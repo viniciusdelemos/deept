@@ -30,7 +30,7 @@ public class UserTimeline {
 		statusList = new ArrayList<Status>();
 		panelDimension = new Dimension(250,60);
 		rows = 0;
-		interval = 5000; //5 minutos
+		interval = 300000; //5 minutos
 	}
 
 	public JPanel getContent() {		
