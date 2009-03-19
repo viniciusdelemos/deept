@@ -1,34 +1,43 @@
 package model;
 
 import controller.ControllerDeepTwitter;
+import prefuse.data.Node;
 import prefuse.visual.NodeItem;
+import prefuse.visual.VisualItem;
 import twitter4j.TwitterException;
+import twitter4j.User;
 
 
 public class FollowUserThread extends Thread {			
 		GraphicManager gManager;
-		NodeItem userNode;
+		VisualItem targetItem;
 		boolean follow;
 		
-	public FollowUserThread(GraphicManager gManager, NodeItem item, boolean follow) {
+	public FollowUserThread(GraphicManager gManager, VisualItem item, boolean follow) {
 		this.gManager = gManager;	
-		userNode = item;
+		targetItem = item;
 		this.follow = follow;
 	}
 	
 	public void run()
 	{		
 		try {
-			String userId = userNode.getString("idTwitter");
-			if(follow) {				
-				ControllerDeepTwitter.getTwitter().create(userId);
-				ControllerDeepTwitter.getTwitter().follow(userId);						
-				gManager.addEdge(gManager.getNodeById(0), gManager.getNodeByTwitterId(Integer.parseInt(userId)));
+			Node mainUserNode = gManager.getNodeById(0); //user principal			
+			Node targetNode = (Node)targetItem.getSourceTuple();
+			String mainUserId = mainUserNode.getString("idTwitter");
+			String targetUserId = targetNode.getString("idTwitter");
+			
+			if(follow) {		
+				if(ControllerDeepTwitter.getTwitter().exists(mainUserId, targetUserId)) return;
+				ControllerDeepTwitter.getTwitter().create(targetNode.getString("idTwitter"));
+				//ControllerDeepTwitter.getTwitter().follow(userId);						
+				gManager.addEdge(mainUserNode, targetNode);
 			}
 			else { //leave
-				ControllerDeepTwitter.getTwitter().destroy(userId);
-				ControllerDeepTwitter.getTwitter().leave(userId);				
-				gManager.removeEdge(gManager.getNodeById(0), gManager.getNodeByTwitterId(Integer.parseInt(userId)));
+				if(!ControllerDeepTwitter.getTwitter().exists(mainUserId, targetUserId)) return;
+				ControllerDeepTwitter.getTwitter().destroy(targetNode.getString("idTwitter"));
+				//ControllerDeepTwitter.getTwitter().leave(userId);				
+				gManager.removeEdge(mainUserNode, targetNode);
 			}
 
 		} catch (TwitterException e) {			
