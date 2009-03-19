@@ -11,10 +11,10 @@ import twitter4j.User;
 import controller.ControllerDeepTwitter;
 
 public class AddFriendsThread extends Thread {
-		NodeItem source;	
+		VisualItem source;	
 		GraphicManager gManager;
 		
-	public AddFriendsThread(GraphicManager gManager, NodeItem s) {
+	public AddFriendsThread(GraphicManager gManager, VisualItem s) {
 		this.gManager = gManager;		
 		this.source = s;
 	}
@@ -36,7 +36,7 @@ public class AddFriendsThread extends Thread {
 					double y = source.getY();
 					
 					Node n = gManager.addNode(user);
-					VisualItem newNode = (VisualItem)gManager.getVisualization().getVisualItem(gManager.NODES, n);
+					VisualItem newNode = gManager.getVisualization().getVisualItem(gManager.NODES, n);
 					PrefuseLib.setX(newNode, null, x);
 					PrefuseLib.setY(newNode, null, y);
 					
