@@ -3,6 +3,7 @@ package controller;
 import gui.GUIAddUser;
 import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
+import gui.GUINewUpdate;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -27,6 +30,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import model.ChartColor;
 import model.GraphicManager;
 import model.UserTimeline;
 import prefuse.Display;
@@ -34,8 +38,11 @@ import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
+import prefuse.util.ColorLib;
+import prefuse.util.PrefuseLib;
 import prefuse.util.force.ForceSimulator;
 import prefuse.util.ui.JForcePanel;
+import prefuse.visual.VisualItem;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -44,6 +51,7 @@ public class ControllerDeepTwitter {
 	private GUILoginDeepTwitter loginWindow;
 	private static GUIMainWindow mainWindow;
 	private GUIAddUser guiAddUser;
+	private GUINewUpdate guiNewUpdate;
 	private static Twitter twitter;
 	private GraphicManager gManager;
 	private boolean isTwitterUser;
@@ -237,8 +245,19 @@ public class ControllerDeepTwitter {
 				String buttonName = ((JButton)e.getSource()).getName();
 				
 				if(buttonName.equals("buttonNewUpdate")) {					
-					//TODO
-					System.out.println("New Update");
+					guiNewUpdate = new GUINewUpdate();
+					guiNewUpdate.addMainWindowListener(this);
+					guiNewUpdate.setVisible(true);
+				}
+				else if(buttonName.equals("buttonUpdate")) {
+					try {
+						twitter.update(guiNewUpdate.getStatus());
+						guiNewUpdate.dispose();
+						Date now = Calendar.getInstance().getTime();
+						setStatusBarMessage("Update realizado com sucesso em "+now);
+					} catch (TwitterException e1) {
+						showMessageDialog(null,e1.getMessage());						
+					}					
 				}
 				else if(buttonName.equals("buttonNewGroup")) {
 					gManager.createGroup();
@@ -253,7 +272,14 @@ public class ControllerDeepTwitter {
 						String id = guiAddUser.getUser();
 						if(!id.equals("")) {
 							User u = (User)twitter.getUserDetail(id);
-							gManager.addNode(u);
+							User exists = gManager.getUser(u.getId());
+							if(exists==null)
+								gManager.addNode(u);
+							else {
+								VisualItem existent = gManager.getVisualization().getVisualItem(GraphicManager.NODES, gManager.getNodeByTwitterId(u.getId()));
+								existent.setStrokeColor(ColorLib.color(ChartColor.blue));
+							}
+								
 							guiAddUser.dispose();
 						}
 						else showMessageDialog("warning","Por favor, preencha o campo!");						
