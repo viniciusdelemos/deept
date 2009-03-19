@@ -360,8 +360,8 @@ public class GraphicManager extends Display {
 		return nodesMap.get(id);			
 	}
 		
-	public User getUser(int twitterId) {
-		return socialNetwork.getUser(twitterId);
+	public User getUser(int idTwitter) {
+		return socialNetwork.getUser(idTwitter);
 	}
 	
 	public SocialNetwork getSocialNetwork() {
@@ -479,12 +479,12 @@ public class GraphicManager extends Display {
     		follow.addActionListener(new ActionListener(){				
     			@Override
 				public void actionPerformed(ActionEvent e) {    				
-					new FollowUserThread(gManager, (NodeItem)clickedItem, true).start();					
+					new FollowUserThread(gManager, clickedItem, true).start();					
 				}});
     		leave.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					new FollowUserThread(gManager, (NodeItem)clickedItem, false).start();					
+					new FollowUserThread(gManager, clickedItem, false).start();					
 				}});
     		block.addActionListener(new ActionListener(){
 				@Override
@@ -565,7 +565,8 @@ public class GraphicManager extends Display {
 		
 		public void mouseDragged(MouseEvent e)
 		{
-			if (!SwingUtilities.isLeftMouseButton(e)) return;		
+			if(!SwingUtilities.isLeftMouseButton(e)) return;
+			if(!controlWasPressed) return;
 			
 			//atualizando coordenadas do mouse 
 			mousePositionEnd.setLocation(e.getX(), e.getY());
