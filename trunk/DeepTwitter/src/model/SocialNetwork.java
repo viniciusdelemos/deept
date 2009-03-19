@@ -20,7 +20,7 @@ public class SocialNetwork {
 	public User getUser(int twitterId) {
 		return usersMap.get(twitterId);
 	}
-	
+		
 	public void addUser(User u)
 	{
 		usersMap.put(u.getId(), u);
