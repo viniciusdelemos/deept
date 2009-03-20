@@ -66,6 +66,7 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
+import profusians.controls.CenterOnClickControl;
 import profusians.zonemanager.ZoneManager;
 import profusians.zonemanager.util.display.ZoneBorderDrawing;
 import profusians.zonemanager.zone.shape.RectangularZoneShape;
@@ -300,6 +301,36 @@ public class GraphicManager extends Display {
 		//System.out.println(u.getId()+"\t"+u.getProfileImageURL());
 		numUsers++;
     	return newNode;    	
+    }
+    
+    public void searchAndAddUserToNetwork(User u) {
+    	User exists = getUser(u.getId());
+    	VisualItem selectedNode;
+    	
+    	if(exists==null) {
+    		Node n = addNode(u);
+    		selectedNode = getVisualization().getVisualItem(NODES, n);    		
+    	}			
+		else
+			selectedNode = getVisualization().getVisualItem(NODES, getNodeByTwitterId(u.getId()));
+		
+    	selectedNode.setStroke(new BasicStroke(1.2f));
+    	selectedNode.setStrokeColor(ColorLib.color(ChartColor.blue));
+    	selectedNode.setFillColor(ColorLib.color(ChartColor.DARK_CYAN));
+		centerItem(selectedNode);
+    }
+    
+    public void centerItem(VisualItem item) {
+    	double scale = getScale();
+		double displayX = getDisplayX();
+		double displayY = getDisplayY();
+		double nodeX = item.getX() * scale;
+		double nodeY = item.getY() * scale;
+		double screenWidth = getWidth();
+		double screenHeight = getHeight();
+		double moveX = (nodeX * -1) + ((screenWidth / 2) + displayX);
+		double moveY = (nodeY * -1) + ((screenHeight / 2) + displayY);			
+		animatePan(moveX, moveY, 1000);
     }
     
     public void addEdge(Node source, Node target) {

@@ -150,6 +150,8 @@ public class ControllerDeepTwitter {
 							if(jTabs.getSelectedIndex()!=1) return;	
 							if(userTimeline!=null) return;
 							userTimeline = new UserTimeline(loggedUserId,isTwitterUser);
+							//padrao é baixar 100 atualizacoes (para userTimeline)
+							//userTimeline.setNumberOfUpdatesToGet(200);
 							scrollUpdates.setViewportView(userTimeline.getContent());		
 						}						
 					});
@@ -271,15 +273,10 @@ public class ControllerDeepTwitter {
 					try{
 						String id = guiAddUser.getUser();
 						if(!id.equals("")) {
+							System.out.println("=> Requesting user to Twitter");
 							User u = (User)twitter.getUserDetail(id);
-							User exists = gManager.getUser(u.getId());
-							if(exists==null)
-								gManager.addNode(u);
-							else {
-								VisualItem existent = gManager.getVisualization().getVisualItem(GraphicManager.NODES, gManager.getNodeByTwitterId(u.getId()));
-								existent.setStrokeColor(ColorLib.color(ChartColor.blue));
-							}
-								
+							System.out.println("=> Got user");
+							gManager.searchAndAddUserToNetwork(u);								
 							guiAddUser.dispose();
 						}
 						else showMessageDialog("warning","Por favor, preencha o campo!");						

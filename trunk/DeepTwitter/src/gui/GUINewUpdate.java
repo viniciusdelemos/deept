@@ -52,11 +52,12 @@ public class GUINewUpdate extends javax.swing.JFrame {
 
         buttonOK.setText("Atualizar");
         buttonOK.setName("buttonUpdate"); // NOI18N
+        buttonOK.setNextFocusableComponent(updateArea);
 
-        jLabel2.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Georgia", 1, 18));
         jLabel2.setText("What are you doing?");
 
-        labelMaxChars.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        labelMaxChars.setFont(new java.awt.Font("Georgia", 1, 18));
         labelMaxChars.setForeground(new java.awt.Color(153, 153, 153));
         labelMaxChars.setText("140");
 
@@ -73,7 +74,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
         updateArea.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         updateArea.setLineWrap(true);
         updateArea.setRows(5);
-        updateArea.setTabSize(4);
+        updateArea.setTabSize(0);
         updateArea.setWrapStyleWord(true);
         updateArea.setNextFocusableComponent(buttonCancel);
         updateArea.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -123,21 +124,25 @@ public class GUINewUpdate extends javax.swing.JFrame {
         pack();
     }// </editor-fold>
 
-    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {
+    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {                                             
         this.dispose();
-    }
+    }                                            
 
-    private void updateAreaKeyPressed(java.awt.event.KeyEvent evt) {
-        verifyConditions();
-}
-
-    private void updateAreaKeyReleased(java.awt.event.KeyEvent evt) {
+    private void updateAreaKeyPressed(java.awt.event.KeyEvent evt) {                                      
         if(evt.getKeyCode()==9) {
             buttonCancel.requestFocusInWindow();
             return;
         }
         verifyConditions();
-}
+}                                     
+
+    private void updateAreaKeyReleased(java.awt.event.KeyEvent evt) {                                       
+        if(evt.getKeyCode()==9) {
+            buttonCancel.requestFocusInWindow();
+            return;
+        }
+        verifyConditions();
+}                                      
 
     public void verifyConditions() {
         int textSize = updateArea.getText().length();

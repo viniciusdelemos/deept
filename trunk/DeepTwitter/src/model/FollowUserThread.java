@@ -27,17 +27,21 @@ public class FollowUserThread extends Thread {
 			String mainUserId = mainUserNode.getString("idTwitter");
 			String targetUserId = targetNode.getString("idTwitter");
 			
+			boolean existsFriendship = ControllerDeepTwitter.getTwitter().exists(mainUserId, targetUserId);
+			
 			if(follow) {		
-				if(ControllerDeepTwitter.getTwitter().exists(mainUserId, targetUserId)) return;
+				if(existsFriendship) return;
 				ControllerDeepTwitter.getTwitter().create(targetNode.getString("idTwitter"));
 				//ControllerDeepTwitter.getTwitter().follow(userId);						
 				gManager.addEdge(mainUserNode, targetNode);
+				ControllerDeepTwitter.setStatusBarMessage("Agora seguindo "+targetNode.getString("name"));
 			}
 			else { //leave
-				if(!ControllerDeepTwitter.getTwitter().exists(mainUserId, targetUserId)) return;
+				if(!existsFriendship) return;
 				ControllerDeepTwitter.getTwitter().destroy(targetNode.getString("idTwitter"));
 				//ControllerDeepTwitter.getTwitter().leave(userId);				
 				gManager.removeEdge(mainUserNode, targetNode);
+				ControllerDeepTwitter.setStatusBarMessage("Deixando de seguir "+targetNode.getString("name"));
 			}
 
 		} catch (TwitterException e) {			

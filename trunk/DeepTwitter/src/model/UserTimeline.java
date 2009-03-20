@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import twitter4j.Status;
 import twitter4j.TwitterException;
@@ -23,6 +24,7 @@ public class UserTimeline {
 	private static long interval;
 	private JPanel panel;
 	private KeepTimelineUpdated keepTimelineUpdated;
+	private int updatesToGet;
 	
 	public UserTimeline (String userId, boolean isTwitterUser) {
 		this.userId = userId;
@@ -31,6 +33,7 @@ public class UserTimeline {
 		panelDimension = new Dimension(250,60);
 		rows = 0;
 		interval = 300000; //5 minutos
+		updatesToGet = 100;
 	}
 
 	public JPanel getContent() {		
@@ -61,10 +64,25 @@ public class UserTimeline {
         gbc.gridx = 1;
         //gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.LINE_START;
-        panel.add(new JLabel(" "+s.getText()),gbc);
+       // panel.add(new JLabel(" "+s.getText()),gbc);
+        
+        JTextArea updateArea = new JTextArea(s.getText());
+        updateArea.setColumns(40);
+        updateArea.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        updateArea.setLineWrap(true);
+        updateArea.setRows(2);
+        updateArea.setTabSize(0);
+        updateArea.setWrapStyleWord(true);       
+        updateArea.setEditable(false);
+        updateArea.setBackground(panel.getBackground());
+        panel.add(updateArea,gbc);
 
         return panel;
-    }    
+    }
+	
+	public void setNumberOfUpdatesToGet(int x) {
+		updatesToGet = x;
+	}
 	
 	public static void setUpdateTimelineInterval(long milliseconds) {
 		interval = milliseconds;
@@ -88,14 +106,18 @@ public class UserTimeline {
 						if(isTwitterUser && userId.equals(ControllerDeepTwitter.getLoggedUserId()))				
 							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getFriendsTimeline();
 						else {
-							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getUserTimeline(userId);
+							System.out.println("Retrieving statuses");
+							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getUserTimeline(userId,updatesToGet);
+							System.out.println("GOT statuses");
 						}
 					}
 					else {						
 						if(isTwitterUser && userId.equals(ControllerDeepTwitter.getLoggedUserId()))				
 							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getFriendsTimeline(lastStatusDate);
 						else {
-							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getUserTimeline(userId,lastStatusDate);
+							System.out.println("Retrieving statuses");
+							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getUserTimeline(userId,updatesToGet,lastStatusDate);
+							System.out.println("GOT statuses");
 						}
 					}
 					
