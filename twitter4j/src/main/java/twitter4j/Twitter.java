@@ -21,7 +21,7 @@ public class Twitter implements java.io.Serializable {
     private String source = "Twitter4J";
 
     private boolean usePostForcibly = false;
-    private static final int MAX_COUNT = 200;
+    private static final int MAX_COUNT = 1000;
     private static final long serialVersionUID = -7550633067620779906L;
 
     public Twitter() {
@@ -171,7 +171,7 @@ public class Twitter implements java.io.Serializable {
      * Sets the source parameter that will be passed by updating methods
      *
      * @param source the new source
-     * @see <a href='http://apiwiki.twitter.com/FAQ#HowdoIget“fromMyApp”appendedtoupdatessentfrommyAPIapplication'>How do I get "from [MyApp]" appended to updates sent from my API application?</a>
+     * @see <a href='http://apiwiki.twitter.com/FAQ#HowdoIgetfromMyAppappendedtoupdatessentfrommyAPIapplication'>How do I get "from [MyApp]" appended to updates sent from my API application?</a>
      * @see <a href="http://twitter.com/help/request_source">Twitter - Request a link to your application</a>
      */
     public void setSource(String source) {
@@ -345,6 +345,30 @@ public class Twitter implements java.io.Serializable {
                 asDocument(), this);
     }
 
+    /**
+     * Returns the 20 most recent statuses posted in the last 24 hours.
+     * @param since_id
+     * @return list of the Friends Timeline
+     * @throws TwitterException
+     */
+    public synchronized List<Status> getFriendsTimelineBySinceId(long since_id) throws 
+    	TwitterException{
+    	return Status.constructStatuses(get(baseURL + "statuses/friends_timeline.xml", 
+    			"since_id", String.valueOf(since_id), true).asDocument(), this);
+    }
+
+    /**
+     * Returns the 20 most recent statuses posted in the last 24 hours.
+     * @param count
+     * @return list of the Friends Timeline
+     * @throws TwitterException
+     */
+    public synchronized List<Status> getFriendsTimeline(int count) throws
+    	TwitterException{
+    	return Status.constructStatuses(get(baseURL + "statuses/friends_timeline.xml",
+    			"count", String.valueOf(count), true).asDocument(), this);
+    }
+    
     /**
      * Returns the 20 most recent statuses posted in the last 24 hours from the specified userid.
      *
@@ -908,7 +932,7 @@ public class Twitter implements java.io.Serializable {
     public final static Device SMS = new Device("sms");
     public final static Device NONE = new Device("none");
 
-    static class Device {
+    public static class Device {
         final String DEVICE;
 
         public Device(String device) {
