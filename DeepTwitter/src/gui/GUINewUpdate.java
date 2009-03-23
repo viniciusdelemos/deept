@@ -53,6 +53,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
         buttonOK.setText("Atualizar");
         buttonOK.setName("buttonUpdate"); // NOI18N
         buttonOK.setNextFocusableComponent(updateArea);
+        buttonOK.setEnabled(false);
 
         jLabel2.setFont(new java.awt.Font("Georgia", 1, 18));
         jLabel2.setText("What are you doing?");
@@ -149,7 +150,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
         //System.out.println("size: "+textSize);
         int remaining = 140-textSize;
         labelMaxChars.setText(String.valueOf(remaining));
-
+        
         if(remaining<0) {
             buttonOK.setEnabled(false);
         }
@@ -160,6 +161,9 @@ public class GUINewUpdate extends javax.swing.JFrame {
         else if(remaining<20) {
             labelMaxChars.setForeground(Color.RED.darker().darker());
             buttonOK.setEnabled(true);
+        }
+        else if(remaining==140) {
+        	buttonOK.setEnabled(false);
         }
         else {
             labelMaxChars.setForeground(new Color(153,153,153));
