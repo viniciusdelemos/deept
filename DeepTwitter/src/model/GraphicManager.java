@@ -4,25 +4,19 @@ import gui.GUIViewUpdates;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import controller.ControllerDeepTwitter;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -30,13 +24,8 @@ import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
-import prefuse.action.assignment.DataSizeAction;
-import prefuse.action.layout.Layout;
 import prefuse.action.layout.graph.ForceDirectedLayout;
-import prefuse.activity.Activity;
 import prefuse.controls.ControlAdapter;
-import prefuse.controls.DragControl;
-import prefuse.controls.NeighborHighlightControl;
 import prefuse.controls.PanControl;
 import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
@@ -47,8 +36,6 @@ import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
-import prefuse.data.io.DataIOException;
-import prefuse.data.io.GraphMLReader;
 import prefuse.data.tuple.DefaultTupleSet;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
@@ -57,7 +44,6 @@ import prefuse.render.LabelRenderer;
 import prefuse.render.PolygonRenderer;
 import prefuse.render.Renderer;
 import prefuse.util.ColorLib;
-import prefuse.util.GraphicsLib;
 import prefuse.util.force.ForceSimulator;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
@@ -66,12 +52,9 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
-import profusians.controls.CenterOnClickControl;
 import profusians.zonemanager.ZoneManager;
-import profusians.zonemanager.util.display.ZoneBorderDrawing;
-import profusians.zonemanager.zone.shape.RectangularZoneShape;
-import profusians.zonemanager.zone.shape.ZoneShape;
 import twitter4j.User;
+import controller.ControllerDeepTwitter;
 
 @SuppressWarnings("serial")
 public class GraphicManager extends Display {
@@ -87,9 +70,8 @@ public class GraphicManager extends Display {
     private ForceDirectedLayout fdl;
     private Map<Integer, Node> nodesMap;    
     private boolean isTwitterUser, isHighQuality;	
-    private String loggedUserId;
-	private SocialNetwork socialNetwork; 
-    private ZoneManager zoneManager;
+    private SocialNetwork socialNetwork; 
+    //private ZoneManager zoneManager;
     private VisualItem selectionBox;
 	private int defaultEdgeColor, highlightEdgeColor, highlightArrowColor,
 	highlightTextColor, defaultTextColor, mainUserStrokeColor, mainUserFillColor,
@@ -116,6 +98,8 @@ public class GraphicManager extends Display {
     	g.addColumn("name", String.class);
     	g.addColumn("image", String.class);//URL.class);
     	g.addColumn("isOpen", boolean.class); 
+    	g.addColumn("isShowingFriends", boolean.class);
+    	g.addColumn("isShowingFollowers", boolean.class);
     	g.addColumn("weight", float.class);
     	   	
     	// add visual data groups
@@ -289,6 +273,8 @@ public class GraphicManager extends Display {
 		newNode.set("name", u.getName());
 		newNode.set("image", u.getProfileImageURL().toString());//sem tostring
 		newNode.set("isOpen", false);
+		newNode.set("isShowingFriends", false);
+		newNode.set("isShowingFollowers", false);
 		nodesMap.put(u.getId(), newNode);
 		
 		if(numUsers==0)
@@ -298,7 +284,6 @@ public class GraphicManager extends Display {
 			mainUser.setStrokeColor(mainUserStrokeColor);
 			mainUser.setFillColor(mainUserFillColor);
 		}		
-		//System.out.println(u.getId()+"\t"+u.getProfileImageURL());
 		numUsers++;
     	return newNode;    	
     }
@@ -321,6 +306,7 @@ public class GraphicManager extends Display {
     }
     
     public void centerItem(VisualItem item) {
+    	System.out.println(item);
     	double scale = getScale();
 		double displayX = getDisplayX();
 		double displayY = getDisplayY();
@@ -390,6 +376,12 @@ public class GraphicManager extends Display {
 	public Node getNodeByTwitterId(int id) {
 		return nodesMap.get(id);			
 	}
+	
+//	public VisualItem getLoggedUser() {
+//		int id = Integer.parseInt(ControllerDeepTwitter.getLoggedUserId());
+//		Node n = getNodeByTwitterId(id);
+//		return getVisualization().getVisualItem(NODES, n);
+//	}
 		
 	public User getUser(int idTwitter) {
 		return socialNetwork.getUser(idTwitter);
@@ -415,6 +407,10 @@ public class GraphicManager extends Display {
 		
 	public int getNumUsers() {
 		return nodesMap.size();
+	}
+	
+	public boolean isTwitterUser() {
+		return isTwitterUser;
 	}
 		
 	public void setPanControlOn(boolean b) {
@@ -446,27 +442,23 @@ public class GraphicManager extends Display {
 		GraphicManager gManager;
 		VisualItem clickedItem;
 		JPopupMenu nodeMenu;
-		//TupleSet selectedNodes;
 		//variáveis utilizadas para a manipulação da caixa de seleção
 		Point2D mousePositionBegin, mousePositionEnd;
 	    Rectangle2D rect;
-	    //int x1,y1,x2,y2;
 	    boolean controlWasPressed;
 	    
 		public ListenerAdapter(GraphicManager gManager)
 		{
 			this.gManager = gManager;			
-			//selectedNodes = m_vis.getFocusGroup(SELECTED_NODES);
 			mousePositionBegin = new Point2D.Float();
 			mousePositionEnd = new Point2D.Float();
-		    rect = new Rectangle2D.Float();
-			createPopupMenus();				
+		    rect = new Rectangle2D.Float();							
 		}
 		
-		public void createPopupMenus()
+		public void createPopupMenu(VisualItem t)
 		{
-			nodeMenu = new JPopupMenu(); 
-    		
+			nodeMenu = new JPopupMenu();
+			
 			JMenuItem friends = new JMenuItem("View Friends");
 			JMenuItem updates = new JMenuItem("View Updates");
     		JMenuItem follow = new JMenuItem("Follow");//("Follow",'f') para adicionar atalho
@@ -480,6 +472,12 @@ public class GraphicManager extends Display {
     		leave.setActionCommand("user_leave");
     		block.setActionCommand("user_block");  
     		followers.setActionCommand("user_followers");
+			
+			Node mainUser = getNodeById(0);			
+			Node target = (Node)t.getSourceTuple();
+			//TODO
+    		//VERIFICA SE SAO AMIGOS/FOLLOWERS, ETC
+			
     		    		
     		nodeMenu.add(friends); //é necessário?
     		nodeMenu.add(updates);
@@ -498,7 +496,7 @@ public class GraphicManager extends Display {
     		updates.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					new GUIViewUpdates(clickedItem,isTwitterUser);
+					new GUIViewUpdates(clickedItem,gManager);
 				}    			
     		});
     		followers.addActionListener(new ActionListener(){
@@ -533,12 +531,11 @@ public class GraphicManager extends Display {
 			clickedItem = item;System.out.println(item);
 			if (!(item instanceof NodeItem)) return;
 			
-			//zoneManager.addItemToZone((NodeItem)item, 0);	
-			
-			//System.out.println(zoneManager.getZone(0).getNumberOfItems());
+			//zoneManager.addItemToZone((NodeItem)item, 0);				
 			
 			if(SwingUtilities.isRightMouseButton(e))
 			{				
+				createPopupMenu(item);
 				nodeMenu.show(e.getComponent(), e.getX(), e.getY());
 				clickedItem.setFixed(true);
 			}
@@ -551,14 +548,15 @@ public class GraphicManager extends Display {
 					else
 						selectedNodes.addTuple(clickedItem);					
 					return;
-				}			
+				}
+								
 				if(item.getBoolean("isOpen") == false)
 				{
-					item.setBoolean("isOpen", true);
-					if(((Node)item).getOutDegree()>0)					
-						setChildrenVisible((NodeItem)item, true);				
+					item.setBoolean("isOpen", true);					
+					if(item.getBoolean("isShowingFriends") == false) 
+						new AddFriendsThread(gManager, (NodeItem)item).start();
 					else
-						new AddFriendsThread(gManager, (NodeItem)item).start();   			            
+						setChildrenVisible((NodeItem)item, true);						   			            
 				}
 				else
 				{
@@ -577,15 +575,11 @@ public class GraphicManager extends Display {
 				controlWasPressed = true;
 				setPanControlOn(false);
 			}
-//			else { if(rect.getHeight()==0 && rect.getWidth()==0) {
-//				selectedNodes.clear();
-//			}
 
 			float[] box = (float[]) selectionBox.get(VisualItem.POLYGON);
 			box[0] = box[1] = box[2] = box[3] = 
 				box[4] = box[5] = box[6] = box[7] = 0;
 
-			//gManager.setHighQuality(false);
 			//setando coordenada x e y em relação ao frame
 			mousePositionBegin.setLocation(e.getX(), e.getY());
 			//setando coordenada absoluta em relação ao Display

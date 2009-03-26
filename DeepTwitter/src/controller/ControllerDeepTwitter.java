@@ -135,7 +135,7 @@ public class ControllerDeepTwitter {
 					mainWindow = new GUIMainWindow("DeepTwitter");
 					mainWindow.addMainWindowListener(new MainWindowListener());
 										
-					JSplitPane jSplitPane = mainWindow.getSplitPane();					
+					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
 					jTabs = mainWindow.getTabs();
 					ForceSimulator forceSimulator = gManager.getForceDirectedLayout().getForceSimulator();										
 					JForcePanel jForcePanel = new JForcePanel(forceSimulator);					
@@ -147,12 +147,18 @@ public class ControllerDeepTwitter {
 					jTabs.addChangeListener(new ChangeListener(){
 						@Override
 						public void stateChanged(ChangeEvent e) {
-							if(jTabs.getSelectedIndex()!=1) return;	
-							if(userTimeline!=null) return;
-							userTimeline = new UserTimeline(loggedUserId,isTwitterUser);
-							//padrao é baixar 100 atualizacoes (para userTimeline)
-							//userTimeline.setNumberOfUpdatesToGet(200);
-							scrollUpdates.setViewportView(userTimeline.getContent());		
+							if(jTabs.getSelectedIndex()==0) {
+								jSplitPane.setDividerLocation(250);								
+							}
+							if(jTabs.getSelectedIndex()==1) {
+								jSplitPane.setDividerLocation(431);
+								if(userTimeline!=null) return;
+								userTimeline = new UserTimeline(loggedUserId,gManager);
+								scrollUpdates.setViewportView(userTimeline.getContent());
+							}
+							if(jTabs.getSelectedIndex()==2) {
+								jSplitPane.setDividerLocation(300);
+							}
 						}						
 					});
 					

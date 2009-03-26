@@ -4,7 +4,6 @@ import java.util.List;
 
 import prefuse.data.Node;
 import prefuse.util.PrefuseLib;
-import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -22,9 +21,9 @@ public class AddFriendsThread extends Thread {
 	public void run()
 	{
 		try {
-			source.set("isOpen", true);
 			List<User> friends = ControllerDeepTwitter.getTwitter().getFriends(source.get("idTwitter").toString());
 			int notAdded = 0;
+			boolean isShowingFriends = source.getBoolean("isShowingFriends");
 			
 			for(User user : friends)
 			{
@@ -43,14 +42,20 @@ public class AddFriendsThread extends Thread {
 					//AO TER UM VISUALITEM, USAR VisualItem.getSourceTuple() para pegar instancia de Nodo ou Edge.					
 					gManager.addEdge((Node)source.getSourceTuple(), n); 		
 				}
-				else
+				else if(!isShowingFriends)
 				{
 					Node n = gManager.getNodeByTwitterId(u.getId());
 					gManager.addEdge((Node)source.getSourceTuple(), n);
 					notAdded++;
 				}
 			}
-			ControllerDeepTwitter.setStatusBarMessage("Adicionados "+(friends.size()-notAdded)+" amigos de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
+			if(!isShowingFriends)
+				ControllerDeepTwitter.setStatusBarMessage("Adicionados "+(friends.size()-notAdded)+" amigos de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
+			else
+				ControllerDeepTwitter.setStatusBarMessage("Adicionados "+notAdded+" amigos de "+source.getString("name") +" à rede. "+(friends.size()-notAdded)+" já existentes.");
+			
+			source.setBoolean("isShowingFriends",true);
+			//node count: botar no log
 			System.out.println("Node Count: "+gManager.getGraph().getNodeCount());
 			
 		} catch (TwitterException e) {
