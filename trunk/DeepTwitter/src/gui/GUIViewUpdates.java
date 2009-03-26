@@ -7,17 +7,18 @@ import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import model.GraphicManager;
 import model.UserTimeline;
 import prefuse.visual.VisualItem;
 
 public class GUIViewUpdates extends JFrame{
 	UserTimeline timeline;
 	
-	public GUIViewUpdates(VisualItem user, boolean isTwitterUser) {
-		timeline = new UserTimeline(user.getString("idTwitter"),isTwitterUser);
+	public GUIViewUpdates(VisualItem user, GraphicManager gManager) {
+		timeline = new UserTimeline(user.getString("idTwitter"),gManager);
 		setTitle("Últimos updates de "+user.getString("name"));
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-		setPreferredSize(new Dimension(300,650));
+		setPreferredSize(new Dimension(439,650));
 		pack();
 		setContentPane(new JScrollPane(timeline.getContent()));
 		addWindowListener(new WindowAdapter() {

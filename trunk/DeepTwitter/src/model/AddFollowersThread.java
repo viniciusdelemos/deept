@@ -11,10 +11,10 @@ import twitter4j.User;
 import controller.ControllerDeepTwitter;
 
 public class AddFollowersThread extends Thread {
-		NodeItem source;	
+		VisualItem source;	
 		GraphicManager gManager;
 		
-	public AddFollowersThread(GraphicManager gManager, NodeItem s) {
+	public AddFollowersThread(GraphicManager gManager, VisualItem s) {
 		this.gManager = gManager;		
 		this.source = s;
 	}
@@ -24,6 +24,7 @@ public class AddFollowersThread extends Thread {
 		try {			
 			List<User> followers = ControllerDeepTwitter.getTwitter().getFollowers(source.get("idTwitter").toString());
 			int notAdded = 0;
+			boolean isShowingFollowers = source.getBoolean("isShowingFollowers");
 			
 			for(User user : followers)
 			{
@@ -35,21 +36,27 @@ public class AddFollowersThread extends Thread {
 					double y = source.getY();
 					
 					Node n = gManager.addNode(user);
-					VisualItem newNode = (VisualItem)gManager.getVisualization().getVisualItem(gManager.NODES, n);
+					VisualItem newNode = gManager.getVisualization().getVisualItem(gManager.NODES, n);
 					PrefuseLib.setX(newNode, null, x);
 					PrefuseLib.setY(newNode, null, y);
 					
 					//AO TER UM VISUALITEM, USAR VisualItem.getSourceTuple() para pegar instancia de Nodo ou Edge.					
 					gManager.addEdge(n,(Node)source.getSourceTuple()); 		
 				}
-				else
+				else if(!isShowingFollowers)
 				{
 					Node n = gManager.getNodeByTwitterId(u.getId());
 					gManager.addEdge(n,(Node)source.getSourceTuple());
 					notAdded++;
 				}
 			}
-			ControllerDeepTwitter.setStatusBarMessage("Adicionados "+(followers.size()-notAdded)+" seguidores de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
+			if(!isShowingFollowers)
+				ControllerDeepTwitter.setStatusBarMessage("Adicionados "+(followers.size()-notAdded)+" seguidores de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
+			else
+				ControllerDeepTwitter.setStatusBarMessage("Adicionados "+notAdded+" seguidores de "+source.getString("name") +" à rede. "+(followers.size()-notAdded)+" já existentes.");
+			
+			source.setBoolean("isShowingFollowers",true);
+			//node count: botar no log
 			System.out.println("Node Count: "+gManager.getGraph().getNodeCount());
 			
 		} catch (TwitterException e) {
