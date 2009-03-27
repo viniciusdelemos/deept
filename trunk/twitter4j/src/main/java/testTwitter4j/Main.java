@@ -18,11 +18,10 @@ public class Main {
 	
 	public static void main(String args []){
 		
-		Date date = new Date(109,0,1);
+		Date date = new Date(109,0,26);
 		
 		
 		StatusMethods statusMethods = new StatusMethods(user1, pass);
-		/*
 		StatusMethods statusMethods1 = new StatusMethods(user, pass);
 		StatusMethods statusMethods2 = new StatusMethods(user2, pass);
 		
@@ -43,7 +42,7 @@ public class Main {
 		FavoriteMethods favoriteMethods1 = new FavoriteMethods(user, pass);
 		
 		NotificationMethods notificationMethods = new NotificationMethods(user1, pass);
-		*/
+		
 		
 		BlockMethods blockMethods = new BlockMethods(user1, pass);
 		
@@ -54,16 +53,20 @@ public class Main {
 		//statusMethods.getFriendsTimelineBySinceId(1371514306);
 		//statusMethods.getFriendsTimeline();
 		
-		statusMethods.getFriendsTimeline(999);
+		//statusMethods.getFriendsTimeline(999);
 
 		
-
+		accountMethods1.rateLimitStatus();
 		
-
+//		statusMethods1.show(1285678945);
+//		
+//		statusMethods1.destroyStatus(1285678945);
+//		
+//		statusMethods1.show(1285678945);
 		
 		
 		
-		
+		accountMethods1.rateLimitStatus();
 		
 		
 		
@@ -92,6 +95,7 @@ public class Main {
 		System.out.println("\n");
 		accountMethods1.rateLimitStatus();
 		*/
+		
 		
 		
 		
