@@ -172,6 +172,36 @@ public class StatusMethods {
 		
 	}
 	
+	public void getFriendsTimelineByMaxId(long max_id){
+		
+		Twitter twitter = new Twitter(user, pass);
+		List<Status> list = null;
+		
+		try {
+			list = twitter.getFriendsTimelineByMaxId(max_id);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		
+		this.printStatus(list);
+		
+	}
+	
+	public void getFriendsTimeline(long since_id, int count){
+		
+		Twitter twitter = new Twitter(user, pass);
+		List<Status> list = null;
+		
+		try {
+			list = twitter.getFriendsTimeline(since_id, count);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		
+		this.printStatus(list);
+		
+	}
+	
 	
 	/** User Timeline **/
 	
@@ -266,6 +296,38 @@ public class StatusMethods {
 		
 	}
 	
+	public void getUserTimeline(long since_id){
+		
+		Twitter twitter = new Twitter(user, pass);
+		List<Status> list = null;
+		
+		try {
+			list = twitter.getUserTimeline(since_id);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		
+		this.printStatus(list);
+		
+	}
+	
+	public void getUserTimelineByPage(int page){
+		
+		Twitter twitter = new Twitter(user, pass);
+		List<Status> list = null;
+		
+		try {
+			list = twitter.getUserTimelineByPage(page);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		
+		this.printStatus(list);
+		
+	}
+	
+	
+	
 	public void show(long id){
 		
 		Twitter twitter = new Twitter(user, pass);
@@ -335,6 +397,36 @@ public class StatusMethods {
 		
 		try {
 			status = twitter.getRepliesByPage(page);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		
+		this.printStatus(status);
+		
+	}
+	
+	public void getRepliesByPageBySinceId(long since_id){
+		
+		Twitter twitter = new Twitter(user, pass);
+		List<Status> status = null;
+		
+		try {
+			status = twitter.getRepliesByPageBySinceId(since_id);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		
+		this.printStatus(status);
+		
+	}
+	
+	public void getReplies(Date date){
+		
+		Twitter twitter = new Twitter(user, pass);
+		List<Status> status = null;
+		
+		try {
+			status = twitter.getReplies(date);
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}

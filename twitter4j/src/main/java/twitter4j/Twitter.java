@@ -346,7 +346,7 @@ public class Twitter implements java.io.Serializable {
     }
 
     /**
-     * Returns the 20 most recent statuses posted in the last 24 hours.
+     * Returns only statuses with an ID greater than (that is, more recent than) the specified ID.
      * @param since_id
      * @return list of the Friends Timeline
      * @throws TwitterException
@@ -427,6 +427,38 @@ public class Twitter implements java.io.Serializable {
         return Status.constructStatuses(get(baseURL + "statuses/friends_timeline/" + id + ".xml",
                 "since", format.format(since), true).asDocument(), this);
     }
+    
+    /**
+	 * Returns only statuses with an ID less than (that is, older than) the
+	 * specified ID.
+	 * 
+	 * @param max_id
+	 * @return list of the Friends Timeline
+	 * @throws TwitterException
+	 */
+	public synchronized List<Status> getFriendsTimelineByMaxId(long max_id)
+			throws TwitterException {
+		return Status.constructStatuses(get(
+				baseURL + "statuses/friends_timeline.xml", "max_id",
+				String.valueOf(max_id), true).asDocument(), this);
+	}
+
+	/**
+	 * Returns the most recent statuses posted in the last 24 hours.
+	 * 
+	 * @param since_id Returns only statuses with an ID greater than (that is, more recent than) the specified ID
+	 * @param count Specifies the number of statuses to retrieve. May not be greater than 200.
+	 * @return
+	 * @throws TwitterException
+	 */
+	public synchronized List<Status> getFriendsTimeline(long since_id, int count)
+			throws TwitterException {
+		return Status.constructStatuses(get(
+				baseURL + "statuses/friends_timeline.xml", "since_id",
+				String.valueOf(since_id), "count", String.valueOf(count), true)
+				.asDocument(), this);
+	}
+
 
     /**
      * Returns the most recent statuses posted in the last 24 hours from the specified userid.
@@ -514,6 +546,31 @@ public class Twitter implements java.io.Serializable {
         return Status.constructStatuses(get(baseURL + "statuses/user_timeline.xml", true).
                 asDocument(), this);
     }
+    
+    /**
+     * Returns the most recent statuses posted in the last 24 hours from the authenticating user.
+     * 
+     * @param since_id
+     * @return
+     * @throws TwitterException
+     */
+    public synchronized List<Status> getUserTimeline(long since_id) throws TwitterException {
+        return Status.constructStatuses(get(baseURL + "statuses/user_timeline.xml",
+                "since_id", String.valueOf(since_id), true).asDocument(), this);
+    }
+    
+    /**
+     * Returns the most recent statuses posted in the last 24 hours from the authenticating user.
+     * 
+     * @param page
+     * @return
+     * @throws TwitterException
+     */
+    public synchronized List<Status> getUserTimelineByPage(int page) throws TwitterException {
+        return Status.constructStatuses(get(baseURL + "statuses/user_timeline.xml",
+                "page", String.valueOf(page), true).asDocument(), this);
+    }
+
 
     /**
      * Returns a single status, specified by the id parameter. The status's author will be returned inline.
@@ -599,6 +656,30 @@ public class Twitter implements java.io.Serializable {
         }
         return Status.constructStatuses(get(baseURL + "statuses/replies.xml",
                 "page", String.valueOf(page), true).asDocument(), this);
+    }
+    
+    /**
+     * Returns the 20 most recent @replies (status updates prefixed with @username) for the authenticating user.
+     * 
+     * @param since_id Returns only statuses with an ID greater than (that is, more recent than) the specified ID.
+     * @return
+     * @throws TwitterException
+     */
+    public synchronized List<Status> getRepliesByPageBySinceId(long since_id) throws TwitterException {
+        return Status.constructStatuses(get(baseURL + "statuses/replies.xml",
+                "since_id", String.valueOf(since_id), true).asDocument(), this);
+    }
+    
+    /**
+     * Returns the 20 most recent @replies (status updates prefixed with @username) for the authenticating user.
+     * 
+     * @param date Narrows the returned results to just those replies created after the specified HTTP-formatted date, up to 24 hours old.
+     * @return
+     * @throws TwitterException
+     */
+    public synchronized List<Status> getReplies(Date date) throws TwitterException {
+        return Status.constructStatuses(get(baseURL + "statuses/replies.xml",
+                "since", format.format(date), true).asDocument(), this);
     }
 
     /**
