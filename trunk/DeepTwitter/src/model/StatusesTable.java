@@ -41,42 +41,50 @@ import prefuse.visual.VisualItem;
 import quicktime.app.image.JImagePainter;
 
 import twitter4j.Status;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
 
-public class UserTimeline {
+public class StatusesTable {
 	private int rows;
 	private String userId;
 	private boolean isTwitterUser;
 	private ArrayList<Status> statusList;
 	private static long interval;
 	private JPanel panel;
-	private KeepTimelineUpdated keepTimelineUpdated;
+	private KeepTableUpdated keepTableUpdated;
 	private int updatesToGet;
 	private GraphicManager gManager;
+	private StatusesType statusesType;
+	private GridBagConstraints gbc;
 	
-	public UserTimeline (String userId, GraphicManager gManager) {
+	public StatusesTable (GraphicManager gManager, String userId) {
+		this(gManager,StatusesType.OTHERS_UPDATES);
 		this.userId = userId;
+	}
+	
+	public StatusesTable(GraphicManager gManager, StatusesType type) {
 		this.gManager = gManager;
+		this.statusesType = type;
 		isTwitterUser = gManager.isTwitterUser();
-		statusList = new ArrayList<Status>();
+		statusList = new ArrayList<Status>();		
 		rows = 0;
 		interval = 120000; //2 minutos
-		updatesToGet = 100;		 
+		updatesToGet = 100;
 	}
 
 	public JPanel getContent() {		
 		GridBagLayout layout = new GridBagLayout();        
 		panel = new JPanel(layout);		
-		keepTimelineUpdated = new KeepTimelineUpdated();
-		keepTimelineUpdated.start();		
+		keepTableUpdated = new KeepTableUpdated();
+		keepTableUpdated.start();		
 		return panel;
 	}
 	
-	private JPanel getPanel(final Status s) {
-		GridBagConstraints gbc = new GridBagConstraints();
-        final JPanel updatePanel = new JPanel(new GridBagLayout());        
+	private JPanel getPanel(final Status s) {		
+        JPanel updatePanel = new JPanel(new GridBagLayout());        
+        gbc = new GridBagConstraints();
         
         if(rows%2==0)
         	updatePanel.setBackground(ChartColor.LIGHT_GRAY);       
@@ -87,8 +95,9 @@ public class UserTimeline {
 		gbc.gridx = 0;
 		gbc.insets = new Insets(0,3,0,1);
 		
-		final User u = s.getUser();
+		final User u = s.getUser();		
 		final JLabel interactiveImage = new JLabel(new ImageIcon(u.getProfileImageURL()));
+		interactiveImage.setSize(48, 48);
 		interactiveImage.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(java.awt.event.MouseEvent arg0) {
 				interactiveImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -113,7 +122,8 @@ public class UserTimeline {
 		editorPane.setBackground(updatePanel.getBackground());
 		editorPane.setText("<b><a href=http://www.twitter.com/"+u.getScreenName()+">"
 				+u.getScreenName()+"</a></b>"
-				+": "+processText(s.getText()));//+"<br><img src=\""+path+"\"></img>");
+				+": "+processText(s.getText()));
+				//+"<br>"+s.getCreatedAt().toString());
 		
 		editorPane.addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -121,7 +131,7 @@ public class UserTimeline {
 					try {
 	        			new URLLinkAction(e.getURL().toString());
 	        		} catch (Exception ex) {
-	        			ControllerDeepTwitter.showMessageDialog(null, ex.getMessage());
+	        			ControllerDeepTwitter.showMessageDialog(ex.getMessage(),MessageType.ERROR);
 	        		} 
 				}
 			}
@@ -129,6 +139,13 @@ public class UserTimeline {
 		
 		updatePanel.add(editorPane,gbc);
 		
+		if(isTwitterUser)
+			updatePanel = addButtonsToPanel(updatePanel, s);
+		        
+        return updatePanel;
+    }
+	
+	public JPanel addButtonsToPanel(final JPanel updatePanel, final Status s) {
 		gbc.weightx = 0;
         gbc.gridx = 2;
         gbc.gridy = 0;
@@ -177,11 +194,15 @@ public class UserTimeline {
 					else {
 						ControllerDeepTwitter.getTwitter().destroyFavorite(s.getId());
 						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../star_off.jpg")));
+						if(statusesType == StatusesType.FAVORITES) {
+							panel.remove(updatePanel);
+							rows--;
+						}
 					}				
 					updatePanel.revalidate();
 				}
 				catch(TwitterException e) {
-					ControllerDeepTwitter.showMessageDialog(null, e.getMessage());
+					ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
 				}
 			}
 		});
@@ -206,8 +227,8 @@ public class UserTimeline {
 				public void mouseClicked(java.awt.event.MouseEvent arg0) {
 					try {
 						int n = JOptionPane.showConfirmDialog(
-	                            null, "Tem certeza que deseja deletar este update?","Aviso",
-	                            JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null);
+	                            null, "Tem certeza que deseja deletar este update?","Atenção",
+	                            JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null);
 						if (n == JOptionPane.YES_OPTION) {
 							ControllerDeepTwitter.getTwitter().destroyStatus(s.getId());
 							panel.remove(updatePanel);
@@ -215,14 +236,14 @@ public class UserTimeline {
 							panel.revalidate();
 						}
 					} catch (TwitterException e) {
-						ControllerDeepTwitter.showMessageDialog(null, e.getMessage());
+						ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
 					}
 				}
 			});
 			updatePanel.add(deleteButton,gbc);
-		}        
-        return updatePanel;
-    }
+		}		
+		return updatePanel;
+	}
 	
 	public String processText(String status) {
 		StringBuilder sb = new StringBuilder(status);
@@ -279,41 +300,53 @@ public class UserTimeline {
 	}
 	
 	public void stopThread() {
-		keepTimelineUpdated.interrupt();
+		keepTableUpdated.interrupt();
 	}
 	
-	class KeepTimelineUpdated extends Thread {
+	class KeepTableUpdated extends Thread {
 		private Date lastStatusDate = null;
 		private long lastStatusId = -1;
 		private GridBagConstraints c = new GridBagConstraints();
 		private JPanel empty;
+		private Twitter twitter = ControllerDeepTwitter.getTwitter();
 		
 		public void run()
 		{
+			System.out.println("=> Starting thread");
 			while(true) {
 				try {
-					if(lastStatusDate == null) {
-						if(isTwitterUser && userId.equals(ControllerDeepTwitter.getLoggedUserId()))				
-							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getFriendsTimeline();
-						else {
-							System.out.println("Retrieving statuses");
-							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getUserTimeline(userId,updatesToGet);
-							System.out.println("GOT statuses");
-						}
+					switch(statusesType)
+					{
+					case MY_UPDATES:
+						if(lastStatusDate == null)
+							statusList = (ArrayList<Status>) twitter.getFriendsTimeline();
+						else
+							statusList = (ArrayList<Status>) twitter.getFriendsTimeline(lastStatusDate);
+						break;
+
+					case OTHERS_UPDATES:
+						if(lastStatusDate == null)
+							statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet);
+						else
+							statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet,lastStatusDate);
+						break;
+
+					case FAVORITES:
+						statusList = (ArrayList<Status>) twitter.favorites();
+						break;
+
+					case REPLIES:
+						statusList = (ArrayList<Status>) twitter.getReplies();
+						break;
+
+					case PUBLIC_TIMELINE:
+						statusList = (ArrayList<Status>) twitter.getPublicTimeline();
+						break;
 					}
-					else {						
-						if(isTwitterUser && userId.equals(ControllerDeepTwitter.getLoggedUserId()))				
-							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getFriendsTimeline(lastStatusDate);
-						else {
-							System.out.println("Retrieving statuses");
-							statusList = (ArrayList<Status>) ControllerDeepTwitter.getTwitter().getUserTimeline(userId,updatesToGet,lastStatusDate);
-							System.out.println("GOT statuses");
-						}
-					}
-					
+
 					if(!statusList.isEmpty()) {
 						lastStatusDate = statusList.get(0).getCreatedAt();
-						
+
 						//checa se nova msg é igual à ultima já adicionada ao painel
 						if(statusList.get(0).getId()>lastStatusId)
 						{
@@ -344,11 +377,13 @@ public class UserTimeline {
 						}
 						statusList.clear();
 					}				
-					Thread.sleep(interval);					
+					Thread.sleep(interval);	
+					System.out.println("running");
 				} catch (TwitterException e) {
-					e.printStackTrace();
+					ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
 				}
-				catch(InterruptedException e2) {
+				catch(InterruptedException ie) {
+					System.out.println("interrupted exception");
 					break;
 				}
 			}

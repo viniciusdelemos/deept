@@ -36,7 +36,7 @@ public class URLLinkAction {
 		}
 		catch (Exception ex)
 		{
-			ControllerDeepTwitter.showMessageDialog(null, ex.getMessage());
+			ControllerDeepTwitter.showMessageDialog(ex.getMessage(),MessageType.ERROR);
 		}
 	}
 }

@@ -8,14 +8,14 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
 import model.GraphicManager;
-import model.UserTimeline;
+import model.StatusesTable;
 import prefuse.visual.VisualItem;
 
 public class GUIViewUpdates extends JFrame{
-	UserTimeline timeline;
+	StatusesTable timeline;
 	
 	public GUIViewUpdates(VisualItem user, GraphicManager gManager) {
-		timeline = new UserTimeline(user.getString("idTwitter"),gManager);
+		timeline = new StatusesTable(gManager,user.getString("idTwitter"));
 		setTitle("Últimos updates de "+user.getString("name"));
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setPreferredSize(new Dimension(439,650));
