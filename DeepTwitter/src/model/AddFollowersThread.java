@@ -60,7 +60,7 @@ public class AddFollowersThread extends Thread {
 			System.out.println("Node Count: "+gManager.getGraph().getNodeCount());
 			
 		} catch (TwitterException e) {
-			ControllerDeepTwitter.showMessageDialog(null,e.getMessage());
+			ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
 		}
 	}
 }

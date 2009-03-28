@@ -1,10 +1,8 @@
 package gui;
 
 import java.awt.event.ActionListener;
-import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 
 /**
  *
@@ -36,7 +34,14 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonClearSelection = new javax.swing.JButton();
         checkBoxHighQuality = new javax.swing.JCheckBox();
         labelFilter = new javax.swing.JLabel();
+        buttonHideSelection = new javax.swing.JButton();
+        buttonRemoveSelection = new javax.swing.JButton();
+        buttonShowAll = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jScrollPane5 = new javax.swing.JScrollPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuLoadNetwork = new javax.swing.JMenuItem();
@@ -90,6 +95,15 @@ public class GUIMainWindow extends javax.swing.JFrame {
         labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14));
         labelFilter.setText("Filtro:");
 
+        buttonHideSelection.setText("Esconder seleção");
+        buttonHideSelection.setName("buttonHideSelection"); // NOI18N
+
+        buttonRemoveSelection.setText("Remover seleção");
+        buttonRemoveSelection.setName("buttonRemoveSelection"); // NOI18N
+
+        buttonShowAll.setText("Exibir todos");
+        buttonShowAll.setName("buttonShowAll"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -99,12 +113,15 @@ public class GUIMainWindow extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(labelFilter)
                     .addComponent(checkBoxHighQuality)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(buttonClearSelection, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                        .addComponent(buttonNewGroup, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                        .addComponent(buttonAddUser, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)))
-                .addGap(55, 55, 55))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(buttonShowAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(buttonRemoveSelection, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(buttonHideSelection, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(buttonAddUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(buttonUpdate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                        .addComponent(buttonNewGroup, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                        .addComponent(buttonClearSelection, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -112,20 +129,30 @@ public class GUIMainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(buttonUpdate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonNewGroup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonAddUser)
                 .addGap(18, 18, 18)
+                .addComponent(buttonNewGroup)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonHideSelection)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonRemoveSelection)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonShowAll)
+                .addGap(7, 7, 7)
                 .addComponent(buttonClearSelection)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(checkBoxHighQuality)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(labelFilter)
-                .addContainerGap(343, Short.MAX_VALUE))
+                .addContainerGap(228, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Interações", jPanel1);
         jTabbedPane1.addTab("Atualizações", jScrollPane1);
+        jTabbedPane1.addTab("@Replies", jScrollPane2);
+        jTabbedPane1.addTab("Favoritos", jScrollPane3);
+        jTabbedPane1.addTab("Mensagens", jScrollPane4);
+        jTabbedPane1.addTab("Public Timeline", jScrollPane5);
 
         jSplitPane1.setLeftComponent(jTabbedPane1);
 
@@ -232,7 +259,10 @@ public class GUIMainWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify
     private javax.swing.JButton buttonAddUser;
     private javax.swing.JButton buttonClearSelection;
+    private javax.swing.JButton buttonHideSelection;
     private javax.swing.JButton buttonNewGroup;
+    private javax.swing.JButton buttonRemoveSelection;
+    private javax.swing.JButton buttonShowAll;
     private javax.swing.JButton buttonUpdate;
     private javax.swing.JCheckBox checkBoxHighQuality;
     private javax.swing.JMenu jMenu1;
@@ -241,6 +271,10 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;

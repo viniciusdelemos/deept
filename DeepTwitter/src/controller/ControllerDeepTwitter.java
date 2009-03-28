@@ -7,10 +7,6 @@ import gui.GUINewUpdate;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,31 +14,28 @@ import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import model.ChartColor;
 import model.GraphicManager;
-import model.UserTimeline;
+import model.MessageType;
+import model.StatusesTable;
+import model.StatusesType;
 import prefuse.Display;
 import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
-import prefuse.util.ColorLib;
-import prefuse.util.PrefuseLib;
 import prefuse.util.force.ForceSimulator;
 import prefuse.util.ui.JForcePanel;
-import prefuse.visual.VisualItem;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -82,11 +75,15 @@ public class ControllerDeepTwitter {
 		}
 	}
 	
-	public static void showMessageDialog(String messageType, String message) {
-		if(messageType!=null && messageType.equals("warning")) 
+	public static void showMessageDialog(String message,MessageType type) {
+		if(type==MessageType.WARNING)
 			JOptionPane.showMessageDialog(null, getFormattedMessage(message),"Atenção",JOptionPane.WARNING_MESSAGE,null);
-		else 
+		else if(type==MessageType.ERROR) 
 			JOptionPane.showMessageDialog(null, getFormattedMessage(message),"Erro",JOptionPane.ERROR_MESSAGE,null);
+		else if(type==MessageType.INFORMATION)
+			JOptionPane.showMessageDialog(null, getFormattedMessage(message),"Informação",JOptionPane.INFORMATION_MESSAGE,null);
+		else
+			JOptionPane.showMessageDialog(null, getFormattedMessage(message),"Atenção",JOptionPane.QUESTION_MESSAGE,null);
 	}
 	
 	public static void setStatusBarMessage(String message) {
@@ -95,7 +92,7 @@ public class ControllerDeepTwitter {
 	
 	class LoginListener implements ActionListener {				
 		JScrollPane scrollUpdates;
-		UserTimeline userTimeline;
+		StatusesTable userTimeline, userReplies, userFavorites, publicTimeline;
 		JTabbedPane jTabs;
 		
 		@Override
@@ -109,9 +106,9 @@ public class ControllerDeepTwitter {
 					{											
 						twitter = new Twitter(loginWindow.getUser(),loginWindow.getPassword());
 						if(twitter.verifyCredentials()) logInOK = true;
-							else showMessageDialog(null, "Nome de usuário ou senha inválidos!");
+							else showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);
 					}
-					else showMessageDialog("warning", "Por favor, preencha os campos de nome de usuário e senha!");					
+					else showMessageDialog("Por favor, preencha os campos de nome de usuário e senha!",MessageType.WARNING);					
 				}
 				else 
 				{
@@ -120,7 +117,7 @@ public class ControllerDeepTwitter {
 						twitter = new Twitter(loginWindow.getUser(),"");
 						logInOK = true;
 					}
-					else showMessageDialog("warning","Por favor, preencha o campo de nome de usuário!");					
+					else showMessageDialog("Por favor, preencha o campo de nome de usuário!",MessageType.WARNING);					
 				}
 
 				if(logInOK)
@@ -137,36 +134,84 @@ public class ControllerDeepTwitter {
 										
 					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
 					jTabs = mainWindow.getTabs();
+					if(!isTwitterUser) {
+						jTabs.setEnabledAt(2, false); //replies
+						jTabs.setEnabledAt(3, false); //favoritos
+						jTabs.setEnabledAt(4, false); //mensagens
+					}
+					
 					ForceSimulator forceSimulator = gManager.getForceDirectedLayout().getForceSimulator();										
 					JForcePanel jForcePanel = new JForcePanel(forceSimulator);					
 					jTabs.addTab("Simulador de Forças", jForcePanel);		
 					
-					scrollUpdates = (JScrollPane) jTabs.getComponent(1);					
-					userTimeline = null;
-					
 					jTabs.addChangeListener(new ChangeListener(){
 						@Override
 						public void stateChanged(ChangeEvent e) {
-							if(jTabs.getSelectedIndex()==0) {
-								jSplitPane.setDividerLocation(250);								
+							int tabIndex = jTabs.getSelectedIndex();
+							
+							if(tabIndex==0) {
+								jSplitPane.setDividerLocation(250);
+								return;
 							}
-							if(jTabs.getSelectedIndex()==1) {
+							else if(tabIndex==6) {
+								jSplitPane.setDividerLocation(300);
+								return;
+							}
+							
+							scrollUpdates = (JScrollPane) jTabs.getComponent(tabIndex);
+							
+							if(tabIndex==1) {
 								jSplitPane.setDividerLocation(431);
 								if(userTimeline!=null) return;
-								userTimeline = new UserTimeline(loggedUserId,gManager);
+								if(isTwitterUser)
+									userTimeline = new StatusesTable(gManager,StatusesType.MY_UPDATES);
+								else
+									userTimeline = new StatusesTable(gManager,loggedUserId);
 								scrollUpdates.setViewportView(userTimeline.getContent());
 							}
-							if(jTabs.getSelectedIndex()==2) {
-								jSplitPane.setDividerLocation(300);
+							else if(tabIndex==2) {
+								jSplitPane.setDividerLocation(431);
+								if(userReplies!=null) return;
+								userReplies = new StatusesTable(gManager,StatusesType.REPLIES);
+								scrollUpdates.setViewportView(userReplies.getContent());
 							}
+							else if(tabIndex==3) {
+								jSplitPane.setDividerLocation(431);
+								if(userFavorites!=null) return;
+								userFavorites = new StatusesTable(gManager,StatusesType.FAVORITES);
+								scrollUpdates.setViewportView(userFavorites.getContent());
+							}
+							else if(tabIndex==4) {
+								//TODO msgs
+							}
+							else if(tabIndex==5) {
+								jSplitPane.setDividerLocation(431);
+								if(publicTimeline!=null) return;
+								publicTimeline = new StatusesTable(gManager,StatusesType.PUBLIC_TIMELINE);
+								scrollUpdates.setViewportView(publicTimeline.getContent());
+							}														
 						}						
 					});
 					
 					mainWindow.addWindowListener(new WindowAdapter() {
 						@Override
 						 public void windowClosed(java.awt.event.WindowEvent arg0) {
-							if(userTimeline!=null)
+							if(userTimeline!=null) {
 								userTimeline.stopThread();
+								userTimeline = null;
+							}								
+							if(userReplies!=null) {
+								userReplies.stopThread();
+								userReplies = null;
+							}
+							if(userFavorites!=null) {
+								userFavorites.stopThread();
+								userFavorites = null;
+							}
+							if(publicTimeline!=null) {
+								publicTimeline.stopThread();
+								publicTimeline = null;
+							}
 						}
 					});
 					
@@ -181,15 +226,15 @@ public class ControllerDeepTwitter {
 				}	
 			} catch (TwitterException ex) {						
 				if(ex.getStatusCode()==401)
-					showMessageDialog(null, "Nome de usuário ou senha inválidos!");				
+					showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);				
 				else if(ex.getStatusCode()==404)
-					showMessageDialog(null, "Usuário não encontrado!");
+					showMessageDialog("Usuário não encontrado!",MessageType.ERROR);
 				else if(ex.getStatusCode()==406)
-					showMessageDialog(null, "Nome de usuário inválido!");
+					showMessageDialog("Nome de usuário inválido!",MessageType.ERROR);
 				else if(ex.getStatusCode()==-1)
-					showMessageDialog(null, "A conexão não pôde ser estabelecida.");
+					showMessageDialog("A conexão não pôde ser estabelecida.",MessageType.ERROR);
 				else 
-					showMessageDialog(null, ex.getMessage());
+					showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			}
 		}
 	}
@@ -215,7 +260,7 @@ public class ControllerDeepTwitter {
 								Graph g = reader.readGraph(fileName);
 								gManager.setGraph(g);
 							} catch (DataIOException e1) {
-								showMessageDialog(null, e1.getMessage());
+								showMessageDialog(e1.getMessage(),MessageType.ERROR);
 							}
 						}
 					}
@@ -227,7 +272,7 @@ public class ControllerDeepTwitter {
 							try {
 								writer.writeGraph(gManager.getGraph(), fileName);
 							} catch (DataIOException e1) {
-								showMessageDialog(null, e1.getMessage());
+								showMessageDialog(e1.getMessage(),MessageType.ERROR);
 							}
 						}
 					}					
@@ -264,7 +309,7 @@ public class ControllerDeepTwitter {
 						Date now = Calendar.getInstance().getTime();
 						setStatusBarMessage("Update realizado com sucesso em "+now);
 					} catch (TwitterException e1) {
-						showMessageDialog(null,e1.getMessage());						
+						showMessageDialog(e1.getMessage(),MessageType.ERROR);						
 					}					
 				}
 				else if(buttonName.equals("buttonNewGroup")) {
@@ -285,10 +330,10 @@ public class ControllerDeepTwitter {
 							gManager.searchAndAddUserToNetwork(u);								
 							guiAddUser.dispose();
 						}
-						else showMessageDialog("warning","Por favor, preencha o campo!");						
+						else showMessageDialog("Por favor, preencha o campo!",MessageType.WARNING);						
 					}
 					catch(TwitterException ex) {
-						showMessageDialog(null, ex.getMessage());					
+						showMessageDialog(ex.getMessage(),MessageType.WARNING);					
 					}
 				}
 				else if(buttonName.equals("buttonClearSelection")) {

@@ -45,7 +45,7 @@ public class FollowUserThread extends Thread {
 			}
 
 		} catch (TwitterException e) {			
-			ControllerDeepTwitter.showMessageDialog(null, e.getMessage());
+			ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
 		}
 	}
 }

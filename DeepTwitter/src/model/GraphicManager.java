@@ -332,8 +332,8 @@ public class GraphicManager extends Display {
 	{
 		//ZoneShape zone = new RectangularZoneShape(x,y,w,h);
 		//int i = zoneManager.createAndAddZone(zone);
-    	if(selectedNodes.getTupleCount()<=0) {
-    		ControllerDeepTwitter.showMessageDialog(null, "Nenhum usuário selecionado");
+    	if(selectedNodes.getTupleCount()<2) {
+    		ControllerDeepTwitter.showMessageDialog("Você deve selecionar dois ou mais usuários para criar um grupo.",MessageType.INFORMATION);
     		return;
     	}
     	AggregateItem group = (AggregateItem)groupTable.addItem();    	
@@ -424,17 +424,27 @@ public class GraphicManager extends Display {
 	
 	public void setChildrenVisible(NodeItem source, boolean visible)
 	{
-		Iterator neighbors = source.outNeighbors();
-		Iterator edges = source.outEdges();
-		while(neighbors.hasNext() || edges.hasNext())
-		{
-			NodeItem nextNode = (NodeItem)neighbors.next();			
-			//if(nextNode.isVisible() == visible) break;
-			nextNode.setVisible(visible);
-			EdgeItem nextEdge = (EdgeItem) edges.next();			
+		try{
+		Iterator<EdgeItem> outEdges = source.outEdges();
+		Iterator<EdgeItem> inEdges = source.inEdges();
+		while(outEdges.hasNext()) {
+			EdgeItem nextEdge = outEdges.next();
+			NodeItem nextNode = nextEdge.getTargetItem();			
+			if(nextNode.getDegree()>1) continue;
 			nextEdge.setVisible(visible);
-			
-			setChildrenVisible(nextNode,visible);
+			nextNode.setVisible(visible);
+		}
+		while(inEdges.hasNext()) {
+			EdgeItem nextEdge = outEdges.next();
+			NodeItem nextNode = nextEdge.getSourceItem();
+			if(nextNode.getDegree()>1) continue;
+			nextEdge.setVisible(visible);
+			nextNode.setVisible(visible);
+		}
+		}
+		catch(Exception e) {
+			System.out.println("$$$ Exception! $$$");
+			e.printStackTrace();
 		}
 	}
 	
