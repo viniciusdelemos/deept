@@ -5,10 +5,16 @@ import twitter4j.http.PostParameter;
 import twitter4j.http.Response;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * A java reporesentation of the <a href="http://twitter.com/help/api">Twitter API</a>
@@ -844,7 +850,7 @@ public class Twitter implements java.io.Serializable {
      * @return list of direct messages
      * @throws TwitterException when Twitter service or network is unavailable
      */
-    public synchronized List<DirectMessage> getDirectMessages(int sinceId) throws
+    public synchronized List<DirectMessage> getDirectMessages(long sinceId) throws
             TwitterException {
         return DirectMessage.constructDirectMessages(get(baseURL +
                 "direct_messages.xml", "since_id", String.valueOf(sinceId), true).asDocument(), this);
@@ -895,11 +901,24 @@ public class Twitter implements java.io.Serializable {
      * @return List
      * @throws TwitterException when Twitter service or network is unavailable
      */
-    public synchronized List<DirectMessage> getSentDirectMessages(int sinceId) throws
+    public synchronized List<DirectMessage> getSentDirectMessages(long sinceId) throws
             TwitterException {
         return DirectMessage.constructDirectMessages(get(baseURL +
                 "direct_messages/sent.xml", "since_id", String.valueOf(sinceId), true).asDocument(), this);
     }
+    
+    /**
+     * Returns a list of the direct messages sent by the authenticating user.
+     * 
+     * @param page
+     * @return
+     * @throws TwitterException
+     */
+    public synchronized List<DirectMessage> getSentDirectMessagesByPage(int page) throws
+    		TwitterException {
+    	return DirectMessage.constructDirectMessages(get(baseURL +
+        "direct_messages/sent.xml", "page", String.valueOf(page), true).asDocument(), this);
+}
 
     /**
      * Sends a new direct message to the specified user from the authenticating user.  Requires both the user and text parameters below.
@@ -973,6 +992,83 @@ public class Twitter implements java.io.Serializable {
         return get(baseURL + "friendships/exists.xml", "user_a", user_a, "user_b", user_b, true).
                 asString().contains("true");
     }
+    
+    /**
+     * Returns an array of numeric IDs for every user the specified user is following.
+     * 
+     * @param id
+     * @return
+     * @throws TwitterException
+     */
+    public synchronized List<String> getFriendsIds(String id) throws TwitterException{
+    	
+    	List<String> ids = new ArrayList<String>();
+    	
+    	Document doc = get(baseURL + "friends/ids/"+ id +".xml", true).asDocument();
+    	
+    	String root = doc.getDocumentElement().getNodeName();
+        boolean isEmpty = "nil-classes".equals(root) || "nilclasses".equals(root);
+        
+        if(isEmpty){
+        	return ids;
+        }
+        else{
+        	 try {
+        		 Element elem = doc.getDocumentElement();
+        		 if (!"ids".equals(elem.getNodeName())) {
+        	            throw new TwitterException("Unexpected root node name:" + elem.getNodeName() + ". Expected:" + "ids" + ". Check Twitter service availability.\n");
+        		 }
+                 NodeList list = doc.getDocumentElement().getElementsByTagName("id");
+                 int size = list.getLength();
+                 for (int i = 0; i < size; i++) {
+                     Element status = (Element) list.item(i);
+                     ids.add(status.getFirstChild().getNodeValue());
+                 }
+                 return ids;
+             } catch (TwitterException te) {
+                     throw te;
+             }
+        }
+    }
+    
+    /**
+     * Returns an array of numeric IDs for every user the specified user is followed by.
+     * 
+     * @param id
+     * @return
+     * @throws TwitterException
+     */
+    public synchronized List<String> getFollowersIds(String id) throws TwitterException{
+    	
+    	List<String> ids = new ArrayList<String>();
+    	
+    	Document doc = get(baseURL + "followers/ids/"+ id +".xml", true).asDocument();
+    	
+    	String root = doc.getDocumentElement().getNodeName();
+        boolean isEmpty = "nil-classes".equals(root) || "nilclasses".equals(root);
+        
+        if(isEmpty){
+        	return ids;
+        }
+        else{
+        	 try {
+        		 Element elem = doc.getDocumentElement();
+        		 if (!"ids".equals(elem.getNodeName())) {
+        	            throw new TwitterException("Unexpected root node name:" + elem.getNodeName() + ". Expected:" + "ids" + ". Check Twitter service availability.\n");
+        		 }
+                 NodeList list = doc.getDocumentElement().getElementsByTagName("id");
+                 int size = list.getLength();
+                 for (int i = 0; i < size; i++) {
+                     Element status = (Element) list.item(i);
+                     ids.add(status.getFirstChild().getNodeValue());
+                 }
+                 return ids;
+             } catch (TwitterException te) {
+                     throw te;
+             }
+        }
+    }
+
 
     /**
      * Returns true if authentication was successful.  Use this method to test if supplied user credentials are valid with minimal overhead.
@@ -982,7 +1078,7 @@ public class Twitter implements java.io.Serializable {
     public synchronized boolean verifyCredentials() throws TwitterException {
         return get(baseURL + "account/verify_credentials.xml", true).getStatusCode() == 200;       
     }
-
+    
     /**
      * Update the location
      *
@@ -1279,4 +1375,7 @@ Formats: xml, json
                 ", format=" + format +
                 '}';
     }
+    
+    
+    
 }

@@ -1,6 +1,7 @@
 package testTwitter4j;
 
 import java.util.Date;
+import java.util.List;
 
 import twitter4j.*;
 
@@ -18,7 +19,7 @@ public class Main {
 	
 	public static void main(String args []){
 		
-		Date date = new Date(109,0,26);
+		Date date = new Date(105,0,26);
 		
 		
 		StatusMethods statusMethods = new StatusMethods(user1, pass);
@@ -35,8 +36,11 @@ public class Main {
 		
 		FriendshipMethods friendshipMethods = new FriendshipMethods(user1, pass);
 		
+		SocialGraphMethods socialGraphMethods = new SocialGraphMethods(user1, pass);
+		
 		AccountMethods accountMethods = new AccountMethods(user1, pass);
 		AccountMethods accountMethods1 = new AccountMethods(user, pass);
+		AccountMethods accountMethods2 = new AccountMethods(user2, pass);
 		
 		FavoriteMethods favoriteMethods = new FavoriteMethods(user1, pass);
 		FavoriteMethods favoriteMethods1 = new FavoriteMethods(user, pass);
@@ -56,17 +60,17 @@ public class Main {
 		//statusMethods.getFriendsTimeline(999);
 
 		
-		accountMethods1.rateLimitStatus();
+
 		
-//		statusMethods1.show(1285678945);
-//		
-//		statusMethods1.destroyStatus(1285678945);
-//		
-//		statusMethods1.show(1285678945);
+		favoriteMethods.destroyFavorite(1413531386);
+		
+	
 		
 		
 		
-		accountMethods1.rateLimitStatus();
+		accountMethods.rateLimitStatus();
+		
+
 		
 		
 		

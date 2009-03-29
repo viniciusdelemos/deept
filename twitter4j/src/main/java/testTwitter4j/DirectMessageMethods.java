@@ -57,7 +57,7 @@ public class DirectMessageMethods {
 	}
 	
 	
-	public void getDirectMessages(int sinceId)
+	public void getDirectMessages(long sinceId)
 	{
 		Twitter twitter = new Twitter(user,password);
 		List<DirectMessage> directMessages = null;
@@ -126,7 +126,7 @@ public class DirectMessageMethods {
 		printDirectMessages(directMessages);
 	}
 	
-	/*
+	
 	public void getSentDirectMessagesByPage(int page)
 	{
 		Twitter twitter = new Twitter(user,password);
@@ -144,7 +144,7 @@ public class DirectMessageMethods {
 		printDirectMessages(directMessages);
 		
 	}
-	*/
+	
 	
 	
 	public void getSentDirectMessages(int sinceId)
