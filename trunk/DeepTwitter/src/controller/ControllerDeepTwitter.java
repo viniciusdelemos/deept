@@ -4,27 +4,26 @@ import gui.GUIAddUser;
 import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
 import gui.GUINewUpdate;
-
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import model.GraphicManager;
 import model.MessageType;
 import model.StatusesTable;
@@ -41,19 +40,27 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 
 public class ControllerDeepTwitter {
-	private GUILoginDeepTwitter loginWindow;
+	private static GUILoginDeepTwitter loginWindow;
 	private static GUIMainWindow mainWindow;
 	private GUIAddUser guiAddUser;
 	private GUINewUpdate guiNewUpdate;
 	private static Twitter twitter;
-	private GraphicManager gManager;
-	private boolean isTwitterUser;
+	private static GraphicManager gManager;
+	private static boolean isTwitterUser;
 	private static String loggedUserId;
+	private static JTabbedPane windowTabs;
+	private static JScrollPane scrollUpdates;
+	private static Map<String,JPanel> panelsMap;
+	private static int currentPanel;
+	private static ArrayList<String> idArray;
 
 	public ControllerDeepTwitter(GUILoginDeepTwitter loginWindow)
 	{
-		this.loginWindow = loginWindow;
+		this.loginWindow = loginWindow;		
 		loginWindow.addLoginListener(new LoginListener());
+		panelsMap = new HashMap<String,JPanel>();
+		currentPanel = 0;
+		idArray = new ArrayList<String>();
 	}
 	
 	public static Twitter getTwitter() {
@@ -75,25 +82,82 @@ public class ControllerDeepTwitter {
 		}
 	}
 	
-	public static void showMessageDialog(String message,MessageType type) {
-		if(type==MessageType.WARNING)
-			JOptionPane.showMessageDialog(null, getFormattedMessage(message),"Atenção",JOptionPane.WARNING_MESSAGE,null);
-		else if(type==MessageType.ERROR) 
-			JOptionPane.showMessageDialog(null, getFormattedMessage(message),"Erro",JOptionPane.ERROR_MESSAGE,null);
-		else if(type==MessageType.INFORMATION)
-			JOptionPane.showMessageDialog(null, getFormattedMessage(message),"Informação",JOptionPane.INFORMATION_MESSAGE,null);
-		else
-			JOptionPane.showMessageDialog(null, getFormattedMessage(message),"Atenção",JOptionPane.QUESTION_MESSAGE,null);
+	public static void showMessageDialog(String message, MessageType type) {
+		Component parent = mainWindow;
+		if(parent == null)
+			parent = loginWindow;
+		
+		switch(type) {
+		case WARNING:
+			JOptionPane.showMessageDialog(parent, getFormattedMessage(message),"Atenção",JOptionPane.WARNING_MESSAGE,null);
+			break;
+		case ERROR:
+			JOptionPane.showMessageDialog(parent, getFormattedMessage(message),"Erro",JOptionPane.ERROR_MESSAGE,null);
+			break;
+		case INFORMATION: 
+			JOptionPane.showMessageDialog(parent, getFormattedMessage(message),"Informação",JOptionPane.INFORMATION_MESSAGE,null);
+			break;
+		default:
+			JOptionPane.showMessageDialog(parent, getFormattedMessage(message),"Atenção",JOptionPane.QUESTION_MESSAGE,null);
+		}	
 	}
 	
 	public static void setStatusBarMessage(String message) {
 		mainWindow.setStatusBarMessage(message);
 	}
 	
-	class LoginListener implements ActionListener {				
-		JScrollPane scrollUpdates;
-		StatusesTable userTimeline, userReplies, userFavorites, publicTimeline;
-		JTabbedPane jTabs;
+	public static void setPanelContent(String userId) {
+		StatusesTable updatesTable;
+		scrollUpdates = (JScrollPane)(((JPanel)windowTabs.getComponent(1)).getComponent(1));
+		JPanel selectedPanel = panelsMap.get(userId);
+		if(selectedPanel == null) {
+			if(isTwitterUser && userId.equals(loggedUserId))
+				updatesTable = new StatusesTable(gManager,StatusesType.MY_UPDATES);				
+			else
+				updatesTable = new StatusesTable(gManager,userId);
+			
+			selectedPanel = updatesTable.getContent();
+			panelsMap.put(userId,selectedPanel);						 
+			scrollUpdates.setViewportView(selectedPanel);
+			
+			idArray.add(userId);
+			currentPanel = idArray.size()-1;
+			reconfigButtons();
+		}
+		else {
+			scrollUpdates.setViewportView(selectedPanel);
+			scrollUpdates.revalidate();
+		}
+		mainWindow.setCurrentUserLabel(gManager.getUserName(Integer.parseInt(userId)));
+	}
+	
+	private static void reconfigButtons() {
+		if(idArray.size()<=1) {
+			mainWindow.setPreviousUserEnabled(false);
+			mainWindow.setNextUserEnabled(false);
+			mainWindow.setCloseUserEnabled(false);
+		}
+		else if(currentPanel==idArray.size()-1) {
+			mainWindow.setPreviousUserEnabled(true);
+			mainWindow.setNextUserEnabled(false);
+			mainWindow.setCloseUserEnabled(true);
+		}			
+		else if(currentPanel==0) {
+			mainWindow.setPreviousUserEnabled(false);
+			mainWindow.setNextUserEnabled(true);
+			mainWindow.setCloseUserEnabled(false);
+		}
+		else {
+			mainWindow.setPreviousUserEnabled(true);
+			mainWindow.setNextUserEnabled(true);
+			mainWindow.setCloseUserEnabled(true);
+		}
+	}
+	
+	
+	
+	class LoginListener implements ActionListener {	
+		StatusesTable userTimeline, userReplies, userFavorites, publicTimeline;		
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -133,21 +197,18 @@ public class ControllerDeepTwitter {
 					mainWindow.addMainWindowListener(new MainWindowListener());
 										
 					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
-					jTabs = mainWindow.getTabs();
+					windowTabs = mainWindow.getTabs();
+					
 					if(!isTwitterUser) {
-						jTabs.setEnabledAt(2, false); //replies
-						jTabs.setEnabledAt(3, false); //favoritos
-						jTabs.setEnabledAt(4, false); //mensagens
-					}
+						windowTabs.setEnabledAt(2, false); //replies
+						windowTabs.setEnabledAt(3, false); //favoritos
+						windowTabs.setEnabledAt(4, false); //mensagens
+					}						
 					
-					ForceSimulator forceSimulator = gManager.getForceDirectedLayout().getForceSimulator();										
-					JForcePanel jForcePanel = new JForcePanel(forceSimulator);					
-					jTabs.addTab("Simulador de Forças", jForcePanel);		
-					
-					jTabs.addChangeListener(new ChangeListener(){
+					windowTabs.addChangeListener(new ChangeListener(){
 						@Override
 						public void stateChanged(ChangeEvent e) {
-							int tabIndex = jTabs.getSelectedIndex();
+							int tabIndex = windowTabs.getSelectedIndex();
 							
 							if(tabIndex==0) {
 								jSplitPane.setDividerLocation(250);
@@ -158,18 +219,15 @@ public class ControllerDeepTwitter {
 								return;
 							}
 							
-							scrollUpdates = (JScrollPane) jTabs.getComponent(tabIndex);
-							
 							if(tabIndex==1) {
 								jSplitPane.setDividerLocation(431);
-								if(userTimeline!=null) return;
-								if(isTwitterUser)
-									userTimeline = new StatusesTable(gManager,StatusesType.MY_UPDATES);
-								else
-									userTimeline = new StatusesTable(gManager,loggedUserId);
-								scrollUpdates.setViewportView(userTimeline.getContent());
+								setPanelContent(getLoggedUserId());	
+								return;
 							}
-							else if(tabIndex==2) {
+							//TODO
+							scrollUpdates = (JScrollPane) windowTabs.getComponent(tabIndex);							
+							
+							if(tabIndex==2) {
 								jSplitPane.setDividerLocation(431);
 								if(userReplies!=null) return;
 								userReplies = new StatusesTable(gManager,StatusesType.REPLIES);
@@ -241,114 +299,160 @@ public class ControllerDeepTwitter {
 	
 	class MainWindowListener implements ActionListener {		
 		@Override
-		public void actionPerformed(ActionEvent e) {			
-			if(e.getSource() instanceof JMenuItem)
-			{
-				String menuName = ((JMenuItem)e.getSource()).getName();
-				
-				if(menuName.equals("menuLoadNetwork") || menuName.equals("menuSaveNetwork")) {
-					JFileChooser chooser = new JFileChooser();
-					FileNameExtensionFilter filter = new FileNameExtensionFilter("XML Files", "xml");
-					chooser.setFileFilter(filter);
-					
-					if(menuName.equals("menuLoadNetwork")) {
-						GraphMLReader reader = new GraphMLReader();
-						int returnVal = chooser.showOpenDialog(mainWindow);
-						if(returnVal == JFileChooser.APPROVE_OPTION) {
-							String fileName = chooser.getSelectedFile().getAbsolutePath();	
-							try {
-								Graph g = reader.readGraph(fileName);
-								gManager.setGraph(g);
-							} catch (DataIOException e1) {
-								showMessageDialog(e1.getMessage(),MessageType.ERROR);
-							}
+		public void actionPerformed(ActionEvent e) {
+
+			String cmd = e.getActionCommand();
+
+			if(cmd.equals("menuLoadNetwork") || cmd.equals("menuSaveNetwork")) {
+				JFileChooser chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XML Files", "xml");
+				chooser.setFileFilter(filter);
+
+				if(cmd.equals("menuLoadNetwork")) {
+					GraphMLReader reader = new GraphMLReader();
+					int returnVal = chooser.showOpenDialog(mainWindow);
+					if(returnVal == JFileChooser.APPROVE_OPTION) {
+						String fileName = chooser.getSelectedFile().getAbsolutePath();	
+						try {
+							Graph g = reader.readGraph(fileName);
+							gManager.setGraph(g);
+						} catch (DataIOException e1) {
+							showMessageDialog(e1.getMessage(),MessageType.ERROR);
 						}
 					}
-					else {
-						GraphMLWriter writer = new GraphMLWriter();
-						int returnVal = chooser.showSaveDialog(mainWindow);
-						if(returnVal == JFileChooser.APPROVE_OPTION) {
-							String fileName = chooser.getSelectedFile().getAbsolutePath();
-							try {
-								writer.writeGraph(gManager.getGraph(), fileName);
-							} catch (DataIOException e1) {
-								showMessageDialog(e1.getMessage(),MessageType.ERROR);
-							}
+				}
+				else {
+					GraphMLWriter writer = new GraphMLWriter();
+					int returnVal = chooser.showSaveDialog(mainWindow);
+					if(returnVal == JFileChooser.APPROVE_OPTION) {
+						String fileName = chooser.getSelectedFile().getAbsolutePath();
+						try {
+							writer.writeGraph(gManager.getGraph(), fileName);
+						} catch (DataIOException e1) {
+							showMessageDialog(e1.getMessage(),MessageType.ERROR);
 						}
-					}					
-				}				
-				else if(menuName.equals("menuSaveNetworkAs")) {
-					//TODO
-					System.out.println("Save Network As...");
-				}
-				else if(menuName.equals("menuLogout")) {
-					mainWindow.dispose();
-					loginWindow.setVisible(true);
-				}
-				else if(menuName.equals("menuCheckBoxStatusBar")) {
-					mainWindow.setStatusBarVisible(mainWindow.isStatusBarVisible());
-				}
-				else if(menuName.equals("menuHelp")) {
-					//TODO
-					System.out.println("Open Help");
-				}
+					}
+				}					
+			}				
+			else if(cmd.equals("menuSaveNetworkAs")) {
+				//TODO
+				System.out.println("Save Network As...");
 			}
-			if(e.getSource() instanceof JButton)
-			{
-				String buttonName = ((JButton)e.getSource()).getName();
-				
-				if(buttonName.equals("buttonNewUpdate")) {					
+			else if(cmd.equals("menuLogout")) {
+				mainWindow.dispose();
+				mainWindow = null;
+				loginWindow.setVisible(true);
+			}
+			else if(cmd.equals("menuCheckBoxStatusBar")) {
+				mainWindow.setStatusBarVisible(mainWindow.isStatusBarVisible());
+			}
+			else if(cmd.equals("menuHelp")) {
+				//TODO
+				System.out.println("Open Help");
+			}
+			else if(cmd.equals("buttonNewUpdate")) {					
+				if(guiNewUpdate == null) {
 					guiNewUpdate = new GUINewUpdate();
 					guiNewUpdate.addMainWindowListener(this);
+					guiNewUpdate.addWindowListener(new WindowAdapter() {
+						@Override
+						 public void windowClosed(java.awt.event.WindowEvent arg0) {
+							guiNewUpdate = null;
+						}
+					});
 					guiNewUpdate.setVisible(true);
 				}
-				else if(buttonName.equals("buttonUpdate")) {
-					try {
-						twitter.update(guiNewUpdate.getStatus());
-						guiNewUpdate.dispose();
-						Date now = Calendar.getInstance().getTime();
-						setStatusBarMessage("Update realizado com sucesso em "+now);
-					} catch (TwitterException e1) {
-						showMessageDialog(e1.getMessage(),MessageType.ERROR);						
-					}					
-				}
-				else if(buttonName.equals("buttonNewGroup")) {
-					gManager.createGroup();
-				}
-				else if(buttonName.equals("buttonAddUser")) {
+				else
+					guiNewUpdate.requestFocus();
+				guiNewUpdate.setLocationRelativeTo(mainWindow);				
+			}
+			else if(cmd.equals("buttonUpdate")) {
+				try {
+					twitter.update(guiNewUpdate.getStatus());
+					guiNewUpdate.dispose();
+					Date now = Calendar.getInstance().getTime();
+					setStatusBarMessage("Update realizado com sucesso em "+now);
+				} catch (TwitterException e1) {
+					showMessageDialog(e1.getMessage(),MessageType.ERROR);						
+				}					
+			}
+			else if(cmd.equals("buttonNewGroup")) {
+				gManager.createGroup();
+			}
+			else if(cmd.equals("buttonAddUser")) {
+				if(guiAddUser == null) {
 					guiAddUser = new GUIAddUser();
 					guiAddUser.addMainWindowListener(this);
+					guiAddUser.addWindowListener(new WindowAdapter() {
+						@Override
+						 public void windowClosed(java.awt.event.WindowEvent arg0) {
+							guiAddUser = null;
+						}
+					});
 					guiAddUser.setVisible(true);
 				}
-				else if(buttonName.equals("buttonOKAddUser")) {
-					try{
-						String id = guiAddUser.getUser();
-						if(!id.equals("")) {
-							System.out.println("=> Requesting user to Twitter");
-							User u = (User)twitter.getUserDetail(id);
-							System.out.println("=> Got user");
-							gManager.searchAndAddUserToNetwork(u);								
-							guiAddUser.dispose();
-						}
-						else showMessageDialog("Por favor, preencha o campo!",MessageType.WARNING);						
+				else
+					guiAddUser.requestFocus();
+				guiAddUser.setLocationRelativeTo(mainWindow);
+			}
+			else if(cmd.equals("buttonOKAddUser")) {
+				try{
+					String id = guiAddUser.getUser();
+					if(!id.equals("")) {
+						System.out.println("=> Requesting user to Twitter");
+						User u = (User)twitter.getUserDetail(id);
+						System.out.println("=> Got user");
+						gManager.searchAndAddUserToNetwork(u);								
+						guiAddUser.dispose();
 					}
-					catch(TwitterException ex) {
-						showMessageDialog(ex.getMessage(),MessageType.WARNING);					
-					}
+					else showMessageDialog("Por favor, preencha o campo!",MessageType.WARNING);						
 				}
-				else if(buttonName.equals("buttonClearSelection")) {
-					gManager.clearSelection();
+				catch(TwitterException ex) {
+					showMessageDialog(ex.getMessage(),MessageType.WARNING);					
+				}
+				catch(NullPointerException ex) {
+					showMessageDialog("Usuário não encontrado!",MessageType.WARNING);					
 				}
 			}
-			else if (e.getSource() instanceof JCheckBox)
-			{
-				String checkBoxName = ((JCheckBox)e.getSource()).getName();
+			else if(cmd.equals("buttonPreviousUser")) {
+				currentPanel--;
+				reconfigButtons();
+				String userId = idArray.get(currentPanel);
+				setPanelContent(userId);
+			}
+			else if(cmd.equals("buttonNextUser")) {
+				currentPanel++;
+				reconfigButtons();
+				String userId = idArray.get(currentPanel);				
+				setPanelContent(userId);
+			}
+			else if(cmd.equals("buttonCloseUpdates")) {
+				panelsMap.remove(idArray.get(currentPanel));
+				if(currentPanel==idArray.size()-1) {
+					idArray.remove(currentPanel);
+					currentPanel--;
+				}
+				else
+					idArray.remove(currentPanel);
 				
-				if(checkBoxName.equals("checkBoxHighQuality")) {						
-					gManager.setHighQuality(mainWindow.isHighQuality());					
-				}				
+				String userId = idArray.get(currentPanel);
+				setPanelContent(userId);								
+				reconfigButtons();								
 			}
+			else if(cmd.equals("buttonTurnOnOff")) {
+				//TODO
+				if(((JToggleButton)e.getSource()).isSelected()) System.out.println("TURNED ON");
+				else System.out.println("TURNED OFF");
+			}
+			else if(cmd.equals("buttonSettings")) {
+				//TODO
+			}
+			else if(cmd.equals("buttonClearSelection")) {
+				gManager.clearSelection();
+			}
+			else if(cmd.equals("checkBoxHighQuality")) {						
+				gManager.setHighQuality(mainWindow.isHighQuality());					
+			}	
 		}
-		
 	}
 }

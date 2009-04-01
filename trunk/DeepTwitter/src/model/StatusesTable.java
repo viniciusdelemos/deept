@@ -51,7 +51,7 @@ public class StatusesTable {
 	private String userId;
 	private boolean isTwitterUser;
 	private ArrayList<Status> statusList;
-	private static long interval;
+	private long interval;
 	private JPanel panel;
 	private KeepTableUpdated keepTableUpdated;
 	private int updatesToGet;
@@ -145,7 +145,7 @@ public class StatusesTable {
         return updatePanel;
     }
 	
-	public JPanel addButtonsToPanel(final JPanel updatePanel, final Status s) {
+	private JPanel addButtonsToPanel(final JPanel updatePanel, final Status s) {
 		gbc.weightx = 0;
         gbc.gridx = 2;
         gbc.gridy = 0;
@@ -175,9 +175,9 @@ public class StatusesTable {
 		final JLabel favoriteButton = new JLabel();
 		ImageIcon starIcon;
 		if(s.isFavorited()) 
-			starIcon = new ImageIcon(getClass().getResource("../star_on.jpg"));		
+			starIcon = new ImageIcon(getClass().getResource("../star_on.png"));		
 		else 
-			starIcon = new ImageIcon(getClass().getResource("../star_off.jpg"));		
+			starIcon = new ImageIcon(getClass().getResource("../star_off.png"));
 		favoriteButton.setIcon(starIcon);	
 		favoriteButton.setToolTipText("Favorite");
 		favoriteButton.addMouseListener(new MouseAdapter(){
@@ -189,17 +189,18 @@ public class StatusesTable {
 					int isOff = favoriteButton.getIcon().toString().indexOf("star_off");
 					if(isOff>0) {
 						ControllerDeepTwitter.getTwitter().createFavorite(s.getId());
-						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../star_on.jpg")));
+						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../star_on.png")));
 					}
 					else {
 						ControllerDeepTwitter.getTwitter().destroyFavorite(s.getId());
-						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../star_off.jpg")));
+						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../star_off.png")));
 						if(statusesType == StatusesType.FAVORITES) {
+							System.out.println("removing favorite panel");
 							panel.remove(updatePanel);
 							rows--;
 						}
 					}				
-					updatePanel.revalidate();
+					panel.revalidate();
 				}
 				catch(TwitterException e) {
 					ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
@@ -217,7 +218,7 @@ public class StatusesTable {
 			gbc.insets = new Insets(0,0,4,0);
 			
 			final JLabel deleteButton = new JLabel();
-			ImageIcon deleteIcon = new ImageIcon(getClass().getResource("../delete.jpg"));	
+			ImageIcon deleteIcon = new ImageIcon(getClass().getResource("../remove.png"));	
 			deleteButton.setIcon(deleteIcon);	
 			deleteButton.setToolTipText("Delete");
 			deleteButton.addMouseListener(new MouseAdapter(){
@@ -245,7 +246,7 @@ public class StatusesTable {
 		return updatePanel;
 	}
 	
-	public String processText(String status) {
+	private String processText(String status) {
 		StringBuilder sb = new StringBuilder(status);
 		int indexHttpBegin = 0;
 		int indexHttpEnd = 0;
@@ -295,7 +296,7 @@ public class StatusesTable {
 		updatesToGet = x;
 	}
 	
-	public static void setUpdateTimelineInterval(long milliseconds) {
+	public void setUpdateTimelineInterval(long milliseconds) {
 		interval = milliseconds;
 	}
 	
@@ -381,6 +382,7 @@ public class StatusesTable {
 					System.out.println("running");
 				} catch (TwitterException e) {
 					ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
+					e.printStackTrace();
 				}
 				catch(InterruptedException ie) {
 					System.out.println("interrupted exception");

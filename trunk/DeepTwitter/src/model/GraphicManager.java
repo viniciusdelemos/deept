@@ -44,7 +44,11 @@ import prefuse.render.LabelRenderer;
 import prefuse.render.PolygonRenderer;
 import prefuse.render.Renderer;
 import prefuse.util.ColorLib;
+import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
+import prefuse.util.force.NBodyForce;
+import prefuse.util.force.RungeKuttaIntegrator;
+import prefuse.util.force.SpringForce;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
 import prefuse.visual.EdgeItem;
@@ -67,7 +71,7 @@ public class GraphicManager extends Display {
 	private final static String SELECTED_NODES = "selected";
     private Graph g;
     private int numUsers, groupId;
-    private ForceDirectedLayout fdl;
+    private ForceSimulator forceSimulator;
     private Map<Integer, Node> nodesMap;    
     private boolean isTwitterUser, isHighQuality;	
     private SocialNetwork socialNetwork; 
@@ -190,13 +194,13 @@ public class GraphicManager extends Display {
     	draw.add(edgeArrow);
     	draw.add(groupStroke);
     	draw.add(groups);
-
-    	fdl = new WeightedForceDirectedLayout(GRAPH,false);
-    	ForceSimulator fsim = fdl.getForceSimulator();
-    	fsim.getForces()[2].setParameter(1,180.0f);    
-    	fsim.getForces()[2].setParameter(0,9.99E-6f); 
     	
+    	//ForceSimulator fsim = fdl.getForceSimulator();
+    	//fsim.getForces()[2].setParameter(1,180.0f);    
+    	//fsim.getForces()[2].setParameter(0,9.99E-6f);     	
     	//zoneManager = new ZoneManager(m_vis,fsim);
+    	    	
+    	ForceDirectedLayout fdl = new WeightedForceDirectedLayout(GRAPH,getForceSimulator(),false);
     	    	
     	//acoes a serem executadas
     	ActionList layout = new ActionList(ActionList.INFINITY); 
@@ -377,6 +381,11 @@ public class GraphicManager extends Display {
 		return nodesMap.get(id);			
 	}
 	
+	public String getUserName(int id) {
+		Node n = nodesMap.get(id);
+		return n.getString("name");
+	}
+	
 //	public VisualItem getLoggedUser() {
 //		int id = Integer.parseInt(ControllerDeepTwitter.getLoggedUserId());
 //		Node n = getNodeByTwitterId(id);
@@ -391,8 +400,24 @@ public class GraphicManager extends Display {
     	return socialNetwork;
     }
 
-	public ForceDirectedLayout getForceDirectedLayout() {
-    	return fdl;
+	public ForceSimulator getForceSimulator() {		
+		if(forceSimulator != null) return forceSimulator;
+		
+		forceSimulator = new ForceSimulator();
+
+    	float gravConstant = -1f;
+    	float minDistance = -1f;
+    	float theta = 0.9f;
+    	
+    	float drag = 0.007f;
+    	float springCoeff = 9.99E-6f;
+    	float defaultLength = 180f;  //default: 50f    	
+    	
+    	forceSimulator.addForce(new NBodyForce(gravConstant, minDistance, theta));
+    	forceSimulator.addForce(new DragForce(drag));
+    	forceSimulator.addForce(new SpringForce(springCoeff, defaultLength));
+		
+		return forceSimulator;
     }
 	
 	public Graph getGraph() {		
@@ -506,7 +531,8 @@ public class GraphicManager extends Display {
     		updates.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					new GUIViewUpdates(clickedItem,gManager);
+					//new GUIViewUpdates(clickedItem,gManager);
+					ControllerDeepTwitter.setPanelContent(clickedItem.getString("idTwitter"));
 				}    			
     		});
     		followers.addActionListener(new ActionListener(){

@@ -37,7 +37,18 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonHideSelection = new javax.swing.JButton();
         buttonRemoveSelection = new javax.swing.JButton();
         buttonShowAll = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel2 = new javax.swing.JPanel();
+        jToolBar1 = new javax.swing.JToolBar();
+        buttonAddUpdate = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
+        buttonPreviousUser = new javax.swing.JButton();
+        labelCurrentUser = new javax.swing.JLabel();
+        buttonNextUser = new javax.swing.JButton();
+        buttonCloseUpdates = new javax.swing.JButton();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
+        buttonTurnOnOff = new javax.swing.JToggleButton();
+        buttonSettings = new javax.swing.JButton();
+        jScrollPane6 = new javax.swing.JScrollPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         jScrollPane3 = new javax.swing.JScrollPane();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -73,15 +84,19 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         buttonUpdate.setText("Novo Update");
+        buttonUpdate.setActionCommand("buttonNewUpdate");
         buttonUpdate.setName("buttonNewUpdate"); // NOI18N
 
         buttonNewGroup.setText("Novo grupo");
+        buttonNewGroup.setActionCommand("buttonNewGroup");
         buttonNewGroup.setName("buttonNewGroup"); // NOI18N
 
         buttonAddUser.setText("Adicionar usuário");
+        buttonAddUser.setActionCommand("buttonAddUser");
         buttonAddUser.setName("buttonAddUser"); // NOI18N
 
         buttonClearSelection.setText("Limpar seleção");
+        buttonClearSelection.setActionCommand("buttonClearSelection");
         buttonClearSelection.setFocusable(false);
         buttonClearSelection.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonClearSelection.setName("buttonClearSelection"); // NOI18N
@@ -90,18 +105,22 @@ public class GUIMainWindow extends javax.swing.JFrame {
         checkBoxHighQuality.setBackground(new java.awt.Color(255, 255, 255));
         checkBoxHighQuality.setSelected(true);
         checkBoxHighQuality.setText("alta qualidade");
+        checkBoxHighQuality.setActionCommand("checkBoxHighQuality");
         checkBoxHighQuality.setName("checkBoxHighQuality"); // NOI18N
 
         labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14));
         labelFilter.setText("Filtro:");
 
         buttonHideSelection.setText("Esconder seleção");
+        buttonHideSelection.setActionCommand("buttonHideSelection");
         buttonHideSelection.setName("buttonHideSelection"); // NOI18N
 
         buttonRemoveSelection.setText("Remover seleção");
+        buttonRemoveSelection.setActionCommand("buttonRemoveSelection");
         buttonRemoveSelection.setName("buttonRemoveSelection"); // NOI18N
 
         buttonShowAll.setText("Exibir todos");
+        buttonShowAll.setActionCommand("buttonShowAll");
         buttonShowAll.setName("buttonShowAll"); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -148,7 +167,78 @@ public class GUIMainWindow extends javax.swing.JFrame {
         );
 
         jTabbedPane1.addTab("Interações", jPanel1);
-        jTabbedPane1.addTab("Atualizações", jScrollPane1);
+
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        jToolBar1.setFloatable(false);
+        jToolBar1.setRollover(true);
+
+        buttonAddUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("../new.png"))); // NOI18N
+        buttonAddUpdate.setToolTipText("Novo update");
+        buttonAddUpdate.setActionCommand("buttonNewUpdate");
+        buttonAddUpdate.setFocusable(false);
+        buttonAddUpdate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonAddUpdate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonAddUpdate);
+        jToolBar1.add(jSeparator2);
+
+        buttonPreviousUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../backward.png"))); // NOI18N
+        buttonPreviousUser.setToolTipText("Usuário anterior");
+        buttonPreviousUser.setActionCommand("buttonPreviousUser");
+        buttonPreviousUser.setEnabled(false);
+        buttonPreviousUser.setFocusable(false);
+        buttonPreviousUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonPreviousUser.setMinimumSize(new java.awt.Dimension(31, 31));
+        buttonPreviousUser.setName("buttonPreviousUser"); // NOI18N
+        buttonPreviousUser.setPreferredSize(new java.awt.Dimension(31, 31));
+        buttonPreviousUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonPreviousUser);
+
+        labelCurrentUser.setFont(new java.awt.Font("Tahoma", 1, 11));
+        labelCurrentUser.setText("username");
+        jToolBar1.add(labelCurrentUser);
+
+        buttonNextUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../forward.png"))); // NOI18N
+        buttonNextUser.setToolTipText("Próximo usuário");
+        buttonNextUser.setActionCommand("buttonNextUser");
+        buttonNextUser.setEnabled(false);
+        buttonNextUser.setFocusable(false);
+        buttonNextUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonNextUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonNextUser);
+
+        buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../remove.png"))); // NOI18N
+        buttonCloseUpdates.setToolTipText("Fechar este usuário");
+        buttonCloseUpdates.setActionCommand("buttonCloseUpdates");
+        buttonCloseUpdates.setEnabled(false);
+        buttonCloseUpdates.setFocusable(false);
+        buttonCloseUpdates.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonCloseUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonCloseUpdates);
+        jToolBar1.add(jSeparator4);
+
+        buttonTurnOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_on.png"))); // NOI18N
+        buttonTurnOnOff.setSelected(true);
+        buttonTurnOnOff.setToolTipText("Ligar/desligar atualizar automaticamente");
+        buttonTurnOnOff.setActionCommand("buttonTurnOnOff");
+        buttonTurnOnOff.setFocusable(false);
+        buttonTurnOnOff.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonTurnOnOff.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_off.png"))); // NOI18N
+        buttonTurnOnOff.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonTurnOnOff);
+
+        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../config.png"))); // NOI18N
+        buttonSettings.setToolTipText("Configurações");
+        buttonSettings.setActionCommand("buttonSettings");
+        buttonSettings.setFocusable(false);
+        buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonSettings);
+
+        jPanel2.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
+        jPanel2.add(jScrollPane6, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Atualizações", jPanel2);
         jTabbedPane1.addTab("@Replies", jScrollPane2);
         jTabbedPane1.addTab("Favoritos", jScrollPane3);
         jTabbedPane1.addTab("Mensagens", jScrollPane4);
@@ -162,23 +252,28 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jMenu1.setName("menuSaveNetworkAs"); // NOI18N
 
         menuLoadNetwork.setText("Carregar Rede");
+        menuLoadNetwork.setActionCommand("menuLoadNetwork");
         menuLoadNetwork.setName("menuLoadNetwork"); // NOI18N
         jMenu1.add(menuLoadNetwork);
 
         menuSaveNetwork.setText("Salvar Rede");
+        menuSaveNetwork.setActionCommand("menuSaveNetwork");
         menuSaveNetwork.setName("menuSaveNetwork"); // NOI18N
         jMenu1.add(menuSaveNetwork);
 
         menuSaveNetworkAs.setText("Salvar Rede Como...");
+        menuSaveNetworkAs.setActionCommand("menuSaveNetworkAs");
         menuSaveNetworkAs.setName("menuSaveNetworkAs"); // NOI18N
         jMenu1.add(menuSaveNetworkAs);
         jMenu1.add(jSeparator1);
 
         menuLogout.setText("Logout");
+        menuLogout.setActionCommand("menuLogout");
         menuLogout.setName("menuLogout"); // NOI18N
         jMenu1.add(menuLogout);
 
         menuExit.setText("Sair");
+        menuExit.setActionCommand("menuExit");
         menuExit.setName("menuExit"); // NOI18N
         menuExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -193,6 +288,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
 
         menuCheckBoxStatusBar.setSelected(true);
         menuCheckBoxStatusBar.setText("Barra de Status");
+        menuCheckBoxStatusBar.setActionCommand("menuCheckBoxStatusBar");
         menuCheckBoxStatusBar.setName("menuCheckBoxStatusBar"); // NOI18N
         jMenu3.add(menuCheckBoxStatusBar);
 
@@ -201,6 +297,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jMenu2.setText("Ajuda");
 
         menuHelp.setText("Tópicos de Ajuda");
+        menuHelp.setActionCommand("menuHelp");
         menuHelp.setName("menuHelp"); // NOI18N
         jMenu2.add(menuHelp);
 
@@ -227,6 +324,13 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonNewGroup.addActionListener(listener);
         buttonUpdate.addActionListener(listener);
         buttonClearSelection.addActionListener(listener);
+
+        buttonCloseUpdates.addActionListener(listener);
+        buttonPreviousUser.addActionListener(listener);
+        buttonNextUser.addActionListener(listener);
+        buttonTurnOnOff.addActionListener(listener);
+        buttonSettings.addActionListener(listener);
+        buttonAddUpdate.addActionListener(listener);
 
         checkBoxHighQuality.addActionListener(listener);        
 	}
@@ -255,14 +359,35 @@ public class GUIMainWindow extends javax.swing.JFrame {
         return jTabbedPane1;
     }
 
+    public void setPreviousUserEnabled(boolean b) {
+        buttonPreviousUser.setEnabled(b);
+    }
+
+    public void setNextUserEnabled(boolean b) {
+        buttonNextUser.setEnabled(b);
+    }
+
+    public void setCurrentUserLabel(String s) {
+        labelCurrentUser.setText(s);
+    }
+
+    public void setCloseUserEnabled(boolean b) {
+        buttonCloseUpdates.setEnabled(b);
+    }
 
     // Variables declaration - do not modify
+    private javax.swing.JButton buttonAddUpdate;
     private javax.swing.JButton buttonAddUser;
     private javax.swing.JButton buttonClearSelection;
+    private javax.swing.JButton buttonCloseUpdates;
     private javax.swing.JButton buttonHideSelection;
     private javax.swing.JButton buttonNewGroup;
+    private javax.swing.JButton buttonNextUser;
+    private javax.swing.JButton buttonPreviousUser;
     private javax.swing.JButton buttonRemoveSelection;
+    private javax.swing.JButton buttonSettings;
     private javax.swing.JButton buttonShowAll;
+    private javax.swing.JToggleButton buttonTurnOnOff;
     private javax.swing.JButton buttonUpdate;
     private javax.swing.JCheckBox checkBoxHighQuality;
     private javax.swing.JMenu jMenu1;
@@ -270,14 +395,19 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JLabel labelCurrentUser;
     private javax.swing.JLabel labelFilter;
     private javax.swing.JLabel labelStatusBar;
     private javax.swing.JCheckBoxMenuItem menuCheckBoxStatusBar;

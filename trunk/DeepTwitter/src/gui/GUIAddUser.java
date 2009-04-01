@@ -1,3 +1,14 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/*
+ * GUIAddUser.java
+ *
+ * Created on 02/03/2009, 15:00:26
+ */
+
 package gui;
 
 import java.awt.event.ActionListener;
@@ -31,10 +42,11 @@ public class GUIAddUser extends javax.swing.JFrame {
         setTitle("Adicionar Usuário do Twitter");
         setResizable(false);
 
-        labelText.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        labelText.setFont(new java.awt.Font("Tahoma", 0, 14));
         labelText.setText("Informe o login ou número do usuário que deseja adicionar à rede:");
 
         buttonOK.setText("OK");
+        buttonOK.setActionCommand("buttonOKAddUser");
         buttonOK.setName("buttonOKAddUser"); // NOI18N
 
         buttonCancel.setText("Cancel");
@@ -76,9 +88,9 @@ public class GUIAddUser extends javax.swing.JFrame {
         pack();
     }// </editor-fold>
 
-    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {
+    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {                                             
         this.dispose();
-    }
+    }                                            
     
     public void addMainWindowListener(ActionListener listener) {
 		buttonOK.addActionListener(listener);
