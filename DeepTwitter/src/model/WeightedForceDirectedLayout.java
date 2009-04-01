@@ -1,12 +1,13 @@
 package model;
 
 import prefuse.action.layout.graph.ForceDirectedLayout;
+import prefuse.util.force.ForceSimulator;
 import prefuse.visual.EdgeItem; 
 
 public class WeightedForceDirectedLayout extends ForceDirectedLayout { 
  
-	public WeightedForceDirectedLayout(String graph, boolean enforceBounds) { 
-		super(graph,enforceBounds); 
+	public WeightedForceDirectedLayout(String graph, ForceSimulator fsim, boolean enforceBounds) { 
+		super(graph,fsim,enforceBounds); 
 	} 
 
 	@Override 

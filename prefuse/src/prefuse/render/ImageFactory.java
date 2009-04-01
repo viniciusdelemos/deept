@@ -129,7 +129,7 @@ public class ImageFactory {
      * @return the corresponding image, if available
      */
     public Image getImage(String imageLocation) {
-        Image image = (Image) imageCache.get(imageLocation);
+    	Image image = (Image) imageCache.get(imageLocation);
         if (image == null && !loadMap.containsKey(imageLocation)) {
             URL imageURL = IOLib.urlFromString(imageLocation); 
             if ( imageURL == null ) {

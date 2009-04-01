@@ -51,9 +51,9 @@ public class GUINewUpdate extends javax.swing.JFrame {
         setResizable(false);
 
         buttonOK.setText("Atualizar");
+        buttonOK.setActionCommand("buttonUpdate");
         buttonOK.setName("buttonUpdate"); // NOI18N
         buttonOK.setNextFocusableComponent(updateArea);
-        buttonOK.setEnabled(false);
 
         jLabel2.setFont(new java.awt.Font("Georgia", 1, 18));
         jLabel2.setText("What are you doing?");
@@ -72,7 +72,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         updateArea.setColumns(20);
-        updateArea.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        updateArea.setFont(new java.awt.Font("Arial", 0, 13));
         updateArea.setLineWrap(true);
         updateArea.setRows(5);
         updateArea.setTabSize(0);
@@ -150,7 +150,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
         //System.out.println("size: "+textSize);
         int remaining = 140-textSize;
         labelMaxChars.setText(String.valueOf(remaining));
-        
+
         if(remaining<0) {
             buttonOK.setEnabled(false);
         }

@@ -41,9 +41,10 @@ public class IOLib {
      * false otherwise
      */
     public static boolean isUrlString(String s) {
-        return s.startsWith("http:/") ||
-               s.startsWith("ftp:/")  ||
-               s.startsWith("file:/");
+    	return s.startsWith("http:/") ||
+    	       s.startsWith("https:/") ||
+    	       s.startsWith("ftp:/")  ||
+    	       s.startsWith("file:/");
     }
     
     /**
