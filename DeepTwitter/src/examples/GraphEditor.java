@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.SwingUtilities;
-
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -78,7 +77,6 @@ public class GraphEditor extends Display {
 	private static final String RUBBER_BAND = "rubberband";
 	private static final String NODES = graphNodes;
 	private static final String SELECTED = "sel";
-    
     private LabelRenderer m_nodeRenderer;
     private EdgeRenderer m_edgeRenderer;
     

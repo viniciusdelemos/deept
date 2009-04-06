@@ -49,10 +49,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonTurnOnOff = new javax.swing.JToggleButton();
         buttonSettings = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jScrollPane5 = new javax.swing.JScrollPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuLoadNetwork = new javax.swing.JMenuItem();
@@ -163,7 +159,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
                 .addComponent(checkBoxHighQuality)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(labelFilter)
-                .addContainerGap(228, Short.MAX_VALUE))
+                .addContainerGap(244, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Interações", jPanel1);
@@ -210,7 +206,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../remove.png"))); // NOI18N
         buttonCloseUpdates.setToolTipText("Fechar este usuário");
         buttonCloseUpdates.setActionCommand("buttonCloseUpdates");
-        buttonCloseUpdates.setEnabled(false);
         buttonCloseUpdates.setFocusable(false);
         buttonCloseUpdates.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonCloseUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -238,11 +233,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jPanel2.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
         jPanel2.add(jScrollPane6, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("Atualizações", jPanel2);
-        jTabbedPane1.addTab("@Replies", jScrollPane2);
-        jTabbedPane1.addTab("Favoritos", jScrollPane3);
-        jTabbedPane1.addTab("Mensagens", jScrollPane4);
-        jTabbedPane1.addTab("Public Timeline", jScrollPane5);
+        //jTabbedPane1.addTab("Atualizações", jPanel2);
 
         jSplitPane1.setLeftComponent(jTabbedPane1);
 
@@ -396,10 +387,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;

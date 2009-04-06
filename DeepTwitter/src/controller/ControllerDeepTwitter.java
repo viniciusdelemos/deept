@@ -4,26 +4,23 @@ import gui.GUIAddUser;
 import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
 import gui.GUINewUpdate;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import model.GraphicManager;
 import model.MessageType;
 import model.StatusesTable;
@@ -33,8 +30,6 @@ import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
-import prefuse.util.force.ForceSimulator;
-import prefuse.util.ui.JForcePanel;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -43,24 +38,19 @@ public class ControllerDeepTwitter {
 	private static GUILoginDeepTwitter loginWindow;
 	private static GUIMainWindow mainWindow;
 	private GUIAddUser guiAddUser;
-	private GUINewUpdate guiNewUpdate;
+	private static GUINewUpdate guiNewUpdate;
 	private static Twitter twitter;
 	private static GraphicManager gManager;
 	private static boolean isTwitterUser;
 	private static String loggedUserId;
-	private static JTabbedPane windowTabs;
-	private static JScrollPane scrollUpdates;
-	private static Map<String,JPanel> panelsMap;
-	private static int currentPanel;
-	private static ArrayList<String> idArray;
-
+	private JTabbedPane windowTabs;
+	private static StatusTabManager tabManager;
+	private static MainWindowListener mainWindowListener;
+	
 	public ControllerDeepTwitter(GUILoginDeepTwitter loginWindow)
 	{
 		this.loginWindow = loginWindow;		
-		loginWindow.addLoginListener(new LoginListener());
-		panelsMap = new HashMap<String,JPanel>();
-		currentPanel = 0;
-		idArray = new ArrayList<String>();
+		loginWindow.addLoginListener(new LoginListener());				
 	}
 	
 	public static Twitter getTwitter() {
@@ -69,6 +59,18 @@ public class ControllerDeepTwitter {
 	
 	public static String getLoggedUserId() {
 		return loggedUserId;
+	}
+	
+	public static boolean isTwitterUser() {
+		return isTwitterUser;
+	}
+	
+	public static String getUserName(String id) {
+		return gManager.getUserName(Integer.parseInt(id));
+	}
+	
+	public static void searchAndAddUserToNetwork(User u) {
+		gManager.searchAndAddUserToNetwork(u);
 	}
 	
 	private static String getFormattedMessage(String message)
@@ -106,58 +108,11 @@ public class ControllerDeepTwitter {
 		mainWindow.setStatusBarMessage(message);
 	}
 	
-	public static void setPanelContent(String userId) {
-		StatusesTable updatesTable;
-		scrollUpdates = (JScrollPane)(((JPanel)windowTabs.getComponent(1)).getComponent(1));
-		JPanel selectedPanel = panelsMap.get(userId);
-		if(selectedPanel == null) {
-			if(isTwitterUser && userId.equals(loggedUserId))
-				updatesTable = new StatusesTable(gManager,StatusesType.MY_UPDATES);				
-			else
-				updatesTable = new StatusesTable(gManager,userId);
-			
-			selectedPanel = updatesTable.getContent();
-			panelsMap.put(userId,selectedPanel);						 
-			scrollUpdates.setViewportView(selectedPanel);
-			
-			idArray.add(userId);
-			currentPanel = idArray.size()-1;
-			reconfigButtons();
-		}
-		else {
-			scrollUpdates.setViewportView(selectedPanel);
-			scrollUpdates.revalidate();
-		}
-		mainWindow.setCurrentUserLabel(gManager.getUserName(Integer.parseInt(userId)));
+	public static void selectTab(int index) {
+		mainWindow.getTabs().setSelectedIndex(index);
 	}
-	
-	private static void reconfigButtons() {
-		if(idArray.size()<=1) {
-			mainWindow.setPreviousUserEnabled(false);
-			mainWindow.setNextUserEnabled(false);
-			mainWindow.setCloseUserEnabled(false);
-		}
-		else if(currentPanel==idArray.size()-1) {
-			mainWindow.setPreviousUserEnabled(true);
-			mainWindow.setNextUserEnabled(false);
-			mainWindow.setCloseUserEnabled(true);
-		}			
-		else if(currentPanel==0) {
-			mainWindow.setPreviousUserEnabled(false);
-			mainWindow.setNextUserEnabled(true);
-			mainWindow.setCloseUserEnabled(false);
-		}
-		else {
-			mainWindow.setPreviousUserEnabled(true);
-			mainWindow.setNextUserEnabled(true);
-			mainWindow.setCloseUserEnabled(true);
-		}
-	}
-	
-	
 	
 	class LoginListener implements ActionListener {	
-		StatusesTable userTimeline, userReplies, userFavorites, publicTimeline;		
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -193,83 +148,89 @@ public class ControllerDeepTwitter {
 					//gManager.addNode(u2);
 					loginWindow.dispose();
 					
+					mainWindowListener = new MainWindowListener();
 					mainWindow = new GUIMainWindow("DeepTwitter");
-					mainWindow.addMainWindowListener(new MainWindowListener());
+					mainWindow.addMainWindowListener(mainWindowListener);
 										
 					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
 					windowTabs = mainWindow.getTabs();
+					System.out.println(windowTabs.getTabCount());
+										
+					tabManager = new StatusTabManager();
+					tabManager.setTabbedPane(windowTabs);
+					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //1
+					tabManager.addTab(StatusesType.REPLIES,"@Replies"); //2
+					tabManager.addTab(StatusesType.FAVORITES,"Favoritos"); //3
+					tabManager.addTab(StatusesType.DIRECT_MESSAGES,"Mensagens"); //4
+					tabManager.addTab(StatusesType.PUBLIC_TIMELINE, "Public Timeline"); //5		
 					
 					if(!isTwitterUser) {
-						windowTabs.setEnabledAt(2, false); //replies
-						windowTabs.setEnabledAt(3, false); //favoritos
-						windowTabs.setEnabledAt(4, false); //mensagens
+						tabManager.setEnabledAt(2, false); //replies
+						tabManager.setEnabledAt(3, false); //favoritos
+						tabManager.setEnabledAt(4, false); //mensagens
 					}						
 					
 					windowTabs.addChangeListener(new ChangeListener(){
 						@Override
 						public void stateChanged(ChangeEvent e) {
-							int tabIndex = windowTabs.getSelectedIndex();
-							
-							if(tabIndex==0) {
+							StatusesTable table = null;
+							int tabIndex = windowTabs.getSelectedIndex();							
+							//index 0 != Tab, é a tab de menu
+							if(tabIndex == 0) {
 								jSplitPane.setDividerLocation(250);
 								return;
 							}
-							else if(tabIndex==6) {
-								jSplitPane.setDividerLocation(300);
-								return;
-							}
 							
-							if(tabIndex==1) {
-								jSplitPane.setDividerLocation(431);
-								setPanelContent(getLoggedUserId());	
-								return;
-							}
-							//TODO
-							scrollUpdates = (JScrollPane) windowTabs.getComponent(tabIndex);							
+							StatusTab selectedTab = tabManager.getTab(tabIndex);	
 							
-							if(tabIndex==2) {
+							switch(selectedTab.getType()) {							
+							case UPDATES:
 								jSplitPane.setDividerLocation(431);
-								if(userReplies!=null) return;
-								userReplies = new StatusesTable(gManager,StatusesType.REPLIES);
-								scrollUpdates.setViewportView(userReplies.getContent());
-							}
-							else if(tabIndex==3) {
+								if(selectedTab.isActive()) return;								
+								if(isTwitterUser)
+									table = new StatusesTable(StatusesType.UPDATES);
+								else
+									table = new StatusesTable(getLoggedUserId());
+								break;
+								
+							case REPLIES:
 								jSplitPane.setDividerLocation(431);
-								if(userFavorites!=null) return;
-								userFavorites = new StatusesTable(gManager,StatusesType.FAVORITES);
-								scrollUpdates.setViewportView(userFavorites.getContent());
-							}
-							else if(tabIndex==4) {
-								//TODO msgs
-							}
-							else if(tabIndex==5) {
+								if(selectedTab.isActive()) return;
+								table = new StatusesTable(StatusesType.REPLIES);
+								break;
+								
+							case FAVORITES:
 								jSplitPane.setDividerLocation(431);
-								if(publicTimeline!=null) return;
-								publicTimeline = new StatusesTable(gManager,StatusesType.PUBLIC_TIMELINE);
-								scrollUpdates.setViewportView(publicTimeline.getContent());
-							}														
+								if(selectedTab.isActive()) return;
+								table = new StatusesTable(StatusesType.FAVORITES);
+								break;
+								
+							case DIRECT_MESSAGES:
+								jSplitPane.setDividerLocation(431);
+								if(selectedTab.isActive()) return;
+								table = new StatusesTable(StatusesType.DIRECT_MESSAGES);
+								break;
+								
+							case PUBLIC_TIMELINE:
+								jSplitPane.setDividerLocation(431);
+								if(selectedTab.isActive()) return;
+								table = new StatusesTable(StatusesType.PUBLIC_TIMELINE);
+								break;								
+							}		
+							selectedTab.setPanelContent(table);
 						}						
 					});
+					
+					//adicionar tab de forças?
 					
 					mainWindow.addWindowListener(new WindowAdapter() {
 						@Override
 						 public void windowClosed(java.awt.event.WindowEvent arg0) {
-							if(userTimeline!=null) {
-								userTimeline.stopThread();
-								userTimeline = null;
-							}								
-							if(userReplies!=null) {
-								userReplies.stopThread();
-								userReplies = null;
-							}
-							if(userFavorites!=null) {
-								userFavorites.stopThread();
-								userFavorites = null;
-							}
-							if(publicTimeline!=null) {
-								publicTimeline.stopThread();
-								publicTimeline = null;
-							}
+							tabManager.getTab(StatusesType.UPDATES).stopThreads();
+							tabManager.getTab(StatusesType.REPLIES).stopThreads();
+							tabManager.getTab(StatusesType.FAVORITES).stopThreads();
+							tabManager.getTab(StatusesType.DIRECT_MESSAGES).stopThreads();
+							tabManager.getTab(StatusesType.PUBLIC_TIMELINE).stopThreads();
 						}
 					});
 					
@@ -282,8 +243,10 @@ public class ControllerDeepTwitter {
 					//gManager.getVisualization().run("layout"); 					
 					//gManager.getVisualization().repaint();					
 				}	
-			} catch (TwitterException ex) {						
-				if(ex.getStatusCode()==401)
+			} catch (TwitterException ex) {
+				if(ex.getStatusCode()==400)
+					ControllerDeepTwitter.showMessageDialog("Você excedeu o número máximo de 100 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
+				else if(ex.getStatusCode()==401)
 					showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);				
 				else if(ex.getStatusCode()==404)
 					showMessageDialog("Usuário não encontrado!",MessageType.ERROR);
@@ -293,8 +256,34 @@ public class ControllerDeepTwitter {
 					showMessageDialog("A conexão não pôde ser estabelecida.",MessageType.ERROR);
 				else 
 					showMessageDialog(ex.getMessage(),MessageType.ERROR);
-			}
+				System.out.println(ex.getMessage());
+				ex.printStackTrace();
+			} catch(Exception e2) {
+				showMessageDialog(e2.getMessage(), MessageType.ERROR);
+				e2.printStackTrace();
+			}			
 		}
+	}
+	
+	public static void openUpdateWindow() {
+		if(guiNewUpdate == null) {
+			guiNewUpdate = new GUINewUpdate();
+			guiNewUpdate.addMainWindowListener(mainWindowListener);
+			guiNewUpdate.addWindowListener(new WindowAdapter() {
+				@Override
+				 public void windowClosed(java.awt.event.WindowEvent arg0) {
+					guiNewUpdate = null;
+				}
+			});
+			guiNewUpdate.setVisible(true);
+		}
+		else
+			guiNewUpdate.requestFocus();
+		guiNewUpdate.setLocationRelativeTo(mainWindow);
+	}
+	
+	public static StatusTabManager getStatusTabManager() {
+		return tabManager;
 	}
 	
 	class MainWindowListener implements ActionListener {		
@@ -351,20 +340,7 @@ public class ControllerDeepTwitter {
 				System.out.println("Open Help");
 			}
 			else if(cmd.equals("buttonNewUpdate")) {					
-				if(guiNewUpdate == null) {
-					guiNewUpdate = new GUINewUpdate();
-					guiNewUpdate.addMainWindowListener(this);
-					guiNewUpdate.addWindowListener(new WindowAdapter() {
-						@Override
-						 public void windowClosed(java.awt.event.WindowEvent arg0) {
-							guiNewUpdate = null;
-						}
-					});
-					guiNewUpdate.setVisible(true);
-				}
-				else
-					guiNewUpdate.requestFocus();
-				guiNewUpdate.setLocationRelativeTo(mainWindow);				
+				openUpdateWindow();				
 			}
 			else if(cmd.equals("buttonUpdate")) {
 				try {
@@ -413,40 +389,7 @@ public class ControllerDeepTwitter {
 				catch(NullPointerException ex) {
 					showMessageDialog("Usuário não encontrado!",MessageType.WARNING);					
 				}
-			}
-			else if(cmd.equals("buttonPreviousUser")) {
-				currentPanel--;
-				reconfigButtons();
-				String userId = idArray.get(currentPanel);
-				setPanelContent(userId);
-			}
-			else if(cmd.equals("buttonNextUser")) {
-				currentPanel++;
-				reconfigButtons();
-				String userId = idArray.get(currentPanel);				
-				setPanelContent(userId);
-			}
-			else if(cmd.equals("buttonCloseUpdates")) {
-				panelsMap.remove(idArray.get(currentPanel));
-				if(currentPanel==idArray.size()-1) {
-					idArray.remove(currentPanel);
-					currentPanel--;
-				}
-				else
-					idArray.remove(currentPanel);
-				
-				String userId = idArray.get(currentPanel);
-				setPanelContent(userId);								
-				reconfigButtons();								
-			}
-			else if(cmd.equals("buttonTurnOnOff")) {
-				//TODO
-				if(((JToggleButton)e.getSource()).isSelected()) System.out.println("TURNED ON");
-				else System.out.println("TURNED OFF");
-			}
-			else if(cmd.equals("buttonSettings")) {
-				//TODO
-			}
+			}			
 			else if(cmd.equals("buttonClearSelection")) {
 				gManager.clearSelection();
 			}
