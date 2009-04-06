@@ -2,43 +2,23 @@ package model;
 
 import gui.GUINewUpdate;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.html.HTMLEditorKit;
-
-import prefuse.util.FontLib;
-import prefuse.util.PrefuseLib;
-import prefuse.visual.VisualItem;
-import quicktime.app.image.JImagePainter;
 
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -55,26 +35,26 @@ public class StatusesTable {
 	private JPanel panel;
 	private KeepTableUpdated keepTableUpdated;
 	private int updatesToGet;
-	private GraphicManager gManager;
 	private StatusesType statusesType;
 	private GridBagConstraints gbc;
 	
-	public StatusesTable (GraphicManager gManager, String userId) {
-		this(gManager,StatusesType.OTHERS_UPDATES);
+	public StatusesTable (String userId) {
+		this(StatusesType.UPDATES);
 		this.userId = userId;
 	}
 	
-	public StatusesTable(GraphicManager gManager, StatusesType type) {
-		this.gManager = gManager;
+	public StatusesTable(StatusesType type) {
 		this.statusesType = type;
-		isTwitterUser = gManager.isTwitterUser();
+		this.userId = null;
+		isTwitterUser = ControllerDeepTwitter.isTwitterUser();
 		statusList = new ArrayList<Status>();		
 		rows = 0;
-		interval = 120000; //2 minutos
+		interval = 2000;//120000; //2 minutos
 		updatesToGet = 100;
 	}
 
 	public JPanel getContent() {		
+		if(panel!=null) return panel;
 		GridBagLayout layout = new GridBagLayout();        
 		panel = new JPanel(layout);		
 		keepTableUpdated = new KeepTableUpdated();
@@ -103,7 +83,7 @@ public class StatusesTable {
 				interactiveImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				gManager.searchAndAddUserToNetwork(s.getUser());
+				ControllerDeepTwitter.searchAndAddUserToNetwork(s.getUser());
 			}
 		});
 		
@@ -129,9 +109,10 @@ public class StatusesTable {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
 					try {
-	        			new URLLinkAction(e.getURL().toString());
+						new URLLinkAction(e.getURL().toString());
 	        		} catch (Exception ex) {
 	        			ControllerDeepTwitter.showMessageDialog(ex.getMessage(),MessageType.ERROR);
+	        			ex.printStackTrace();
 	        		} 
 				}
 			}
@@ -283,7 +264,10 @@ public class StatusesTable {
 				}
 				else {
 					url = sb.subSequence(indexHttpBegin, indexHttpEnd).toString();
-					htmlString = "<a href="+url+">"+url+"</a>";
+					if(indexHttpBegin==wwwLink) 
+						htmlString = "<a href=http://"+url+">"+url+"</a>";
+					else
+						htmlString = "<a href="+url+">"+url+"</a>";
 					sb.replace(indexHttpBegin, indexHttpEnd, htmlString);
 				}				
 				indexHttpEnd=indexHttpBegin+htmlString.length();
@@ -296,12 +280,30 @@ public class StatusesTable {
 		updatesToGet = x;
 	}
 	
+	public String getUserId() {
+		if(userId==null)
+			return ControllerDeepTwitter.getLoggedUserId();
+		return userId;
+	}
+	
 	public void setUpdateTimelineInterval(long milliseconds) {
 		interval = milliseconds;
 	}
 	
-	public void stopThread() {
-		keepTableUpdated.interrupt();
+	public void pauseThread() {
+		keepTableUpdated.pauseThread();
+	}
+	
+	public void resumeThread() {
+		keepTableUpdated.resumeThread();
+	}
+	
+	public void interruptThread() {
+		keepTableUpdated.interruptThread();
+	}
+	
+	public boolean isThreadSuspended() {
+		return keepTableUpdated.isThreadSuspended();
 	}
 	
 	class KeepTableUpdated extends Thread {
@@ -310,34 +312,72 @@ public class StatusesTable {
 		private GridBagConstraints c = new GridBagConstraints();
 		private JPanel empty;
 		private Twitter twitter = ControllerDeepTwitter.getTwitter();
+		private boolean threadSuspended = false;
+		
+		public synchronized void pauseThread() {
+			threadSuspended = true;
+		}
+		
+		public synchronized void resumeThread() {
+			threadSuspended = false;
+			notify();
+		}
+		
+		public synchronized void interruptThread() {
+			interrupt();
+		}
+		
+		public boolean isThreadSuspended() {
+			return threadSuspended;
+		}
 		
 		public void run()
-		{
-			System.out.println("=> Starting thread");
+		{	
+			System.out.println("STARTING " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));			
 			while(true) {
-				try {
+				try {					
+					if (threadSuspended) {
+						System.out.println("PAUSING " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
+						synchronized(this) {
+							while (threadSuspended) {
+								try {
+									wait();
+								} catch (InterruptedException e) {
+									System.out.println("INTERRUPTED " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
+									break;
+								}
+							}
+							System.out.println("RESUMING " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
+						}
+					}
+					
 					switch(statusesType)
 					{
-					case MY_UPDATES:
-						if(lastStatusDate == null)
-							statusList = (ArrayList<Status>) twitter.getFriendsTimeline();
-						else
-							statusList = (ArrayList<Status>) twitter.getFriendsTimeline(lastStatusDate);
+					case UPDATES:
+						if(lastStatusDate == null) {
+							if(userId==null)
+								statusList = (ArrayList<Status>) twitter.getFriendsTimeline();
+							else
+								statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet);
+						}
+						else {
+							if(userId==null)
+								statusList = (ArrayList<Status>) twitter.getFriendsTimeline(lastStatusDate);
+							else
+								statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet,lastStatusDate);
+						}
 						break;
-
-					case OTHERS_UPDATES:
-						if(lastStatusDate == null)
-							statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet);
-						else
-							statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet,lastStatusDate);
-						break;
-
+					
 					case FAVORITES:
 						statusList = (ArrayList<Status>) twitter.favorites();
 						break;
 
 					case REPLIES:
 						statusList = (ArrayList<Status>) twitter.getReplies();
+						break;
+					
+					case DIRECT_MESSAGES:
+						//TODO
 						break;
 
 					case PUBLIC_TIMELINE:
@@ -379,13 +419,21 @@ public class StatusesTable {
 						statusList.clear();
 					}				
 					Thread.sleep(interval);	
-					System.out.println("running");
+					System.out.println("running " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
 				} catch (TwitterException e) {
-					ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
-					e.printStackTrace();
+					if(e.getStatusCode()==400) {
+						ControllerDeepTwitter.showMessageDialog("Você excedeu o limite de 100 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
+						break;
+					}
+					else if(e.getStatusCode()==401) {
+						ControllerDeepTwitter.showMessageDialog("Você não está autorizado a ver os updates desta pessoa.",MessageType.ERROR);
+						break;
+					}
+					else
+						ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);					
 				}
 				catch(InterruptedException ie) {
-					System.out.println("interrupted exception");
+					System.out.println("INTERRUPTED " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
 					break;
 				}
 			}

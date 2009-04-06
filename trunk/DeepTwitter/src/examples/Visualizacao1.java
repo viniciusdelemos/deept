@@ -84,7 +84,7 @@ public class Visualizacao1 extends JPanel {
         // load the data
         Table t = null;
         try {
-            t = new prefuse.data.io.DelimitedTextTableReader().readTable ("teste.txt");
+            t = new prefuse.data.io.DelimitedTextTableReader().readTable("teste.txt");
         } catch ( Exception e ) {
             e.printStackTrace();
             System.exit(1);

@@ -1,9 +1,9 @@
 package model;
 
 public enum StatusesType {
-	MY_UPDATES,
-	OTHERS_UPDATES,
+	UPDATES,
 	REPLIES,
 	FAVORITES,
+	DIRECT_MESSAGES,
 	PUBLIC_TIMELINE
 }

@@ -1,8 +1,6 @@
 package examples;
 
-import javax.swing.JFrame;
 import javax.swing.JSplitPane;
-
 import model.GraphicManager;
 import prefuse.Display;
 import prefuse.util.force.ForceSimulator;
@@ -44,7 +42,7 @@ public class AppletDeepTwitter extends JPrefuseApplet {
 	
 	private static JSplitPane createMainMenu(GraphicManager g)
     {
-    	ForceSimulator fsim = gManager.getForceDirectedLayout().getForceSimulator();
+    	ForceSimulator fsim = gManager.getForceSimulator();
         JForcePanel fpanel = new JForcePanel(fsim);
         
         JSplitPane split = new JSplitPane();

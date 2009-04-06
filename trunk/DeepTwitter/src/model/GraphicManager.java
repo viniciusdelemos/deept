@@ -1,9 +1,9 @@
 package model;
 
-import gui.GUIViewUpdates;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -47,7 +48,6 @@ import prefuse.util.ColorLib;
 import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
 import prefuse.util.force.NBodyForce;
-import prefuse.util.force.RungeKuttaIntegrator;
 import prefuse.util.force.SpringForce;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
@@ -56,12 +56,12 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
-import profusians.zonemanager.ZoneManager;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
+import controller.StatusTab;
 
 @SuppressWarnings("serial")
-public class GraphicManager extends Display {
+public class GraphicManager extends Display { 
 	
 	public final static String GRAPH = "graph";
 	public final static String NODES = "graph.nodes";
@@ -280,7 +280,7 @@ public class GraphicManager extends Display {
 		newNode.set("isShowingFriends", false);
 		newNode.set("isShowingFollowers", false);
 		nodesMap.put(u.getId(), newNode);
-		
+				
 		if(numUsers==0)
 		{
 			VisualItem mainUser = getVisualization().getVisualItem(NODES, newNode);
@@ -531,8 +531,12 @@ public class GraphicManager extends Display {
     		updates.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					//new GUIViewUpdates(clickedItem,gManager);
-					ControllerDeepTwitter.setPanelContent(clickedItem.getString("idTwitter"));
+					StatusTab tab = ControllerDeepTwitter.getStatusTabManager().getTab(StatusesType.UPDATES);
+					if(isTwitterUser && clickedItem.getString("idTwitter").equals(ControllerDeepTwitter.getLoggedUserId()))
+						tab.setPanelContent(new StatusesTable(StatusesType.UPDATES));
+					else
+						tab.setPanelContent(new StatusesTable(clickedItem.getString("idTwitter")));
+					ControllerDeepTwitter.selectTab(1);
 				}    			
     		});
     		followers.addActionListener(new ActionListener(){
