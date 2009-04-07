@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * A utility class to handle HTTP request/response.
@@ -42,6 +43,7 @@ public class HttpClient implements java.io.Serializable {
     private int connectionTimeout = 0;
     private int readTimeout = 0;
     private static final long serialVersionUID = 808018030183407996L;
+    private static final boolean PROXY_ON = false;
 
     public HttpClient(String userId, String password) {
         this();
@@ -211,6 +213,12 @@ public class HttpClient implements java.io.Serializable {
                 InputStream is = null;
                 OutputStream osw = null;
                 try {
+                	if(PROXY_ON) {
+                		Properties props = System.getProperties();
+                		props.put("proxySet", "true");
+                		props.put("proxyHost", "web-proxy.boi.hp.com");
+                		props.put("proxyPort", "8088");
+                	}
                     con = getConnection(url);
                     con.setDoInput(true);
                     setHeaders(con, authenticated);

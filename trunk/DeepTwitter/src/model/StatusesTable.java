@@ -37,16 +37,18 @@ public class StatusesTable {
 	private int updatesToGet;
 	private StatusesType statusesType;
 	private GridBagConstraints gbc;
+	private ControllerDeepTwitter controller;
 	
-	public StatusesTable (String userId) {
+	public StatusesTable (String userId) {		
 		this(StatusesType.UPDATES);
-		this.userId = userId;
+		this.userId = userId;		
 	}
 	
 	public StatusesTable(StatusesType type) {
 		this.statusesType = type;
 		this.userId = null;
-		isTwitterUser = ControllerDeepTwitter.isTwitterUser();
+		controller = ControllerDeepTwitter.getInstance();
+		isTwitterUser = controller.isTwitterUser();
 		statusList = new ArrayList<Status>();		
 		rows = 0;
 		interval = 2000;//120000; //2 minutos
@@ -83,7 +85,7 @@ public class StatusesTable {
 				interactiveImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				ControllerDeepTwitter.searchAndAddUserToNetwork(s.getUser());
+				controller.searchAndAddUserToNetwork(s.getUser());
 			}
 		});
 		
@@ -111,7 +113,7 @@ public class StatusesTable {
 					try {
 						new URLLinkAction(e.getURL().toString());
 	        		} catch (Exception ex) {
-	        			ControllerDeepTwitter.showMessageDialog(ex.getMessage(),MessageType.ERROR);
+	        			controller.showMessageDialog(ex.getMessage(),MessageType.ERROR);
 	        			ex.printStackTrace();
 	        		} 
 				}
@@ -142,7 +144,7 @@ public class StatusesTable {
 				replyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				new GUINewUpdate(s.getUser().getScreenName()).setVisible(true);				
+				controller.openGUINewUpdateWindow(s.getUser().getScreenName());				
 			}
 		});
 		updatePanel.add(replyButton,gbc);
@@ -169,11 +171,11 @@ public class StatusesTable {
 				try{
 					int isOff = favoriteButton.getIcon().toString().indexOf("star_off");
 					if(isOff>0) {
-						ControllerDeepTwitter.getTwitter().createFavorite(s.getId());
+						controller.getTwitter().createFavorite(s.getId());
 						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../star_on.png")));
 					}
 					else {
-						ControllerDeepTwitter.getTwitter().destroyFavorite(s.getId());
+						controller.getTwitter().destroyFavorite(s.getId());
 						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../star_off.png")));
 						if(statusesType == StatusesType.FAVORITES) {
 							System.out.println("removing favorite panel");
@@ -184,13 +186,13 @@ public class StatusesTable {
 					panel.revalidate();
 				}
 				catch(TwitterException e) {
-					ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
+					controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
 				}
 			}
 		});
 		updatePanel.add(favoriteButton,gbc);
 		
-		int loggedUserId = Integer.parseInt(ControllerDeepTwitter.getLoggedUserId());
+		int loggedUserId = Integer.parseInt(controller.getLoggedUserId());
 		if(loggedUserId == s.getUser().getId()) {
 			gbc.weightx = 0;
 			gbc.gridx = 2;
@@ -212,13 +214,13 @@ public class StatusesTable {
 	                            null, "Tem certeza que deseja deletar este update?","Atenção",
 	                            JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null);
 						if (n == JOptionPane.YES_OPTION) {
-							ControllerDeepTwitter.getTwitter().destroyStatus(s.getId());
+							controller.getTwitter().destroyStatus(s.getId());
 							panel.remove(updatePanel);
 							rows--;
 							panel.revalidate();
 						}
 					} catch (TwitterException e) {
-						ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
+						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
 					}
 				}
 			});
@@ -282,7 +284,7 @@ public class StatusesTable {
 	
 	public String getUserId() {
 		if(userId==null)
-			return ControllerDeepTwitter.getLoggedUserId();
+			return controller.getLoggedUserId();
 		return userId;
 	}
 	
@@ -311,7 +313,7 @@ public class StatusesTable {
 		private long lastStatusId = -1;
 		private GridBagConstraints c = new GridBagConstraints();
 		private JPanel empty;
-		private Twitter twitter = ControllerDeepTwitter.getTwitter();
+		private Twitter twitter = controller.getTwitter();
 		private boolean threadSuspended = false;
 		
 		public synchronized void pauseThread() {
@@ -333,21 +335,21 @@ public class StatusesTable {
 		
 		public void run()
 		{	
-			System.out.println("STARTING " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));			
+			System.out.println("STARTING " + statusesType + " para " + controller.getUserName(getUserId()));			
 			while(true) {
 				try {					
 					if (threadSuspended) {
-						System.out.println("PAUSING " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
+						System.out.println("PAUSING " + statusesType + " para " + controller.getUserName(getUserId()));
 						synchronized(this) {
 							while (threadSuspended) {
 								try {
 									wait();
 								} catch (InterruptedException e) {
-									System.out.println("INTERRUPTED " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
+									System.out.println("INTERRUPTED " + statusesType + " para " + controller.getUserName(getUserId()));
 									break;
 								}
 							}
-							System.out.println("RESUMING " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
+							System.out.println("RESUMING " + statusesType + " para " + controller.getUserName(getUserId()));
 						}
 					}
 					
@@ -419,21 +421,21 @@ public class StatusesTable {
 						statusList.clear();
 					}				
 					Thread.sleep(interval);	
-					System.out.println("running " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
+					System.out.println("running " + statusesType + " para " + controller.getUserName(getUserId()));
 				} catch (TwitterException e) {
 					if(e.getStatusCode()==400) {
-						ControllerDeepTwitter.showMessageDialog("Você excedeu o limite de 100 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
+						controller.showMessageDialog("Você excedeu o limite de 100 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
 						break;
 					}
 					else if(e.getStatusCode()==401) {
-						ControllerDeepTwitter.showMessageDialog("Você não está autorizado a ver os updates desta pessoa.",MessageType.ERROR);
+						controller.showMessageDialog("Você não está autorizado a ver os updates desta pessoa.",MessageType.ERROR);
 						break;
 					}
 					else
-						ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);					
+						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);					
 				}
 				catch(InterruptedException ie) {
-					System.out.println("INTERRUPTED " + statusesType + " para " + ControllerDeepTwitter.getUserName(getUserId()));
+					System.out.println("INTERRUPTED " + statusesType + " para " + controller.getUserName(getUserId()));
 					break;
 				}
 			}

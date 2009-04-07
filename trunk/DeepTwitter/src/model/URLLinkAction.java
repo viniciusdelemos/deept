@@ -4,9 +4,11 @@ import controller.ControllerDeepTwitter;
 
 public class URLLinkAction {
 	private String url;
+	private ControllerDeepTwitter controller;
 
 	URLLinkAction(String bac)
 	{
+		controller = ControllerDeepTwitter.getInstance();
 		url=bac;
 		execute();
 	}
@@ -36,7 +38,7 @@ public class URLLinkAction {
 		}
 		catch (Exception ex)
 		{
-			ControllerDeepTwitter.showMessageDialog(ex.getMessage(),MessageType.ERROR);
+			controller.showMessageDialog(ex.getMessage(),MessageType.ERROR);
 		}
 	}
 }

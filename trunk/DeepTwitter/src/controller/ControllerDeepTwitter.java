@@ -35,41 +35,52 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 
 public class ControllerDeepTwitter {
-	private static GUILoginDeepTwitter loginWindow;
-	private static GUIMainWindow mainWindow;
+	private GUILoginDeepTwitter loginWindow;
+	private GUIMainWindow mainWindow;
 	private GUIAddUser guiAddUser;
-	private static GUINewUpdate guiNewUpdate;
-	private static Twitter twitter;
-	private static GraphicManager gManager;
-	private static boolean isTwitterUser;
-	private static String loggedUserId;
+	private GUINewUpdate guiNewUpdate;
+	private Twitter twitter;
+	private GraphicManager gManager;
+	private boolean isTwitterUser;
+	private String loggedUserId;
 	private JTabbedPane windowTabs;
-	private static StatusTabManager tabManager;
-	private static MainWindowListener mainWindowListener;
+	private StatusTabManager tabManager;
+	private MainWindowListener mainWindowListener;
 	
-	public ControllerDeepTwitter(GUILoginDeepTwitter loginWindow)
-	{
+	private ControllerDeepTwitter(){
+		//construtor private previne chamadas nao autorizadas ao construtor.
+	}
+	
+	private static class SingletonHolder { 
+		private final static ControllerDeepTwitter INSTANCE = new ControllerDeepTwitter();
+	}
+
+	public static ControllerDeepTwitter getInstance() {
+		return SingletonHolder.INSTANCE;
+	}
+
+	public void setLoginWindow(GUILoginDeepTwitter loginWindow) {
 		this.loginWindow = loginWindow;		
 		loginWindow.addLoginListener(new LoginListener());				
 	}
 	
-	public static Twitter getTwitter() {
+	public Twitter getTwitter() {
 		return twitter;
 	}
 	
-	public static String getLoggedUserId() {
+	public String getLoggedUserId() {
 		return loggedUserId;
 	}
 	
-	public static boolean isTwitterUser() {
+	public boolean isTwitterUser() {
 		return isTwitterUser;
 	}
 	
-	public static String getUserName(String id) {
+	public String getUserName(String id) {
 		return gManager.getUserName(Integer.parseInt(id));
 	}
 	
-	public static void searchAndAddUserToNetwork(User u) {
+	public void searchAndAddUserToNetwork(User u) {
 		gManager.searchAndAddUserToNetwork(u);
 	}
 	
@@ -84,7 +95,7 @@ public class ControllerDeepTwitter {
 		}
 	}
 	
-	public static void showMessageDialog(String message, MessageType type) {
+	public void showMessageDialog(String message, MessageType type) {
 		Component parent = mainWindow;
 		if(parent == null)
 			parent = loginWindow;
@@ -104,11 +115,11 @@ public class ControllerDeepTwitter {
 		}	
 	}
 	
-	public static void setStatusBarMessage(String message) {
+	public void setStatusBarMessage(String message) {
 		mainWindow.setStatusBarMessage(message);
 	}
 	
-	public static void selectTab(int index) {
+	public void selectTab(int index) {
 		mainWindow.getTabs().setSelectedIndex(index);
 	}
 	
@@ -143,7 +154,7 @@ public class ControllerDeepTwitter {
 				{
 					User u = twitter.getAuthenticatedUser();
 					loggedUserId = String.valueOf(u.getId());
-					gManager = new GraphicManager(isTwitterUser);						
+					gManager = new GraphicManager();						
 					//User u2 = twitter.getAuthenticatedUser();
 					//gManager.addNode(u2);
 					loginWindow.dispose();
@@ -245,7 +256,7 @@ public class ControllerDeepTwitter {
 				}	
 			} catch (TwitterException ex) {
 				if(ex.getStatusCode()==400)
-					ControllerDeepTwitter.showMessageDialog("Você excedeu o número máximo de 100 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
+					showMessageDialog("Você excedeu o número máximo de 100 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
 				else if(ex.getStatusCode()==401)
 					showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);				
 				else if(ex.getStatusCode()==404)
@@ -265,13 +276,20 @@ public class ControllerDeepTwitter {
 		}
 	}
 	
-	public static void openUpdateWindow() {
+	public void openGUINewUpdateWindow() {
+		openGUINewUpdateWindow(null);
+	}
+	
+	public void openGUINewUpdateWindow(String inReplyTo) {
 		if(guiNewUpdate == null) {
-			guiNewUpdate = new GUINewUpdate();
+			if(inReplyTo==null)
+				guiNewUpdate = new GUINewUpdate();
+			else
+				guiNewUpdate = new GUINewUpdate(inReplyTo);
 			guiNewUpdate.addMainWindowListener(mainWindowListener);
 			guiNewUpdate.addWindowListener(new WindowAdapter() {
 				@Override
-				 public void windowClosed(java.awt.event.WindowEvent arg0) {
+				public void windowClosed(java.awt.event.WindowEvent arg0) {
 					guiNewUpdate = null;
 				}
 			});
@@ -282,7 +300,7 @@ public class ControllerDeepTwitter {
 		guiNewUpdate.setLocationRelativeTo(mainWindow);
 	}
 	
-	public static StatusTabManager getStatusTabManager() {
+	public StatusTabManager getStatusTabManager() {
 		return tabManager;
 	}
 	
@@ -340,7 +358,7 @@ public class ControllerDeepTwitter {
 				System.out.println("Open Help");
 			}
 			else if(cmd.equals("buttonNewUpdate")) {					
-				openUpdateWindow();				
+				openGUINewUpdateWindow();				
 			}
 			else if(cmd.equals("buttonUpdate")) {
 				try {
