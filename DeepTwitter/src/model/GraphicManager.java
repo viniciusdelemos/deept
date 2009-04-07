@@ -73,7 +73,7 @@ public class GraphicManager extends Display {
     private int numUsers, groupId;
     private ForceSimulator forceSimulator;
     private Map<Integer, Node> nodesMap;    
-    private boolean isTwitterUser, isHighQuality;	
+    private boolean isHighQuality, isTwitterUser;
     private SocialNetwork socialNetwork; 
     //private ZoneManager zoneManager;
     private VisualItem selectionBox;
@@ -83,12 +83,15 @@ public class GraphicManager extends Display {
 	private PanControl panControl;
 	private TupleSet selectedNodes;
 	private AggregateTable groupTable;
+	private ControllerDeepTwitter controller;
 	
-    public GraphicManager(boolean isTwitterUser)
+    public GraphicManager()
     {    	
     	super(new Visualization());    	
-    	    	
-    	this.isTwitterUser = isTwitterUser;    	
+    	
+    	controller = ControllerDeepTwitter.getInstance();
+    	isTwitterUser = controller.isTwitterUser();    	
+    	
     	nodesMap = new HashMap<Integer, Node>();
     	socialNetwork = new SocialNetwork();
     	//modo qualidade - setar para falso para melhor desempenho
@@ -337,7 +340,7 @@ public class GraphicManager extends Display {
 		//ZoneShape zone = new RectangularZoneShape(x,y,w,h);
 		//int i = zoneManager.createAndAddZone(zone);
     	if(selectedNodes.getTupleCount()<2) {
-    		ControllerDeepTwitter.showMessageDialog("Você deve selecionar dois ou mais usuários para criar um grupo.",MessageType.INFORMATION);
+    		controller.showMessageDialog("Você deve selecionar dois ou mais usuários para criar um grupo.",MessageType.INFORMATION);
     		return;
     	}
     	AggregateItem group = (AggregateItem)groupTable.addItem();    	
@@ -531,12 +534,12 @@ public class GraphicManager extends Display {
     		updates.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					StatusTab tab = ControllerDeepTwitter.getStatusTabManager().getTab(StatusesType.UPDATES);
-					if(isTwitterUser && clickedItem.getString("idTwitter").equals(ControllerDeepTwitter.getLoggedUserId()))
+					StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);
+					if(isTwitterUser && clickedItem.getString("idTwitter").equals(controller.getLoggedUserId()))
 						tab.setPanelContent(new StatusesTable(StatusesType.UPDATES));
 					else
 						tab.setPanelContent(new StatusesTable(clickedItem.getString("idTwitter")));
-					ControllerDeepTwitter.selectTab(1);
+					controller.selectTab(1);
 				}    			
     		});
     		followers.addActionListener(new ActionListener(){
@@ -702,7 +705,7 @@ public class GraphicManager extends Display {
 	}
 	
 	private class EdgesColorAction extends ColorAction {
-		private String field;		
+		private String field;	
 		
 		public EdgesColorAction(String group, String field) { 
 			super(group, field); 		 

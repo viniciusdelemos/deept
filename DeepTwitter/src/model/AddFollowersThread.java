@@ -13,8 +13,10 @@ import controller.ControllerDeepTwitter;
 public class AddFollowersThread extends Thread {
 		VisualItem source;	
 		GraphicManager gManager;
+		ControllerDeepTwitter controller;
 		
 	public AddFollowersThread(GraphicManager gManager, VisualItem s) {
+		controller = ControllerDeepTwitter.getInstance();
 		this.gManager = gManager;		
 		this.source = s;
 	}
@@ -22,7 +24,7 @@ public class AddFollowersThread extends Thread {
 	public void run()
 	{
 		try {			
-			List<User> followers = ControllerDeepTwitter.getTwitter().getFollowers(source.get("idTwitter").toString());
+			List<User> followers = controller.getTwitter().getFollowers(source.get("idTwitter").toString());
 			int notAdded = 0;
 			boolean isShowingFollowers = source.getBoolean("isShowingFollowers");
 			
@@ -51,16 +53,16 @@ public class AddFollowersThread extends Thread {
 				}
 			}
 			if(!isShowingFollowers)
-				ControllerDeepTwitter.setStatusBarMessage("Adicionados "+(followers.size()-notAdded)+" seguidores de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
+				controller.setStatusBarMessage("Adicionados "+(followers.size()-notAdded)+" seguidores de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
 			else
-				ControllerDeepTwitter.setStatusBarMessage("Adicionados "+notAdded+" seguidores de "+source.getString("name") +" à rede. "+(followers.size()-notAdded)+" já existentes.");
+				controller.setStatusBarMessage("Adicionados "+notAdded+" seguidores de "+source.getString("name") +" à rede. "+(followers.size()-notAdded)+" já existentes.");
 			
 			source.setBoolean("isShowingFollowers",true);
 			//node count: botar no log
 			System.out.println("Node Count: "+gManager.getGraph().getNodeCount());
 			
 		} catch (TwitterException e) {
-			ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
+			controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
 		}
 	}
 }

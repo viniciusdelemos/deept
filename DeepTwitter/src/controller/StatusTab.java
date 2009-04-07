@@ -23,7 +23,6 @@ import model.StatusesType;
 
 public class StatusTab {
 	private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JLabel labelCurrentUser;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator4;
@@ -33,14 +32,17 @@ public class StatusTab {
     private javax.swing.JButton buttonPreviousUser;
     private javax.swing.JButton buttonCloseUpdates;
     private javax.swing.JButton buttonAddUpdate;
+    private javax.swing.JTextField txtCurrentUser;
 	private Map<String,StatusesTable> tablesMap;
 	private StatusesType type;
 	private TabListener tabListener;
 	private int currentTable;
 	private boolean hasMultiplePanels;
 	private ArrayList<String> idArray;
+	private ControllerDeepTwitter controller;
 	
 	public StatusTab(JTabbedPane pane, StatusesType type, String name) {
+		controller = ControllerDeepTwitter.getInstance();
 		initComponents();
 		pane.addTab(name, createAndGetPanel(type));
 		this.type = type;
@@ -79,7 +81,7 @@ public class StatusTab {
 			jScrollPane6.revalidate();
 		}
 		reconfigOnOffButton();
-		labelCurrentUser.setText(ControllerDeepTwitter.getUserName(userId));
+		setCurrentUserName(controller.getUserName(userId));
 	}
 	
 	private void setPanelContent(String userId) {
@@ -87,7 +89,14 @@ public class StatusTab {
 		jScrollPane6.setViewportView(selectedTable.getContent());
 		jScrollPane6.revalidate();
 		reconfigOnOffButton();
-		labelCurrentUser.setText(ControllerDeepTwitter.getUserName(userId));		
+		setCurrentUserName(controller.getUserName(userId));		
+	}
+	
+	public void setCurrentUserName(String name) {
+		//labelCurrentUser.setText(name);
+		//Dimension d = labelCurrentUser.getPreferredSize();
+		//labelCurrentUser.setPreferredSize(new Dimension(d.width+60,d.height));
+		txtCurrentUser.setText(name);
 	}
 	
 	public boolean isActive() {
@@ -152,9 +161,18 @@ public class StatusTab {
         buttonPreviousUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonPreviousUser);
 
-        labelCurrentUser.setFont(new java.awt.Font("Tahoma", 1, 11));
-        labelCurrentUser.setText("username");
-        jToolBar1.add(labelCurrentUser);
+        txtCurrentUser.setBackground(new java.awt.Color(240, 240, 240));
+        txtCurrentUser.setEditable(false);
+        txtCurrentUser.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        txtCurrentUser.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtCurrentUser.setText("username");
+        txtCurrentUser.setAutoscrolls(false);
+        txtCurrentUser.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 240, 240), 0, true));
+        txtCurrentUser.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        txtCurrentUser.setMaximumSize(new java.awt.Dimension(120, 14));
+        txtCurrentUser.setMinimumSize(new java.awt.Dimension(120, 14));
+        txtCurrentUser.setPreferredSize(new java.awt.Dimension(60, 14));
+        jToolBar1.add(txtCurrentUser);
 
         buttonNextUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../forward.png"))); // NOI18N
         buttonNextUser.setToolTipText("Próximo usuário");
@@ -164,6 +182,7 @@ public class StatusTab {
         buttonNextUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonNextUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonNextUser);
+        jToolBar1.add(jSeparator4);
 
         buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../remove.png"))); // NOI18N
         buttonCloseUpdates.setToolTipText("Fechar este usuário");
@@ -173,8 +192,7 @@ public class StatusTab {
         buttonCloseUpdates.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonCloseUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonCloseUpdates);
-        jToolBar1.add(jSeparator4);
-
+        
         buttonTurnOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_on.png"))); // NOI18N
         buttonTurnOnOff.setSelected(true);
         buttonTurnOnOff.setToolTipText("Ligar/desligar atualizar automaticamente");
@@ -198,7 +216,6 @@ public class StatusTab {
 	
 	private void initComponents() {
 		jToolBar1 = new JToolBar();
-		labelCurrentUser = new JLabel();		
 		jScrollPane6 = new JScrollPane();
 		jSeparator2 = new Separator();
 		jSeparator4 = new Separator();
@@ -208,6 +225,7 @@ public class StatusTab {
 	    buttonPreviousUser = new JButton();
 	    buttonCloseUpdates = new JButton();
 	    buttonAddUpdate = new JButton();
+	    txtCurrentUser = new javax.swing.JTextField();
 	    
 	    tabListener = new TabListener();	    
 	    buttonCloseUpdates.addActionListener(tabListener);
@@ -235,7 +253,7 @@ public class StatusTab {
 			buttonPreviousUser.setEnabled(true);
 			buttonNextUser.setEnabled(true);
 		}
-		if(idArray.get(currentTable).equals(ControllerDeepTwitter.getLoggedUserId()))
+		if(idArray.get(currentTable).equals(controller.getLoggedUserId()))
 			buttonCloseUpdates.setEnabled(false);
 		else
 			buttonCloseUpdates.setEnabled(true);
@@ -252,7 +270,7 @@ public class StatusTab {
 		public void actionPerformed(ActionEvent e) {
 			String cmd = e.getActionCommand();
 			if(cmd.equals("buttonNewUpdate")) {
-				ControllerDeepTwitter.openUpdateWindow();
+				controller.openGUINewUpdateWindow();
 			}
 			else if(cmd.equals("buttonPreviousUser")) {
 				currentTable--;
@@ -289,7 +307,7 @@ public class StatusTab {
 					jScrollPane6.setViewportView(new JPanel());
 					buttonTurnOnOff.setEnabled(false);
 					buttonCloseUpdates.setEnabled(false);
-					labelCurrentUser.setText("");
+					setCurrentUserName("");
 				}								
 			}
 			else if(cmd.equals("buttonTurnOnOff")) {

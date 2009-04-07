@@ -12,8 +12,10 @@ public class FollowUserThread extends Thread {
 		GraphicManager gManager;
 		VisualItem targetItem;
 		boolean follow;
+		ControllerDeepTwitter controller;
 		
 	public FollowUserThread(GraphicManager gManager, VisualItem item, boolean follow) {
+		controller = ControllerDeepTwitter.getInstance();
 		this.gManager = gManager;	
 		targetItem = item;
 		this.follow = follow;
@@ -27,25 +29,25 @@ public class FollowUserThread extends Thread {
 			String mainUserId = mainUserNode.getString("idTwitter");
 			String targetUserId = targetNode.getString("idTwitter");
 			
-			boolean existsFriendship = ControllerDeepTwitter.getTwitter().exists(mainUserId, targetUserId);
+			boolean existsFriendship = controller.getTwitter().exists(mainUserId, targetUserId);
 			
 			if(follow) {		
 				if(existsFriendship) return;
-				ControllerDeepTwitter.getTwitter().create(targetNode.getString("idTwitter"));
-				//ControllerDeepTwitter.getTwitter().follow(userId);						
+				controller.getTwitter().create(targetNode.getString("idTwitter"));
+				//controller.getTwitter().follow(userId);						
 				gManager.addEdge(mainUserNode, targetNode);
-				ControllerDeepTwitter.setStatusBarMessage("Agora seguindo "+targetNode.getString("name"));
+				controller.setStatusBarMessage("Agora seguindo "+targetNode.getString("name"));
 			}
 			else { //leave
 				if(!existsFriendship) return;
-				ControllerDeepTwitter.getTwitter().destroy(targetNode.getString("idTwitter"));
-				//ControllerDeepTwitter.getTwitter().leave(userId);				
+				controller.getTwitter().destroy(targetNode.getString("idTwitter"));
+				//controller.getTwitter().leave(userId);				
 				gManager.removeEdge(mainUserNode, targetNode);
-				ControllerDeepTwitter.setStatusBarMessage("Deixando de seguir "+targetNode.getString("name"));
+				controller.setStatusBarMessage("Deixando de seguir "+targetNode.getString("name"));
 			}
 
 		} catch (TwitterException e) {			
-			ControllerDeepTwitter.showMessageDialog(e.getMessage(),MessageType.ERROR);
+			controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
 		}
 	}
 }
