@@ -20,5 +20,6 @@ public class DeepTwitter {
 		controller.setLoginWindow(loginWindow);	
 		SwingUtilities.updateComponentTreeUI(loginWindow);
 		loginWindow.setVisible(true);
+		loginWindow.setLocationRelativeTo(null);
 	}
 }

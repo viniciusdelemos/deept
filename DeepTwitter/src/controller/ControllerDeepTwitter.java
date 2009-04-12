@@ -249,6 +249,7 @@ public class ControllerDeepTwitter {
 					
 					SwingUtilities.updateComponentTreeUI(mainWindow);
 					mainWindow.setVisible(true);
+					mainWindow.setLocationRelativeTo(null);
 					
 					gManager.addNode(u);
 					//gManager.getVisualization().run("layout"); 					
