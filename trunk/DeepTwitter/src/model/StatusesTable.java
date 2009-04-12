@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
@@ -77,8 +78,11 @@ public class StatusesTable {
 		gbc.gridx = 0;
 		gbc.insets = new Insets(0,3,0,1);
 		
-		final User u = s.getUser();		
-		final JLabel interactiveImage = new JLabel(new ImageIcon(u.getProfileImageURL()));
+		final User u = s.getUser();
+		//
+		
+		java.awt.Image image = new ImageIcon(u.getProfileImageURL()).getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
+		final JLabel interactiveImage = new JLabel(new ImageIcon(image));
 		interactiveImage.setSize(48, 48);
 		interactiveImage.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(java.awt.event.MouseEvent arg0) {
