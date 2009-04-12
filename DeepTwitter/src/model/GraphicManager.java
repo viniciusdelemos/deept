@@ -611,7 +611,13 @@ public class GraphicManager extends Display {
 			
 		//métodos utilizados para desenhar a caixa de seleção
 		public void mousePressed(MouseEvent e)
-		{	
+		{
+	    	  
+	    	  if (!e.isShiftDown()) {
+	    		  TupleSet focus = m_vis.getFocusGroup(SELECTED_NODES);
+	    		  focus.clear();
+	    	  }
+			
 			if(!SwingUtilities.isLeftMouseButton(e)) return;
 			
 			if(e.isControlDown()) { 
