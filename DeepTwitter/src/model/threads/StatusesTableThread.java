@@ -83,11 +83,17 @@ public class StatusesTableThread {
 		
 		final User u = s.getUser();
 		
-		//Image image = new ImageIcon(u.getProfileImageURL()).getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
-		//final JLabel interactiveImage = new JLabel(new ImageIcon(image));
+		JLabel interactiveImageAux;
+		ImageIcon userPicture = new ImageIcon(u.getProfileImageURL());
+		if(userPicture.getIconHeight()>48 || userPicture.getIconWidth()>48) {
+			Image image = userPicture.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
+			interactiveImageAux = new JLabel(new ImageIcon(image));
+		}
+		else
+			interactiveImageAux = new JLabel(userPicture);
+
+		final JLabel interactiveImage = interactiveImageAux;
 		
-		final JLabel interactiveImage = new JLabel(new ImageIcon(u.getProfileImageURL()));
-		interactiveImage.setSize(48, 48);
 		interactiveImage.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(java.awt.event.MouseEvent arg0) {
 				interactiveImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
