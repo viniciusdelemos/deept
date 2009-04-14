@@ -1,6 +1,4 @@
-package model;
-
-import gui.GUINewUpdate;
+package model.threads;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -21,13 +19,18 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import model.ChartColor;
+import model.MessageType;
+import model.StatusesType;
+import model.URLLinkAction;
+
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
 
-public class StatusesTable {
+public class StatusesTableThread {
 	private int rows;
 	private String userId;
 	private boolean isTwitterUser;
@@ -40,12 +43,12 @@ public class StatusesTable {
 	private GridBagConstraints gbc;
 	private ControllerDeepTwitter controller;
 	
-	public StatusesTable (String userId) {		
+	public StatusesTableThread (String userId) {		
 		this(StatusesType.UPDATES);
 		this.userId = userId;		
 	}
 	
-	public StatusesTable(StatusesType type) {
+	public StatusesTableThread(StatusesType type) {
 		this.statusesType = type;
 		this.userId = null;
 		controller = ControllerDeepTwitter.getInstance();
@@ -79,10 +82,11 @@ public class StatusesTable {
 		gbc.insets = new Insets(0,3,0,1);
 		
 		final User u = s.getUser();
-		//
 		
-		java.awt.Image image = new ImageIcon(u.getProfileImageURL()).getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
-		final JLabel interactiveImage = new JLabel(new ImageIcon(image));
+		//Image image = new ImageIcon(u.getProfileImageURL()).getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
+		//final JLabel interactiveImage = new JLabel(new ImageIcon(image));
+		
+		final JLabel interactiveImage = new JLabel(new ImageIcon(u.getProfileImageURL()));
 		interactiveImage.setSize(48, 48);
 		interactiveImage.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(java.awt.event.MouseEvent arg0) {
@@ -140,7 +144,7 @@ public class StatusesTable {
         gbc.anchor = GridBagConstraints.NORTH;
         
 		final JLabel replyButton = new JLabel();	
-		ImageIcon replyIcon = new ImageIcon(getClass().getResource("../reply.jpg"));	
+		ImageIcon replyIcon = new ImageIcon(getClass().getResource("../../reply.jpg"));	
 		replyButton.setIcon(replyIcon);		
 		replyButton.setToolTipText("Reply");
 		replyButton.addMouseListener(new MouseAdapter(){
@@ -162,9 +166,9 @@ public class StatusesTable {
 		final JLabel favoriteButton = new JLabel();
 		ImageIcon starIcon;
 		if(s.isFavorited()) 
-			starIcon = new ImageIcon(getClass().getResource("../star_on.png"));		
+			starIcon = new ImageIcon(getClass().getResource("../../star_on.png"));		
 		else 
-			starIcon = new ImageIcon(getClass().getResource("../star_off.png"));
+			starIcon = new ImageIcon(getClass().getResource("../../star_off.png"));
 		favoriteButton.setIcon(starIcon);	
 		favoriteButton.setToolTipText("Favorite");
 		favoriteButton.addMouseListener(new MouseAdapter(){
@@ -176,11 +180,11 @@ public class StatusesTable {
 					int isOff = favoriteButton.getIcon().toString().indexOf("star_off");
 					if(isOff>0) {
 						controller.getTwitter().createFavorite(s.getId());
-						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../star_on.png")));
+						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../../star_on.png")));
 					}
 					else {
 						controller.getTwitter().destroyFavorite(s.getId());
-						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../star_off.png")));
+						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../../star_off.png")));
 						if(statusesType == StatusesType.FAVORITES) {
 							System.out.println("removing favorite panel");
 							panel.remove(updatePanel);
@@ -205,7 +209,7 @@ public class StatusesTable {
 			gbc.insets = new Insets(0,0,4,0);
 			
 			final JLabel deleteButton = new JLabel();
-			ImageIcon deleteIcon = new ImageIcon(getClass().getResource("../remove.png"));	
+			ImageIcon deleteIcon = new ImageIcon(getClass().getResource("../../remove.png"));	
 			deleteButton.setIcon(deleteIcon);	
 			deleteButton.setToolTipText("Delete");
 			deleteButton.addMouseListener(new MouseAdapter(){
@@ -400,7 +404,7 @@ public class StatusesTable {
 							if(empty != null) panel.remove(empty);							
 							//de trás para frente, para adicionar as mais recentes em cima
 							for(int i=statusList.size()-1; i>=0; i--) {
-								Status s = statusList.get(i);
+								Status s = statusList.get(i);								
 								//para evitar bug da API do twitter
 								if(s.getId()>lastStatusId) {
 									c.weightx = 0.5;

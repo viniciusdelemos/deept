@@ -1,5 +1,7 @@
-package model;
+package model.threads;
 
+import model.GraphicManager;
+import model.MessageType;
 import controller.ControllerDeepTwitter;
 import prefuse.data.Node;
 import prefuse.visual.NodeItem;

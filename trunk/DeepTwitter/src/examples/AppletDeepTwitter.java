@@ -23,7 +23,7 @@ public class AppletDeepTwitter extends JPrefuseApplet {
         
         try{
         	twitter = new Twitter(username,password);         	
-        	gManager = new GraphicManager(isTwitterUser);
+        	gManager = new GraphicManager();
         	User mainUser = twitter.getUserDetail(username);
         	gManager.addNode(mainUser);
         }

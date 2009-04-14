@@ -23,7 +23,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import model.GraphicManager;
 import model.MessageType;
-import model.StatusesTable;
+import model.threads.StatusesTableThread;
 import model.StatusesType;
 import prefuse.Display;
 import prefuse.data.Graph;
@@ -33,6 +33,7 @@ import prefuse.data.io.GraphMLWriter;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import twitter4j.UserWithStatus;
 
 public class ControllerDeepTwitter {
 	private GUILoginDeepTwitter loginWindow;
@@ -48,7 +49,7 @@ public class ControllerDeepTwitter {
 	private MainWindowListener mainWindowListener;
 	
 	private ControllerDeepTwitter(){
-		//construtor private previne chamadas nao autorizadas ao construtor.
+		//construtor private previne chamadas nao autorizadas ao construtor.		
 	}
 	
 	private static class SingletonHolder { 
@@ -152,7 +153,7 @@ public class ControllerDeepTwitter {
 
 				if(logInOK)
 				{
-					User u = twitter.getAuthenticatedUser();
+					UserWithStatus u = twitter.getAuthenticatedUser();
 					loggedUserId = String.valueOf(u.getId());
 					gManager = new GraphicManager();						
 					//User u2 = twitter.getAuthenticatedUser();
@@ -184,7 +185,7 @@ public class ControllerDeepTwitter {
 					windowTabs.addChangeListener(new ChangeListener(){
 						@Override
 						public void stateChanged(ChangeEvent e) {
-							StatusesTable table = null;
+							StatusesTableThread table = null;
 							int tabIndex = windowTabs.getSelectedIndex();							
 							//index 0 != Tab, é a tab de menu
 							if(tabIndex == 0) {
@@ -199,33 +200,33 @@ public class ControllerDeepTwitter {
 								jSplitPane.setDividerLocation(431);
 								if(selectedTab.isActive()) return;								
 								if(isTwitterUser)
-									table = new StatusesTable(StatusesType.UPDATES);
+									table = new StatusesTableThread(StatusesType.UPDATES);
 								else
-									table = new StatusesTable(getLoggedUserId());
+									table = new StatusesTableThread(getLoggedUserId());
 								break;
 								
 							case REPLIES:
 								jSplitPane.setDividerLocation(431);
 								if(selectedTab.isActive()) return;
-								table = new StatusesTable(StatusesType.REPLIES);
+								table = new StatusesTableThread(StatusesType.REPLIES);
 								break;
 								
 							case FAVORITES:
 								jSplitPane.setDividerLocation(431);
 								if(selectedTab.isActive()) return;
-								table = new StatusesTable(StatusesType.FAVORITES);
+								table = new StatusesTableThread(StatusesType.FAVORITES);
 								break;
 								
 							case DIRECT_MESSAGES:
 								jSplitPane.setDividerLocation(431);
 								if(selectedTab.isActive()) return;
-								table = new StatusesTable(StatusesType.DIRECT_MESSAGES);
+								table = new StatusesTableThread(StatusesType.DIRECT_MESSAGES);
 								break;
 								
 							case PUBLIC_TIMELINE:
 								jSplitPane.setDividerLocation(431);
 								if(selectedTab.isActive()) return;
-								table = new StatusesTable(StatusesType.PUBLIC_TIMELINE);
+								table = new StatusesTableThread(StatusesType.PUBLIC_TIMELINE);
 								break;								
 							}		
 							selectedTab.setPanelContent(table);
@@ -248,12 +249,12 @@ public class ControllerDeepTwitter {
 					jSplitPane.setRightComponent((Display)gManager);		
 					
 					SwingUtilities.updateComponentTreeUI(mainWindow);
-					mainWindow.setVisible(true);
 					mainWindow.setLocationRelativeTo(null);
+					mainWindow.setVisible(true);					
 					
 					gManager.addNode(u);
 					//gManager.getVisualization().run("layout"); 					
-					//gManager.getVisualization().repaint();					
+					//gManager.getVisualization().repaint();	
 				}	
 			} catch (TwitterException ex) {
 				if(ex.getStatusCode()==400)
