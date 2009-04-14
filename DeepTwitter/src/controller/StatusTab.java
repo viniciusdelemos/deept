@@ -1,6 +1,5 @@
 package controller;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -18,8 +16,8 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JToolBar.Separator;
 
-import model.StatusesTable;
 import model.StatusesType;
+import model.threads.StatusesTableThread;
 
 public class StatusTab {
 	private javax.swing.JToolBar jToolBar1;
@@ -33,7 +31,7 @@ public class StatusTab {
     private javax.swing.JButton buttonCloseUpdates;
     private javax.swing.JButton buttonAddUpdate;
     private javax.swing.JTextField txtCurrentUser;
-	private Map<String,StatusesTable> tablesMap;
+	private Map<String,StatusesTableThread> tablesMap;
 	private StatusesType type;
 	private TabListener tabListener;
 	private int currentTable;
@@ -50,7 +48,7 @@ public class StatusTab {
 		currentTable = 0;
 		if(type == StatusesType.UPDATES || type == StatusesType.FAVORITES) 		
 			hasMultiplePanels = true;		
-		tablesMap = new HashMap<String,StatusesTable>();
+		tablesMap = new HashMap<String,StatusesTableThread>();
 	}
 	
 	private JPanel createAndGetPanel(StatusesType typeOfTab) {
@@ -61,9 +59,9 @@ public class StatusTab {
 		return jPanel2;
 	}	
 	
-	public void setPanelContent(StatusesTable newTable) {
+	public void setPanelContent(StatusesTableThread newTable) {
 		String userId = newTable.getUserId();
-		StatusesTable selectedTable = tablesMap.get(userId);		
+		StatusesTableThread selectedTable = tablesMap.get(userId);		
 		if(selectedTable == null) {
 			JPanel content = newTable.getContent();
 			jScrollPane6.setViewportView(content);
@@ -85,7 +83,7 @@ public class StatusTab {
 	}
 	
 	private void setPanelContent(String userId) {
-		StatusesTable selectedTable = tablesMap.get(userId);		
+		StatusesTableThread selectedTable = tablesMap.get(userId);		
 		jScrollPane6.setViewportView(selectedTable.getContent());
 		jScrollPane6.revalidate();
 		reconfigOnOffButton();

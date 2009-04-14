@@ -1,21 +1,24 @@
-package model;
+package model.threads;
 
 import java.util.List;
 
+import model.GraphicManager;
+import model.MessageType;
+
 import prefuse.data.Node;
 import prefuse.util.PrefuseLib;
-import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
+import twitter4j.TwitterAdapter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
 
-public class AddFollowersThread extends Thread {
+public class AddFriendsThread extends Thread {
 		VisualItem source;	
 		GraphicManager gManager;
 		ControllerDeepTwitter controller;
 		
-	public AddFollowersThread(GraphicManager gManager, VisualItem s) {
+	public AddFriendsThread(GraphicManager gManager, VisualItem s) {
 		controller = ControllerDeepTwitter.getInstance();
 		this.gManager = gManager;		
 		this.source = s;
@@ -23,12 +26,18 @@ public class AddFollowersThread extends Thread {
 	
 	public void run()
 	{
-		try {			
-			List<User> followers = controller.getTwitter().getFollowers(source.get("idTwitter").toString());
+		try {
+			List<User> friends = controller.getTwitter().getFriends(source.get("idTwitter").toString());
+//			controller.getTwitter().getFriendsAsync(source.get("idTwitter").toString(), new TwitterAdapter(){
+//				@override
+//				public void gotFriends(List<User> users){
+//					
+//			    }
+//			});
 			int notAdded = 0;
-			boolean isShowingFollowers = source.getBoolean("isShowingFollowers");
+			boolean isShowingFriends = source.getBoolean("isShowingFriends");
 			
-			for(User user : followers)
+			for(User user : friends)
 			{
 				User u = (User)gManager.getUser(user.getId());					
 				
@@ -43,21 +52,21 @@ public class AddFollowersThread extends Thread {
 					PrefuseLib.setY(newNode, null, y);
 					
 					//AO TER UM VISUALITEM, USAR VisualItem.getSourceTuple() para pegar instancia de Nodo ou Edge.					
-					gManager.addEdge(n,(Node)source.getSourceTuple()); 		
+					gManager.addEdge((Node)source.getSourceTuple(), n); 		
 				}
-				else if(!isShowingFollowers)
+				else if(!isShowingFriends)
 				{
 					Node n = gManager.getNodeByTwitterId(u.getId());
-					gManager.addEdge(n,(Node)source.getSourceTuple());
+					gManager.addEdge((Node)source.getSourceTuple(), n);
 					notAdded++;
 				}
 			}
-			if(!isShowingFollowers)
-				controller.setStatusBarMessage("Adicionados "+(followers.size()-notAdded)+" seguidores de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
+			if(!isShowingFriends)
+				controller.setStatusBarMessage("Adicionados "+(friends.size()-notAdded)+" amigos de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
 			else
-				controller.setStatusBarMessage("Adicionados "+notAdded+" seguidores de "+source.getString("name") +" à rede. "+(followers.size()-notAdded)+" já existentes.");
+				controller.setStatusBarMessage("Adicionados "+notAdded+" amigos de "+source.getString("name") +" à rede. "+(friends.size()-notAdded)+" já existentes.");
 			
-			source.setBoolean("isShowingFollowers",true);
+			source.setBoolean("isShowingFriends",true);
 			//node count: botar no log
 			System.out.println("Node Count: "+gManager.getGraph().getNodeCount());
 			

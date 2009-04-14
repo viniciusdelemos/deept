@@ -18,6 +18,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import model.threads.AddFollowersThread;
+import model.threads.AddFriendsThread;
+import model.threads.FollowUserThread;
+import model.threads.StatusesTableThread;
+
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -57,6 +62,7 @@ import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 import twitter4j.User;
+import twitter4j.UserWithStatus;
 import controller.ControllerDeepTwitter;
 import controller.StatusTab;
 
@@ -536,9 +542,9 @@ public class GraphicManager extends Display {
 				public void actionPerformed(ActionEvent arg0) {
 					StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);
 					if(isTwitterUser && clickedItem.getString("idTwitter").equals(controller.getLoggedUserId()))
-						tab.setPanelContent(new StatusesTable(StatusesType.UPDATES));
+						tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES));
 					else
-						tab.setPanelContent(new StatusesTable(clickedItem.getString("idTwitter")));
+						tab.setPanelContent(new StatusesTableThread(clickedItem.getString("idTwitter")));
 					controller.selectTab(1);
 				}    			
     		});
@@ -611,13 +617,7 @@ public class GraphicManager extends Display {
 			
 		//métodos utilizados para desenhar a caixa de seleção
 		public void mousePressed(MouseEvent e)
-		{
-	    	  
-	    	  if (!e.isShiftDown()) {
-	    		  TupleSet focus = m_vis.getFocusGroup(SELECTED_NODES);
-	    		  focus.clear();
-	    	  }
-			
+		{			
 			if(!SwingUtilities.isLeftMouseButton(e)) return;
 			
 			if(e.isControlDown()) { 

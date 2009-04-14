@@ -6,7 +6,7 @@ public class URLLinkAction {
 	private String url;
 	private ControllerDeepTwitter controller;
 
-	URLLinkAction(String bac)
+	public URLLinkAction(String bac)
 	{
 		controller = ControllerDeepTwitter.getInstance();
 		url=bac;
