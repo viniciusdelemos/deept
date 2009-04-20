@@ -37,15 +37,16 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonHideSelection = new javax.swing.JButton();
         buttonRemoveSelection = new javax.swing.JButton();
         buttonShowAll = new javax.swing.JButton();
+        checkBoxCurvedEdges = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         buttonAddUpdate = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         buttonPreviousUser = new javax.swing.JButton();
-        labelCurrentUser = new javax.swing.JLabel();
+        txtCurrentUser = new javax.swing.JTextField();
         buttonNextUser = new javax.swing.JButton();
-        buttonCloseUpdates = new javax.swing.JButton();
         jSeparator4 = new javax.swing.JToolBar.Separator();
+        buttonCloseUpdates = new javax.swing.JButton();
         buttonTurnOnOff = new javax.swing.JToggleButton();
         buttonSettings = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
@@ -104,7 +105,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         checkBoxHighQuality.setActionCommand("checkBoxHighQuality");
         checkBoxHighQuality.setName("checkBoxHighQuality"); // NOI18N
 
-        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14));
+        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         labelFilter.setText("Filtro:");
 
         buttonHideSelection.setText("Esconder seleção");
@@ -119,6 +120,11 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonShowAll.setActionCommand("buttonShowAll");
         buttonShowAll.setName("buttonShowAll"); // NOI18N
 
+        checkBoxCurvedEdges.setBackground(new java.awt.Color(255, 255, 255));
+        checkBoxCurvedEdges.setText("arestas curvas");
+        checkBoxCurvedEdges.setActionCommand("checkBoxCurvedEdges");
+        checkBoxCurvedEdges.setName("checkBoxCurvedEdges"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -126,6 +132,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(checkBoxCurvedEdges)
                     .addComponent(labelFilter)
                     .addComponent(checkBoxHighQuality)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -157,9 +164,11 @@ public class GUIMainWindow extends javax.swing.JFrame {
                 .addComponent(buttonClearSelection)
                 .addGap(18, 18, 18)
                 .addComponent(checkBoxHighQuality)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(checkBoxCurvedEdges)
+                .addGap(7, 7, 7)
                 .addComponent(labelFilter)
-                .addContainerGap(244, Short.MAX_VALUE))
+                .addContainerGap(221, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Interações", jPanel1);
@@ -190,9 +199,18 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonPreviousUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonPreviousUser);
 
-        labelCurrentUser.setFont(new java.awt.Font("Tahoma", 1, 11));
-        labelCurrentUser.setText("username");
-        jToolBar1.add(labelCurrentUser);
+        txtCurrentUser.setBackground(new java.awt.Color(240, 240, 240));
+        txtCurrentUser.setEditable(false);
+        txtCurrentUser.setFont(new java.awt.Font("Tahoma", 1, 12));
+        txtCurrentUser.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtCurrentUser.setText("username");
+        txtCurrentUser.setAutoscrolls(false);
+        txtCurrentUser.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 240, 240), 0, true));
+        txtCurrentUser.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        txtCurrentUser.setMaximumSize(new java.awt.Dimension(120, 14));
+        txtCurrentUser.setMinimumSize(new java.awt.Dimension(120, 14));
+        txtCurrentUser.setPreferredSize(new java.awt.Dimension(60, 14));
+        jToolBar1.add(txtCurrentUser);
 
         buttonNextUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../forward.png"))); // NOI18N
         buttonNextUser.setToolTipText("Próximo usuário");
@@ -202,6 +220,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonNextUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonNextUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonNextUser);
+        jToolBar1.add(jSeparator4);
 
         buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../remove.png"))); // NOI18N
         buttonCloseUpdates.setToolTipText("Fechar este usuário");
@@ -210,7 +229,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCloseUpdates.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonCloseUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonCloseUpdates);
-        jToolBar1.add(jSeparator4);
 
         buttonTurnOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_on.png"))); // NOI18N
         buttonTurnOnOff.setSelected(true);
@@ -233,7 +251,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jPanel2.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
         jPanel2.add(jScrollPane6, java.awt.BorderLayout.CENTER);
 
-        //jTabbedPane1.addTab("Atualizações", jPanel2);
+        jTabbedPane1.addTab("Atualizações", jPanel2);
 
         jSplitPane1.setLeftComponent(jTabbedPane1);
 
@@ -323,11 +341,16 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonSettings.addActionListener(listener);
         buttonAddUpdate.addActionListener(listener);
 
-        checkBoxHighQuality.addActionListener(listener);        
+        checkBoxHighQuality.addActionListener(listener);
+        checkBoxCurvedEdges.addActionListener(listener);
 	}
 
     public boolean isHighQuality() {
         return checkBoxHighQuality.isSelected(); 
+    }
+
+    public boolean isCurvedEdges() {
+        return checkBoxCurvedEdges.isSelected();
     }
 
     public boolean isStatusBarVisible() {
@@ -358,8 +381,8 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonNextUser.setEnabled(b);
     }
 
-    public void setCurrentUserLabel(String s) {
-        labelCurrentUser.setText(s);
+    public void setCurrentUserName(String s) {
+        txtCurrentUser.setText(s);
     }
 
     public void setCloseUserEnabled(boolean b) {
@@ -380,6 +403,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonShowAll;
     private javax.swing.JToggleButton buttonTurnOnOff;
     private javax.swing.JButton buttonUpdate;
+    private javax.swing.JCheckBox checkBoxCurvedEdges;
     private javax.swing.JCheckBox checkBoxHighQuality;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -394,7 +418,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JLabel labelCurrentUser;
     private javax.swing.JLabel labelFilter;
     private javax.swing.JLabel labelStatusBar;
     private javax.swing.JCheckBoxMenuItem menuCheckBoxStatusBar;
@@ -404,6 +427,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuLogout;
     private javax.swing.JMenuItem menuSaveNetwork;
     private javax.swing.JMenuItem menuSaveNetworkAs;
+    private javax.swing.JTextField txtCurrentUser;
     // End of variables declaration
 
 }
