@@ -27,7 +27,9 @@ public class AddFriendsThread extends Thread {
 	public void run()
 	{
 		try {
+			System.out.println("GETTING FRIENDS FOR "+source.get("name"));
 			List<User> friends = controller.getTwitter().getFriends(source.get("idTwitter").toString());
+			System.out.println("GOT FRIENDS");
 //			controller.getTwitter().getFriendsAsync(source.get("idTwitter").toString(), new TwitterAdapter(){
 //				@override
 //				public void gotFriends(List<User> users){
