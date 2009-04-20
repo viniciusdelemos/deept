@@ -85,8 +85,9 @@ public class GraphicManager extends Display {
     private VisualItem selectionBox;
 	private int defaultEdgeColor, highlightEdgeColor, highlightArrowColor,
 	highlightTextColor, defaultTextColor, mainUserStrokeColor, mainUserFillColor,
-	selectedUserStrokeColor, selectedUserFillColor;
+	selectedUserStrokeColor, selectedUserFillColor, edgeType;
 	private PanControl panControl;
+	private EdgeRenderer edgeRenderer;
 	private TupleSet selectedNodes;
 	private AggregateTable groupTable;
 	private ControllerDeepTwitter controller;
@@ -126,7 +127,8 @@ public class GraphicManager extends Display {
     	nodeRenderer.setMaxImageDimensions(100,100);
     	nodeRenderer.setRoundedCorner(8,8);
 
-    	EdgeRenderer edgeRenderer = new EdgeRenderer(prefuse.Constants.EDGE_TYPE_LINE,prefuse.Constants.EDGE_ARROW_FORWARD);
+    	edgeType = Constants.EDGE_TYPE_LINE;
+    	edgeRenderer = new EdgeRenderer(edgeType,prefuse.Constants.EDGE_ARROW_FORWARD);    	
     	edgeRenderer.setArrowHeadSize(20,20);   
     	edgeRenderer.setDefaultLineWidth(2);   	
     	//edgeRenderer.setHorizontalAlignment1(prefuse.Constants.CENTER);
@@ -340,6 +342,13 @@ public class GraphicManager extends Display {
 		Edge e = g.getEdge(source, target);
 		g.removeEdge(e);
 	}
+    
+    public void setEdgeType(boolean isCurved) {
+    	if(isCurved)
+    		edgeRenderer.setEdgeType(Constants.EDGE_TYPE_CURVE);
+    	else
+    		edgeRenderer.setEdgeType(Constants.EDGE_TYPE_LINE);
+    }
     
     public void createGroup()
 	{
