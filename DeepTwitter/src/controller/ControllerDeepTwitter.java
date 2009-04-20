@@ -46,7 +46,7 @@ public class ControllerDeepTwitter {
 	private String loggedUserId;
 	private JTabbedPane windowTabs;
 	private StatusTabManager tabManager;
-	private MainWindowListener mainWindowListener;
+	private MainWindowListener mainWindowListener;	
 	
 	private ControllerDeepTwitter(){
 		//construtor private previne chamadas nao autorizadas ao construtor.		
@@ -166,8 +166,9 @@ public class ControllerDeepTwitter {
 										
 					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
 					windowTabs = mainWindow.getTabs();
-					System.out.println(windowTabs.getTabCount());
-										
+					
+					windowTabs.remove(1);
+					
 					tabManager = new StatusTabManager();
 					tabManager.setTabbedPane(windowTabs);
 					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //1
@@ -415,7 +416,10 @@ public class ControllerDeepTwitter {
 			}
 			else if(cmd.equals("checkBoxHighQuality")) {						
 				gManager.setHighQuality(mainWindow.isHighQuality());					
-			}	
+			}
+			else if(cmd.equals("checkBoxCurvedEdges")) {
+				gManager.setEdgeType(mainWindow.isCurvedEdges());
+			}
 		}
 	}
 }
