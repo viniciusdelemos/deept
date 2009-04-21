@@ -4,6 +4,7 @@ import java.util.List;
 
 import model.GraphicManager;
 import model.MessageType;
+import model.UserDeepT;
 
 import prefuse.data.Node;
 import prefuse.util.PrefuseLib;
@@ -11,6 +12,7 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import twitter4j.UserWithStatus;
 import controller.ControllerDeepTwitter;
 
 public class AddFollowersThread extends Thread {
@@ -27,13 +29,13 @@ public class AddFollowersThread extends Thread {
 	public void run()
 	{
 		try {			
-			List<User> followers = controller.getTwitter().getFollowers(source.get("idTwitter").toString());
+			List<UserWithStatus> followers = controller.getTwitter().getFollowers(source.get("idTwitter").toString());
 			int notAdded = 0;
 			boolean isShowingFollowers = source.getBoolean("isShowingFollowers");
 			
-			for(User user : followers)
+			for(UserWithStatus user : followers)
 			{
-				User u = (User)gManager.getUser(user.getId());					
+				UserDeepT u = gManager.getUser(user.getId());					
 				
 				if(u == null)
 				{	

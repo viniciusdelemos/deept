@@ -7,23 +7,25 @@ import java.util.Map;
 import twitter4j.*;
 
 public class SocialNetwork {   
-    private Map<Integer,User> usersMap;
+    private Map<Integer,UserDeepT> usersMap;
     private List<UsersGroup> listUsersGroup;
     private int groupId;
     
     public SocialNetwork() {        
-        usersMap = new HashMap<Integer, User>();     
+        usersMap = new HashMap<Integer, UserDeepT>();     
         listUsersGroup = new ArrayList<UsersGroup>();
         groupId = 0;
     }
     
-	public User getUser(int twitterId) {
+	public UserDeepT getUser(int twitterId) {
 		return usersMap.get(twitterId);
 	}
 		
-	public void addUser(User u)
+	public void addUser(UserWithStatus u, int idGraphic)
 	{
-		usersMap.put(u.getId(), u);
+		UserDeepT userDeepT = new UserDeepT(u, idGraphic);
+		usersMap.put(u.getId(), userDeepT);
+
 	}
 	
 	public int getNumUsers()
