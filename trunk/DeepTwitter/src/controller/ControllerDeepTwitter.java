@@ -81,7 +81,7 @@ public class ControllerDeepTwitter {
 		return gManager.getUserName(Integer.parseInt(id));
 	}
 	
-	public void searchAndAddUserToNetwork(User u) {
+	public void searchAndAddUserToNetwork(UserWithStatus u) {
 		gManager.searchAndAddUserToNetwork(u);
 	}
 	
@@ -169,6 +169,7 @@ public class ControllerDeepTwitter {
 					
 					windowTabs.remove(1);
 					
+
 					tabManager = new StatusTabManager();
 					tabManager.setTabbedPane(windowTabs);
 					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //1
@@ -397,7 +398,7 @@ public class ControllerDeepTwitter {
 					String id = guiAddUser.getUser();
 					if(!id.equals("")) {
 						System.out.println("=> Requesting user to Twitter");
-						User u = (User)twitter.getUserDetail(id);
+						UserWithStatus u = twitter.getUserDetail(id);
 						System.out.println("=> Got user");
 						gManager.searchAndAddUserToNetwork(u);								
 						guiAddUser.dispose();

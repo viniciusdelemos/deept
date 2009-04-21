@@ -9,6 +9,7 @@ import prefuse.util.ui.JPrefuseApplet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import twitter4j.UserWithStatus;
 
 public class AppletDeepTwitter extends JPrefuseApplet {	
 	private static GraphicManager gManager = null;
@@ -24,7 +25,7 @@ public class AppletDeepTwitter extends JPrefuseApplet {
         try{
         	twitter = new Twitter(username,password);         	
         	gManager = new GraphicManager();
-        	User mainUser = twitter.getUserDetail(username);
+        	UserWithStatus mainUser = twitter.getUserDetail(username);
         	gManager.addNode(mainUser);
         }
         catch(TwitterException te)

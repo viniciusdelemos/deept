@@ -85,7 +85,7 @@ public class GraphicManager extends Display {
     private VisualItem selectionBox;
 	private int defaultEdgeColor, highlightEdgeColor, highlightArrowColor,
 	highlightTextColor, defaultTextColor, mainUserStrokeColor, mainUserFillColor,
-	selectedUserStrokeColor, selectedUserFillColor, edgeType;
+	selectedUserStrokeColor, selectedUserFillColor, edgeType;;
 	private PanControl panControl;
 	private EdgeRenderer edgeRenderer;
 	private TupleSet selectedNodes;
@@ -127,8 +127,9 @@ public class GraphicManager extends Display {
     	nodeRenderer.setMaxImageDimensions(100,100);
     	nodeRenderer.setRoundedCorner(8,8);
 
+
     	edgeType = Constants.EDGE_TYPE_LINE;
-    	edgeRenderer = new EdgeRenderer(edgeType,prefuse.Constants.EDGE_ARROW_FORWARD);    	
+    	edgeRenderer = new EdgeRenderer(edgeType,prefuse.Constants.EDGE_ARROW_FORWARD);
     	edgeRenderer.setArrowHeadSize(20,20);   
     	edgeRenderer.setDefaultLineWidth(2);   	
     	//edgeRenderer.setHorizontalAlignment1(prefuse.Constants.CENTER);
@@ -280,8 +281,8 @@ public class GraphicManager extends Display {
     	m_vis.run("layout");    	
     }        
 	
-    public Node addNode(User u) {
-    	socialNetwork.addUser(u);
+    public Node addNode(UserWithStatus u) {
+    	socialNetwork.addUser(u, numUsers);
     	Node newNode = g.addNode();
     	newNode.set("id", numUsers);
     	newNode.set("idTwitter", u.getId());
@@ -303,8 +304,8 @@ public class GraphicManager extends Display {
     	return newNode;    	
     }
     
-    public void searchAndAddUserToNetwork(User u) {
-    	User exists = getUser(u.getId());
+    public void searchAndAddUserToNetwork(UserWithStatus u) {
+    	UserDeepT exists = getUser(u.getId());
     	VisualItem selectedNode;
     	
     	if(exists==null) {
@@ -343,12 +344,14 @@ public class GraphicManager extends Display {
 		g.removeEdge(e);
 	}
     
+
     public void setEdgeType(boolean isCurved) {
     	if(isCurved)
     		edgeRenderer.setEdgeType(Constants.EDGE_TYPE_CURVE);
     	else
     		edgeRenderer.setEdgeType(Constants.EDGE_TYPE_LINE);
     }
+    
     
     public void createGroup()
 	{
@@ -410,7 +413,7 @@ public class GraphicManager extends Display {
 //		return getVisualization().getVisualItem(NODES, n);
 //	}
 		
-	public User getUser(int idTwitter) {
+	public UserDeepT getUser(int idTwitter) {
 		return socialNetwork.getUser(idTwitter);
 	}
 	
