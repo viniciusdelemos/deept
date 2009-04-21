@@ -15,6 +15,7 @@ import java.util.List;
 public class User extends TwitterResponse implements java.io.Serializable {
     static final String[] POSSIBLE_ROOT_NAMES = new String[]{"user", "sender", "recipient"};
     private Twitter twitter;
+    
     private int id;
     private String name;
     private String screenName;
@@ -24,6 +25,7 @@ public class User extends TwitterResponse implements java.io.Serializable {
     private String url;
     private boolean isProtected;
     private int followersCount;
+    
     private static final long serialVersionUID = 3037057798600246529L;
 
     /*package*/User(Element elem, Twitter twitter) throws TwitterException {

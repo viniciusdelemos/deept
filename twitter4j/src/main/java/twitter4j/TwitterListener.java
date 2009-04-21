@@ -23,9 +23,9 @@ public interface TwitterListener {
 
     void destroyedStatus(Status destroyedStatus);
 
-    void gotFriends(List<User> users);
+    void gotFriends(List<UserWithStatus> list);
 
-    void gotFollowers(List<User> users);
+    void gotFollowers(List<UserWithStatus> list);
 
     void gotFeatured(List<User> users);
 

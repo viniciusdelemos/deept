@@ -23,6 +23,7 @@ public class AsyncTwitterTestUnit extends TestCase implements TwitterListener {
     private Status status = null;
     private User user = null;
     private UserWithStatus userWithStatus = null;
+    private List<UserWithStatus> usersWithStatus = null;
     private boolean test;
     private String schedule;
     private DirectMessage message = null;
@@ -59,12 +60,12 @@ public class AsyncTwitterTestUnit extends TestCase implements TwitterListener {
         this.status = destroyedStatus;
     }
 
-    public void gotFriends(List<User> users) {
-        this.users = users;
+    public void gotFriends(List<UserWithStatus> users) {
+        this.usersWithStatus = users;
     }
 
-    public void gotFollowers(List<User> users) {
-        this.users = users;
+    public void gotFollowers(List<UserWithStatus> users) {
+        this.usersWithStatus = users;
     }
 
     public void gotFeatured(List<User> users) {

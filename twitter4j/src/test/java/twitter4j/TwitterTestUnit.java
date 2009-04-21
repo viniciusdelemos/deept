@@ -193,7 +193,7 @@ public class TwitterTestUnit extends TestCase {
         twitterAPI1.destroyStatus(status.getId());
     }
     public void testGetFriends() throws Exception{
-        List<User> actualReturn = twitterAPI1.getFriends(id2);
+        List<UserWithStatus> actualReturn = twitterAPI1.getFriends(id2);
         boolean found = false;
         for(User user: actualReturn){
             found = found || user.getName().equals("Yusuke Yamamoto");
@@ -230,7 +230,7 @@ public class TwitterTestUnit extends TestCase {
         twitterAPI2.destroyFavorite(status.getId());
     }
     public void testFollowers() throws Exception{
-        List<User> actualReturn = twitterAPI1.getFollowers();
+        List<UserWithStatus> actualReturn = twitterAPI1.getFollowers();
         assertTrue(actualReturn.size() > 0);
         actualReturn = twitterAPI1.getFollowers(1);
         assertTrue(actualReturn.size() > 0);

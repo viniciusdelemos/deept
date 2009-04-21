@@ -20,7 +20,7 @@ public class UserMethods {
 	}
 	
 	/** Friends **/
-	
+	/*
 	public void getFriends()
 	{
 		Twitter twitter = new Twitter(user, pass);
@@ -94,7 +94,7 @@ public class UserMethods {
 	}
 	
 	/** Followers **/
-	
+	/*
 	public void getFollowers()
 	{
 		Twitter twitter = new Twitter(user, pass);
