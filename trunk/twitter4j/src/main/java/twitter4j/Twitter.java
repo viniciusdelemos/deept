@@ -752,9 +752,9 @@ public class Twitter implements java.io.Serializable {
      * @return the list of friends
      * @throws TwitterException when Twitter service or network is unavailable
      */
-    public List<User> getFriends() throws TwitterException {
+    public List<UserWithStatus> getFriends() throws TwitterException {
     	this.Update();
-        return User.constructUsers(get(baseURL + "statuses/friends.xml", true).asDocument(), this);
+        return UserWithStatus.constructUsersWithStatus(get(baseURL + "statuses/friends.xml", true).asDocument(), this);
     }
 
     /**
@@ -764,9 +764,9 @@ public class Twitter implements java.io.Serializable {
      * @return the list of friends
      * @throws TwitterException when Twitter service or network is unavailable
      */
-    public List<User> getFriends(int page) throws TwitterException {
+    public List<UserWithStatus> getFriends(int page) throws TwitterException {
     	this.Update();
-        return User.constructUsers(get(baseURL + "statuses/friends.xml", "page",
+        return UserWithStatus.constructUsersWithStatus(get(baseURL + "statuses/friends.xml", "page",
                 String.valueOf(page), true).asDocument(), this);
     }
 
@@ -777,9 +777,9 @@ public class Twitter implements java.io.Serializable {
      * @return the list of friends
      * @throws TwitterException when Twitter service or network is unavailable
      */
-    public List<User> getFriends(String id) throws TwitterException {
+    public List<UserWithStatus> getFriends(String id) throws TwitterException {
     	this.Update();
-        return User.constructUsers(get(baseURL + "statuses/friends.xml",
+        return UserWithStatus.constructUsersWithStatus(get(baseURL + "statuses/friends.xml",
                 "id", id, true).asDocument(), this);
     }
 
@@ -791,9 +791,9 @@ public class Twitter implements java.io.Serializable {
      * @return List
      * @throws TwitterException when Twitter service or network is unavailable
      */
-    public List<User> getFriends(String id, int page) throws TwitterException {
+    public List<UserWithStatus> getFriends(String id, int page) throws TwitterException {
     	this.Update();
-        return User.constructUsers(get(baseURL + "statuses/friends.xml",
+        return UserWithStatus.constructUsersWithStatus(get(baseURL + "statuses/friends.xml",
                 "id", id, "page", String.valueOf(page), true).asDocument(), this);
     }
 
@@ -803,9 +803,9 @@ public class Twitter implements java.io.Serializable {
      * @return List
      * @throws TwitterException when Twitter service or network is unavailable
      */
-    public List<User> getFollowers() throws TwitterException {
+    public List<UserWithStatus> getFollowers() throws TwitterException {
     	this.Update();
-        return User.constructUsers(get(baseURL + "statuses/followers.xml", true).asDocument(), this);
+        return UserWithStatus.constructUsersWithStatus(get(baseURL + "statuses/followers.xml", true).asDocument(), this);
     }
 
     /**
@@ -816,9 +816,9 @@ public class Twitter implements java.io.Serializable {
      * @throws TwitterException when Twitter service or network is unavailable
      * @since twitter4j 1.1.0
      */
-    public List<User> getFollowers(int page) throws TwitterException {
+    public List<UserWithStatus> getFollowers(int page) throws TwitterException {
     	this.Update();
-        return User.constructUsers(get(baseURL + "statuses/followers.xml", "page", String.valueOf(page), true).asDocument(), this);
+        return UserWithStatus.constructUsersWithStatus(get(baseURL + "statuses/followers.xml", "page", String.valueOf(page), true).asDocument(), this);
     }
 
     /**
@@ -829,9 +829,9 @@ public class Twitter implements java.io.Serializable {
      * @throws TwitterException when Twitter service or network is unavailable
      * @since twitter4j 1.1.0
      */
-    public List<User> getFollowers(String id) throws TwitterException {
+    public List<UserWithStatus> getFollowers(String id) throws TwitterException {
     	this.Update();
-        return User.constructUsers(get(baseURL + "statuses/followers/" + id + ".xml", true).asDocument(), this);
+        return UserWithStatus.constructUsersWithStatus(get(baseURL + "statuses/followers/" + id + ".xml", true).asDocument(), this);
     }
 
     /**
@@ -843,9 +843,9 @@ public class Twitter implements java.io.Serializable {
      * @throws TwitterException when Twitter service or network is unavailable
      * @since twitter4j 1.1.0
      */
-    public List<User> getFollowers(String id, int page) throws TwitterException {
+    public List<UserWithStatus> getFollowers(String id, int page) throws TwitterException {
     	this.Update();
-        return User.constructUsers(get(baseURL + "statuses/followers/" + id + ".xml", "page", String.valueOf(page), true).asDocument(), this);
+        return UserWithStatus.constructUsersWithStatus(get(baseURL + "statuses/followers/" + id + ".xml", "page", String.valueOf(page), true).asDocument(), this);
     }
 
     /**

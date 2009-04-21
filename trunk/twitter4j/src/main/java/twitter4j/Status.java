@@ -20,12 +20,13 @@ public class Status extends TwitterResponse implements java.io.Serializable {
     private long inReplyToStatusId;
     private int inReplyToUserId;
     private boolean isFavorited;
+    private String inReplyToScreenName;
     private static final long serialVersionUID = 1608000492860584608L;
 
     /*package*/Status(Element elem, Twitter twitter) throws TwitterException {
         super();
         ensureRootNodeNameIs("status", elem);
-        user = new User((Element) elem.getElementsByTagName("user").item(0),
+        user = new UserWithStatus((Element) elem.getElementsByTagName("user").item(0),
                 twitter);
         id = getChildLong("id", elem);
         text = getChildText("text", elem);
@@ -35,6 +36,7 @@ public class Status extends TwitterResponse implements java.io.Serializable {
         inReplyToStatusId = getChildInt("in_reply_to_status_id", elem);
         inReplyToUserId = getChildInt("in_reply_to_user_id", elem);
         isFavorited = getChildBoolean("favorited", elem);
+        inReplyToScreenName = getChildText("in_reply_to_screen_name", elem);
     }
 
     /**
@@ -116,16 +118,24 @@ public class Status extends TwitterResponse implements java.io.Serializable {
     public boolean isFavorited() {
         return isFavorited;
     }
+    
 
 
-    private User user = null;
+    public String getInReplyToScreenName() {
+		return inReplyToScreenName;
+	}
+
+
+
+
+	private UserWithStatus user = null;
 
     /**
      * Return the user
      *
      * @return the user
      */
-    public User getUser() {
+    public UserWithStatus getUser() {
         return user;
     }
 

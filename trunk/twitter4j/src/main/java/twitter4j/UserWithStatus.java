@@ -1,21 +1,37 @@
 package twitter4j;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.Date;
 
 /**
  * A data class representing Twitter User with status
  */
-public class UserWithStatus extends User {
+public class UserWithStatus extends User implements java.io.Serializable{
+	
     private String profileBackgroundColor;
     private String profileTextColor;
     private String profileLinkColor;
     private String profileSidebarFillColor;
     private String profileSidebarBorderColor;
+    
     private int friendsCount;
+    private Date createdAt; //<<<<<<<<
     private int favouritesCount;
+    private String utcOffset; //<<<<<
+    private String timeZone; //<<<<<
+    private String profileBackgroundImageUrl; //<<<<<<
+    private String profileBackgroundTile; //<<<<<
+    
     private int statusesCount;
+    private boolean notifications; //<<<<
+    private boolean following; //<<<<
+    
     private Date statusCreatedAt;
     private long statusId = -1;
     private String statusText = null;
@@ -25,29 +41,46 @@ public class UserWithStatus extends User {
     private int statusInReplyToUserId = -1;
     private boolean statusFavorited = false;
     private String statusInReplyToScreenName = null;
+    
     private static final long serialVersionUID = -3338496376247577523L;
 
     public UserWithStatus(Element elem, Twitter twitter) throws TwitterException {
         super(elem, twitter);
+
         profileBackgroundColor = getChildText("profile_background_color", elem);
         profileTextColor = getChildText("profile_text_color", elem);
         profileLinkColor = getChildText("profile_link_color", elem);
         profileSidebarFillColor = getChildText("profile_sidebar_fill_color", elem);
         profileSidebarBorderColor = getChildText("profile_sidebar_border_color", elem);
+        
         friendsCount = getChildInt("friends_count", elem);
+        createdAt = getChildDate("created_at", elem);
         favouritesCount = getChildInt("favourites_count", elem);
+        utcOffset = getChildText("utc_offset", elem);
+        timeZone = getChildText("time_zone", elem);
+        profileBackgroundImageUrl = getChildText("profile_background_image_url", elem);
+        profileBackgroundTile = getChildText("profile_background_tile", elem);
         statusesCount = getChildInt("statuses_count", elem);
+        notifications = getChildBoolean("profile_background_tile", elem);
+        following = getChildBoolean("profile_background_tile", elem);
+        
         if (!isProtected()) {
-            Element status = (Element) elem.getElementsByTagName("status").item(0);
-            statusCreatedAt = getChildDate("created_at", status);
-            statusId = Long.valueOf(status.getElementsByTagName("id").item(0).getTextContent());
-            statusText = getChildText("text", status);
-            statusSource = getChildText("source", status);
-            statusTruncated = getChildBoolean("truncated", status);
-            statusInReplyToStatusId = getChildLong("in_reply_to_status_id", status);
-            statusInReplyToUserId = getChildInt("in_reply_to_user_id", status);
-            statusFavorited = getChildBoolean("favorited", status);
-            statusInReplyToScreenName = getChildText("in_reply_to_screen_name", status);
+        	
+            Element status = (Element)elem.getElementsByTagName("status").item(0);
+            
+            if(status != null){
+            
+	            statusCreatedAt = getChildDate("created_at", status);
+	            statusId = Long.valueOf(status.getElementsByTagName("id").item(0).getTextContent());
+	            statusText = getChildText("text", status);
+	            statusSource = getChildText("source", status);
+	            statusTruncated = getChildBoolean("truncated", status);
+	            statusInReplyToStatusId = getChildLong("in_reply_to_status_id", status);
+	            statusInReplyToUserId = getChildInt("in_reply_to_user_id", status);
+	            statusFavorited = getChildBoolean("favorited", status);
+	            statusInReplyToScreenName = getChildText("in_reply_to_screen_name", status);
+            
+            }
         }
     }
 
@@ -82,8 +115,36 @@ public class UserWithStatus extends User {
     public int getStatusesCount() {
         return statusesCount;
     }
+    
+    public Date getCreatedAt() {
+		return createdAt;
+	}
 
-    /**
+	public String getUtcOffset() {
+		return utcOffset;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public String getProfileBackgroundImageUrl() {
+		return profileBackgroundImageUrl;
+	}
+
+	public String getProfileBackgroundTile() {
+		return profileBackgroundTile;
+	}
+
+	public boolean isNotifications() {
+		return notifications;
+	}
+
+	public boolean isFollowing() {
+		return following;
+	}
+
+	/**
      * @return created_at or null if the user is protected
      * @since twitter4j 1.1.0
      */
@@ -161,6 +222,31 @@ public class UserWithStatus extends User {
     public String getStatusInReplyToScreenName() {
         return -1 != statusInReplyToUserId ? statusInReplyToScreenName : null;
     }
+    
+    public static List<UserWithStatus> constructUsersWithStatus(Document doc, Twitter twitter) throws TwitterException {
+        if (isRootNodeNilClasses(doc)) {
+            return new ArrayList<UserWithStatus>(0);
+        } else {
+            try {
+                ensureRootNodeNameIs("users", doc);
+                NodeList list = doc.getDocumentElement().getElementsByTagName(
+                        "user");
+                int size = list.getLength();
+                List<UserWithStatus> users = new ArrayList<UserWithStatus>(size);
+                for (int i = 0; i < size; i++) {
+                    users.add(new UserWithStatus((Element) list.item(i), twitter));
+                }
+                return users;
+            } catch (TwitterException te) {
+                if (isRootNodeNilClasses(doc)) {
+                    return new ArrayList<UserWithStatus>(0);
+                } else {
+                    throw te;
+                }
+            }
+        }
+    }
+
 
     @Override
     public int hashCode() {
@@ -180,7 +266,8 @@ public class UserWithStatus extends User {
 
     @Override
      public String toString() {
-        return "UserWithStatus{" +
+        return super.toString() + "\t"+ 
+        "UserWithStatus{" +
                 "profileBackgroundColor='" + profileBackgroundColor + '\'' +
                 ", profileTextColor='" + profileTextColor + '\'' +
                 ", profileLinkColor='" + profileLinkColor + '\'' +

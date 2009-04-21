@@ -24,9 +24,9 @@ public class TwitterAdapter implements TwitterListener {
     }
     public void destroyedStatus(Status destroyedStatus){
     }
-    public void gotFriends(List<User> users){
+    public void gotFriends(List<UserWithStatus> users){
     }
-    public void gotFollowers(List<User> users){
+    public void gotFollowers(List<UserWithStatus> users){
     }
     public void gotFeatured(List<User> users){
     }
