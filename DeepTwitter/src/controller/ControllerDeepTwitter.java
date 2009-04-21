@@ -81,7 +81,7 @@ public class ControllerDeepTwitter {
 		return gManager.getUserName(Integer.parseInt(id));
 	}
 	
-	public void searchAndAddUserToNetwork(UserWithStatus u) {
+	public synchronized void searchAndAddUserToNetwork(UserWithStatus u) {
 		gManager.searchAndAddUserToNetwork(u);
 	}
 	
@@ -116,7 +116,7 @@ public class ControllerDeepTwitter {
 		}	
 	}
 	
-	public void setStatusBarMessage(String message) {
+	public synchronized void setStatusBarMessage(String message) {
 		mainWindow.setStatusBarMessage(message);
 	}
 	
@@ -155,7 +155,9 @@ public class ControllerDeepTwitter {
 				{
 					UserWithStatus u = twitter.getAuthenticatedUser();
 					loggedUserId = String.valueOf(u.getId());
-					gManager = new GraphicManager();						
+					gManager = new GraphicManager();
+
+					
 					//User u2 = twitter.getAuthenticatedUser();
 					//gManager.addNode(u2);
 					loginWindow.dispose();
@@ -169,7 +171,6 @@ public class ControllerDeepTwitter {
 					
 					windowTabs.remove(1);
 					
-
 					tabManager = new StatusTabManager();
 					tabManager.setTabbedPane(windowTabs);
 					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //1
@@ -182,7 +183,9 @@ public class ControllerDeepTwitter {
 						tabManager.setEnabledAt(2, false); //replies
 						tabManager.setEnabledAt(3, false); //favoritos
 						tabManager.setEnabledAt(4, false); //mensagens
-					}						
+					}
+					
+					
 					
 					windowTabs.addChangeListener(new ChangeListener(){
 						@Override
@@ -255,6 +258,10 @@ public class ControllerDeepTwitter {
 					mainWindow.setVisible(true);					
 					
 					gManager.addNode(u);
+					
+					UpdatePanel1 updatePanel1 = new UpdatePanel1();
+					new Thread(updatePanel1).start();
+					
 					//gManager.getVisualization().run("layout"); 					
 					//gManager.getVisualization().repaint();	
 				}	
@@ -278,6 +285,33 @@ public class ControllerDeepTwitter {
 				e2.printStackTrace();
 			}			
 		}
+	}
+	
+	private class UpdatePanel1 extends Thread{
+		
+		public UpdatePanel1(){
+		}
+		
+		public void run(){
+			
+			int timemillis = 50;
+			
+			// sendo assim (50 * 60) = 3000
+			// vai ficar 3 segundos atualizando jpanel1
+			// para atualizar foto
+			
+			for(int i=0 ; i<60;i++){
+				
+				try {
+					Thread.sleep(timemillis);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			
+				mainWindow.getJPanel1().updateUI();
+			}
+		}
+		
 	}
 	
 	public void openGUINewUpdateWindow() {

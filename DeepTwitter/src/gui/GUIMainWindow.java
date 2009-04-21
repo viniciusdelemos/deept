@@ -388,6 +388,10 @@ public class GUIMainWindow extends javax.swing.JFrame {
     public void setCloseUserEnabled(boolean b) {
         buttonCloseUpdates.setEnabled(b);
     }
+    
+    public javax.swing.JPanel getJPanel1(){
+    	return jPanel1;
+    }
 
     // Variables declaration - do not modify
     private javax.swing.JButton buttonAddUpdate;
