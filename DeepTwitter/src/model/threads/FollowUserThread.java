@@ -21,6 +21,7 @@ public class FollowUserThread extends Thread {
 		this.gManager = gManager;	
 		targetItem = item;
 		this.follow = follow;
+		this.start();
 	}
 	
 	public void run()

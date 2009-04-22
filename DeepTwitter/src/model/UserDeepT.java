@@ -10,8 +10,6 @@ import twitter4j.UserWithStatus;
 
 public class UserDeepT {
 	
-	private int idGraphic;
-	
 	private int id;
     private String name;
     private String screenName;
@@ -46,14 +44,10 @@ public class UserDeepT {
     //TODO implementar direct messages
     private Map<Integer,DirectMessage> directMessages;
     
-    public UserDeepT(UserWithStatus userWithStatus, int idGraphic){
+    public UserDeepT(UserWithStatus userWithStatus){
     	
     	statuses = new HashMap<Long, StatusDeepT>();
-    	
-    	//Id graphic
-    	this.idGraphic = idGraphic;
-    	
-    	
+    	    	
     	//Data of User
     	this.id = userWithStatus.getId();
     	this.name = userWithStatus.getName();
@@ -95,10 +89,6 @@ public class UserDeepT {
     	}
 
     }
-
-	public int getIdGraphic() {
-		return idGraphic;
-	}
 
 	public int getId() {
 		return id;

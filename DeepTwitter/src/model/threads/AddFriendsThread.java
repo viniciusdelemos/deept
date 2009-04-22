@@ -24,6 +24,7 @@ public class AddFriendsThread extends Thread {
 		controller = ControllerDeepTwitter.getInstance();
 		this.gManager = gManager;		
 		this.source = s;
+		this.start();
 	}
 	
 	public void run()
@@ -31,14 +32,8 @@ public class AddFriendsThread extends Thread {
 		try {
 			System.out.println("GETTING FRIENDS FOR "+source.get("name"));
 			List<UserWithStatus> friends = controller.getTwitter().getFriends(source.get("idTwitter").toString());
-			System.out.println("GOT FRIENDS");
+			System.out.println("GOT FRIENDS FOR "+source.get("name"));
 
-//			controller.getTwitter().getFriendsAsync(source.get("idTwitter").toString(), new TwitterAdapter(){
-//				@override
-//				public void gotFriends(List<User> users){
-//					
-//			    }
-//			});
 			int notAdded = 0;
 			boolean isShowingFriends = source.getBoolean("isShowingFriends");
 			
@@ -77,6 +72,10 @@ public class AddFriendsThread extends Thread {
 			
 		} catch (TwitterException e) {
 			controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
+			e.printStackTrace();
+		} catch(Exception ex) {
+			System.out.println("%%%%EXCEPTION%%%%\n");
+			ex.printStackTrace();
 		}
 	}
 }

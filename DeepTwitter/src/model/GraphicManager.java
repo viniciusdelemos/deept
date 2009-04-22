@@ -2,8 +2,6 @@ package model;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Image;
-import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -13,7 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -22,7 +19,6 @@ import model.threads.AddFollowersThread;
 import model.threads.AddFriendsThread;
 import model.threads.FollowUserThread;
 import model.threads.StatusesTableThread;
-
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -282,26 +278,27 @@ public class GraphicManager extends Display {
     }        
 	
     public Node addNode(UserWithStatus u) {
-    	socialNetwork.addUser(u, numUsers);
-    	Node newNode = g.addNode();
-    	newNode.set("id", numUsers);
-    	newNode.set("idTwitter", u.getId());
-		newNode.set("name", u.getName());
-		newNode.set("image", u.getProfileImageURL().toString());//sem tostring
-		newNode.set("isOpen", false);
-		newNode.set("isShowingFriends", false);
-		newNode.set("isShowingFollowers", false);
-		nodesMap.put(u.getId(), newNode);
-				
-		if(numUsers==0)
-		{
-			VisualItem mainUser = getVisualization().getVisualItem(NODES, newNode);
-			mainUser.setStroke(new BasicStroke(2));
-			mainUser.setStrokeColor(mainUserStrokeColor);
-			mainUser.setFillColor(mainUserFillColor);
-		}		
-		numUsers++;
-    	return newNode;    	
+    	synchronized (m_vis) {
+			socialNetwork.addUser(u);
+			Node newNode = g.addNode();
+			newNode.set("id", numUsers);
+			newNode.set("idTwitter", u.getId());
+			newNode.set("name", u.getName());
+			newNode.set("image", u.getProfileImageURL().toString());//sem tostring
+			newNode.set("isOpen", false);
+			newNode.set("isShowingFriends", false);
+			newNode.set("isShowingFollowers", false);
+			nodesMap.put(u.getId(), newNode);
+			if (numUsers == 0) {
+				VisualItem mainUser = getVisualization().getVisualItem(NODES,
+						newNode);
+				mainUser.setStroke(new BasicStroke(2));
+				mainUser.setStrokeColor(mainUserStrokeColor);
+				mainUser.setFillColor(mainUserFillColor);
+			}
+			numUsers++;
+			return newNode;
+		}    	
     }
     
     public void searchAndAddUserToNetwork(UserWithStatus u) {
@@ -336,7 +333,9 @@ public class GraphicManager extends Display {
     }
     
     public void addEdge(Node source, Node target) {
-		g.addEdge(source, target);	
+    	synchronized(m_vis) {
+    		g.addEdge(source, target);	
+    	}
 	}
     
     public void removeEdge(Node source, Node target) {
@@ -471,22 +470,22 @@ public class GraphicManager extends Display {
 	public void setChildrenVisible(NodeItem source, boolean visible)
 	{
 		try{
-		Iterator<EdgeItem> outEdges = source.outEdges();
-		Iterator<EdgeItem> inEdges = source.inEdges();
-		while(outEdges.hasNext()) {
-			EdgeItem nextEdge = outEdges.next();
-			NodeItem nextNode = nextEdge.getTargetItem();			
-			if(nextNode.getDegree()>1) continue;
-			nextEdge.setVisible(visible);
-			nextNode.setVisible(visible);
-		}
-		while(inEdges.hasNext()) {
-			EdgeItem nextEdge = outEdges.next();
-			NodeItem nextNode = nextEdge.getSourceItem();
-			if(nextNode.getDegree()>1) continue;
-			nextEdge.setVisible(visible);
-			nextNode.setVisible(visible);
-		}
+			Iterator<EdgeItem> outEdges = source.outEdges();
+			Iterator<EdgeItem> inEdges = source.inEdges();
+			while(outEdges.hasNext()) {
+				EdgeItem nextEdge = outEdges.next();
+				NodeItem nextNode = nextEdge.getTargetItem();			
+				if(nextNode.getDegree()>1) continue;
+				nextEdge.setVisible(visible);
+				nextNode.setVisible(visible);
+			}
+			while(inEdges.hasNext()) {
+				EdgeItem nextEdge = outEdges.next();
+				NodeItem nextNode = nextEdge.getSourceItem();
+				if(nextNode.getDegree()>1) continue;
+				nextEdge.setVisible(visible);
+				nextNode.setVisible(visible);
+			}
 		}
 		catch(Exception e) {
 			System.out.println("$$$ Exception! $$$");
@@ -547,7 +546,7 @@ public class GraphicManager extends Display {
     		friends.addActionListener(new ActionListener() {				
     			@Override
 				public void actionPerformed(ActionEvent e) {    				
-					new AddFriendsThread(gManager, (NodeItem)clickedItem).start();					
+					new AddFriendsThread(gManager, (NodeItem)clickedItem);					
 				}});
     		updates.addActionListener(new ActionListener() {
 				@Override
@@ -563,18 +562,18 @@ public class GraphicManager extends Display {
     		followers.addActionListener(new ActionListener(){
     			@Override
     			public void actionPerformed(ActionEvent arg0) {
-    				new AddFollowersThread(gManager, (NodeItem)clickedItem).start();
+    				new AddFollowersThread(gManager, (NodeItem)clickedItem);
     			}
     		});
     		follow.addActionListener(new ActionListener(){				
     			@Override
 				public void actionPerformed(ActionEvent e) {    				
-					new FollowUserThread(gManager, clickedItem, true).start();					
+					new FollowUserThread(gManager, clickedItem, true);					
 				}});
     		leave.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					new FollowUserThread(gManager, clickedItem, false).start();					
+					new FollowUserThread(gManager, clickedItem, false);					
 				}});
     		block.addActionListener(new ActionListener(){
 				@Override
@@ -612,17 +611,17 @@ public class GraphicManager extends Display {
 				}
 								
 				if(item.getBoolean("isOpen") == false)
-				{
-					item.setBoolean("isOpen", true);					
+				{										
 					if(item.getBoolean("isShowingFriends") == false) 
-						new AddFriendsThread(gManager, (NodeItem)item).start();
+						new AddFriendsThread(gManager, (NodeItem)item);
 					else
-						setChildrenVisible((NodeItem)item, true);						   			            
+						setChildrenVisible((NodeItem)item, true);	
+					item.setBoolean("isOpen", true);
 				}
 				else
-				{
-					item.setBoolean("isOpen", false);				
-					setChildrenVisible((NodeItem)item,false);				
+				{							
+					setChildrenVisible((NodeItem)item,false);
+					item.setBoolean("isOpen", false);		
 				}
 			}
 	    }

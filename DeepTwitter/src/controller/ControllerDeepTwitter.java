@@ -81,14 +81,14 @@ public class ControllerDeepTwitter {
 		return gManager.getUserName(Integer.parseInt(id));
 	}
 	
-	public synchronized void searchAndAddUserToNetwork(UserWithStatus u) {
+	public void searchAndAddUserToNetwork(UserWithStatus u) {
 		gManager.searchAndAddUserToNetwork(u);
 	}
 	
 	private static String getFormattedMessage(String message)
 	{
 		try {
-			int index1 = message.indexOf("<error>");
+			int index1 = message.indexOf("<error>"); //tam=7
 			int index2 = message.indexOf("</error>");		
 			return message.substring(index1+7, index2);
 		} catch (Exception e) {
@@ -156,8 +156,7 @@ public class ControllerDeepTwitter {
 					UserWithStatus u = twitter.getAuthenticatedUser();
 					loggedUserId = String.valueOf(u.getId());
 					gManager = new GraphicManager();
-
-					
+				
 					//User u2 = twitter.getAuthenticatedUser();
 					//gManager.addNode(u2);
 					loginWindow.dispose();
@@ -184,8 +183,6 @@ public class ControllerDeepTwitter {
 						tabManager.setEnabledAt(3, false); //favoritos
 						tabManager.setEnabledAt(4, false); //mensagens
 					}
-					
-					
 					
 					windowTabs.addChangeListener(new ChangeListener(){
 						@Override
@@ -259,8 +256,8 @@ public class ControllerDeepTwitter {
 					
 					gManager.addNode(u);
 					
-					UpdatePanel1 updatePanel1 = new UpdatePanel1();
-					new Thread(updatePanel1).start();
+//					UpdatePanel1 updatePanel1 = new UpdatePanel1();
+//					new Thread(updatePanel1).start();
 					
 					//gManager.getVisualization().run("layout"); 					
 					//gManager.getVisualization().repaint();	
@@ -285,33 +282,6 @@ public class ControllerDeepTwitter {
 				e2.printStackTrace();
 			}			
 		}
-	}
-	
-	private class UpdatePanel1 extends Thread{
-		
-		public UpdatePanel1(){
-		}
-		
-		public void run(){
-			
-			int timemillis = 50;
-			
-			// sendo assim (50 * 60) = 3000
-			// vai ficar 3 segundos atualizando jpanel1
-			// para atualizar foto
-			
-			for(int i=0 ; i<60;i++){
-				
-				try {
-					Thread.sleep(timemillis);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			
-				mainWindow.getJPanel1().updateUI();
-			}
-		}
-		
 	}
 	
 	public void openGUINewUpdateWindow() {
@@ -457,4 +427,30 @@ public class ControllerDeepTwitter {
 			}
 		}
 	}
+	
+//	private class UpdatePanel1 extends Thread {
+//
+//		public UpdatePanel1(){
+//		}
+//
+//		public void run(){
+//
+//			int timemillis = 50;
+//
+//			// sendo assim (50 * 60) = 3000
+//			// vai ficar 3 segundos atualizando jpanel1
+//			// para atualizar foto
+//
+//			for(int i=0 ; i<60;i++){
+//
+//				try {
+//					Thread.sleep(timemillis);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//
+//				mainWindow.getJPanel1().updateUI();
+//			}
+//		}
+//	}
 }

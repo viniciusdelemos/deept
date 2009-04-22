@@ -29,6 +29,9 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
+import demo.wordfreq.WordFreq;
+import examples.Visualizacao1;
+import gui.visualizations.Timeline;
 
 public class StatusesTableThread {
 	private int rows;
@@ -55,7 +58,7 @@ public class StatusesTableThread {
 		isTwitterUser = controller.isTwitterUser();
 		statusList = new ArrayList<Status>();		
 		rows = 0;
-		interval = 2000;//120000; //2 minutos
+		interval = 120000; //2 minutos
 		updatesToGet = 100;
 	}
 
@@ -381,7 +384,7 @@ public class StatusesTableThread {
 								statusList = (ArrayList<Status>) twitter.getFriendsTimeline(lastStatusDate);
 							else
 								statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet,lastStatusDate);
-						}
+						}						
 						break;
 					
 					case FAVORITES:
@@ -400,7 +403,15 @@ public class StatusesTableThread {
 						statusList = (ArrayList<Status>) twitter.getPublicTimeline();
 						break;
 					}
-
+										
+					//new WordFreq(statusList);
+					//new Visualizacao1();
+					ArrayList<Status> reversed = new ArrayList<Status>(statusList.size());
+					for(int i=statusList.size()-1; i>=0; i--) {
+						reversed.add(statusList.get(i));
+					}
+					new Timeline(reversed);
+					
 					if(!statusList.isEmpty()) {
 						lastStatusDate = statusList.get(0).getCreatedAt();
 
