@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
@@ -23,43 +22,25 @@ import javax.swing.SwingConstants;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
-import prefuse.action.Action;
 import prefuse.action.ActionList;
 import prefuse.action.GroupAction;
 import prefuse.action.RepaintAction;
-import prefuse.action.assignment.ColorAction;
-import prefuse.action.assignment.DataColorAction;
-import prefuse.action.assignment.DataShapeAction;
-import prefuse.action.filter.VisibilityFilter;
 import prefuse.action.layout.AxisLabelLayout;
 import prefuse.action.layout.AxisLayout;
 import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
-import prefuse.controls.ToolTipControl;
-import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.expression.AndPredicate;
-import prefuse.data.expression.Predicate;
-import prefuse.data.expression.parser.ExpressionParser;
-import prefuse.data.io.DelimitedTextTableReader;
-import prefuse.data.query.DynamicQueryBinding;
-import prefuse.data.query.ListQueryBinding;
-import prefuse.data.query.NumberRangeModel;
-import prefuse.data.query.ObjectRangeModel;
 import prefuse.data.query.RangeQueryBinding;
 import prefuse.data.query.SearchQueryBinding;
-import prefuse.demos.TreeMap.NodeRenderer;
 import prefuse.render.AxisRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.render.Renderer;
 import prefuse.render.RendererFactory;
-import prefuse.render.ShapeRenderer;
-import prefuse.render.AbstractShapeRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.FontLib;
 import prefuse.util.UpdateListener;
 import prefuse.util.ui.JFastLabel;
-import prefuse.util.ui.JRangeSlider;
 import prefuse.util.ui.JSearchPanel;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
@@ -71,29 +52,26 @@ import prefuse.visual.sort.ItemSorter;
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
 public class Visualizacao1 extends JPanel {
-
-    public static void main(String[] args) {
-        UILib.setPlatformLookAndFeel();
-        
-        JFrame f = demo();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setVisible(true);
-    }
-    
-    public static JFrame demo() {
+       
+    public Visualizacao1() {
         // load the data
         Table t = null;
         try {
             t = new prefuse.data.io.DelimitedTextTableReader().readTable("teste.txt");
+        	
         } catch ( Exception e ) {
             e.printStackTrace();
             System.exit(1);
         }
         
         JFrame frame = new JFrame("Timeline");
+        UILib.setPlatformLookAndFeel();
         frame.setContentPane(new Visualizacao1(t));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        return frame;
+        frame.setVisible(true);
+        
+        
     }
     
     // ------------------------------------------------------------------------
@@ -128,6 +106,8 @@ public class Visualizacao1 extends JPanel {
 //        Predicate p = (Predicate)
 //            ExpressionParser.parse("["+TOTAL_RECEIPTS+"] >= 20000000"); 
         VisualTable vt = vis.addTable(group, t);
+        prefuse.data.Table table = new Table();
+        
         
         // add a new column containing a label string showing
         // candidate name, party, state, year, and total receipts
@@ -208,12 +188,12 @@ public class Visualizacao1 extends JPanel {
         draw.add(xaxis);
         draw.add(yaxis);
         draw.add(ylabels);
-        draw.add(new ColorAction(group, VisualItem.FILLCOLOR, 0));
+        //draw.add(new ColorAction(group, VisualItem.FILLCOLOR, 0));
         draw.add(new RepaintAction());
         vis.putAction("draw", draw);
 
         ActionList update = new ActionList();
-        update.add(new VisibilityFilter(group, filter));
+        //update.add(new VisibilityFilter(group, filter));
         update.add(cntr);
         update.add(xaxis);
         update.add(yaxis);
@@ -237,6 +217,7 @@ public class Visualizacao1 extends JPanel {
                 int score = super.score(item);
                 if ( item.isInGroup(group) )
                     score += item.getInt("day");
+                
                 return score;
             }
         });
