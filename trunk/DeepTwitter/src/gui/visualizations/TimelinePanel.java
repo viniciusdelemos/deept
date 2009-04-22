@@ -1,0 +1,359 @@
+package gui.visualizations;
+
+import gui.visualizations.StatusesDataTable.ColNames;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import model.ChartColor;
+import prefuse.Constants;
+import prefuse.Display;
+import prefuse.Visualization;
+import prefuse.action.ActionList;
+import prefuse.action.GroupAction;
+import prefuse.action.RepaintAction;
+import prefuse.action.assignment.ColorAction;
+import prefuse.action.assignment.DataColorAction;
+import prefuse.action.assignment.DataShapeAction;
+import prefuse.action.filter.VisibilityFilter;
+import prefuse.action.layout.AxisLabelLayout;
+import prefuse.action.layout.AxisLayout;
+import prefuse.controls.Control;
+import prefuse.controls.ControlAdapter;
+import prefuse.data.Table;
+import prefuse.data.Tuple;
+import prefuse.data.expression.AndPredicate;
+import prefuse.data.query.ObjectRangeModel;
+import prefuse.data.query.RangeQueryBinding;
+import prefuse.data.query.SearchQueryBinding;
+import prefuse.util.ColorLib;
+import prefuse.util.DataLib;
+import prefuse.util.FontLib;
+import prefuse.util.UpdateListener;
+import prefuse.util.ui.JFastLabel;
+import prefuse.util.ui.JRangeSlider;
+import prefuse.util.ui.JSearchPanel;
+import prefuse.util.ui.UILib;
+import prefuse.visual.VisualItem;
+import prefuse.visual.VisualTable;
+import prefuse.visual.sort.ItemSorter;
+import twitter4j.Status;
+
+public class TimelinePanel extends JPanel {
+       
+    private String panelTitle = "Timeline";
+    private String m_totalStr;
+    private int m_totalPeople = 10000;
+    private JFastLabel m_total = new JFastLabel(m_totalPeople+" updates");
+    private JFastLabel m_details;
+    
+    private Visualization m_vis;
+    private Display m_display;
+    private Rectangle2D m_dataB = new Rectangle2D.Double();
+    private Rectangle2D m_xlabB = new Rectangle2D.Double();
+    private Rectangle2D m_ylabB = new Rectangle2D.Double();
+    
+    public enum Group {
+		STATUS, X_AXIS, Y_AXIS
+	}
+    
+    public TimelinePanel(ArrayList<Status> statusesList) {
+        super(new BorderLayout());
+        
+        final Visualization vis = new Visualization();
+        m_vis = vis;
+        
+        Table sdt = getStatusesDataTable(statusesList);		
+		VisualTable vt = vis.addTable(Group.STATUS.toString(),sdt);	        		       
+                
+        vis.setRendererFactory(new TimelineRenderFactory());
+        
+        SearchQueryBinding idSearchQuery = new SearchQueryBinding(vt, ColNames.SCREEN_NAME.toString());
+        
+        AxisLayout xAxis = new AxisLayout(Group.STATUS.toString(), 
+				StatusesDataTable.ColNames.DAY.toString(), Constants.X_AXIS);
+        xAxis.setRangeModel(xRangeModel(vt));
+        AxisLabelLayout xlabels = new AxisLabelLayout(Group.X_AXIS.toString(), xAxis, m_xlabB, 15);
+        //xlabels.setSpacing(5);
+        vis.putAction("xlabels", xlabels);
+                
+        AxisLayout yAxis = new AxisLayout(Group.STATUS.toString(), 
+				StatusesDataTable.ColNames.DATE.toString(),	Constants.Y_AXIS);
+        RangeQueryBinding  hourQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.DATE.toString());
+        yAxis.setRangeModel(hourQuery.getModel());      
+        AxisLabelLayout ylabels = new AxisLabelLayout(Group.Y_AXIS.toString(), yAxis, m_ylabB);
+        
+        xAxis.setLayoutBounds(m_dataB);
+        yAxis.setLayoutBounds(m_dataB);
+        
+        AndPredicate filter = new AndPredicate(idSearchQuery.getPredicate());
+        filter.add(hourQuery.getPredicate());
+        
+//        int[] palette = new int[] {
+//            ColorLib.rgb(150,150,255), ColorLib.rgb(255,150,150),
+//            ColorLib.rgb(0,255,0)
+//            //CRIAR ARRAY DE CORES REFERENTES AS CATEGORIAS
+//        };
+        DataColorAction shapeColor = new DataColorAction(Group.STATUS.toString(), 
+				StatusesDataTable.ColNames.DATE.toString(),
+				Constants.NOMINAL, VisualItem.STROKECOLOR,
+				new int[] {ChartColor.DARK_BLUE.getRGB()});
+                
+        DataShapeAction shape = new DataShapeAction(Group.STATUS.toString(),
+				StatusesDataTable.ColNames.DATE.toString(),
+				new int[] {Constants.SHAPE_ELLIPSE});
+        
+        Counter cntr = new Counter(Group.STATUS.toString());
+        
+        ActionList draw = new ActionList();
+        draw.add(cntr);
+        draw.add(shapeColor);
+        draw.add(shape);
+        draw.add(xAxis);
+        draw.add(yAxis);
+        draw.add(ylabels);
+        draw.add(new ColorAction(Group.STATUS.toString(), VisualItem.FILLCOLOR, 0));
+        draw.add(new RepaintAction());
+        vis.putAction("draw", draw);
+
+        ActionList update = new ActionList();
+        update.add(new VisibilityFilter(Group.STATUS.toString(), filter));
+        update.add(cntr);
+        update.add(xAxis);
+        update.add(yAxis);
+        update.add(ylabels);
+        update.add(xlabels);
+        update.add(new RepaintAction());
+        vis.putAction("update", update);
+        
+        UpdateListener lstnr = new UpdateListener() {
+            public void update(Object src) {
+                vis.run("update");
+            }
+        };
+        filter.addExpressionListener(lstnr);
+                
+        m_display = new Display(vis);
+        m_display.setItemSorter(new ItemSorter() {
+            public int score(VisualItem item) {
+                int score = super.score(item);
+                if (item.isInGroup(Group.STATUS.toString()))
+                    score += 300000000;//item.getLong(StatusesDataTable.ColNames.DATE_MILIS.toString());
+                return score;
+            }
+        });
+        m_display.setBorder(BorderFactory.createEmptyBorder(10,50,10,10));
+        m_display.setSize(700,450);
+        m_display.setHighQuality(true);
+        m_display.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                displayLayout();
+            }
+        });
+        displayLayout();
+        
+        m_details = new JFastLabel(panelTitle);
+        m_details.setPreferredSize(new Dimension(75,20));
+        m_details.setVerticalAlignment(SwingConstants.BOTTOM);
+        
+        m_total.setPreferredSize(new Dimension(500,20));
+        m_total.setHorizontalAlignment(SwingConstants.RIGHT);
+        m_total.setVerticalAlignment(SwingConstants.BOTTOM);
+        
+        //ToolTipControl ttc = new ToolTipControl("label");
+        Control hoverc = new ControlAdapter() {
+            public void itemEntered(VisualItem item, MouseEvent evt) {
+                if ( item.isInGroup(Group.STATUS.toString()) ) {
+                	System.out.println(item);
+                	m_total.setText(item.getString(StatusesDataTable.ColNames.SCREEN_NAME.toString()));
+                	item.setFillColor(item.getStrokeColor());
+                	item.setStrokeColor(ColorLib.rgb(0,0,0));
+                	item.getVisualization().repaint();
+                }
+            }
+            public void itemExited(VisualItem item, MouseEvent evt) {
+                if ( item.isInGroup(Group.STATUS.toString()) ) {
+                  m_total.setText(m_totalStr);
+                  item.setFillColor(item.getEndFillColor());
+                  item.setStrokeColor(item.getEndStrokeColor());
+                  item.getVisualization().repaint();
+                }
+            }
+        };
+        //m_display.addControlListener(ttc);
+        m_display.addControlListener(hoverc);
+        
+        this.addComponentListener(lstnr);
+        
+        Box infoBox = new Box(BoxLayout.X_AXIS);
+        infoBox.add(Box.createHorizontalStrut(5));
+        infoBox.add(m_details);
+        infoBox.add(Box.createHorizontalGlue());
+        infoBox.add(Box.createHorizontalStrut(5));
+        infoBox.add(m_total);
+        infoBox.add(Box.createHorizontalStrut(5));
+        
+        // set up search box
+        JSearchPanel searcher = idSearchQuery.createSearchPanel();
+        searcher.setLabelText("Screen Name: ");
+        searcher.setBorder(BorderFactory.createEmptyBorder(5,5,5,0));
+        
+        // create dynamic queries
+        Box radioBox = new Box(BoxLayout.X_AXIS);
+        radioBox.add(Box.createHorizontalStrut(5));
+        radioBox.add(searcher);
+        radioBox.add(Box.createHorizontalGlue());
+        radioBox.add(Box.createHorizontalStrut(5));        
+        radioBox.add(Box.createHorizontalStrut(16));
+        
+        JRangeSlider slider = hourQuery.createVerticalRangeSlider();
+        slider.setThumbColor(null);
+        slider.setMinExtent(hourQuery.getModel().getMinimum());
+        slider.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                System.out.println("pressing");
+            	m_display.setHighQuality(false);
+            }
+            public void mouseReleased(MouseEvent e) {
+                m_display.setHighQuality(true);
+                m_display.repaint();
+            }
+        });
+        
+        vis.run("draw");
+        vis.run("xlabels");
+        
+        add(infoBox, BorderLayout.NORTH);
+        add(m_display, BorderLayout.CENTER);
+        add(slider, BorderLayout.EAST);
+        add(radioBox, BorderLayout.SOUTH);
+        UILib.setColor(this, ColorLib.getColor(255,255,255), Color.GRAY);
+        slider.setForeground(Color.LIGHT_GRAY);
+        UILib.setFont(radioBox, FontLib.getFont("Tahoma", 15));
+        m_details.setFont(FontLib.getFont("Tahoma", 18));
+        m_total.setFont(FontLib.getFont("Tahoma", 16));
+    }
+    
+    public StatusesDataTable getStatusesDataTable(ArrayList<Status> statusesList) {
+		StatusesDataTable tbl = new StatusesDataTable();
+		tbl.addRows(statusesList.size());
+		int index = 0;
+		
+		for (Status s : statusesList) {
+			try{
+				tbl.set(index, StatusesDataTable.ColNames.TWITTER_ID.toString(), String.valueOf(s.getUser().getId()));
+				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), String.valueOf(s.getUser().getScreenName()));
+				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), s.getUser().getProfileImageURL().toString());
+				tbl.set(index, StatusesDataTable.ColNames.STATUS_ID.toString(), String.valueOf(s.getId()));
+
+				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");		
+				String formatedTime = formatter.format(s.getCreatedAt());
+				Date d = formatter.parse(formatedTime);
+				TimelineDate formatedDate = new TimelineDate(d.getTime());						
+				tbl.set(index, StatusesDataTable.ColNames.DATE.toString(), formatedDate);
+
+				tbl.set(index, StatusesDataTable.ColNames.DAY.toString(), s.getCreatedAt().getDate()+"/"+(s.getCreatedAt().getMonth()+1));
+				index++;		
+			}
+			catch(Exception e) {
+				System.out.println("**********\n");
+				e.printStackTrace();
+			}
+		}
+		return tbl;
+	}
+	
+//	private static ObjectRangeModel yRangeModel(VisualTable vt) {
+//		Object[] array = DataLib.ordinalArray(vt.tuples(), StatusesDataTable.ColNames.DATE.toString());
+//		ArrayList<Date> axisLabels = new ArrayList<Date>();
+//		
+//		for(int i=0; i<(array.length); i++) {
+//			Date statusDate = (Date)array[i];
+//			axisLabels.add(statusDate);
+//		}
+//		
+//		return  new ObjectRangeModel(axisLabels.toArray());
+//	}
+	
+	private static ObjectRangeModel xRangeModel(VisualTable vt) {
+		List<Object> l = new ArrayList<Object>();
+
+		Iterator<Tuple> it = vt.tuples();
+		String latestDay = "";
+		while (it.hasNext()) {
+			Tuple item = it.next();
+			String newDay = item.getString(StatusesDataTable.ColNames.DAY.toString());
+			if(!newDay.equals(latestDay)) {
+				System.out.println("day: "+newDay);
+				l.add(newDay);
+				latestDay = newDay;
+			}			
+		}				
+
+		// padding range with extra "blank" at head and tail
+		Object[] a = new Object[l.size()];//+2
+		//a[0] = "";  
+		//a[a.length-1] = "";
+		for (int i = 0; i < l.size(); i++) {//i = 1
+			a[i] = l.get(i);
+		}
+		
+		// return range model
+		return new ObjectRangeModel(a);  
+	}
+    
+    public void displayLayout() {
+    	Insets i = m_display.getInsets();
+        int w = m_display.getWidth();
+        int h = m_display.getHeight();
+        int iw = i.left+i.right;
+        int ih = i.top+i.bottom;
+        int aw = 45;
+        int ah = 15;
+        m_dataB.setRect(i.left+20, i.top, w-iw-aw, h-ih-ah);
+        m_xlabB.setRect(i.left+20, h-ah-i.bottom, w-iw-aw, ah-10);        
+        m_ylabB.setRect(i.left, i.top, w-iw, h-ih-ah);
+        
+        m_vis.run("update");
+        m_vis.run("xlabels");
+    }
+    
+    private class Counter extends GroupAction {
+    	public Counter(String group) {
+    		super(group);
+    	}
+    	public void run(double frac) {
+    		int cont = 0;
+    		Iterator<VisualItem> visibleItems = m_vis.visibleItems(m_group);
+    		while(visibleItems.hasNext()) { 
+    			VisualItem item = visibleItems.next();
+    			cont++;
+    		}
+    		m_totalPeople = cont;
+    		if(m_totalPeople == 1)
+    			m_totalStr = m_totalPeople + " update";
+    		else
+    			m_totalStr = m_totalPeople + " updates";
+    		m_total.setText(m_totalStr);
+    	}
+    }
+}
+

@@ -24,6 +24,7 @@ public class AddFollowersThread extends Thread {
 		controller = ControllerDeepTwitter.getInstance();
 		this.gManager = gManager;		
 		this.source = s;
+		this.start();
 	}
 	
 	public void run()
