@@ -31,7 +31,7 @@ import twitter4j.User;
 import controller.ControllerDeepTwitter;
 import demo.wordfreq.WordFreq;
 import examples.Visualizacao1;
-import gui.visualizations.Timeline;
+import gui.visualizations.GUITimeline;
 
 public class StatusesTableThread {
 	private int rows;
@@ -386,7 +386,7 @@ public class StatusesTableThread {
 								statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet,lastStatusDate);
 						}						
 						break;
-					
+
 					case FAVORITES:
 						statusList = (ArrayList<Status>) twitter.favorites();
 						break;
@@ -403,14 +403,12 @@ public class StatusesTableThread {
 						statusList = (ArrayList<Status>) twitter.getPublicTimeline();
 						break;
 					}
-										
-					//new WordFreq(statusList);
-					//new Visualizacao1();
+															
 					ArrayList<Status> reversed = new ArrayList<Status>(statusList.size());
 					for(int i=statusList.size()-1; i>=0; i--) {
 						reversed.add(statusList.get(i));
 					}
-					new Timeline(reversed);
+					new GUITimeline(reversed);
 					
 					if(!statusList.isEmpty()) {
 						lastStatusDate = statusList.get(0).getCreatedAt();
@@ -457,7 +455,9 @@ public class StatusesTableThread {
 						break;
 					}
 					else
-						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);					
+						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
+					System.out.println("Status code: "+e.getStatusCode());
+					e.printStackTrace();
 				}
 				catch(InterruptedException ie) {
 					System.out.println("INTERRUPTED " + statusesType + " para " + controller.getUserName(getUserId()));
