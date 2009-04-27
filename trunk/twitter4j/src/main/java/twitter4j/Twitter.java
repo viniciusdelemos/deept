@@ -589,9 +589,20 @@ public class Twitter implements java.io.Serializable {
      * @throws TwitterException
      */
     public List<Status> getUserTimeline(long since_id) throws TwitterException {
-    	this.Update();
         return Status.constructStatuses(get(baseURL + "statuses/user_timeline.xml",
                 "since_id", String.valueOf(since_id), true).asDocument(), this);
+    }
+    
+    public List<Status> getUserTimelineBySinceId(String id, int sinceID, int count) throws TwitterException{
+    	return Status.constructStatuses(get(baseURL + "statuses/user_timeline/"+id+".xml",
+    			"since_id", String.valueOf(sinceID), "count", String.valueOf(count), true).asDocument(), this);
+    	
+    }
+    
+    public List<Status> getUserTimelineBySinceId(String id, int sinceID) throws TwitterException{
+    	return Status.constructStatuses(get(baseURL + "statuses/user_timeline/"+id+".xml",
+    			"since_id", String.valueOf(sinceID), true).asDocument(), this);
+    	
     }
     
     /**
@@ -602,7 +613,6 @@ public class Twitter implements java.io.Serializable {
      * @throws TwitterException
      */
     public List<Status> getUserTimelineByPage(int page) throws TwitterException {
-    	this.Update();
         return Status.constructStatuses(get(baseURL + "statuses/user_timeline.xml",
                 "page", String.valueOf(page), true).asDocument(), this);
     }
@@ -1061,10 +1071,10 @@ public class Twitter implements java.io.Serializable {
      * @return
      * @throws TwitterException
      */
-    public List<String> getFriendsIds(String id) throws TwitterException{
+    public List<Long> getFriendsIds(String id) throws TwitterException{
     	this.Update();
     	
-    	List<String> ids = new ArrayList<String>();
+    	List<Long> ids = new ArrayList<Long>();
     	
     	Document doc = get(baseURL + "friends/ids/"+ id +".xml", true).asDocument();
     	
@@ -1084,7 +1094,7 @@ public class Twitter implements java.io.Serializable {
                  int size = list.getLength();
                  for (int i = 0; i < size; i++) {
                      Element status = (Element) list.item(i);
-                     ids.add(status.getFirstChild().getNodeValue());
+                     ids.add(Long.parseLong(status.getFirstChild().getNodeValue()));
                  }
                  return ids;
              } catch (TwitterException te) {
@@ -1100,10 +1110,10 @@ public class Twitter implements java.io.Serializable {
      * @return
      * @throws TwitterException
      */
-    public List<String> getFollowersIds(String id) throws TwitterException{
+    public List<Long> getFollowersIds(String id) throws TwitterException{
     	this.Update();
     	
-    	List<String> ids = new ArrayList<String>();
+    	List<Long> ids = new ArrayList<Long>();
     	
     	Document doc = get(baseURL + "followers/ids/"+ id +".xml", true).asDocument();
     	
@@ -1123,7 +1133,7 @@ public class Twitter implements java.io.Serializable {
                  int size = list.getLength();
                  for (int i = 0; i < size; i++) {
                      Element status = (Element) list.item(i);
-                     ids.add(status.getFirstChild().getNodeValue());
+                     ids.add(Long.parseLong(status.getFirstChild().getNodeValue()));
                  }
                  return ids;
              } catch (TwitterException te) {
