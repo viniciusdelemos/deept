@@ -365,31 +365,41 @@ public class GraphicManager extends Display {
     	
     	groupId++;
     	
-    	NodeItem item;
+    	NodeItem currentItem;
+    	NodeItem previousItem = null;
     	Iterator selected = selectedNodes.tuples();
-    	while(selected.hasNext()) {    		
-    		item = (NodeItem)selected.next();    		
-    		group.addItem(item); 
-    		item.setFixed(true);
-    		
+    	
+//    	while(selected.hasNext()) {
+//    		
+//    		currentItem = (NodeItem)selected.next();
+//    		if(previousItem != null) {
+//    			addEdge((Node)previousItem.getSourceTuple(), (Node)currentItem.getSourceTuple());
+//    		}
+//    		previousItem = currentItem;
+//    	}
+    	
+    	while(selected.hasNext()) {
+    		currentItem = (NodeItem)selected.next();  
+    		group.addItem(currentItem); 
     		//alterar o peso de sua aresta para o grupo se distanciar dos demais nodos
-    		Iterator edges = item.edges();
+    		Iterator edges = currentItem.edges();
     		while(edges.hasNext()) {
     			EdgeItem edge = (EdgeItem)edges.next();
     			NodeItem source = edge.getSourceItem();
     			NodeItem target = edge.getTargetItem();
-    			if(source == item) {
+    			if(source == currentItem) {
     				if(!group.containsItem(target)) {
-        				edge.set("weight", 340);
-        			}
+    					edge.set("weight", 340);
+    				}
     			}
-    			if(target == item) {
+    			if(target == currentItem) {
     				if(!group.containsItem(source)) {
     					edge.set("weight", 340);
     				}
-    			}    			
-    		}
-    	}
+    			}
+    			previousItem = currentItem;
+    		}    		
+    	}    	
     	clearSelection();
 	}
     

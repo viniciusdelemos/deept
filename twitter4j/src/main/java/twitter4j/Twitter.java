@@ -593,13 +593,13 @@ public class Twitter implements java.io.Serializable {
                 "since_id", String.valueOf(since_id), true).asDocument(), this);
     }
     
-    public List<Status> getUserTimelineBySinceId(String id, int sinceID, int count) throws TwitterException{
+    public List<Status> getUserTimelineBySinceId(String id, long sinceID, int count) throws TwitterException{
     	return Status.constructStatuses(get(baseURL + "statuses/user_timeline/"+id+".xml",
     			"since_id", String.valueOf(sinceID), "count", String.valueOf(count), true).asDocument(), this);
     	
     }
     
-    public List<Status> getUserTimelineBySinceId(String id, int sinceID) throws TwitterException{
+    public List<Status> getUserTimelineBySinceId(String id, long sinceID) throws TwitterException{
     	return Status.constructStatuses(get(baseURL + "statuses/user_timeline/"+id+".xml",
     			"since_id", String.valueOf(sinceID), true).asDocument(), this);
     	

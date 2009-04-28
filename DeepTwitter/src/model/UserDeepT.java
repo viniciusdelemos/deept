@@ -110,7 +110,7 @@ public class UserDeepT {
 		return description;
 	}
 
-	public URL getProfileImageUrl() {
+	public URL getProfileImageURL() {
 		return profileImageUrl;
 	}
 

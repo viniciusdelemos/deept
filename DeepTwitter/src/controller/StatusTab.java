@@ -1,5 +1,7 @@
 package controller;
 
+import gui.visualizations.GUITimeline;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -24,12 +26,14 @@ public class StatusTab {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator4;
+    private javax.swing.JToolBar.Separator jSeparator5;
     private javax.swing.JToggleButton buttonTurnOnOff;
     private javax.swing.JButton buttonSettings;
     private javax.swing.JButton buttonNextUser;
     private javax.swing.JButton buttonPreviousUser;
     private javax.swing.JButton buttonCloseUpdates;
     private javax.swing.JButton buttonAddUpdate;
+    private javax.swing.JButton buttonTimeline;
     private javax.swing.JTextField txtCurrentUser;
 	private Map<String,StatusesTableThread> tablesMap;
 	private StatusesType type;
@@ -209,6 +213,16 @@ public class StatusTab {
         buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonSettings);
         
+        jToolBar1.add(jSeparator5);
+
+        buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
+        buttonTimeline.setToolTipText("Configurações");
+        buttonTimeline.setActionCommand("buttonTimeline");
+        buttonTimeline.setFocusable(false);
+        buttonTimeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonTimeline.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonTimeline);
+        
 		panel.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
 	}
 	
@@ -217,8 +231,10 @@ public class StatusTab {
 		jScrollPane6 = new JScrollPane();
 		jSeparator2 = new Separator();
 		jSeparator4 = new Separator();
+		jSeparator5 = new Separator();
 		buttonTurnOnOff = new JToggleButton();
 		buttonSettings = new JButton();
+		buttonTimeline = new JButton();
 	    buttonNextUser = new JButton();
 	    buttonPreviousUser = new JButton();
 	    buttonCloseUpdates = new JButton();
@@ -232,6 +248,7 @@ public class StatusTab {
         buttonTurnOnOff.addActionListener(tabListener);
         buttonSettings.addActionListener(tabListener);
         buttonAddUpdate.addActionListener(tabListener);
+        buttonTimeline.addActionListener(tabListener);
 	}
 	
 	private void reconfigButtons() {
@@ -318,6 +335,10 @@ public class StatusTab {
 			else if(cmd.equals("buttonSettings")) {
 				//TODO
 				System.out.println("Settings");
+			}
+			else if(cmd.equals("buttonTimeline")) {
+				String userId = idArray.get(currentTable);
+				new GUITimeline(tablesMap.get(userId).getStatusesList());
 			}
 		}	
 	}

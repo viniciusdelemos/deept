@@ -21,6 +21,7 @@ import javax.swing.event.HyperlinkListener;
 
 import model.ChartColor;
 import model.MessageType;
+import model.StatusDeepT;
 import model.StatusesType;
 import model.URLLinkAction;
 
@@ -37,7 +38,8 @@ public class StatusesTableThread {
 	private int rows;
 	private String userId;
 	private boolean isTwitterUser;
-	private ArrayList<Status> statusList;
+	private ArrayList<Status> statusesList;
+	private ArrayList<StatusDeepT> allStatusesList;
 	private long interval;
 	private JPanel panel;
 	private KeepTableUpdated keepTableUpdated;
@@ -56,9 +58,10 @@ public class StatusesTableThread {
 		this.userId = null;
 		controller = ControllerDeepTwitter.getInstance();
 		isTwitterUser = controller.isTwitterUser();
-		statusList = new ArrayList<Status>();		
+		statusesList = new ArrayList<Status>();
+		allStatusesList = new ArrayList<StatusDeepT>();
 		rows = 0;
-		interval = 120000; //2 minutos
+		interval = 2000;//120000; //2 minutos
 		updatesToGet = 100;
 	}
 
@@ -325,8 +328,11 @@ public class StatusesTableThread {
 		return keepTableUpdated.isThreadSuspended();
 	}
 	
+	public synchronized ArrayList<StatusDeepT> getStatusesList() {				
+		return allStatusesList;
+	}
+	
 	class KeepTableUpdated extends Thread {
-		private Date lastStatusDate = null;
 		private long lastStatusId = -1;
 		private GridBagConstraints c = new GridBagConstraints();
 		private JPanel empty;
@@ -373,26 +379,27 @@ public class StatusesTableThread {
 					switch(statusesType)
 					{
 					case UPDATES:
-						if(lastStatusDate == null) {
+						if(lastStatusId < 0) {
+							System.out.println("last status ID < 0");
 							if(userId==null)
-								statusList = (ArrayList<Status>) twitter.getFriendsTimeline();
+								statusesList = (ArrayList<Status>) twitter.getFriendsTimeline();
 							else
-								statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet);
+								statusesList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet);
 						}
 						else {
 							if(userId==null)
-								statusList = (ArrayList<Status>) twitter.getFriendsTimeline(lastStatusDate);
+								statusesList = (ArrayList<Status>) twitter.getFriendsTimelineBySinceId(lastStatusId);
 							else
-								statusList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet,lastStatusDate);
+								statusesList = (ArrayList<Status>) twitter.getUserTimelineBySinceId(userId, lastStatusId, updatesToGet);
 						}						
 						break;
 
 					case FAVORITES:
-						statusList = (ArrayList<Status>) twitter.favorites();
+						statusesList = (ArrayList<Status>) twitter.favorites();
 						break;
 
 					case REPLIES:
-						statusList = (ArrayList<Status>) twitter.getReplies();
+						statusesList = (ArrayList<Status>) twitter.getReplies();
 						break;
 					
 					case DIRECT_MESSAGES:
@@ -400,36 +407,30 @@ public class StatusesTableThread {
 						break;
 
 					case PUBLIC_TIMELINE:
-						statusList = (ArrayList<Status>) twitter.getPublicTimeline();
+						statusesList = (ArrayList<Status>) twitter.getPublicTimeline();
 						break;
 					}
-															
-					ArrayList<Status> reversed = new ArrayList<Status>(statusList.size());
-					for(int i=statusList.size()-1; i>=0; i--) {
-						reversed.add(statusList.get(i));
-					}
-					new GUITimeline(reversed);
 					
-					if(!statusList.isEmpty()) {
-						lastStatusDate = statusList.get(0).getCreatedAt();
-
+					if(!statusesList.isEmpty()) {
+						//lastStatusId = statusesList.get(0).getId();
+						System.out.println("LastStatusId: "+lastStatusId);
 						//checa se nova msg é igual à ultima já adicionada ao painel
-						if(statusList.get(0).getId()>lastStatusId)
+						if(statusesList.get(0).getId()>lastStatusId)
 						{
+							System.out.println("Novo update com id maior = "+statusesList.get(0).getId());
 							if(empty != null) panel.remove(empty);							
 							//de trás para frente, para adicionar as mais recentes em cima
-							for(int i=statusList.size()-1; i>=0; i--) {
-								Status s = statusList.get(i);								
-								//para evitar bug da API do twitter
-								if(s.getId()>lastStatusId) {
-									c.weightx = 0.5;
-									c.fill = GridBagConstraints.HORIZONTAL;
-									c.gridx = 0;
-									panel.add(getPanel(s),c,0);			
-									rows++;
-									panel.revalidate();
-									lastStatusId = s.getId();
-								}								
+							for(int i=statusesList.size()-1; i>=0; i--) {
+								System.out.println("ESTOU NO FOR");
+								Status s = statusesList.get(i);								
+								c.weightx = 0.5;
+								c.fill = GridBagConstraints.HORIZONTAL;
+								c.gridx = 0;
+								panel.add(getPanel(s),c,0);			
+								rows++;
+								panel.revalidate();
+								lastStatusId = s.getId();
+								allStatusesList.add(0,new StatusDeepT(s));
 							}
 							empty = new JPanel();
 							empty.add(new JLabel(""));
@@ -441,7 +442,6 @@ public class StatusesTableThread {
 							panel.add(empty,c);
 							panel.revalidate();
 						}
-						statusList.clear();
 					}				
 					Thread.sleep(interval);	
 					System.out.println("running " + statusesType + " para " + controller.getUserName(getUserId()));

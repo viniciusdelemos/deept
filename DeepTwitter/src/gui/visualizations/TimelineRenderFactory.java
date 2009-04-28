@@ -7,7 +7,6 @@ import prefuse.render.LabelRenderer;
 import prefuse.render.Renderer;
 import prefuse.render.ShapeRenderer;
 import prefuse.visual.expression.InGroupPredicate;
-import demo.wordfreq.render.RotateLabelAxisRenderer;
 
 public final class TimelineRenderFactory extends DefaultRendererFactory {
 
@@ -16,7 +15,7 @@ public final class TimelineRenderFactory extends DefaultRendererFactory {
 		
 		//Renderer renderer = new LabelRenderer(null,StatusesDataTable.ColNames.IMAGE_URL.toString());
 		Renderer renderer = new ShapeRenderer(13);
-		Renderer axisX = new AxisRenderer(Constants.CENTER, Constants.FAR_BOTTOM);
+		Renderer axisX = new RotateLabelAxisRenderer(Constants.CENTER, Constants.FAR_BOTTOM);
 		Renderer axisY = new AxisRenderer(Constants.FAR_LEFT, Constants.CENTER);
 	    
 	    this.setDefaultRenderer(renderer);
