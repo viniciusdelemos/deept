@@ -49,6 +49,8 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCloseUpdates = new javax.swing.JButton();
         buttonTurnOnOff = new javax.swing.JToggleButton();
         buttonSettings = new javax.swing.JButton();
+        jSeparator5 = new javax.swing.JToolBar.Separator();
+        buttonTimeline = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -105,7 +107,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         checkBoxHighQuality.setActionCommand("checkBoxHighQuality");
         checkBoxHighQuality.setName("checkBoxHighQuality"); // NOI18N
 
-        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14));
         labelFilter.setText("Filtro:");
 
         buttonHideSelection.setText("Esconder seleção");
@@ -247,6 +249,15 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonSettings);
+        jToolBar1.add(jSeparator5);
+
+        buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
+        buttonTimeline.setToolTipText("Configurações");
+        buttonTimeline.setActionCommand("buttonTimeline");
+        buttonTimeline.setFocusable(false);
+        buttonTimeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonTimeline.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonTimeline);
 
         jPanel2.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
         jPanel2.add(jScrollPane6, java.awt.BorderLayout.CENTER);
@@ -340,6 +351,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonTurnOnOff.addActionListener(listener);
         buttonSettings.addActionListener(listener);
         buttonAddUpdate.addActionListener(listener);
+        buttonTimeline.addActionListener(listener);
 
         checkBoxHighQuality.addActionListener(listener);
         checkBoxCurvedEdges.addActionListener(listener);
@@ -405,6 +417,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonRemoveSelection;
     private javax.swing.JButton buttonSettings;
     private javax.swing.JButton buttonShowAll;
+    private javax.swing.JButton buttonTimeline;
     private javax.swing.JToggleButton buttonTurnOnOff;
     private javax.swing.JButton buttonUpdate;
     private javax.swing.JCheckBox checkBoxCurvedEdges;
@@ -419,6 +432,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator4;
+    private javax.swing.JToolBar.Separator jSeparator5;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
