@@ -21,9 +21,11 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import model.ChartColor;
+import model.StatusDeepT;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -61,8 +63,8 @@ public class TimelinePanel extends JPanel {
        
     private String panelTitle = "Timeline";
     private String m_totalStr;
-    private int m_totalPeople = 10000;
-    private JFastLabel m_total = new JFastLabel(m_totalPeople+" updates");
+    private int visibleStatuses;
+    private JFastLabel m_total = new JFastLabel(visibleStatuses+" updates");
     private JFastLabel m_details;
     
     private Visualization m_vis;
@@ -75,7 +77,7 @@ public class TimelinePanel extends JPanel {
 		STATUS, X_AXIS, Y_AXIS
 	}
     
-    public TimelinePanel(ArrayList<Status> statusesList) {
+    public TimelinePanel(ArrayList<StatusDeepT> statusesList) {
         super(new BorderLayout());
         
         final Visualization vis = new Visualization();
@@ -89,15 +91,16 @@ public class TimelinePanel extends JPanel {
         SearchQueryBinding idSearchQuery = new SearchQueryBinding(vt, ColNames.SCREEN_NAME.toString());
         
         AxisLayout xAxis = new AxisLayout(Group.STATUS.toString(), 
-				StatusesDataTable.ColNames.DAY.toString(), Constants.X_AXIS);
-        xAxis.setRangeModel(xRangeModel(vt));
+				StatusesDataTable.ColNames.DAY.toString(), Constants.X_AXIS);        
+        RangeQueryBinding  dayQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.DAY.toString());
+        xAxis.setRangeModel(dayQuery.getModel());      
         AxisLabelLayout xlabels = new AxisLabelLayout(Group.X_AXIS.toString(), xAxis, m_xlabB, 15);
         //xlabels.setSpacing(5);
         vis.putAction("xlabels", xlabels);
                 
         AxisLayout yAxis = new AxisLayout(Group.STATUS.toString(), 
-				StatusesDataTable.ColNames.DATE.toString(),	Constants.Y_AXIS);
-        RangeQueryBinding  hourQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.DATE.toString());
+				StatusesDataTable.ColNames.HOUR.toString(),	Constants.Y_AXIS);
+        RangeQueryBinding  hourQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.HOUR.toString());
         yAxis.setRangeModel(hourQuery.getModel());      
         AxisLabelLayout ylabels = new AxisLabelLayout(Group.Y_AXIS.toString(), yAxis, m_ylabB);
         
@@ -106,6 +109,7 @@ public class TimelinePanel extends JPanel {
         
         AndPredicate filter = new AndPredicate(idSearchQuery.getPredicate());
         filter.add(hourQuery.getPredicate());
+        filter.add(dayQuery.getPredicate());
         
 //        int[] palette = new int[] {
 //            ColorLib.rgb(150,150,255), ColorLib.rgb(255,150,150),
@@ -113,12 +117,12 @@ public class TimelinePanel extends JPanel {
 //            //CRIAR ARRAY DE CORES REFERENTES AS CATEGORIAS
 //        };
         DataColorAction shapeColor = new DataColorAction(Group.STATUS.toString(), 
-				StatusesDataTable.ColNames.DATE.toString(),
+				StatusesDataTable.ColNames.HOUR.toString(),
 				Constants.NOMINAL, VisualItem.STROKECOLOR,
 				new int[] {ChartColor.DARK_BLUE.getRGB()});
                 
         DataShapeAction shape = new DataShapeAction(Group.STATUS.toString(),
-				StatusesDataTable.ColNames.DATE.toString(),
+				StatusesDataTable.ColNames.HOUR.toString(),
 				new int[] {Constants.SHAPE_ELLIPSE});
         
         Counter cntr = new Counter(Group.STATUS.toString());
@@ -160,7 +164,7 @@ public class TimelinePanel extends JPanel {
                 return score;
             }
         });
-        m_display.setBorder(BorderFactory.createEmptyBorder(10,50,10,10));
+        m_display.setBorder(BorderFactory.createEmptyBorder(10,50,50,10));
         m_display.setSize(700,450);
         m_display.setHighQuality(true);
         m_display.addComponentListener(new ComponentAdapter() {
@@ -224,13 +228,16 @@ public class TimelinePanel extends JPanel {
         radioBox.add(Box.createHorizontalStrut(5));        
         radioBox.add(Box.createHorizontalStrut(16));
         
-        JRangeSlider slider = hourQuery.createVerticalRangeSlider();
-        slider.setThumbColor(null);
-        slider.setMinExtent(hourQuery.getModel().getMinimum());
-        slider.addMouseListener(new MouseAdapter() {
+        JRangeSlider verticalSlider = hourQuery.createVerticalRangeSlider();
+        verticalSlider.setThumbColor(null);
+        verticalSlider.setMinExtent(hourQuery.getModel().getMinimum());
+        
+        JRangeSlider horizontalSlider = dayQuery.createHorizontalRangeSlider();
+        horizontalSlider.setThumbColor(null);
+        horizontalSlider.setMinExtent(dayQuery.getModel().getMinimum());
+        horizontalSlider.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                System.out.println("pressing");
-            	m_display.setHighQuality(false);
+                m_display.setHighQuality(false);
             }
             public void mouseReleased(MouseEvent e) {
                 m_display.setHighQuality(true);
@@ -243,82 +250,101 @@ public class TimelinePanel extends JPanel {
         
         add(infoBox, BorderLayout.NORTH);
         add(m_display, BorderLayout.CENTER);
-        add(slider, BorderLayout.EAST);
-        add(radioBox, BorderLayout.SOUTH);
+        add(verticalSlider, BorderLayout.EAST);
+        add(horizontalSlider, BorderLayout.SOUTH);
+        //ADICIONAR CAIXA DE BUSCA SOH PARA STATUSES DO USER LOGADO
+        //add(radioBox, BorderLayout.SOUTH);
         UILib.setColor(this, ColorLib.getColor(255,255,255), Color.GRAY);
-        slider.setForeground(Color.LIGHT_GRAY);
+        verticalSlider.setForeground(ChartColor.LIGHT_BLUE);
+        horizontalSlider.setForeground(ChartColor.LIGHT_BLUE);
         UILib.setFont(radioBox, FontLib.getFont("Tahoma", 15));
         m_details.setFont(FontLib.getFont("Tahoma", 18));
         m_total.setFont(FontLib.getFont("Tahoma", 16));
     }
     
-    public StatusesDataTable getStatusesDataTable(ArrayList<Status> statusesList) {
+    public StatusesDataTable getStatusesDataTable(ArrayList<StatusDeepT> statusesList) {
 		StatusesDataTable tbl = new StatusesDataTable();
 		tbl.addRows(statusesList.size());
 		int index = 0;
 		
-		for (Status s : statusesList) {
+		for (StatusDeepT s : statusesList) {
 			try{
-				tbl.set(index, StatusesDataTable.ColNames.TWITTER_ID.toString(), String.valueOf(s.getUser().getId()));
-				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), String.valueOf(s.getUser().getScreenName()));
+				tbl.set(index, StatusesDataTable.ColNames.STATUSDEEPT.toString(), s);
+				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), s.getUser().getScreenName());
 				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), s.getUser().getProfileImageURL().toString());
-				tbl.set(index, StatusesDataTable.ColNames.STATUS_ID.toString(), String.valueOf(s.getId()));
-
+				//SETAR CATEGORIA
+				
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");		
 				String formatedTime = formatter.format(s.getCreatedAt());
 				Date d = formatter.parse(formatedTime);
-				TimelineDate formatedDate = new TimelineDate(d.getTime());						
-				tbl.set(index, StatusesDataTable.ColNames.DATE.toString(), formatedDate);
+				CustomDateHours formatedDate = new CustomDateHours(d.getTime());						
+				tbl.set(index, StatusesDataTable.ColNames.HOUR.toString(), formatedDate);
 
-				tbl.set(index, StatusesDataTable.ColNames.DAY.toString(), s.getCreatedAt().getDate()+"/"+(s.getCreatedAt().getMonth()+1));
+				formatter = new SimpleDateFormat("EEE dd/MM/yyyy");
+				formatedTime = formatter.format(s.getCreatedAt());
+				System.out.println(formatedTime);
+				d = formatter.parse(formatedTime);							
+				CustomDateDay day = new CustomDateDay(d.getTime());			
+
+				tbl.set(index, StatusesDataTable.ColNames.DAY.toString(), day);
 				index++;		
 			}
 			catch(Exception e) {
-				System.out.println("**********\n");
+				System.out.println("*****Exception******\n");
 				e.printStackTrace();
 			}
 		}
 		return tbl;
 	}
 	
-//	private static ObjectRangeModel yRangeModel(VisualTable vt) {
-//		Object[] array = DataLib.ordinalArray(vt.tuples(), StatusesDataTable.ColNames.DATE.toString());
-//		ArrayList<Date> axisLabels = new ArrayList<Date>();
+//	private ObjectRangeModel yRangeModel(VisualTable vt) {
+//		Object[] array = DataLib.ordinalArray(vt.tuples(), StatusesDataTable.ColNames.HOUR.toString());
+//		ArrayList<TimelineDate> axisLabels = new ArrayList<TimelineDate>();
 //		
-//		for(int i=0; i<(array.length); i++) {
-//			Date statusDate = (Date)array[i];
+////		TimelineDate first = (TimelineDate)array[0];
+////		TimelineDate last = (TimelineDate)array[array.length-1];
+////		
+////		for(int i = first.getHours(); i<=last.getHours(); i++) {
+////			TimelineDate newDate = (TimelineDate)first.clone();
+////			newDate.setHours(i);
+////			newDate.setMinutes(0);
+////			newDate.setSeconds(0);	
+////			axisLabels.add(newDate);
+////		}
+//		for(int i=0; i<array.length; i++) {
+//			TimelineDate statusDate = (TimelineDate)array[i];
 //			axisLabels.add(statusDate);
 //		}
 //		
 //		return  new ObjectRangeModel(axisLabels.toArray());
 //	}
 	
-	private static ObjectRangeModel xRangeModel(VisualTable vt) {
-		List<Object> l = new ArrayList<Object>();
-
-		Iterator<Tuple> it = vt.tuples();
-		String latestDay = "";
-		while (it.hasNext()) {
-			Tuple item = it.next();
-			String newDay = item.getString(StatusesDataTable.ColNames.DAY.toString());
-			if(!newDay.equals(latestDay)) {
-				System.out.println("day: "+newDay);
-				l.add(newDay);
-				latestDay = newDay;
-			}			
-		}				
-
-		// padding range with extra "blank" at head and tail
-		Object[] a = new Object[l.size()];//+2
-		//a[0] = "";  
-		//a[a.length-1] = "";
-		for (int i = 0; i < l.size(); i++) {//i = 1
-			a[i] = l.get(i);
-		}
-		
-		// return range model
-		return new ObjectRangeModel(a);  
-	}
+//	private ObjectRangeModel xRangeModel(VisualTable vt) {
+//		List<Object> labels = new ArrayList<Object>();
+//
+//		Iterator<Tuple> it = vt.tuples();
+//		String latestDay = "";
+//		while (it.hasNext()) {
+//			Tuple item = it.next();
+//			String newDay = item.getString(StatusesDataTable.ColNames.DAY.toString());
+//			//System.out.println(newDay);
+//			if(!newDay.equals(latestDay)) {
+//				labels.add(newDay);
+//				latestDay = newDay;
+//			}			
+//		}				
+//
+//		// padding range with extra "blank" at head and tail
+//		Object[] a = new Object[labels.size()];//+2
+//		//a[0] = "";  
+//		//a[a.length-1] = "";
+//		for (int i = labels.size()-1; i >=0; i--) {//i = 1
+//			a[i] = labels.get(i);
+//		}
+//		
+//		// return range model
+//		return new ObjectRangeModel(a);  
+//	}
     
     public void displayLayout() {
     	Insets i = m_display.getInsets();
@@ -347,11 +373,11 @@ public class TimelinePanel extends JPanel {
     			VisualItem item = visibleItems.next();
     			cont++;
     		}
-    		m_totalPeople = cont;
-    		if(m_totalPeople == 1)
-    			m_totalStr = m_totalPeople + " update";
+    		visibleStatuses = cont;
+    		if(visibleStatuses == 1)
+    			m_totalStr = visibleStatuses + " update";
     		else
-    			m_totalStr = m_totalPeople + " updates";
+    			m_totalStr = visibleStatuses + " updates";
     		m_total.setText(m_totalStr);
     	}
     }

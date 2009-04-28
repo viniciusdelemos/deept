@@ -19,7 +19,7 @@ public class SocialGraphMethods {
 		
 		Twitter twitter = new Twitter(user, pass);
 		
-		List<String> ids = null;
+		List<Long> ids = null;
 		
 		try {
 			ids = twitter.getFriendsIds(id);
@@ -28,8 +28,8 @@ public class SocialGraphMethods {
 		}
 		
 		System.out.println("Friends of "+id);
-		for(String str : ids){
-			System.out.println(str);
+		for(Long l : ids){
+			System.out.println(l);
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class SocialGraphMethods {
 		
 		Twitter twitter = new Twitter(user, pass);
 		
-		List<String> ids = null;
+		List<Long> ids = null;
 		
 		try {
 			ids = twitter.getFollowersIds(id);
@@ -46,8 +46,8 @@ public class SocialGraphMethods {
 		}
 		
 		System.out.println("Followers of "+id);
-		for(String str : ids){
-			System.out.println(str);
+		for(Long l : ids){
+			System.out.println(l);
 		}
 	}
 

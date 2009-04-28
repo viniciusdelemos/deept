@@ -2,6 +2,8 @@ package model;
 
 import java.util.Date;
 
+import twitter4j.UserWithStatus;
+
 public class StatusDeepT {
 	
 	private Date createdAt;
@@ -13,6 +15,7 @@ public class StatusDeepT {
     private int inReplyToUserId;
     private boolean isFavorited;
     private String inReplyToScreenName;
+    private UserDeepT userDeepT;
     
 	public StatusDeepT(Date createdAt, long id, String text, String source,
 			boolean isTruncated, long inReplyToStatusId, int inReplyToUserId,
@@ -39,6 +42,7 @@ public class StatusDeepT {
 		this.inReplyToUserId = status.getInReplyToUserId();
 		this.isFavorited = status.isFavorited();
 		this.inReplyToScreenName = status.getInReplyToScreenName();
+		this.userDeepT = new UserDeepT(status.getUser());
 	}
 
 	public Date getCreatedAt() {
@@ -77,7 +81,9 @@ public class StatusDeepT {
 		return inReplyToScreenName;
 	}
 	
-	
+	public UserDeepT getUser() {
+		return userDeepT;
+	}
     
     
 
