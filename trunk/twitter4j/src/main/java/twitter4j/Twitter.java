@@ -7,7 +7,6 @@ import twitter4j.http.Response;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -324,7 +323,7 @@ public class Twitter implements java.io.Serializable {
      * @return the 20 most recent statuses
      * @throws TwitterException when Twitter service or network is unavailable
      */
-    public List<Status> getPublicTimeline(int sinceID) throws
+    public List<Status> getPublicTimeline(long sinceID) throws
             TwitterException {
         return Status.constructStatuses(get(baseURL +
                 "statuses/public_timeline.xml", "since_id", String.valueOf(sinceID), false).
