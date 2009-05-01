@@ -411,7 +411,7 @@ public class StatusMethods {
 		List<Status> status = null;
 		
 		try {
-			status = twitter.getRepliesByPageBySinceId(since_id);
+			status = twitter.getRepliesBySinceId(since_id);
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
