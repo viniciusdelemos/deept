@@ -722,7 +722,7 @@ public class Twitter implements java.io.Serializable {
      * @return
      * @throws TwitterException
      */
-    public List<Status> getRepliesByPageBySinceId(long since_id) throws TwitterException {
+    public List<Status> getRepliesBySinceId(long since_id) throws TwitterException {
     	this.Update();
         return Status.constructStatuses(get(baseURL + "statuses/replies.xml",
                 "since_id", String.valueOf(since_id), true).asDocument(), this);
@@ -1255,7 +1255,7 @@ public class Twitter implements java.io.Serializable {
         return Status.constructStatuses(get(baseURL + "favorites/" + id + ".xml", "page", String.valueOf(page), true).
                 asDocument(), this);
     }
-
+    
     /**
      * Favorites the status specified in the ID parameter as the authenticating user.  Returns the favorite status when successful.
      *
