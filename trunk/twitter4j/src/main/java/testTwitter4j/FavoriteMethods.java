@@ -2,6 +2,7 @@ package testTwitter4j;
 
 import java.util.List;
 
+import twitter4j.AsyncTwitter;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -70,6 +71,24 @@ public class FavoriteMethods {
 		printStatus(status);
 	}
 	
+	public void favoritesBySinceId(String id, long since_id){
+		
+		Twitter twitter = new Twitter(user, password);
+		List<Status> status = null;
+		
+		try {
+			status = twitter.favoritesBySinceId(id, since_id);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("\n\n\nFavorites from id: "
+				+ id + "  sinceId: "+since_id);
+		printStatus(status);
+		
+	}
+	
+		
 	public void favorites(String id, int page)
 	{
 		Twitter twitter = new Twitter(user,password);

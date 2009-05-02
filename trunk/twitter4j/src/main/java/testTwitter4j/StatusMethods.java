@@ -205,6 +205,35 @@ public class StatusMethods {
 	
 	/** User Timeline **/
 	
+	public void getUserTimelineBySinceId(String id, int since_id, int count){
+		Twitter twitter = new Twitter(user, pass);
+		
+		List<Status> list = null;
+		
+		try{
+			list = twitter.getUserTimelineBySinceId(id, since_id, count);
+		} catch(TwitterException e){
+			e.printStackTrace();
+		}
+		
+		this.printStatus(list);
+	}
+	public void getUserTimelineBySinceId(String id, int since_id){
+		
+		Twitter twitter = new Twitter(user, pass);
+		
+		List<Status> list = null;
+		
+		try{
+			list = twitter.getUserTimelineBySinceId(id, since_id);
+		} catch(TwitterException e){
+			e.printStackTrace();
+		}
+		
+		this.printStatus(list);
+		
+	}
+	
 	public void getUserTimeline(String id, int count, Date since){
 		
 		Twitter twitter = new Twitter(user, pass);
