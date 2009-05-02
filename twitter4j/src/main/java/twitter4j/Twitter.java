@@ -1255,6 +1255,12 @@ public class Twitter implements java.io.Serializable {
                 asDocument(), this);
     }
     
+    public List<Status> favoritesBySinceId(String id, long since_id) throws TwitterException{
+    	return Status.constructStatuses(get(baseURL + "favorites/" + id + ".xml",
+    			"since_id", String.valueOf(since_id), true).asDocument() , this);
+    }
+    
+    
     /**
      * Favorites the status specified in the ID parameter as the authenticating user.  Returns the favorite status when successful.
      *

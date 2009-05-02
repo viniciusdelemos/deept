@@ -46,23 +46,28 @@ public class UserWithStatus extends User implements java.io.Serializable{
 
     public UserWithStatus(Element elem, Twitter twitter) throws TwitterException {
         super(elem, twitter);
-
-        profileBackgroundColor = getChildText("profile_background_color", elem);
-        profileTextColor = getChildText("profile_text_color", elem);
-        profileLinkColor = getChildText("profile_link_color", elem);
-        profileSidebarFillColor = getChildText("profile_sidebar_fill_color", elem);
-        profileSidebarBorderColor = getChildText("profile_sidebar_border_color", elem);
         
-        friendsCount = getChildInt("friends_count", elem);
-        createdAt = getChildDate("created_at", elem);
-        favouritesCount = getChildInt("favourites_count", elem);
-        utcOffset = getChildText("utc_offset", elem);
-        timeZone = getChildText("time_zone", elem);
-        profileBackgroundImageUrl = getChildText("profile_background_image_url", elem);
-        profileBackgroundTile = getChildText("profile_background_tile", elem);
-        statusesCount = getChildInt("statuses_count", elem);
-        notifications = getChildBoolean("profile_background_tile", elem);
-        following = getChildBoolean("profile_background_tile", elem);
+        try{
+
+	        profileBackgroundColor = getChildText("profile_background_color", elem);
+	        profileTextColor = getChildText("profile_text_color", elem);
+	        profileLinkColor = getChildText("profile_link_color", elem);
+	        profileSidebarFillColor = getChildText("profile_sidebar_fill_color", elem);
+	        profileSidebarBorderColor = getChildText("profile_sidebar_border_color", elem);
+	        
+	        friendsCount = getChildInt("friends_count", elem);
+	        createdAt = getChildDate("created_at", elem);
+	        favouritesCount = getChildInt("favourites_count", elem);
+	        utcOffset = getChildText("utc_offset", elem);
+	        timeZone = getChildText("time_zone", elem);
+	        profileBackgroundImageUrl = getChildText("profile_background_image_url", elem);
+	        profileBackgroundTile = getChildText("profile_background_tile", elem);
+	        statusesCount = getChildInt("statuses_count", elem);
+	        notifications = getChildBoolean("profile_background_tile", elem);
+	        following = getChildBoolean("profile_background_tile", elem);
+        }catch(Exception e){
+        	
+        }
         
         if (!isProtected()) {
         	

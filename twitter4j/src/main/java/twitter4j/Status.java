@@ -36,7 +36,12 @@ public class Status extends TwitterResponse implements java.io.Serializable {
         inReplyToStatusId = getChildInt("in_reply_to_status_id", elem);
         inReplyToUserId = getChildInt("in_reply_to_user_id", elem);
         isFavorited = getChildBoolean("favorited", elem);
-        inReplyToScreenName = getChildText("in_reply_to_screen_name", elem);
+        
+        try{
+        	inReplyToScreenName = getChildText("in_reply_to_screen_name", elem);
+        }catch(Exception e){
+        	
+        }
     }
 
     /**
