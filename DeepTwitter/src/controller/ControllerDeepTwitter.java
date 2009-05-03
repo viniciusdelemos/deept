@@ -23,6 +23,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import model.GraphicManager;
 import model.MessageType;
+import model.UserDeepT;
 import model.threads.StatusesTableThread;
 import model.StatusesType;
 import prefuse.Display;
@@ -81,7 +82,7 @@ public class ControllerDeepTwitter {
 		return gManager.getUserName(Integer.parseInt(id));
 	}
 	
-	public void searchAndAddUserToNetwork(UserWithStatus u) {
+	public void searchAndAddUserToNetwork(UserDeepT u) {
 		gManager.searchAndAddUserToNetwork(u);
 	}
 	
@@ -153,7 +154,7 @@ public class ControllerDeepTwitter {
 
 				if(logInOK)
 				{
-					UserWithStatus u = twitter.getAuthenticatedUser();
+					UserDeepT u = new UserDeepT(twitter.getAuthenticatedUser());
 					loggedUserId = String.valueOf(u.getId());
 					gManager = new GraphicManager();
 				
@@ -173,14 +174,15 @@ public class ControllerDeepTwitter {
 					tabManager = new StatusTabManager();
 					tabManager.setTabbedPane(windowTabs);
 					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //1
-					tabManager.addTab(StatusesType.REPLIES,"@Replies"); //2
+					tabManager.addTab(StatusesType.REPLIES,"@"+u.getScreenName()); //2
 					tabManager.addTab(StatusesType.FAVORITES,"Favoritos"); //3
 					tabManager.addTab(StatusesType.DIRECT_MESSAGES,"Mensagens"); //4
-					tabManager.addTab(StatusesType.PUBLIC_TIMELINE, "Public Timeline"); //5		
+					tabManager.addTab(StatusesType.SEARCH, "Busca"); //5
+					tabManager.addTab(StatusesType.PUBLIC_TIMELINE, "Public Timeline"); //6		
 					
 					if(!isTwitterUser) {
 						tabManager.setEnabledAt(2, false); //replies
-						tabManager.setEnabledAt(3, false); //favoritos
+						//tabManager.setEnabledAt(3, false); //favoritos
 						tabManager.setEnabledAt(4, false); //mensagens
 					}
 					
@@ -204,7 +206,7 @@ public class ControllerDeepTwitter {
 								if(isTwitterUser)
 									table = new StatusesTableThread(StatusesType.UPDATES);
 								else
-									table = new StatusesTableThread(getLoggedUserId());
+									table = new StatusesTableThread(StatusesType.UPDATES,getLoggedUserId());
 								break;
 								
 							case REPLIES:
@@ -224,6 +226,11 @@ public class ControllerDeepTwitter {
 								if(selectedTab.isActive()) return;
 								table = new StatusesTableThread(StatusesType.DIRECT_MESSAGES);
 								break;
+							case SEARCH:
+								jSplitPane.setDividerLocation(431);
+								return;
+//								if(selectedTab.isActive()) return;
+//								table = new StatusesTableThread(StatusesType.SEARCH);								
 								
 							case PUBLIC_TIMELINE:
 								jSplitPane.setDividerLocation(431);
@@ -244,6 +251,7 @@ public class ControllerDeepTwitter {
 							tabManager.getTab(StatusesType.REPLIES).stopThreads();
 							tabManager.getTab(StatusesType.FAVORITES).stopThreads();
 							tabManager.getTab(StatusesType.DIRECT_MESSAGES).stopThreads();
+							tabManager.getTab(StatusesType.SEARCH).stopThreads();
 							tabManager.getTab(StatusesType.PUBLIC_TIMELINE).stopThreads();
 						}
 					});
@@ -273,10 +281,11 @@ public class ControllerDeepTwitter {
 					showMessageDialog("Nome de usuário inválido!",MessageType.ERROR);
 				else if(ex.getStatusCode()==-1)
 					showMessageDialog("A conexão não pôde ser estabelecida.",MessageType.ERROR);
-				else 
+				else {
+					System.out.println("Status Code: "+ex.getStatusCode()+"\nMessage: "+ex.getMessage());
+					ex.printStackTrace();
 					showMessageDialog(ex.getMessage(),MessageType.ERROR);
-				System.out.println(ex.getMessage());
-				ex.printStackTrace();
+				}
 			} catch(Exception e2) {
 				showMessageDialog(e2.getMessage(), MessageType.ERROR);
 				e2.printStackTrace();
@@ -402,7 +411,7 @@ public class ControllerDeepTwitter {
 					String id = guiAddUser.getUser();
 					if(!id.equals("")) {
 						System.out.println("=> Requesting user to Twitter");
-						UserWithStatus u = twitter.getUserDetail(id);
+						UserDeepT u = new UserDeepT(twitter.getUserDetail(id));
 						System.out.println("=> Got user");
 						gManager.searchAndAddUserToNetwork(u);								
 						guiAddUser.dispose();

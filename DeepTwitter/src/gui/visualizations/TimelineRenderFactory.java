@@ -19,7 +19,7 @@ public final class TimelineRenderFactory extends DefaultRendererFactory {
 		Renderer axisY = new AxisRenderer(Constants.FAR_LEFT, Constants.CENTER);
 	    
 	    this.setDefaultRenderer(renderer);
-        this.add(new InGroupPredicate(TimelinePanel.Group.STATUS.toString()), renderer);
+        this.add(new InGroupPredicate(TimelinePanel.Group.STATUSES.toString()), renderer);
         this.add(new InGroupPredicate(TimelinePanel.Group.X_AXIS.toString()), axisX);
         this.add(new InGroupPredicate(TimelinePanel.Group.Y_AXIS.toString()), axisY);
 	}

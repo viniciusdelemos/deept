@@ -1260,6 +1260,11 @@ public class Twitter implements java.io.Serializable {
     			"since_id", String.valueOf(since_id), true).asDocument() , this);
     }
     
+    public List<Status> favoritesBySinceId(long since_id) throws TwitterException{
+    	return Status.constructStatuses(get(baseURL + "favorites.xml",
+    			"since_id", String.valueOf(since_id), true).asDocument() , this);
+    }
+    
     
     /**
      * Favorites the status specified in the ID parameter as the authenticating user.  Returns the favorite status when successful.
@@ -1404,7 +1409,7 @@ Formats: xml, json
      */
 
     public QueryResult search(Query query) throws TwitterException {
-        return new QueryResult(get(searchBaseURL + "search.json", query.asPostParameters(), false).asJSONObject(), this);
+        return new QueryResult(get(searchBaseURL + "search.json", query.asPostParameters(), false).asJSONObject(), this);    	
     }
 
     private SimpleDateFormat format = new SimpleDateFormat(

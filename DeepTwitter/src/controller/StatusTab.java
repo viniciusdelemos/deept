@@ -28,6 +28,10 @@ public class StatusTab {
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
     private javax.swing.JToggleButton buttonTurnOnOff;
+    private javax.swing.JToggleButton buttonInbox;
+    private javax.swing.JToggleButton buttonOutbox;
+    private javax.swing.JButton buttonSearchUpdates;
+    private javax.swing.JButton buttonNewDirectMessage;
     private javax.swing.JButton buttonSettings;
     private javax.swing.JButton buttonNextUser;
     private javax.swing.JButton buttonPreviousUser;
@@ -55,10 +59,11 @@ public class StatusTab {
 		tablesMap = new HashMap<String,StatusesTableThread>();
 	}
 	
-	private JPanel createAndGetPanel(StatusesType typeOfTab) {
+	private JPanel createAndGetPanel(StatusesType type) {
+		this.type = type;
 		JPanel jPanel2 = new JPanel();
 		jPanel2.setLayout(new java.awt.BorderLayout());
-		addToolBar(jPanel2,typeOfTab);
+		addToolBar(jPanel2,type);
 		jPanel2.add(jScrollPane6, java.awt.BorderLayout.CENTER);		
 		return jPanel2;
 	}	
@@ -117,28 +122,7 @@ public class StatusTab {
 		return type;
 	}
 	
-	private void addToolBar(JPanel panel, StatusesType typeOfTab) {		
-		
-//		POR ENQUANTO EH A MESMA TOOLBAR
-//		switch(typeOfTab) {
-//		case MY_UPDATES:
-//		case OTHERS_UPDATES:
-//
-//			break;
-//		case FAVORITES:
-//
-//			break;
-//		case REPLIES:
-//
-//			break;
-//		case DIRECT_MESSAGES:
-//			
-//			break;
-//		case PUBLIC_TIMELINE:
-//
-//			break;
-//		}
-		
+	private void addToolBar(JPanel panel, StatusesType typeOfTab) {
 		jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
@@ -149,6 +133,15 @@ public class StatusTab {
         buttonAddUpdate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonAddUpdate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonAddUpdate);
+        
+        buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_add.png"))); // NOI18N
+        buttonNewDirectMessage.setToolTipText("Nova mensagem direta");
+        buttonNewDirectMessage.setActionCommand("buttonNewDirectMessage");
+        buttonNewDirectMessage.setFocusable(false);
+        buttonNewDirectMessage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonNewDirectMessage.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonNewDirectMessage);
+        
         jToolBar1.add(jSeparator2);
 
         buttonPreviousUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../backward.png"))); // NOI18N
@@ -163,19 +156,38 @@ public class StatusTab {
         buttonPreviousUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonPreviousUser);
 
-        txtCurrentUser.setBackground(new java.awt.Color(240, 240, 240));
-        txtCurrentUser.setEditable(false);
-        txtCurrentUser.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        txtCurrentUser.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtCurrentUser.setText("username");
-        txtCurrentUser.setAutoscrolls(false);
-        txtCurrentUser.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 240, 240), 0, true));
-        txtCurrentUser.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        txtCurrentUser.setMaximumSize(new java.awt.Dimension(120, 14));
-        txtCurrentUser.setMinimumSize(new java.awt.Dimension(120, 14));
-        txtCurrentUser.setPreferredSize(new java.awt.Dimension(60, 14));
+        if(type == StatusesType.SEARCH) {
+        	txtCurrentUser.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+            txtCurrentUser.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+            txtCurrentUser.setText("busca");
+            txtCurrentUser.setAutoscrolls(false);
+            txtCurrentUser.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+            txtCurrentUser.setMargin(new java.awt.Insets(0, 0, 0, 0));
+            txtCurrentUser.setMaximumSize(new java.awt.Dimension(110, 16));
+            txtCurrentUser.setMinimumSize(new java.awt.Dimension(110, 16));
+            txtCurrentUser.setPreferredSize(new java.awt.Dimension(50, 16));
+            txtCurrentUser.addFocusListener(new java.awt.event.FocusAdapter() {
+                public void focusGained(java.awt.event.FocusEvent evt) {
+                	System.out.println("FOCUS GAINED");
+                    txtCurrentUser.selectAll();
+                }
+            });
+        }
+        else {
+        	txtCurrentUser.setBackground(new java.awt.Color(240, 240, 240));
+        	txtCurrentUser.setEditable(false);
+        	txtCurrentUser.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        	txtCurrentUser.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        	txtCurrentUser.setText("username");
+        	txtCurrentUser.setAutoscrolls(false);
+        	txtCurrentUser.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 240, 240), 0, true));
+        	txtCurrentUser.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        	txtCurrentUser.setMaximumSize(new java.awt.Dimension(120, 14));
+        	txtCurrentUser.setMinimumSize(new java.awt.Dimension(120, 14));
+        	txtCurrentUser.setPreferredSize(new java.awt.Dimension(60, 14));        	
+        }
         jToolBar1.add(txtCurrentUser);
-
+        
         buttonNextUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../forward.png"))); // NOI18N
         buttonNextUser.setToolTipText("Próximo usuário");
         buttonNextUser.setActionCommand("buttonNextUser");
@@ -184,6 +196,32 @@ public class StatusTab {
         buttonNextUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonNextUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonNextUser);
+        
+        buttonSearchUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../search.png"))); // NOI18N
+        buttonSearchUpdates.setToolTipText("Buscar");
+        buttonSearchUpdates.setActionCommand("buttonSearchUpdates");
+        buttonSearchUpdates.setFocusable(false);
+        buttonSearchUpdates.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonSearchUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonSearchUpdates);
+
+        buttonInbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_inbox.png"))); // NOI18N
+        buttonInbox.setSelected(true);
+        buttonInbox.setToolTipText("Caixa de Entrada");
+        buttonInbox.setActionCommand("buttonInbox");
+        buttonInbox.setFocusable(false);
+        buttonInbox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonInbox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonInbox);
+
+        buttonOutbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_outbox.png"))); // NOI18N
+        buttonOutbox.setToolTipText("Caixa de Saída");
+        buttonOutbox.setActionCommand("buttonOutbox");
+        buttonOutbox.setFocusable(false);
+        buttonOutbox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonOutbox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonOutbox);
+        
         jToolBar1.add(jSeparator4);
 
         buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../remove.png"))); // NOI18N
@@ -216,14 +254,55 @@ public class StatusTab {
         jToolBar1.add(jSeparator5);
 
         buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
-        buttonTimeline.setToolTipText("Configurações");
+        buttonTimeline.setToolTipText("Ver timeline de atualizações");
         buttonTimeline.setActionCommand("buttonTimeline");
         buttonTimeline.setFocusable(false);
         buttonTimeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonTimeline.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonTimeline);
         
+        reconfigToolBarBasedOnTabType();
+        
 		panel.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
+	}
+	
+	private void reconfigToolBarBasedOnTabType() {
+		if(!controller.isTwitterUser())
+			buttonAddUpdate.setEnabled(false);
+		
+		switch(this.type) {
+		case REPLIES:
+		case PUBLIC_TIMELINE:
+			txtCurrentUser.setVisible(false);
+			buttonPreviousUser.setVisible(false);
+			buttonNextUser.setVisible(false);
+			jSeparator4.setVisible(false);
+			buttonCloseUpdates.setVisible(false);
+		case UPDATES:			
+		case FAVORITES:
+			buttonInbox.setVisible(false);
+			buttonOutbox.setVisible(false);
+			buttonSearchUpdates.setVisible(false);
+			buttonNewDirectMessage.setVisible(false);
+			break;
+		case DIRECT_MESSAGES:
+			buttonAddUpdate.setVisible(false);
+			buttonSearchUpdates.setVisible(false);
+			txtCurrentUser.setVisible(false);
+			buttonPreviousUser.setVisible(false);
+			buttonNextUser.setVisible(false);
+			buttonCloseUpdates.setVisible(false);		
+			break;
+		case SEARCH:
+			buttonAddUpdate.setVisible(false);
+			buttonInbox.setVisible(false);
+			buttonOutbox.setVisible(false);
+			buttonNewDirectMessage.setVisible(false);	
+			buttonPreviousUser.setVisible(false);
+			buttonNextUser.setVisible(false);
+			buttonCloseUpdates.setVisible(false);		
+			break;
+		}
 	}
 	
 	private void initComponents() {
@@ -240,6 +319,10 @@ public class StatusTab {
 	    buttonCloseUpdates = new JButton();
 	    buttonAddUpdate = new JButton();
 	    txtCurrentUser = new javax.swing.JTextField();
+	    buttonSearchUpdates = new javax.swing.JButton();
+        buttonInbox = new javax.swing.JToggleButton();
+        buttonOutbox = new javax.swing.JToggleButton();
+        buttonNewDirectMessage = new javax.swing.JButton();
 	    
 	    tabListener = new TabListener();	    
 	    buttonCloseUpdates.addActionListener(tabListener);
@@ -249,6 +332,10 @@ public class StatusTab {
         buttonSettings.addActionListener(tabListener);
         buttonAddUpdate.addActionListener(tabListener);
         buttonTimeline.addActionListener(tabListener);
+        buttonSearchUpdates.addActionListener(tabListener);
+        buttonInbox.addActionListener(tabListener);
+        buttonOutbox.addActionListener(tabListener);
+        buttonNewDirectMessage.addActionListener(tabListener);
 	}
 	
 	private void reconfigButtons() {
@@ -340,6 +427,11 @@ public class StatusTab {
 				String userId = idArray.get(currentTable);
 				new GUITimeline(tablesMap.get(userId).getStatusesList());
 			}
+			else if(cmd.equals("buttonSearchUpdates")) {
+				setPanelContent(new StatusesTableThread(StatusesType.SEARCH,txtCurrentUser.getText()));
+			}
+			else
+				System.out.println(cmd);
 		}	
 	}
 }
