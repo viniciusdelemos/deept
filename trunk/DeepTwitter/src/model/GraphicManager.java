@@ -1,5 +1,7 @@
 package model;
 
+import gui.GUINewUpdate;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -277,7 +279,7 @@ public class GraphicManager extends Display {
     	m_vis.run("layout");    	
     }        
 	
-    public Node addNode(UserWithStatus u) {
+    public Node addNode(UserDeepT u) {
     	synchronized (m_vis) {
 			socialNetwork.addUser(u);
 			Node newNode = g.addNode();
@@ -301,7 +303,7 @@ public class GraphicManager extends Display {
 		}    	
     }
     
-    public void searchAndAddUserToNetwork(UserWithStatus u) {
+    public void searchAndAddUserToNetwork(UserDeepT u) {
     	UserDeepT exists = getUser(u.getId());
     	VisualItem selectedNode;
     	
@@ -441,7 +443,7 @@ public class GraphicManager extends Display {
     	
     	float drag = 0.007f;
     	float springCoeff = 9.99E-6f;
-    	float defaultLength = 180f;  //default: 50f    	
+    	float defaultLength = 180f;    	
     	
     	forceSimulator.addForce(new NBodyForce(gravConstant, minDistance, theta));
     	forceSimulator.addForce(new DragForce(drag));
@@ -520,38 +522,53 @@ public class GraphicManager extends Display {
 		    rect = new Rectangle2D.Float();							
 		}
 		
-		public void createPopupMenu(VisualItem t)
+		public void createPopupMenu(VisualItem item)
 		{
+			final String clickedUserName = getUser(item.getInt("idTwitter")).getScreenName();
 			nodeMenu = new JPopupMenu();
 			
-			JMenuItem friends = new JMenuItem("View Friends");
-			JMenuItem updates = new JMenuItem("View Updates");
-    		JMenuItem follow = new JMenuItem("Follow");//("Follow",'f') para adicionar atalho
-    		JMenuItem leave = new JMenuItem("Leave");
-    		JMenuItem block = new JMenuItem("Block"); 
-    		JMenuItem followers = new JMenuItem("View Followers");
-    		    		
-    		friends.setActionCommand("user_friends");
-    		updates.setActionCommand("user_updates");
-    		follow.setActionCommand("user_follow");
-    		leave.setActionCommand("user_leave");
-    		block.setActionCommand("user_block");  
-    		followers.setActionCommand("user_followers");
+			JMenuItem friends = new JMenuItem("Ver Amigos");
+			JMenuItem updates = new JMenuItem("Ver Tweets");
+			JMenuItem favorites = new JMenuItem("Ver Favoritos");			
+    		JMenuItem follow = new JMenuItem("Seguir");//("Follow",'f') para adicionar atalho
+    		JMenuItem leave = new JMenuItem("Deixar");
+    		JMenuItem sendReply = new JMenuItem("@"+clickedUserName);
+    		JMenuItem block = new JMenuItem("Bloquear"); 
+    		JMenuItem followers = new JMenuItem("Ver Seguidores");
+    		 
+    		Integer loggedUserId = Integer.parseInt(controller.getLoggedUserId());
+    		Node mainUserNode = getNodeByTwitterId(loggedUserId);			
+			Node clickedNode = (Node)item.getSourceTuple();
 			
-			Node mainUser = getNodeById(0);			
-			Node target = (Node)t.getSourceTuple();
-			//TODO
-    		//VERIFICA SE SAO AMIGOS/FOLLOWERS, ETC
-			
-    		    		
+			nodeMenu.add(updates);
     		nodeMenu.add(friends); //é necessário?
-    		nodeMenu.add(updates);
     		nodeMenu.add(followers);
-    		nodeMenu.addSeparator();
-    		nodeMenu.add(follow);
-    		nodeMenu.add(leave);
-    		nodeMenu.add(block);
-    		    		
+    		nodeMenu.add(favorites);
+    		
+    		if(!clickedNode.get("idTwitter").equals(loggedUserId)) {
+    			nodeMenu.add(sendReply);
+    			
+    			int edge = g.getEdge(mainUserNode.getInt("id"), clickedNode.getInt("id"));
+    			if(edge == -1) {    			
+    				nodeMenu.addSeparator();
+    				nodeMenu.add(follow);
+    			}
+    			else {
+    				nodeMenu.addSeparator();
+    				nodeMenu.add(leave);
+    			}
+    			
+    			//TODO inserir algo para mostrar que bloqueou e remover amizade entre os 2!    			
+    			nodeMenu.add(block);
+    		}
+			
+    		if(!controller.isTwitterUser()) {
+				followers.setEnabled(false);
+				follow.setEnabled(false);
+				leave.setEnabled(false);
+				block.setEnabled(false);
+			}
+			
     		//follow.setMnemonic(KeyEvent.VK_F);
     		friends.addActionListener(new ActionListener() {				
     			@Override
@@ -565,7 +582,7 @@ public class GraphicManager extends Display {
 					if(isTwitterUser && clickedItem.getString("idTwitter").equals(controller.getLoggedUserId()))
 						tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES));
 					else
-						tab.setPanelContent(new StatusesTableThread(clickedItem.getString("idTwitter")));
+						tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES,clickedItem.getString("idTwitter")));
 					controller.selectTab(1);
 				}    			
     		});
@@ -573,6 +590,17 @@ public class GraphicManager extends Display {
     			@Override
     			public void actionPerformed(ActionEvent arg0) {
     				new AddFollowersThread(gManager, (NodeItem)clickedItem);
+    			}
+    		});
+    		favorites.addActionListener(new ActionListener(){
+    			@Override
+    			public void actionPerformed(ActionEvent arg0) {
+    				StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.FAVORITES);
+					if(isTwitterUser && clickedItem.getString("idTwitter").equals(controller.getLoggedUserId()))
+						tab.setPanelContent(new StatusesTableThread(StatusesType.FAVORITES));
+					else
+						tab.setPanelContent(new StatusesTableThread(StatusesType.FAVORITES,clickedItem.getString("idTwitter")));
+					controller.selectTab(3);
     			}
     		});
     		follow.addActionListener(new ActionListener(){				
@@ -585,6 +613,11 @@ public class GraphicManager extends Display {
 				public void actionPerformed(ActionEvent e) {
 					new FollowUserThread(gManager, clickedItem, false);					
 				}});
+    		sendReply.addActionListener(new ActionListener(){
+    			@Override
+				public void actionPerformed(ActionEvent e) {
+    				controller.openGUINewUpdateWindow(clickedUserName);					
+    		}});
     		block.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -598,7 +631,8 @@ public class GraphicManager extends Display {
 		}	
 		
 		public void itemClicked(VisualItem item, MouseEvent e) {
-			clickedItem = item;System.out.println(item);
+			clickedItem = item;
+			System.out.println(item);
 			if (!(item instanceof NodeItem)) return;
 			
 			//zoneManager.addItemToZone((NodeItem)item, 0);				

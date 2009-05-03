@@ -3,6 +3,7 @@ package model;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import twitter4j.DirectMessage;
@@ -88,6 +89,16 @@ public class UserDeepT {
 	    	statuses.put(userWithStatus.getStatusId(), statusDeepT);
     	}
 
+    }
+    
+    public UserDeepT(int fromUserId, String fromUserName, String imageURL) {
+    	this.id = fromUserId;
+    	this.screenName = fromUserName;
+    	try {
+			this.profileImageUrl = new URL(imageURL);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
     }
 
 	public int getId() {

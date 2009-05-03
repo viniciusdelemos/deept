@@ -6,6 +6,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/prefuse"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/profusians"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/twitter4j"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/WordFreq"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

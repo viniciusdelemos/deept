@@ -41,10 +41,20 @@ public class StatusDeepT {
 		this.inReplyToStatusId = status.getInReplyToStatusId();
 		this.inReplyToUserId = status.getInReplyToUserId();
 		this.isFavorited = status.isFavorited();
-		this.inReplyToScreenName = status.getInReplyToScreenName();
+		this.inReplyToScreenName = status.getInReplyToScreenName();		
 		this.userDeepT = new UserDeepT(status.getUser());
 	}
-
+	
+	public StatusDeepT(twitter4j.Tweet status){
+		this.createdAt = status.getCreatedAt();
+		this.id = status.getId();
+		this.text = status.getText();
+		this.source = status.getSource();		
+		this.inReplyToUserId = status.getToUserId();
+		this.inReplyToScreenName = status.getToUser();		
+		this.userDeepT = new UserDeepT(status.getFromUserId(), status.getFromUser(),status.getProfileImageUrl());
+	}
+	
 	public Date getCreatedAt() {
 		return createdAt;
 	}

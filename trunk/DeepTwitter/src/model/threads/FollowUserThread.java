@@ -35,7 +35,10 @@ public class FollowUserThread extends Thread {
 			boolean existsFriendship = controller.getTwitter().exists(mainUserId, targetUserId);
 			
 			if(follow) {		
-				if(existsFriendship) return;
+				if(existsFriendship) { 
+					controller.showMessageDialog("Você já está seguindo esta pessoa.\nProvavelmente você ainda não adicionou seus amigos à rede.",MessageType.INFORMATION);
+					return;
+				}
 				controller.getTwitter().create(targetNode.getString("idTwitter"));
 				//controller.getTwitter().follow(userId);						
 				gManager.addEdge(mainUserNode, targetNode);
@@ -49,8 +52,14 @@ public class FollowUserThread extends Thread {
 				controller.setStatusBarMessage("Deixando de seguir "+targetNode.getString("name"));
 			}
 
-		} catch (TwitterException e) {			
+		} catch (TwitterException e) {	
+			//TODO melhorar, inserior nome no titulo etc. e tentar pedir permissao
+			if(e.getStatusCode()==403) {
+				controller.showMessageDialog("O usuário é protegido e não lhe permite realizar esta ação",MessageType.ERROR);
+				return;
+			}			
 			controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
+			
 		}
 	}
 }

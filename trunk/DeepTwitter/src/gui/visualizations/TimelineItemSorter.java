@@ -17,7 +17,7 @@ public final class TimelineItemSorter extends ItemSorter {
 			// axis has score 268435456 by default
 						
 			// put DATA_POINT on top of LINE
-			if (item.isInGroup(TimelinePanel.Group.STATUS.toString()))
+			if (item.isInGroup(TimelinePanel.Group.STATUSES.toString()))
 				score += 300000000;
 			
 			return score;

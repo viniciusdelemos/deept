@@ -5,5 +5,6 @@ public enum StatusesType {
 	REPLIES,
 	FAVORITES,
 	DIRECT_MESSAGES,
+	SEARCH,
 	PUBLIC_TIMELINE
 }

@@ -21,10 +21,10 @@ public class SocialNetwork {
 		return usersMap.get(twitterId);
 	}
 		
-	public void addUser(UserWithStatus u)
+	public void addUser(UserDeepT u)
 	{
-		UserDeepT userDeepT = new UserDeepT(u);
-		usersMap.put(u.getId(), userDeepT);
+		//UserDeepT userDeepT = new UserDeepT(u);
+		usersMap.put(u.getId(), u);
 	}
 	
 	public int getNumUsers()

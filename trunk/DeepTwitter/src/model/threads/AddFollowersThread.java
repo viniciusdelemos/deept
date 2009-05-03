@@ -43,7 +43,7 @@ public class AddFollowersThread extends Thread {
 					double x = source.getX();					
 					double y = source.getY();
 					
-					Node n = gManager.addNode(user);
+					Node n = gManager.addNode(new UserDeepT(user));
 					VisualItem newNode = gManager.getVisualization().getVisualItem(gManager.NODES, n);
 					PrefuseLib.setX(newNode, null, x);
 					PrefuseLib.setY(newNode, null, y);
