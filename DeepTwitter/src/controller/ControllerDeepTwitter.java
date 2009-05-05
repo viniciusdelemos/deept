@@ -31,10 +31,12 @@ import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
+import twitter4j.RateLimitStatus;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.UserWithStatus;
+import twitter4j.examples.Update;
 
 public class ControllerDeepTwitter {
 	private GUILoginDeepTwitter loginWindow;
@@ -47,7 +49,9 @@ public class ControllerDeepTwitter {
 	private String loggedUserId;
 	private JTabbedPane windowTabs;
 	private StatusTabManager tabManager;
-	private MainWindowListener mainWindowListener;	
+	private MainWindowListener mainWindowListener;
+	private UpdateRateLimitThread updateRateLimit;
+	private long rateLimitSleepTime = 60000; //padrao 1min
 	
 	private ControllerDeepTwitter(){
 		//construtor private previne chamadas nao autorizadas ao construtor.		
@@ -253,6 +257,7 @@ public class ControllerDeepTwitter {
 							tabManager.getTab(StatusesType.DIRECT_MESSAGES).stopThreads();
 							tabManager.getTab(StatusesType.SEARCH).stopThreads();
 							tabManager.getTab(StatusesType.PUBLIC_TIMELINE).stopThreads();
+							updateRateLimit.interrupt();
 						}
 					});
 					
@@ -263,6 +268,8 @@ public class ControllerDeepTwitter {
 					mainWindow.setVisible(true);					
 					
 					gManager.addNode(u);
+					
+					updateRateLimit = new UpdateRateLimitThread(rateLimitSleepTime);
 					
 //					UpdatePanel1 updatePanel1 = new UpdatePanel1();
 //					new Thread(updatePanel1).start();
@@ -299,7 +306,7 @@ public class ControllerDeepTwitter {
 	
 	public void openGUINewUpdateWindow(String inReplyTo) {
 		if(guiNewUpdate == null) {
-			if(inReplyTo==null)
+			if(inReplyTo==null) 
 				guiNewUpdate = new GUINewUpdate();
 			else
 				guiNewUpdate = new GUINewUpdate(inReplyTo);
@@ -319,6 +326,10 @@ public class ControllerDeepTwitter {
 	
 	public StatusTabManager getStatusTabManager() {
 		return tabManager;
+	}
+	
+	public void setRateLimitSleepTime(long time) {
+		rateLimitSleepTime = time;
 	}
 	
 	class MainWindowListener implements ActionListener {		
@@ -433,6 +444,29 @@ public class ControllerDeepTwitter {
 			}
 			else if(cmd.equals("checkBoxCurvedEdges")) {
 				gManager.setEdgeType(mainWindow.isCurvedEdges());
+			}
+		}
+	}
+	
+	private class UpdateRateLimitThread extends Thread {
+		long sleepTime;
+		RateLimitStatus rlt;
+		
+		public UpdateRateLimitThread(long sleepTime) {
+			this.sleepTime = sleepTime;
+			start();
+		}
+		
+		public void run() {
+			while(true) {
+				try {
+					System.out.println("UPDATING RATE LIMIT");
+					rlt = twitter.rateLimitStatus();
+					mainWindow.setRateLimitStatus(rlt.getRemainingHits(),rlt.getHourlyLimit(),rlt.getDateTime());
+					Thread.sleep(sleepTime);
+				} catch (Exception e) {					
+					break;
+				} 
 			}
 		}
 	}

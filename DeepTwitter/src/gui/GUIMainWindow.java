@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.event.ActionListener;
+import java.util.Date;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
@@ -38,13 +39,18 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonRemoveSelection = new javax.swing.JButton();
         buttonShowAll = new javax.swing.JButton();
         checkBoxCurvedEdges = new javax.swing.JCheckBox();
+        labelAPILimit = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         buttonAddUpdate = new javax.swing.JButton();
+        buttonNewDirectMessage = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         buttonPreviousUser = new javax.swing.JButton();
         txtCurrentUser = new javax.swing.JTextField();
         buttonNextUser = new javax.swing.JButton();
+        buttonSearchUpdates = new javax.swing.JButton();
+        buttonInbox = new javax.swing.JToggleButton();
+        buttonOutbox = new javax.swing.JToggleButton();
         jSeparator4 = new javax.swing.JToolBar.Separator();
         buttonCloseUpdates = new javax.swing.JButton();
         buttonTurnOnOff = new javax.swing.JToggleButton();
@@ -107,7 +113,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         checkBoxHighQuality.setActionCommand("checkBoxHighQuality");
         checkBoxHighQuality.setName("checkBoxHighQuality"); // NOI18N
 
-        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14));
+        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         labelFilter.setText("Filtro:");
 
         buttonHideSelection.setText("Esconder seleção");
@@ -127,6 +133,9 @@ public class GUIMainWindow extends javax.swing.JFrame {
         checkBoxCurvedEdges.setActionCommand("checkBoxCurvedEdges");
         checkBoxCurvedEdges.setName("checkBoxCurvedEdges"); // NOI18N
 
+        labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelAPILimit.setText("Requisições API:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -134,6 +143,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(labelAPILimit)
                     .addComponent(checkBoxCurvedEdges)
                     .addComponent(labelFilter)
                     .addComponent(checkBoxHighQuality)
@@ -170,7 +180,9 @@ public class GUIMainWindow extends javax.swing.JFrame {
                 .addComponent(checkBoxCurvedEdges)
                 .addGap(7, 7, 7)
                 .addComponent(labelFilter)
-                .addContainerGap(221, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(labelAPILimit)
+                .addContainerGap(195, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Interações", jPanel1);
@@ -187,6 +199,14 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonAddUpdate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonAddUpdate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonAddUpdate);
+
+        buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_add.png"))); // NOI18N
+        buttonNewDirectMessage.setToolTipText("Nova mensagem direta");
+        buttonNewDirectMessage.setActionCommand("buttonNewDirectMessage");
+        buttonNewDirectMessage.setFocusable(false);
+        buttonNewDirectMessage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonNewDirectMessage.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonNewDirectMessage);
         jToolBar1.add(jSeparator2);
 
         buttonPreviousUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../backward.png"))); // NOI18N
@@ -222,6 +242,31 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonNextUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonNextUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonNextUser);
+
+        buttonSearchUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../search.png"))); // NOI18N
+        buttonSearchUpdates.setToolTipText("Buscar");
+        buttonSearchUpdates.setActionCommand("buttonSearchUpdates");
+        buttonSearchUpdates.setFocusable(false);
+        buttonSearchUpdates.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonSearchUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonSearchUpdates);
+
+        buttonInbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_inbox.png"))); // NOI18N
+        buttonInbox.setSelected(true);
+        buttonInbox.setToolTipText("Caixa de Entrada");
+        buttonInbox.setActionCommand("buttonInbox");
+        buttonInbox.setFocusable(false);
+        buttonInbox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonInbox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonInbox);
+
+        buttonOutbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_outbox.png"))); // NOI18N
+        buttonOutbox.setToolTipText("Caixa de Saída");
+        buttonOutbox.setActionCommand("buttonOutbox");
+        buttonOutbox.setFocusable(false);
+        buttonOutbox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonOutbox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonOutbox);
         jToolBar1.add(jSeparator4);
 
         buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../remove.png"))); // NOI18N
@@ -258,6 +303,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonTimeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonTimeline.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonTimeline);
+        buttonTimeline.getAccessibleContext().setAccessibleDescription("Visualização do Timeline de Atualizações");
 
         jPanel2.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
         jPanel2.add(jScrollPane6, java.awt.BorderLayout.CENTER);
@@ -401,8 +447,8 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCloseUpdates.setEnabled(b);
     }
     
-    public javax.swing.JPanel getJPanel1(){
-    	return jPanel1;
+    public void setRateLimitStatus(int left, int total, Date resetDate) {
+        labelAPILimit.setText("Requisições API: "+left+"/"+total+" Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
     }
 
     // Variables declaration - do not modify
@@ -411,10 +457,14 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonClearSelection;
     private javax.swing.JButton buttonCloseUpdates;
     private javax.swing.JButton buttonHideSelection;
+    private javax.swing.JToggleButton buttonInbox;
+    private javax.swing.JButton buttonNewDirectMessage;
     private javax.swing.JButton buttonNewGroup;
     private javax.swing.JButton buttonNextUser;
+    private javax.swing.JToggleButton buttonOutbox;
     private javax.swing.JButton buttonPreviousUser;
     private javax.swing.JButton buttonRemoveSelection;
+    private javax.swing.JButton buttonSearchUpdates;
     private javax.swing.JButton buttonSettings;
     private javax.swing.JButton buttonShowAll;
     private javax.swing.JButton buttonTimeline;
@@ -436,6 +486,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JLabel labelAPILimit;
     private javax.swing.JLabel labelFilter;
     private javax.swing.JLabel labelStatusBar;
     private javax.swing.JCheckBoxMenuItem menuCheckBoxStatusBar;
