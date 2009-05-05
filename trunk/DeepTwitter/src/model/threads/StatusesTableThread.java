@@ -419,7 +419,7 @@ public class StatusesTableThread {
 						break;
 
 					case REPLIES:
-						if(lastStatusId < 0)
+						if(lastStatusId < 0) 
 							auxList = (ArrayList<Status>) twitter.getReplies();
 						else
 							auxList = (ArrayList<Status>) twitter.getRepliesBySinceId(lastStatusId);
@@ -430,6 +430,8 @@ public class StatusesTableThread {
 						break;
 					
 					case SEARCH:
+						//TODO: POSSIBILITAR MULTIPLAS PESQUISAS
+						//SALVAR PESQUISAS/UPDATES NO COMPUTADOR PARA CARREGAR MAIS RAPIDO DEPOIS?
 						Query query = new Query(searchQuery);
 						if(lastStatusId >= 0) 
 							query.setSinceId(lastStatusId);
@@ -470,6 +472,7 @@ public class StatusesTableThread {
 							if(empty != null) panel.remove(empty);							
 							//de trás para frente, para adicionar as mais recentes em cima
 							for(int i=statusesList.size()-1; i>=0; i--) {
+							//for(int i=0; i<statusesList.size(); i++) {
 								StatusDeepT s = statusesList.get(i);
 								System.out.println(s);
 								c.weightx = 0.5;
