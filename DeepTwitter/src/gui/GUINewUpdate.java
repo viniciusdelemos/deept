@@ -14,6 +14,8 @@ package gui;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 
+import model.StatusesType;
+
 /**
  *
  * @author Guilherme
@@ -25,10 +27,15 @@ public class GUINewUpdate extends javax.swing.JFrame {
         initComponents();       
     }
 
-    public GUINewUpdate(String inReplyTo) {
+    public GUINewUpdate(String username, StatusesType st) {
     	initComponents();
-    	updateArea.setText("@"+inReplyTo+" ");
-    }
+    	if(st == StatusesType.DIRECT_MESSAGES)
+    		updateArea.setText("D "+username+" ");
+    	else if(st == StatusesType.REPLIES)
+    		updateArea.setText("@"+username+" ");
+    	else
+    		throw new IllegalArgumentException("Este StatusesType não é válido.");
+    }   
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -130,7 +137,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
     }                                            
 
     private void updateAreaKeyPressed(java.awt.event.KeyEvent evt) {                                      
-        if(evt.getKeyCode()==9) {
+        if(evt.getKeyCode()==9) { //TAB
             buttonCancel.requestFocusInWindow();
             return;
         }
@@ -138,7 +145,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
 }                                     
 
     private void updateAreaKeyReleased(java.awt.event.KeyEvent evt) {                                       
-        if(evt.getKeyCode()==9) {
+        if(evt.getKeyCode()==9) { //TAB
             buttonCancel.requestFocusInWindow();
             return;
         }
@@ -146,12 +153,12 @@ public class GUINewUpdate extends javax.swing.JFrame {
 }                                      
 
     public void verifyConditions() {
-        int textSize = updateArea.getText().length();
+    	int textSize = updateArea.getText().length();
         //System.out.println("size: "+textSize);
         int remaining = 140-textSize;
         labelMaxChars.setText(String.valueOf(remaining));
 
-        if(remaining<0) {
+        if(remaining<0 || remaining==140) {
             buttonOK.setEnabled(false);
         }
         else if(remaining<10) {
@@ -161,9 +168,6 @@ public class GUINewUpdate extends javax.swing.JFrame {
         else if(remaining<20) {
             labelMaxChars.setForeground(Color.RED.darker().darker());
             buttonOK.setEnabled(true);
-        }
-        else if(remaining==140) {
-        	buttonOK.setEnabled(false);
         }
         else {
             labelMaxChars.setForeground(new Color(153,153,153));

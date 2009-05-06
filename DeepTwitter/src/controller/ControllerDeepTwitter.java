@@ -9,8 +9,10 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -301,15 +303,15 @@ public class ControllerDeepTwitter {
 	}
 	
 	public void openGUINewUpdateWindow() {
-		openGUINewUpdateWindow(null);
+		openGUINewUpdateWindow(null,null);
 	}
 	
-	public void openGUINewUpdateWindow(String inReplyTo) {
+	public void openGUINewUpdateWindow(String username, StatusesType type) {
 		if(guiNewUpdate == null) {
-			if(inReplyTo==null) 
+			if(username==null) 
 				guiNewUpdate = new GUINewUpdate();
 			else
-				guiNewUpdate = new GUINewUpdate(inReplyTo);
+				guiNewUpdate = new GUINewUpdate(username,type);
 			guiNewUpdate.addMainWindowListener(mainWindowListener);
 			guiNewUpdate.addWindowListener(new WindowAdapter() {
 				@Override

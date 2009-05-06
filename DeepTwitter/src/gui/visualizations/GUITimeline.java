@@ -1,6 +1,7 @@
 package gui.visualizations;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -12,7 +13,7 @@ import prefuse.demos.Congress;
 import twitter4j.Status;
 
 public class GUITimeline extends JFrame{
-	public GUITimeline(ArrayList<StatusDeepT> statusesList) {
+	public GUITimeline(List<StatusDeepT> statusesList) {
 		super("Timeline");
 		setContentPane(new TimelinePanel(statusesList));
         pack();

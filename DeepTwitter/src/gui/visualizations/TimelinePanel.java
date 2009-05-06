@@ -77,7 +77,7 @@ public class TimelinePanel extends JPanel {
 		STATUSES, X_AXIS, Y_AXIS
 	}
     
-    public TimelinePanel(ArrayList<StatusDeepT> statusesList) {
+    public TimelinePanel(List<StatusDeepT> statusesList) {
         super(new BorderLayout());
         
         final Visualization vis = new Visualization();
@@ -262,7 +262,7 @@ public class TimelinePanel extends JPanel {
         labelTotalStatuses.setFont(FontLib.getFont("Tahoma", 16));
     }
     
-    public StatusesDataTable getStatusesDataTable(ArrayList<StatusDeepT> statusesList) {
+    public StatusesDataTable getStatusesDataTable(List<StatusDeepT> statusesList) {
 		StatusesDataTable tbl = new StatusesDataTable();
 		tbl.addRows(statusesList.size());
 		int index = 0;

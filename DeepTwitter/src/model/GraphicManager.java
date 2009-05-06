@@ -533,6 +533,8 @@ public class GraphicManager extends Display {
     		JMenuItem follow = new JMenuItem("Seguir");//("Follow",'f') para adicionar atalho
     		JMenuItem leave = new JMenuItem("Deixar");
     		JMenuItem sendReply = new JMenuItem("@"+clickedUserName);
+    		JMenuItem sendMessage = new JMenuItem("Enviar mensagem");
+    		JMenuItem openURL = new JMenuItem("Abrir URL");
     		JMenuItem block = new JMenuItem("Bloquear"); 
     		JMenuItem followers = new JMenuItem("Ver Seguidores");
     		 
@@ -545,29 +547,33 @@ public class GraphicManager extends Display {
     		nodeMenu.add(followers);
     		nodeMenu.add(favorites);
     		
-    		if(!clickedNode.get("idTwitter").equals(loggedUserId)) {
+    		if(!clickedNode.get("idTwitter").equals(loggedUserId)) { 
+    			nodeMenu.addSeparator();
     			nodeMenu.add(sendReply);
-    			
+    			nodeMenu.add(sendMessage);
+    			//verifica se estou seguindo o usuário destino
     			int edge = g.getEdge(mainUserNode.getInt("id"), clickedNode.getInt("id"));
-    			if(edge == -1) {    			
-    				nodeMenu.addSeparator();
-    				nodeMenu.add(follow);
-    			}
-    			else {
-    				nodeMenu.addSeparator();
+    			if(edge == -1) 
+    				nodeMenu.add(follow);    			
+    			else 
     				nodeMenu.add(leave);
-    			}
+    			
+    			//verifica se estou sendo seguido
+    			//edge = g.getEdge(clickedNode.getInt("id"),mainUserNode.getInt("id"), );
     			
     			//TODO inserir algo para mostrar que bloqueou e remover amizade entre os 2!    			
     			nodeMenu.add(block);
     		}
+    		
+    		nodeMenu.addSeparator();
+    		nodeMenu.add(openURL);
 			
     		if(!controller.isTwitterUser()) {
 				followers.setEnabled(false);
 				follow.setEnabled(false);
 				leave.setEnabled(false);
 				block.setEnabled(false);
-			}
+			}   		
 			
     		//follow.setMnemonic(KeyEvent.VK_F);
     		friends.addActionListener(new ActionListener() {				
@@ -616,13 +622,23 @@ public class GraphicManager extends Display {
     		sendReply.addActionListener(new ActionListener(){
     			@Override
 				public void actionPerformed(ActionEvent e) {
-    				controller.openGUINewUpdateWindow(clickedUserName);					
+    				controller.openGUINewUpdateWindow(clickedUserName,StatusesType.REPLIES);					
+    		}});
+    		sendMessage.addActionListener(new ActionListener(){
+    			@Override
+				public void actionPerformed(ActionEvent e) {
+    				controller.openGUINewUpdateWindow(clickedUserName,StatusesType.DIRECT_MESSAGES);
     		}});
     		block.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println("BLOCK USER");					
 				}});
+    		openURL.addActionListener(new ActionListener(){
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    				new URLLinkAction("http://www.twitter.com/"+clickedUserName);					
+    			}});
     		
     		//create popupMenu for 'background'
     		//JPopupMenu backgroundMenu = new JPopupMenu(); 

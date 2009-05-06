@@ -43,7 +43,7 @@ public class GUIAddUser extends javax.swing.JFrame {
         setResizable(false);
 
         labelText.setFont(new java.awt.Font("Tahoma", 0, 14));
-        labelText.setText("Informe o login ou número do usuário que deseja adicionar à rede:");
+        labelText.setText("Informe o screen name ou número do usuário que deseja adicionar à rede:");
 
         buttonOK.setText("OK");
         buttonOK.setActionCommand("buttonOKAddUser");
