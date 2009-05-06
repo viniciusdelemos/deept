@@ -10,6 +10,7 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -26,6 +27,7 @@ import model.StatusDeepT;
 import model.StatusesType;
 import model.URLLinkAction;
 import model.UserDeepT;
+import twitter4j.DirectMessage;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -38,10 +40,7 @@ import controller.ControllerDeepTwitter;
 public class StatusesTableThread {
 	private int rows;
 	private String userId, searchQuery;
-	private boolean isTwitterUser;
-	private ArrayList<Status> auxList;
-	private ArrayList<StatusDeepT> statusesList;
-	private ArrayList<StatusDeepT> allStatusesList;
+	private boolean isTwitterUser;	
 	private long interval;
 	private JPanel panel;
 	private KeepTableUpdated keepTableUpdated;
@@ -63,9 +62,7 @@ public class StatusesTableThread {
 		this.userId = null;
 		this.searchQuery = null;
 		controller = ControllerDeepTwitter.getInstance();
-		isTwitterUser = controller.isTwitterUser();
-		auxList = new ArrayList<Status>();		
-		allStatusesList = new ArrayList<StatusDeepT>();
+		isTwitterUser = controller.isTwitterUser();		
 		rows = 0;
 		interval = 2000;//120000; //2 minutos
 		updatesToGet = 100;
@@ -136,9 +133,10 @@ public class StatusesTableThread {
 		editorPane.addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-					try {
+					try {						
 						new URLLinkAction(e.getURL().toString());
 	        		} catch (Exception ex) {
+	        			//controller.searchAndAddUserToNetwork(e.getDescription());
 	        			controller.showMessageDialog(ex.getMessage(),MessageType.ERROR);
 	        			ex.printStackTrace();
 	        		} 
@@ -170,7 +168,7 @@ public class StatusesTableThread {
 				replyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				controller.openGUINewUpdateWindow(s.getUser().getScreenName());				
+				controller.openGUINewUpdateWindow(s.getUser().getScreenName(),StatusesType.REPLIES);				
 			}
 		});
 		updatePanel.add(replyButton,gbc);
@@ -287,7 +285,7 @@ public class StatusesTableThread {
 							break;
 						}
 					}
-					htmlString = "<a href=http://www.twitter.com/"+url+">"+url+"</a>";
+					htmlString = "<a href=http://www.twitter.com/"+url+">"+url+"</a>";//"<a href="+url+">"+url+"</a>";
 					sb.replace(indexHttpBegin, indexHttpBegin+i, htmlString);
 				}
 				else {
@@ -334,17 +332,29 @@ public class StatusesTableThread {
 		return keepTableUpdated.isThreadSuspended();
 	}
 	
-	public ArrayList<StatusDeepT> getStatusesList() {				
-		return allStatusesList;
+	public List<StatusDeepT> getStatusesList() {				
+		return keepTableUpdated.getStatusesList();
 	}
 	
 	class KeepTableUpdated extends Thread {
-		private long lastStatusId = -1;
-		private GridBagConstraints c = new GridBagConstraints();
+		private long lastStatusId;
+		private GridBagConstraints c;
 		private JPanel empty;
-		private Twitter twitter = controller.getTwitter();
-		private boolean threadSuspended = false;
-		private Map<Long,Status> favoritesMap = new HashMap<Long,Status>();
+		private Twitter twitter;
+		private boolean threadSuspended;
+		private Map<Long,Status> favoritesMap;// = new HashMap<Long,Status>();
+		private List<DirectMessage> directMessagesList;
+		private List<Status> auxList;
+		private List<StatusDeepT> statusesList, allStatusesList;		
+		
+		public KeepTableUpdated() {			
+			twitter = controller.getTwitter();
+			c = new GridBagConstraints();
+			threadSuspended = false;
+			lastStatusId = -1;
+			statusesList = new ArrayList<StatusDeepT>();
+			allStatusesList = new ArrayList<StatusDeepT>();
+		}
 		
 		public synchronized void pauseThread() {
 			threadSuspended = true;
@@ -361,6 +371,10 @@ public class StatusesTableThread {
 		
 		public boolean isThreadSuspended() {
 			return threadSuspended;
+		}
+		
+		public List<StatusDeepT> getStatusesList() {				
+			return allStatusesList;
 		}
 		
 		public void run()
@@ -390,15 +404,15 @@ public class StatusesTableThread {
 					case UPDATES:
 						if(lastStatusId < 0) {
 							if(userId==null)
-								auxList = (ArrayList<Status>) twitter.getFriendsTimeline(updatesToGet);
+								auxList = twitter.getFriendsTimeline(updatesToGet);
 							else
-								auxList = (ArrayList<Status>) twitter.getUserTimeline(userId,updatesToGet);
+								auxList = twitter.getUserTimeline(userId,updatesToGet);
 						}
 						else {
 							if(userId==null)
-								auxList = (ArrayList<Status>) twitter.getFriendsTimelineBySinceId(lastStatusId);
+								auxList = twitter.getFriendsTimelineBySinceId(lastStatusId);
 							else
-								auxList = (ArrayList<Status>) twitter.getUserTimelineBySinceId(userId, lastStatusId, updatesToGet);
+								auxList = twitter.getUserTimelineBySinceId(userId, lastStatusId, updatesToGet);
 						}						
 						break;
 
@@ -406,9 +420,9 @@ public class StatusesTableThread {
 						//TODO
 //						if(lastStatusId < 0) {
 							if(userId==null)
-								auxList = (ArrayList<Status>) twitter.favorites();
+								auxList = twitter.favorites();
 							else
-								auxList = (ArrayList<Status>) twitter.favorites(userId);
+								auxList = twitter.favorites(userId);
 //						}
 //						else {System.out.println("user id = "+userId);
 //							if(userId==null)
@@ -420,15 +434,26 @@ public class StatusesTableThread {
 
 					case REPLIES:
 						if(lastStatusId < 0) 
-							auxList = (ArrayList<Status>) twitter.getReplies();
+							auxList = twitter.getReplies();
 						else
-							auxList = (ArrayList<Status>) twitter.getRepliesBySinceId(lastStatusId);
+							auxList = twitter.getRepliesBySinceId(lastStatusId);
 						break;
 					
-					case DIRECT_MESSAGES:
-						//TODO
+					case DIRECT_MESSAGES_RECEIVED:
+						if(lastStatusId < 0) 
+							directMessagesList = twitter.getDirectMessages();
+						else
+							directMessagesList = twitter.getDirectMessages(lastStatusId);
+						
 						break;
 					
+					case DIRECT_MESSAGES_SENT:
+						if(lastStatusId < 0) 
+							directMessagesList = twitter.getSentDirectMessages();
+						else
+							directMessagesList = twitter.getSentDirectMessages(lastStatusId);
+						break;
+						
 					case SEARCH:
 						//TODO: POSSIBILITAR MULTIPLAS PESQUISAS
 						//SALVAR PESQUISAS/UPDATES NO COMPUTADOR PARA CARREGAR MAIS RAPIDO DEPOIS?
@@ -447,11 +472,15 @@ public class StatusesTableThread {
 
 					case PUBLIC_TIMELINE:
 						if(lastStatusId<0)							
-							auxList = (ArrayList<Status>) twitter.getPublicTimeline();
+							auxList = twitter.getPublicTimeline();
 						else
-							auxList = (ArrayList<Status>) twitter.getPublicTimeline(lastStatusId);
+							auxList = twitter.getPublicTimeline(lastStatusId);
 						break;
 					}
+					
+//					for(DirectMessage m : directMessagesList) {
+//						statusesList.add(new StatusDeepT(m));
+//					}
 					
 					for(Status s : auxList) {
 						statusesList.add(new StatusDeepT(s));

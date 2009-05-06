@@ -2,7 +2,10 @@ package model;
 
 import java.util.Date;
 
-import twitter4j.UserWithStatus;
+import twitter4j.DirectMessage;
+import twitter4j.Status;
+import twitter4j.Tweet;
+import twitter4j.TwitterResponse;
 
 public class StatusDeepT {
 	
@@ -32,7 +35,11 @@ public class StatusDeepT {
 		this.inReplyToScreenName = inReplyToScreenName;
 	}
 	
-	public StatusDeepT(twitter4j.Status status){
+//	public <T extends TwitterResponse> StatusDeepT(T status) {
+//    	
+//    }
+	
+	public StatusDeepT(Status status){
 		this.createdAt = status.getCreatedAt();
 		this.id = status.getId();
 		this.text = status.getText();
@@ -54,7 +61,7 @@ public class StatusDeepT {
 		this.inReplyToScreenName = status.getToUser();		
 		this.userDeepT = new UserDeepT(status.getFromUserId(), status.getFromUser(),status.getProfileImageUrl());
 	}
-	
+		
 	public Date getCreatedAt() {
 		return createdAt;
 	}
@@ -94,10 +101,4 @@ public class StatusDeepT {
 	public UserDeepT getUser() {
 		return userDeepT;
 	}
-    
-    
-
-
-
-
 }

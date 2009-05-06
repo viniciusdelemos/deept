@@ -388,6 +388,22 @@ public class StatusTab {
 				String userId = idArray.get(currentTable);				
 				setPanelContent(userId);
 			}
+			else if(cmd.equals("buttonInbox")) {
+				if(!buttonOutbox.isSelected())
+						buttonInbox.setSelected(true);
+				else {
+					System.out.println("carregar painel inbox");
+				}
+				buttonOutbox.setSelected(false);
+			}
+			else if(cmd.equals("buttonOutbox")) {
+				if(!buttonInbox.isSelected())
+					buttonOutbox.setSelected(true);
+				else {
+					System.out.println("carregar painel outbox");
+				}
+				buttonInbox.setSelected(false);
+			}
 			else if(cmd.equals("buttonCloseUpdates")) {
 				String id = idArray.get(currentTable);
 				tablesMap.get(id).interruptThread();
