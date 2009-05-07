@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 import prefuse.Display;
 import prefuse.controls.ControlAdapter;
 import prefuse.visual.AggregateItem;
+import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
 /**
@@ -17,6 +18,7 @@ import prefuse.visual.VisualItem;
 public class AggregateDragControl extends ControlAdapter {
 
     private VisualItem activeItem;
+    private GraphicManager gManager;
     protected Point2D down = new Point2D.Double();
     protected Point2D temp = new Point2D.Double();
     protected boolean dragged;
@@ -25,7 +27,8 @@ public class AggregateDragControl extends ControlAdapter {
      * Creates a new drag control that issues repaint requests as an item
      * is dragged.
      */
-    public AggregateDragControl() {
+    public AggregateDragControl(GraphicManager gManager) {
+    	this.gManager = gManager;
     }
         
     /**
@@ -37,6 +40,26 @@ public class AggregateDragControl extends ControlAdapter {
         activeItem = item;
         //if ( !(item instanceof AggregateItem) )
             setFixed(item, true);
+            
+        if(item instanceof NodeItem) {
+        	NodeItem selectedItem = (NodeItem)item;
+        	Iterator<NodeItem> i = selectedItem.neighbors();
+        	while(i.hasNext()) {
+        		NodeItem neighbor = i.next();
+        		boolean iAmSource = gManager.getEdge(selectedItem.getInt("id"), neighbor.getInt("id")) != -1;
+        		boolean iAmTarget = gManager.getEdge(neighbor.getInt("id"), selectedItem.getInt("id")) != -1;
+        		
+        		if(iAmSource && iAmTarget) {
+        			neighbor.setStrokeColor(ChartColor.LIGHT_GREEN.getRGB());
+        		}
+        		else if(iAmSource) {
+        			neighbor.setStrokeColor(ChartColor.BLUE.getRGB());
+        		}
+        		else {
+        			neighbor.setStrokeColor(ChartColor.RED.getRGB());
+        		}
+        	}
+        }
     }
     
     /**
@@ -49,13 +72,23 @@ public class AggregateDragControl extends ControlAdapter {
         }
         Display d = (Display)e.getSource();
         d.setCursor(Cursor.getDefaultCursor());
+        
+        if(item instanceof NodeItem) {
+        	NodeItem selectedItem = (NodeItem)item;
+        	Iterator<NodeItem> i = selectedItem.neighbors();
+        	while(i.hasNext()) {
+        		NodeItem neighbor = i.next();
+        		//TODO se item estiver selecionado, voltar a cor de selecao
+        		neighbor.setStrokeColor(ChartColor.TRANSLUCENT);
+        	}
+        }
     }
     
     /**
      * @see prefuse.controls.Control#itemPressed(prefuse.visual.VisualItem, java.awt.event.MouseEvent)
      */
     public void itemPressed(VisualItem item, MouseEvent e) {
-        if (!SwingUtilities.isLeftMouseButton(e)) return;
+    	if (!SwingUtilities.isLeftMouseButton(e)) return;
         dragged = false;        
         Display d = (Display)e.getComponent();
         d.getAbsoluteCoordinate(e.getPoint(), down);
@@ -79,7 +112,7 @@ public class AggregateDragControl extends ControlAdapter {
      * @see prefuse.controls.Control#itemDragged(prefuse.visual.VisualItem, java.awt.event.MouseEvent)
      */
     public void itemDragged(VisualItem item, MouseEvent e) {
-        if (!SwingUtilities.isLeftMouseButton(e)) return;
+    	if (!SwingUtilities.isLeftMouseButton(e)) return;
         dragged = true;
         Display d = (Display)e.getComponent();
         d.getAbsoluteCoordinate(e.getPoint(), temp);
