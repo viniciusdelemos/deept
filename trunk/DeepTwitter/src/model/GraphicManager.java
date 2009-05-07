@@ -70,9 +70,17 @@ public class GraphicManager extends Display {
 	public final static String GRAPH = "graph";
 	public final static String NODES = "graph.nodes";
 	public final static String GROUPS = "groups";
-	public final static  String EDGES = "graph.edges";
-	private final static String SELECTION_BOX = "selectionbox";	
-	private final static String SELECTED_NODES = "selected";
+	public final static  String EDGES = "graph.edges";		
+	public final static String SELECTED_NODES = "selected";
+	public final static String FRIENDS = "friends";
+	public final static String FOLLOWERS = "followers";
+	public final static String FRIENDS_AND_FOLLOWERS = "friendsandfollowers";
+	//TODO setar private e criar gets/sets
+	public static int defaultEdgeColor, highlightEdgeColor, highlightArrowColor,
+	highlightTextColor, defaultTextColor, mainUserStrokeColor, mainUserFillColor,
+	selectedUserStrokeColor, selectedUserFillColor, edgeType;
+	
+	private final static String SELECTION_BOX = "selectionbox";
     private Graph g;
     private int numUsers, groupId;
     private ForceSimulator forceSimulator;
@@ -80,10 +88,7 @@ public class GraphicManager extends Display {
     private boolean isHighQuality, isTwitterUser;
     private SocialNetwork socialNetwork; 
     //private ZoneManager zoneManager;
-    private VisualItem selectionBox;
-	private int defaultEdgeColor, highlightEdgeColor, highlightArrowColor,
-	highlightTextColor, defaultTextColor, mainUserStrokeColor, mainUserFillColor,
-	selectedUserStrokeColor, selectedUserFillColor, edgeType;;
+    private VisualItem selectionBox;	
 	private PanControl panControl;
 	private EdgeRenderer edgeRenderer;
 	private TupleSet selectedNodes;
@@ -163,26 +168,26 @@ public class GraphicManager extends Display {
     	selectedUserStrokeColor = ColorLib.color(ChartColor.black);
     	selectedUserFillColor = ColorLib.color(ChartColor.LIGHT_GREEN);
     	
-//    	ColorAction nodeText = new ColorAction(NODES, VisualItem.TEXTCOLOR);
+////    	ColorAction nodeText = new ColorAction(NODES, VisualItem.TEXTCOLOR);
+////    	nodeText.setDefaultColor(defaultTextColor);
+////    	nodeText.add(VisualItem.HIGHLIGHT, highlightTextColor);    	
+//    	NodesColorAction nodeText = new NodesColorAction(NODES,VisualItem.TEXTCOLOR);
 //    	nodeText.setDefaultColor(defaultTextColor);
-//    	nodeText.add(VisualItem.HIGHLIGHT, highlightTextColor);    	
-    	NodesColorAction nodeText = new NodesColorAction(NODES,VisualItem.TEXTCOLOR);
-    	nodeText.setDefaultColor(defaultTextColor);
-
-//    	ColorAction nodeStroke = new ColorAction(NODES, VisualItem.STROKECOLOR);
-//    	nodeStroke.setDefaultColor(ColorLib.gray(100));
-//    	nodeStroke.add(VisualItem.HIGHLIGHT, highlightEdgeColor); 
-    	NodesColorAction nodeStroke = new NodesColorAction(NODES, VisualItem.STROKECOLOR);    	
-    	
-//    	ColorAction edgeStroke = new ColorAction(EDGES, VisualItem.STROKECOLOR);
-//    	edgeStroke.setDefaultColor(defaultEdgeColor); 
-//    	edgeStroke.add(VisualItem.HIGHLIGHT, highlightEdgeColor);
-    	EdgesColorAction edgeStroke = new EdgesColorAction(EDGES,VisualItem.STROKECOLOR);
-
-//    	ColorAction edgeArrow = new ColorAction(EDGES,VisualItem.FILLCOLOR);
-//    	edgeArrow.setDefaultColor(defaultEdgeColor);
-//    	edgeArrow.add(VisualItem.HIGHLIGHT, highlightArrowColor);
-    	EdgesColorAction edgeArrow = new EdgesColorAction(EDGES,VisualItem.FILLCOLOR);
+//
+////    	ColorAction nodeStroke = new ColorAction(NODES, VisualItem.STROKECOLOR);
+////    	nodeStroke.setDefaultColor(ColorLib.gray(100));
+////    	nodeStroke.add(VisualItem.HIGHLIGHT, highlightEdgeColor); 
+//    	NodesColorAction nodeStroke = new NodesColorAction(NODES, VisualItem.STROKECOLOR);    	
+//    	
+////    	ColorAction edgeStroke = new ColorAction(EDGES, VisualItem.STROKECOLOR);
+////    	edgeStroke.setDefaultColor(defaultEdgeColor); 
+////    	edgeStroke.add(VisualItem.HIGHLIGHT, highlightEdgeColor);
+//    	EdgesColorAction edgeStroke = new EdgesColorAction(EDGES,VisualItem.STROKECOLOR);
+//
+////    	ColorAction edgeArrow = new ColorAction(EDGES,VisualItem.FILLCOLOR);
+////    	edgeArrow.setDefaultColor(defaultEdgeColor);
+////    	edgeArrow.add(VisualItem.HIGHLIGHT, highlightArrowColor);
+//    	EdgesColorAction edgeArrow = new EdgesColorAction(EDGES,VisualItem.FILLCOLOR);
     	
     	ColorAction groupStroke = new ColorAction(GROUPS, VisualItem.STROKECOLOR);
         groupStroke.setDefaultColor(ColorLib.gray(200));
@@ -198,10 +203,10 @@ public class GraphicManager extends Display {
 
     	//color actions
     	ActionList draw = new ActionList();        
-    	draw.add(nodeText);
-    	//draw.add(nodeStroke);
-    	draw.add(edgeStroke);   
-    	draw.add(edgeArrow);
+//    	draw.add(nodeText);
+//    	//draw.add(nodeStroke);
+//    	draw.add(edgeStroke);   
+//    	draw.add(edgeArrow);
     	draw.add(groupStroke);
     	draw.add(groups);
     	
@@ -223,7 +228,7 @@ public class GraphicManager extends Display {
     	setSize(800,600);
     	pan(super.getWidth()/2,super.getHeight()/2);    	
     	
-    	setHighQuality(isHighQuality);
+    	setHighQuality(isHighQuality);   	
     	
     	//criando um novo focus group para guardar os nodos selecionados
         selectedNodes = new DefaultTupleSet(); 
@@ -235,7 +240,7 @@ public class GraphicManager extends Display {
         			VisualItem item = (VisualItem) add[i];
         			item.setStroke(new BasicStroke(1.5f));
         			item.setStrokeColor(selectedUserStrokeColor);        				
-        			item.setFillColor(selectedUserFillColor);        			
+        			item.setFillColor(selectedUserFillColor);            			
         		}
         		for (int i = 0; i < rem.length; i++) {
         			VisualItem item = (VisualItem) rem[i];
@@ -265,7 +270,7 @@ public class GraphicManager extends Display {
         panControl.setEnabled(true);
         
     	//addControlListener(new DragControl());
-    	addControlListener(new AggregateDragControl());
+    	addControlListener(new AggregateDragControl(this));
     	addControlListener(new ZoomControl());        	      	
     	addControlListener(panControl);    	
     	//addControlListener(new NeighborHighlightControl()); 
@@ -428,6 +433,10 @@ public class GraphicManager extends Display {
 		return socialNetwork.getUser(idTwitter);
 	}
 	
+	public int getEdge(int source, int target) {
+		return g.getEdge(source, target);
+	}
+	
 	public SocialNetwork getSocialNetwork() {
     	return socialNetwork;
     }
@@ -477,6 +486,10 @@ public class GraphicManager extends Display {
 	public void clearSelection()
 	{
 		m_vis.getFocusGroup(SELECTED_NODES).clear();
+	}
+	
+	public TupleSet getTupleSet(String name) {
+		return m_vis.getFocusGroup(name);
 	}
 	
 	public void setChildrenVisible(NodeItem source, boolean visible)
@@ -688,7 +701,7 @@ public class GraphicManager extends Display {
 			
 		//métodos utilizados para desenhar a caixa de seleção
 		public void mousePressed(MouseEvent e)
-		{			
+		{		
 			if(!SwingUtilities.isLeftMouseButton(e)) return;
 			
 			if(e.isControlDown()) { 
@@ -781,101 +794,101 @@ public class GraphicManager extends Display {
 		}	
 	}
 	
-	private class EdgesColorAction extends ColorAction {
-		private String field;	
-		
-		public EdgesColorAction(String group, String field) { 
-			super(group, field); 		 
-			// set the action to all (not only to the visible) edges 
-			//setFilterPredicate((Predicate)ExpressionParser.parse("TRUE")); 
-			this.field = field;			
-		} 
-		 
-		public int getColor(VisualItem item)
-		{ 
-			Color c = new Color(defaultEdgeColor);		 
-			EdgeItem edge = (EdgeItem)item;
-			
-			if(field == VisualItem.STROKECOLOR)
-			{
-				if (edge.getSourceItem().isHover()) c = new Color(highlightEdgeColor);
-			}
-			if(field == VisualItem.FILLCOLOR)
-			{
-				if(edge.getSourceItem().isHover()) c = new Color(highlightArrowColor);		
-				if(edge.getTargetItem().isHover()) c = new Color(highlightArrowColor);
-			}					
-			return c.getRGB();
-		}
-	}
-	
-	private class NodesColorAction extends ColorAction {
-		private String field;		
-		
-		public NodesColorAction(String group, String field) { 
-			super(group, field);		 
-			this.field = field;			
-		} 
-		 
-		public int getColor(VisualItem item)
-		{ 
-			Color c = new Color(defaultTextColor);
-			try
-			{			 
-				if(field == VisualItem.TEXTCOLOR)
-				{
-					NodeItem node = (NodeItem)item;
-					if (node.isHover()) c = new Color(highlightTextColor);
-					else
-					{				
-						Iterator i = node.inEdges();
-						while(i.hasNext())
-						{
-							EdgeItem edge = (EdgeItem)i.next();
-							NodeItem nodeItem = edge.getSourceItem();
-							if(nodeItem.isHover())
-							{
-								//colorindo os filhos
-								c = new Color(highlightTextColor);
-								break;
-							}
-						}
-						i = node.outEdges();
-						while(i.hasNext())
-						{
-							EdgeItem edge = (EdgeItem)i.next();
-							NodeItem nodeItem = edge.getTargetItem();
-							if(nodeItem.isHover())
-							{
-								//colorindo os pais com uma cor diferente
-								c = new Color(highlightEdgeColor);
-								break;
-							}
-						}
-					}
-				}
-				
-
-				//			if(node.getParent()!=null) //FAZER O IN E OUT EDGES
-				//			{
-				//				if(((NodeItem)(node.getParent())).isHover())
-				//				{
-				//					if(field == VisualItem.TEXTCOLOR) c = new Color(highlightTextColor);
-				//				}
-				//			}
-				//			if(node.getTargetItem().isHover())
-				//			{
-				//				if(field == VisualItem.FILLCOLOR) c = new Color(highlightArrowColor);
-				//			}
-				//else ei.setVisible(false);	
-
-			}
-			catch(Exception e)
-			{
-				System.out.println("***** EXCEPTIONNNN");
-				e.printStackTrace();
-			}
-			return c.getRGB();
-		}
-	}
+//	private class EdgesColorAction extends ColorAction {
+//		private String field;	
+//		
+//		public EdgesColorAction(String group, String field) { 
+//			super(group, field); 		 
+//			// set the action to all (not only to the visible) edges 
+//			//setFilterPredicate((Predicate)ExpressionParser.parse("TRUE")); 
+//			this.field = field;			
+//		} 
+//		 
+//		public int getColor(VisualItem item)
+//		{ 
+//			Color c = new Color(defaultEdgeColor);		 
+//			EdgeItem edge = (EdgeItem)item;
+//			
+//			if(field == VisualItem.STROKECOLOR)
+//			{
+//				if (edge.getSourceItem().isHover()) c = new Color(highlightEdgeColor);
+//			}
+//			if(field == VisualItem.FILLCOLOR)
+//			{
+//				if(edge.getSourceItem().isHover()) c = new Color(highlightArrowColor);		
+//				if(edge.getTargetItem().isHover()) c = new Color(highlightArrowColor);
+//			}					
+//			return c.getRGB();
+//		}
+//	}
+//	
+//	private class NodesColorAction extends ColorAction {
+//		private String field;		
+//		
+//		public NodesColorAction(String group, String field) { 
+//			super(group, field);		 
+//			this.field = field;			
+//		} 
+//		 
+//		public int getColor(VisualItem item)
+//		{ 
+//			Color c = new Color(defaultTextColor);
+//			try
+//			{			 
+//				if(field == VisualItem.TEXTCOLOR)
+//				{
+//					NodeItem node = (NodeItem)item;
+//					if (node.isHover()) c = new Color(highlightTextColor);
+//					else
+//					{				
+//						Iterator i = node.inEdges();
+//						while(i.hasNext())
+//						{
+//							EdgeItem edge = (EdgeItem)i.next();
+//							NodeItem nodeItem = edge.getSourceItem();
+//							if(nodeItem.isHover())
+//							{
+//								//colorindo os filhos
+//								c = new Color(highlightTextColor);
+//								break;
+//							}
+//						}
+//						i = node.outEdges();
+//						while(i.hasNext())
+//						{
+//							EdgeItem edge = (EdgeItem)i.next();
+//							NodeItem nodeItem = edge.getTargetItem();
+//							if(nodeItem.isHover())
+//							{
+//								//colorindo os pais com uma cor diferente
+//								c = new Color(highlightEdgeColor);
+//								break;
+//							}
+//						}
+//					}
+//				}
+//				
+//
+//				//			if(node.getParent()!=null) //FAZER O IN E OUT EDGES
+//				//			{
+//				//				if(((NodeItem)(node.getParent())).isHover())
+//				//				{
+//				//					if(field == VisualItem.TEXTCOLOR) c = new Color(highlightTextColor);
+//				//				}
+//				//			}
+//				//			if(node.getTargetItem().isHover())
+//				//			{
+//				//				if(field == VisualItem.FILLCOLOR) c = new Color(highlightArrowColor);
+//				//			}
+//				//else ei.setVisible(false);	
+//
+//			}
+//			catch(Exception e)
+//			{
+//				System.out.println("***** EXCEPTIONNNN");
+//				e.printStackTrace();
+//			}
+//			return c.getRGB();
+//		}
+//	}
 }
