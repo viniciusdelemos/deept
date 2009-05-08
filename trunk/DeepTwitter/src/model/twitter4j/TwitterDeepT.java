@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import model.StatusDeepT;
-import model.UserDeepT;
 
 import twitter4j.DirectMessage;
 import twitter4j.ExtendedUser;

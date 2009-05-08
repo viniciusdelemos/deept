@@ -25,7 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import model.ChartColor;
-import model.StatusDeepT;
+import model.twitter4j.StatusDeepT;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -270,8 +270,8 @@ public class TimelinePanel extends JPanel {
 		for (StatusDeepT s : statusesList) {
 			try{
 				tbl.set(index, StatusesDataTable.ColNames.STATUSDEEPT.toString(), s);
-				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), s.getUser().getScreenName());
-				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), s.getUser().getProfileImageURL().toString());
+				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), s.getUserTeste().getScreenName());//s.getUser().getScreenName());
+				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), s.getUserTeste().getProfileImageURL().toString());//s.getUser().getProfileImageURL().toString());
 				//SETAR CATEGORIA
 				
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");		

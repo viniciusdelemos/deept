@@ -23,13 +23,13 @@ import javax.swing.event.HyperlinkListener;
 
 import model.ChartColor;
 import model.MessageType;
-import model.StatusDeepT;
 import model.StatusesType;
 import model.URLLinkAction;
-import model.UserDeepT;
 import model.twitter4j.DirectMessageDeepT;
+import model.twitter4j.StatusDeepT;
 import model.twitter4j.TwitterDeepT;
 import model.twitter4j.TwitterMod;
+import model.twitter4j.UserDeepT;
 import twitter4j.ExtendedUser;
 import twitter4j.Paging;
 import twitter4j.DirectMessage;
@@ -95,16 +95,21 @@ public class StatusesTableThread {
 		gbc.gridx = 0;
 		gbc.insets = new Insets(0,3,0,1);
 		
-		final ExtendedUser u1 = s.getExtendedUser();
-		final User u2 = s.getUser();
-		User u;
-		
 		JLabel interactiveImageAux;
-		ImageIcon userPicture = null;
-		if(u1 != null)
-			userPicture = new ImageIcon(u1.getProfileImageURL());
-		else
-			userPicture = new ImageIcon(u2.getProfileImageURL());
+		ImageIcon userPicture = null;		
+		
+//		final ExtendedUser u1 = s.getExtendedUser();
+//		final User u2 = s.getUser();
+//		if(u1 != null) {
+//			userPicture = new ImageIcon(u1.getProfileImageURL());
+//			screenName = u1.getScreenName();
+//			}
+//		else {
+//			userPicture = new ImageIcon(u2.getProfileImageURL());
+//			screenName = u2.getScreenName();
+//			}
+		User u = s.getUserTeste();
+		userPicture = new ImageIcon(u.getProfileImageURL());		
 
 		if(userPicture.getIconHeight()>48 || userPicture.getIconWidth()>48) {
 			Image image = userPicture.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
@@ -120,7 +125,7 @@ public class StatusesTableThread {
 				interactiveImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				controller.searchAndAddUserToNetwork(s.getUser());
+				controller.searchAndAddUserToNetwork(s.getUserTeste());//s.getUser());
 			}
 		});
 		
@@ -138,18 +143,11 @@ public class StatusesTableThread {
 		editorPane.setFont(new Font("Calibri",0,13));
 		editorPane.setBackground(updatePanel.getBackground());
 		
-		if(u1 != null){
-		editorPane.setText("<b><a href=http://www.twitter.com/"+u1.getScreenName()+">"
-				+u1.getScreenName()+"</a></b>"
+		editorPane.setText("<b><a href=http://www.twitter.com/"+u.getScreenName()+">"
+				+u.getScreenName()+"</a></b>"
 				+": "+processText(s.getText()));
 				//+"<br>"+s.getCreatedAt().toString());
-		}
-		else{
-			editorPane.setText("<b><a href=http://www.twitter.com/"+u2.getScreenName()+">"
-					+u2.getScreenName()+"</a></b>"
-					+": "+processText(s.getText()));
-					//+"<br>"+s.getCreatedAt().toString());
-		}
+		
 		
 		editorPane.addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -189,7 +187,7 @@ public class StatusesTableThread {
 				replyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				controller.openGUINewUpdateWindow(s.getUser().getScreenName(),StatusesType.REPLIES);				
+				controller.openGUINewUpdateWindow(s.getUserTeste().getScreenName(),StatusesType.REPLIES);//s.getUser().getScreenName(),StatusesType.REPLIES);				
 			}
 		});
 		updatePanel.add(replyButton,gbc);
@@ -238,14 +236,15 @@ public class StatusesTableThread {
 		updatePanel.add(favoriteButton,gbc);
 		
 		int loggedUserId = Integer.parseInt(controller.getLoggedUserId());
-		int id = -1;
 		
-		if(s.getUser() != null)
-			id = s.getUser().getId();
-		else
-			id = s.getExtendedUser().getId();
+//		int id = -1;
+//		if(s.getUser() != null)
+//			id = s.getUser().getId();
+//		else
+//			id = s.getExtendedUser().getId();
+//		id = s.getUserTeste().getId();
 		
-		if(loggedUserId == id) {
+		if(loggedUserId == s.getUserTeste().getId()) {
 			gbc.weightx = 0;
 			gbc.gridx = 2;
 			gbc.gridy = 0;
@@ -372,14 +371,7 @@ public class StatusesTableThread {
 		private boolean threadSuspended;
 		private Map<Long,Status> favoritesMap;// = new HashMap<Long,Status>();
 		
-		private List<DirectMessageDeepT> directMessagesList; //TROQUEI O TIPO SO PARA TESTAR
-		private List<StatusDeepT> auxList; //TROQUEI O TIPO SO PARA TESTAR
-		
-		//Antes os tipos eram DirectMessage, e Status, dai troquei para ver se
-		// a aplicacao tah rodando com a nova api, e os requests jah retornando
-		//StatusDeepT e DirectMessageDeepT, axo que é so tirar esses dois caras,
-		//pois agora nao precisa fazer a conversao do tipo (de status para statusDeepT)
-		
+		private List<DirectMessageDeepT> directMessagesList; //TROQUEI O TIPO SO PARA TESTAR				
 		private List<StatusDeepT> statusesList, allStatusesList;		
 
 		
@@ -440,17 +432,13 @@ public class StatusesTableThread {
 					case UPDATES:
 						if(lastStatusId < 0) {
 							if(userId==null)
-
 								statusesList = twitter.getFriendsTimelineDeepT(new Paging().count(updatesToGet));
-
 							else
 								statusesList = twitter.getUserTimelineDeepT(userId, new Paging().count(updatesToGet));
 						}
 						else {
 							if(userId==null)
-
 								statusesList = twitter.getFriendsTimelineDeepT(new Paging().sinceId(lastStatusId));
-
 							else
 								statusesList = twitter.getUserTimelineDeepT(userId, updatesToGet, lastStatusId);
 								//talvez seja melhor fazer userId, new Paging().count(updatesToGet).sinceId(lastStatusId)
@@ -485,8 +473,7 @@ public class StatusesTableThread {
 						if(lastStatusId < 0) 
 							directMessagesList = twitter.getDirectMessagesDeepT();
 						else
-							directMessagesList = twitter.getDirectMessagesDeepT(new Paging(lastStatusId));
-						
+							directMessagesList = twitter.getDirectMessagesDeepT(new Paging(lastStatusId));						
 						break;
 					
 					case DIRECT_MESSAGES_SENT:
@@ -520,14 +507,9 @@ public class StatusesTableThread {
 						break;
 					}
 					
-//					for(DirectMessage m : directMessagesList) {
-//						statusesList.add(new StatusDeepT(m));
-//					}
-					/*
-					for(Status s : auxList) {
-						statusesList.add(new StatusDeepT(s));
-					}
-					*/
+					for(DirectMessage m : directMessagesList) {
+						System.out.println(m);//statusesList.add(new StatusDeepT(m));
+					}					
 					
 					//TODO
 					if(statusesType == StatusesType.FAVORITES) {

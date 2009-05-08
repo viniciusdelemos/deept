@@ -14,15 +14,11 @@ import twitter4j.TwitterException;
 
 public class ExtendedUserDeepT extends ExtendedUser{
 	
-  
-
     public ExtendedUserDeepT(Element elem, Twitter twitter)
 			throws TwitterException {
 		super(elem, twitter);
 		
 	}
-    
-
 	
 	static List<ExtendedUserDeepT> constructExtendedUserDeepT(Document doc,
 			Twitter twitter) throws TwitterException {
@@ -77,15 +73,4 @@ public class ExtendedUserDeepT extends ExtendedUser{
                 "message: " + this.getStatusText() +
                 "user: " + this.getScreenName();
     }
-	
-	
-	
-	
-	
-	
-    
-    
-	
-	
-
 }

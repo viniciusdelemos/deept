@@ -1,4 +1,4 @@
-package model;
+package model.twitter4j;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,25 +54,25 @@ public class StatusDeepT extends Status{
     }
     
     
-    /**
-     * 
-     * Deve ser chamado pelo UserDeepT para assim o userDeepT ter statuses
-     * neste caso ExtendedUser e User nao irao receber nenhum dado!
-     */
-	public StatusDeepT(Date createdAt, long id, String text, String source,
-			boolean isTruncated, long inReplyToStatusId, int inReplyToUserId,
-			boolean isFavorited, String inReplyToScreenName) throws TwitterException{
-
-		this.createdAt = createdAt;
-		this.id = id;
-		this.text = text;
-		this.source = source;
-		this.isTruncated = isTruncated;
-		this.inReplyToStatusId = inReplyToStatusId;
-		this.inReplyToUserId = inReplyToUserId;
-		this.isFavorited = isFavorited;
-		this.inReplyToScreenName = inReplyToScreenName;
-	}
+//    /**
+//     * 
+//     * Deve ser chamado pelo UserDeepT para assim o userDeepT ter statuses
+//     * neste caso ExtendedUser e User nao irao receber nenhum dado!
+//     */
+//	public StatusDeepT(Date createdAt, long id, String text, String source,
+//			boolean isTruncated, long inReplyToStatusId, int inReplyToUserId,
+//			boolean isFavorited, String inReplyToScreenName) throws TwitterException{
+//
+//		this.createdAt = createdAt;
+//		this.id = id;
+//		this.text = text;
+//		this.source = source;
+//		this.isTruncated = isTruncated;
+//		this.inReplyToStatusId = inReplyToStatusId;
+//		this.inReplyToUserId = inReplyToUserId;
+//		this.isFavorited = isFavorited;
+//		this.inReplyToScreenName = inReplyToScreenName;
+//	}
 	
 //	public <T extends TwitterResponse> StatusDeepT(T status) {
 //    	
@@ -113,7 +113,6 @@ public class StatusDeepT extends Status{
 		//Antes era UserDeepT, agora user,
 		//axo melhor assim, pois UserDeepT tem lista de Status, DirectMessages e outras coisas
 		user = new User(status.getFromUserId(), status.getFromUser(),status.getProfileImageUrl());
-
 	}
 		
 	public Date getCreatedAt() {
@@ -152,21 +151,22 @@ public class StatusDeepT extends Status{
 		return inReplyToScreenName;
 	}
 	
-	public ExtendedUser getUserDeepT() {
-		return extendedUser;
-	}
+//	public ExtendedUser getUserDeepT() {
+//		return extendedUser;
+//	}
+//	
+//	public ExtendedUser getExtendedUser() {
+//		return extendedUser;
+//	}
+//
+//	public User getUser() {
+//		return user;
+//	}
 	
-	
-	
-	public ExtendedUser getExtendedUser() {
-		return extendedUser;
+	public User getUserTeste() {
+		if(extendedUser != null) return extendedUser;
+		else return user;
 	}
-
-
-	public User getUser() {
-		return user;
-	}
-
 
 	public static List<StatusDeepT> constructStatusesDeepT(Document doc, Twitter twitter)
 			throws TwitterException {

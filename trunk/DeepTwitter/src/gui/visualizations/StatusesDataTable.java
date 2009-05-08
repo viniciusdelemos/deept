@@ -1,5 +1,5 @@
 package gui.visualizations;
-import model.StatusDeepT;
+import model.twitter4j.StatusDeepT;
 import prefuse.data.Table;
 
 public final class StatusesDataTable extends Table {
