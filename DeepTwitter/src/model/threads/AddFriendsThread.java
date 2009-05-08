@@ -31,13 +31,13 @@ public class AddFriendsThread extends Thread {
 	{
 		try {
 			System.out.println("GETTING FRIENDS FOR "+source.get("name"));
-			List<UserWithStatus> friends = controller.getTwitter().getFriends(source.get("idTwitter").toString());
+			List<UserDeepT> friends = controller.getTwitter().getFriendsDeepT(source.get("idTwitter").toString());
 			System.out.println("GOT FRIENDS FOR "+source.get("name"));
 
 			int notAdded = 0;
 			boolean isShowingFriends = source.getBoolean("isShowingFriends");
 			
-			for(UserWithStatus user : friends)
+			for(UserDeepT user : friends)
 			{
 				UserDeepT u = gManager.getUser(user.getId());					
 				
@@ -46,7 +46,7 @@ public class AddFriendsThread extends Thread {
 					double x = source.getX();					
 					double y = source.getY();
 					
-					Node n = gManager.addNode(new UserDeepT(user));
+					Node n = gManager.addNode(user);
 					VisualItem newNode = gManager.getVisualization().getVisualItem(gManager.NODES, n);
 					PrefuseLib.setX(newNode, null, x);
 					PrefuseLib.setY(newNode, null, y);

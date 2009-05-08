@@ -27,12 +27,16 @@ import model.GraphicManager;
 import model.MessageType;
 import model.UserDeepT;
 import model.threads.StatusesTableThread;
+import model.twitter4j.ExtendedUserDeepT;
+import model.twitter4j.TwitterDeepT;
+import model.twitter4j.TwitterMod;
 import model.StatusesType;
 import prefuse.Display;
 import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
+import twitter4j.ExtendedUser;
 import twitter4j.RateLimitStatus;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -45,7 +49,7 @@ public class ControllerDeepTwitter {
 	private GUIMainWindow mainWindow;
 	private GUIAddUser guiAddUser;
 	private GUINewUpdate guiNewUpdate;
-	private Twitter twitter;
+	private TwitterDeepT twitter;
 	private GraphicManager gManager;
 	private boolean isTwitterUser;
 	private String loggedUserId;
@@ -72,7 +76,7 @@ public class ControllerDeepTwitter {
 		loginWindow.addLoginListener(new LoginListener());				
 	}
 	
-	public Twitter getTwitter() {
+	public TwitterDeepT getTwitter() {
 		return twitter;
 	}
 	
@@ -86,6 +90,18 @@ public class ControllerDeepTwitter {
 	
 	public String getUserName(String id) {
 		return gManager.getUserName(Integer.parseInt(id));
+	}
+	
+	public void searchAndAddUserToNetwork(User u){
+		try{
+			ExtendedUser extendedUser = twitter.verifyCredentials();
+			UserDeepT userDeepT = new UserDeepT(extendedUser);
+			gManager.searchAndAddUserToNetwork(userDeepT);
+		}catch(TwitterException e){
+			e.printStackTrace();
+			//nao é grave, só coloquei assim para poder ver no console se acontecer
+			System.out.println("PROBLEMA MUIIIIIIIIIIIIIITO GRAVE");
+		}
 	}
 	
 	public void searchAndAddUserToNetwork(UserDeepT u) {
@@ -137,14 +153,21 @@ public class ControllerDeepTwitter {
 		public void actionPerformed(ActionEvent e) {
 			boolean logInOK = false;
 			isTwitterUser = loginWindow.isTwitterUser();
+			
+			ExtendedUser user = null;
+			
 			try{
 				if(isTwitterUser)
 				{				
 					if(loginWindow.getUser().compareTo("")>0 && loginWindow.getPassword().compareTo("")>0)
-					{											
-						twitter = new Twitter(loginWindow.getUser(),loginWindow.getPassword());
-						if(twitter.verifyCredentials()) logInOK = true;
-							else showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);
+					{
+						twitter = new TwitterDeepT(loginWindow.getUser(),loginWindow.getPassword());
+						
+						user = twitter.verifyCredentials(); //Se usuario ou senha invalido,
+						//gerado excecao com statusCode = 401
+						
+						logInOK = true;
+						//	else showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);
 					}
 					else showMessageDialog("Por favor, preencha os campos de nome de usuário e senha!",MessageType.WARNING);					
 				}
@@ -152,7 +175,7 @@ public class ControllerDeepTwitter {
 				{
 					if(loginWindow.getUser().compareTo("")>0)
 					{
-						twitter = new Twitter(loginWindow.getUser(),"");
+						twitter = new TwitterDeepT(loginWindow.getUser(),"");
 						logInOK = true;
 					}
 					else showMessageDialog("Por favor, preencha o campo de nome de usuário!",MessageType.WARNING);					
@@ -160,7 +183,8 @@ public class ControllerDeepTwitter {
 
 				if(logInOK)
 				{
-					UserDeepT u = new UserDeepT(twitter.getAuthenticatedUser());
+					UserDeepT u = new UserDeepT(user);
+					
 					loggedUserId = String.valueOf(u.getId());
 					gManager = new GraphicManager();
 				
@@ -424,7 +448,8 @@ public class ControllerDeepTwitter {
 					String id = guiAddUser.getUser();
 					if(!id.equals("")) {
 						System.out.println("=> Requesting user to Twitter");
-						UserDeepT u = new UserDeepT(twitter.getUserDetail(id));
+						ExtendedUser extendedUser = twitter.getUserDetail(id);
+						UserDeepT u = new UserDeepT(extendedUser);
 						System.out.println("=> Got user");
 						gManager.searchAndAddUserToNetwork(u);								
 						guiAddUser.dispose();

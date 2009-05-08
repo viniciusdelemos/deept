@@ -27,6 +27,11 @@ import model.StatusDeepT;
 import model.StatusesType;
 import model.URLLinkAction;
 import model.UserDeepT;
+import model.twitter4j.DirectMessageDeepT;
+import model.twitter4j.TwitterDeepT;
+import model.twitter4j.TwitterMod;
+import twitter4j.ExtendedUser;
+import twitter4j.Paging;
 import twitter4j.DirectMessage;
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -90,10 +95,17 @@ public class StatusesTableThread {
 		gbc.gridx = 0;
 		gbc.insets = new Insets(0,3,0,1);
 		
-		final UserDeepT u = s.getUser();
+		final ExtendedUser u1 = s.getExtendedUser();
+		final User u2 = s.getUser();
+		User u;
 		
 		JLabel interactiveImageAux;
-		ImageIcon userPicture = new ImageIcon(u.getProfileImageURL());
+		ImageIcon userPicture = null;
+		if(u1 != null)
+			userPicture = new ImageIcon(u1.getProfileImageURL());
+		else
+			userPicture = new ImageIcon(u2.getProfileImageURL());
+
 		if(userPicture.getIconHeight()>48 || userPicture.getIconWidth()>48) {
 			Image image = userPicture.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
 			interactiveImageAux = new JLabel(new ImageIcon(image));
@@ -125,10 +137,19 @@ public class StatusesTableThread {
 		editorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
 		editorPane.setFont(new Font("Calibri",0,13));
 		editorPane.setBackground(updatePanel.getBackground());
-		editorPane.setText("<b><a href=http://www.twitter.com/"+u.getScreenName()+">"
-				+u.getScreenName()+"</a></b>"
+		
+		if(u1 != null){
+		editorPane.setText("<b><a href=http://www.twitter.com/"+u1.getScreenName()+">"
+				+u1.getScreenName()+"</a></b>"
 				+": "+processText(s.getText()));
 				//+"<br>"+s.getCreatedAt().toString());
+		}
+		else{
+			editorPane.setText("<b><a href=http://www.twitter.com/"+u2.getScreenName()+">"
+					+u2.getScreenName()+"</a></b>"
+					+": "+processText(s.getText()));
+					//+"<br>"+s.getCreatedAt().toString());
+		}
 		
 		editorPane.addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -217,7 +238,14 @@ public class StatusesTableThread {
 		updatePanel.add(favoriteButton,gbc);
 		
 		int loggedUserId = Integer.parseInt(controller.getLoggedUserId());
-		if(loggedUserId == s.getUser().getId()) {
+		int id = -1;
+		
+		if(s.getUser() != null)
+			id = s.getUser().getId();
+		else
+			id = s.getExtendedUser().getId();
+		
+		if(loggedUserId == id) {
 			gbc.weightx = 0;
 			gbc.gridx = 2;
 			gbc.gridy = 0;
@@ -340,12 +368,20 @@ public class StatusesTableThread {
 		private long lastStatusId;
 		private GridBagConstraints c;
 		private JPanel empty;
-		private Twitter twitter;
+		private TwitterDeepT twitter = controller.getTwitter();
 		private boolean threadSuspended;
 		private Map<Long,Status> favoritesMap;// = new HashMap<Long,Status>();
-		private List<DirectMessage> directMessagesList;
-		private List<Status> auxList;
+		
+		private List<DirectMessageDeepT> directMessagesList; //TROQUEI O TIPO SO PARA TESTAR
+		private List<StatusDeepT> auxList; //TROQUEI O TIPO SO PARA TESTAR
+		
+		//Antes os tipos eram DirectMessage, e Status, dai troquei para ver se
+		// a aplicacao tah rodando com a nova api, e os requests jah retornando
+		//StatusDeepT e DirectMessageDeepT, axo que é so tirar esses dois caras,
+		//pois agora nao precisa fazer a conversao do tipo (de status para statusDeepT)
+		
 		private List<StatusDeepT> statusesList, allStatusesList;		
+
 		
 		public KeepTableUpdated() {			
 			twitter = controller.getTwitter();
@@ -404,15 +440,21 @@ public class StatusesTableThread {
 					case UPDATES:
 						if(lastStatusId < 0) {
 							if(userId==null)
-								auxList = twitter.getFriendsTimeline(updatesToGet);
+
+								statusesList = twitter.getFriendsTimelineDeepT(new Paging().count(updatesToGet));
+
 							else
-								auxList = twitter.getUserTimeline(userId,updatesToGet);
+								statusesList = twitter.getUserTimelineDeepT(userId, new Paging().count(updatesToGet));
 						}
 						else {
 							if(userId==null)
-								auxList = twitter.getFriendsTimelineBySinceId(lastStatusId);
+
+								statusesList = twitter.getFriendsTimelineDeepT(new Paging().sinceId(lastStatusId));
+
 							else
-								auxList = twitter.getUserTimelineBySinceId(userId, lastStatusId, updatesToGet);
+								statusesList = twitter.getUserTimelineDeepT(userId, updatesToGet, lastStatusId);
+								//talvez seja melhor fazer userId, new Paging().count(updatesToGet).sinceId(lastStatusId)
+								//testar
 						}						
 						break;
 
@@ -420,9 +462,9 @@ public class StatusesTableThread {
 						//TODO
 //						if(lastStatusId < 0) {
 							if(userId==null)
-								auxList = twitter.favorites();
+								statusesList = twitter.getFavoritesDeepT();
 							else
-								auxList = twitter.favorites(userId);
+								statusesList = twitter.getFavoritesDeepT(userId);
 //						}
 //						else {System.out.println("user id = "+userId);
 //							if(userId==null)
@@ -434,24 +476,24 @@ public class StatusesTableThread {
 
 					case REPLIES:
 						if(lastStatusId < 0) 
-							auxList = twitter.getReplies();
+							statusesList = twitter.getMentionsDeepT();
 						else
-							auxList = twitter.getRepliesBySinceId(lastStatusId);
+							statusesList = twitter.getMentionsDeepT(new Paging(lastStatusId));
 						break;
 					
 					case DIRECT_MESSAGES_RECEIVED:
 						if(lastStatusId < 0) 
-							directMessagesList = twitter.getDirectMessages();
+							directMessagesList = twitter.getDirectMessagesDeepT();
 						else
-							directMessagesList = twitter.getDirectMessages(lastStatusId);
+							directMessagesList = twitter.getDirectMessagesDeepT(new Paging(lastStatusId));
 						
 						break;
 					
 					case DIRECT_MESSAGES_SENT:
 						if(lastStatusId < 0) 
-							directMessagesList = twitter.getSentDirectMessages();
+							directMessagesList = twitter.getSentDirectMessagesDeepT();
 						else
-							directMessagesList = twitter.getSentDirectMessages(lastStatusId);
+							directMessagesList = twitter.getSentDirectMessagesDeepT(new Paging(lastStatusId));
 						break;
 						
 					case SEARCH:
@@ -472,19 +514,20 @@ public class StatusesTableThread {
 
 					case PUBLIC_TIMELINE:
 						if(lastStatusId<0)							
-							auxList = twitter.getPublicTimeline();
+							statusesList = twitter.getPublicTimelineDeepT();
 						else
-							auxList = twitter.getPublicTimeline(lastStatusId);
+							statusesList = twitter.getPublicTimelineDeepT(lastStatusId);
 						break;
 					}
 					
 //					for(DirectMessage m : directMessagesList) {
 //						statusesList.add(new StatusDeepT(m));
 //					}
-					
+					/*
 					for(Status s : auxList) {
 						statusesList.add(new StatusDeepT(s));
 					}
+					*/
 					
 					//TODO
 					if(statusesType == StatusesType.FAVORITES) {

@@ -32,21 +32,21 @@ public class FollowUserThread extends Thread {
 			String mainUserId = mainUserNode.getString("idTwitter");
 			String targetUserId = targetNode.getString("idTwitter");
 			
-			boolean existsFriendship = controller.getTwitter().exists(mainUserId, targetUserId);
+			boolean existsFriendship = controller.getTwitter().existsFriendship(mainUserId, targetUserId);
 			
 			if(follow) {		
 				if(existsFriendship) { 
 					controller.showMessageDialog("Você já está seguindo esta pessoa.\nProvavelmente você ainda não adicionou seus amigos à rede.",MessageType.INFORMATION);
 					return;
 				}
-				controller.getTwitter().create(targetNode.getString("idTwitter"));
+				controller.getTwitter().createFriendship(targetNode.getString("idTwitter"));
 				//controller.getTwitter().follow(userId);						
 				gManager.addEdge(mainUserNode, targetNode);
 				controller.setStatusBarMessage("Agora seguindo "+targetNode.getString("name"));
 			}
 			else { //leave
 				if(!existsFriendship) return;
-				controller.getTwitter().destroy(targetNode.getString("idTwitter"));
+				controller.getTwitter().destroyFriendship(targetNode.getString("idTwitter"));
 				//controller.getTwitter().leave(userId);				
 				gManager.removeEdge(mainUserNode, targetNode);
 				controller.setStatusBarMessage("Deixando de seguir "+targetNode.getString("name"));
