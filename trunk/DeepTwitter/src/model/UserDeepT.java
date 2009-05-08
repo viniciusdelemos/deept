@@ -6,7 +6,12 @@ import java.util.Map;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import model.twitter4j.DirectMessageDeepT;
+import model.twitter4j.ExtendedUserDeepT;
+
 import twitter4j.DirectMessage;
+import twitter4j.ExtendedUser;
+import twitter4j.TwitterException;
 import twitter4j.UserWithStatus;
 
 public class UserDeepT {
@@ -30,7 +35,7 @@ public class UserDeepT {
     private int friendsCount;
     private Date createdAt;
     private int favouritesCount;
-    private String utcOffset;
+    private int utcOffset;
     private String timeZone;
     private String profileBackgroundImageUrl;
     private String profileBackgroundTile;
@@ -40,55 +45,122 @@ public class UserDeepT {
     private boolean following;
     
     
+    
+    private long lastStatus = -1;
+    
+    
     private Map<Long,StatusDeepT> statuses;
     
     //TODO implementar direct messages
-    private Map<Integer,DirectMessage> directMessages;
+    private Map<Integer,DirectMessageDeepT> directMessages;
     
-    public UserDeepT(UserWithStatus userWithStatus){
+    
+    public UserDeepT(ExtendedUserDeepT e) throws TwitterException{
     	
     	statuses = new HashMap<Long, StatusDeepT>();
-    	    	
+    	directMessages = new HashMap<Integer, DirectMessageDeepT>();
+    	
     	//Data of User
-    	this.id = userWithStatus.getId();
-    	this.name = userWithStatus.getName();
-    	this.screenName = userWithStatus.getScreenName();
-    	this.location = userWithStatus.getLocation();
-    	this.description = userWithStatus.getDescription();
-    	this.profileImageUrl = userWithStatus.getProfileImageURL();
-    	this.url = userWithStatus.getURL();
-    	this.isProtected = userWithStatus.isProtected();
-    	this.followersCount = userWithStatus.getFollowersCount();
+    	this.id = e.getId();
+        this.name = e.getName();
+        this.screenName = e.getScreenName();
+        this.location = e.getLocation();
+        this.description = e.getDescription();
+        this.profileImageUrl = e.getProfileImageURL();
+        this.url = e.getURL();
+        this.isProtected = e.isProtected();
+        this.followersCount = e.getFavouritesCount();
+        
+        this.profileBackgroundColor = e.getProfileBackgroundColor();
+        this.profileTextColor = e.getProfileTextColor();
+        this.profileLinkColor = e.getProfileLinkColor();
+        this.profileSidebarFillColor = e.getProfileSidebarFillColor();
+        this.profileSidebarBorderColor = e.getProfileSidebarBorderColor();
+        
+        this.friendsCount = e.getFriendsCount();
+        this.createdAt = e.getCreatedAt();
+        this.favouritesCount = e.getFavouritesCount();
+        this.utcOffset = e.getUtcOffset();
+        this.timeZone = e.getTimeZone();
+        this.profileBackgroundImageUrl = e.getProfileBackgroundImageUrl();
+        this.profileBackgroundTile = e.getProfileBackgroundTile();
+        
+        this.statusesCount = e.getStatusesCount();
+        this.notifications = e.isNotificationEnabled();
+        this.following = e.isFollowing();
+        
+        //Status
+        //se existe status
+        if(e.getStatusId() > 0){
+        	
+        	if(e.getStatusId() > lastStatus)
+        		lastStatus = e.getStatusId();
+        	
+        	StatusDeepT statusDeepT = new StatusDeepT(e.getStatusCreatedAt(),
+        			e.getStatusId(), e.getStatusText(), e.getStatusSource(),
+        			e.isStatusTruncated(), e.getStatusInReplyToStatusId(),
+        			e.getStatusInReplyToUserId(), e.isStatusFavorited(),
+        			e.getStatusInReplyToScreenName());
+        	
+        	//Se já tem a mensagem vai atualizar com novo bjeto
+        	statuses.put(e.getStatusId(), statusDeepT);
+       	
+        }
+   	
+    }
+    
+    public UserDeepT(ExtendedUser e) throws TwitterException{
     	
-    	this.profileBackgroundColor = userWithStatus.getProfileBackgroundColor();
-    	this.profileTextColor = userWithStatus.getProfileTextColor();
-    	this.profileLinkColor = userWithStatus.getProfileLinkColor();
-    	this.profileSidebarFillColor = userWithStatus.getProfileSidebarFillColor();
-    	this.profileSidebarBorderColor = userWithStatus.getProfileSidebarBorderColor();
+    	statuses = new HashMap<Long, StatusDeepT>();
+    	directMessages = new HashMap<Integer, DirectMessageDeepT>();
     	
-    	this.friendsCount = userWithStatus.getFriendsCount();
-    	this.createdAt = userWithStatus.getCreatedAt();
-    	this.favouritesCount = userWithStatus.getFavouritesCount();
-    	this.utcOffset = userWithStatus.getUtcOffset();
-    	this.timeZone = userWithStatus.getTimeZone();
-    	this.profileBackgroundImageUrl = userWithStatus.getProfileBackgroundImageUrl();
-    	this.profileBackgroundTile = userWithStatus.getProfileBackgroundTile();
-    	
-    	this.statusesCount = userWithStatus.getStatusesCount();
-    	this.notifications = userWithStatus.isNotifications();
-    	this.following = userWithStatus.isFollowing();
-    	
-    	if(userWithStatus.getStatusCreatedAt() != null){
-	    	//Last status posted by user
-	    	StatusDeepT statusDeepT = new StatusDeepT(userWithStatus.getStatusCreatedAt(),
-	    			userWithStatus.getStatusId(), userWithStatus.getStatusText(), 
-	    			userWithStatus.getStatusSource(), userWithStatus.isStatusTruncated(),
-	    			userWithStatus.getStatusInReplyToStatusId(), userWithStatus.getStatusInReplyToUserId(),
-	    			userWithStatus.isStatusFavorited(), userWithStatus.getStatusInReplyToScreenName());
-	    	
-	    	statuses.put(userWithStatus.getStatusId(), statusDeepT);
-    	}
-
+    	//Data of User
+    	this.id = e.getId();
+        this.name = e.getName();
+        this.screenName = e.getScreenName();
+        this.location = e.getLocation();
+        this.description = e.getDescription();
+        this.profileImageUrl = e.getProfileImageURL();
+        this.url = e.getURL();
+        this.isProtected = e.isProtected();
+        this.followersCount = e.getFavouritesCount();
+        
+        this.profileBackgroundColor = e.getProfileBackgroundColor();
+        this.profileTextColor = e.getProfileTextColor();
+        this.profileLinkColor = e.getProfileLinkColor();
+        this.profileSidebarFillColor = e.getProfileSidebarFillColor();
+        this.profileSidebarBorderColor = e.getProfileSidebarBorderColor();
+        
+        this.friendsCount = e.getFriendsCount();
+        this.createdAt = e.getCreatedAt();
+        this.favouritesCount = e.getFavouritesCount();
+        this.utcOffset = e.getUtcOffset();
+        this.timeZone = e.getTimeZone();
+        this.profileBackgroundImageUrl = e.getProfileBackgroundImageUrl();
+        this.profileBackgroundTile = e.getProfileBackgroundTile();
+        
+        this.statusesCount = e.getStatusesCount();
+        this.notifications = e.isNotificationEnabled();
+        this.following = e.isFollowing();
+        
+        //Status
+        //se existe status
+        if(e.getStatusId() > 0){
+        	
+        	if(e.getStatusId() > lastStatus)
+        		lastStatus = e.getStatusId();
+        	
+        	StatusDeepT statusDeepT = new StatusDeepT(e.getStatusCreatedAt(),
+        			e.getStatusId(), e.getStatusText(), e.getStatusSource(),
+        			e.isStatusTruncated(), e.getStatusInReplyToStatusId(),
+        			e.getStatusInReplyToUserId(), e.isStatusFavorited(),
+        			e.getStatusInReplyToScreenName());
+        	
+        	//Se já tem a mensagem vai atualizar com novo bjeto
+        	statuses.put(e.getStatusId(), statusDeepT);
+       	
+        }
+   	
     }
     
     public UserDeepT(int fromUserId, String fromUserName, String imageURL) {
@@ -169,7 +241,7 @@ public class UserDeepT {
 		return favouritesCount;
 	}
 
-	public String getUtcOffset() {
+	public int getUtcOffset() {
 		return utcOffset;
 	}
 
@@ -201,11 +273,41 @@ public class UserDeepT {
 		return statuses;
 	}
 
-	public Map<Integer, DirectMessage> getDirectMessages() {
+	public Map<Integer, DirectMessageDeepT> getDirectMessages() {
 		return directMessages;
 	}
     
-    
+	@Override
+    public String toString() {
+        String aux ="ExtendedUser{" +
+                "profileBackgroundColor='" + profileBackgroundColor + '\'' +
+                ", profileTextColor='" + profileTextColor + '\'' +
+                ", profileLinkColor='" + profileLinkColor + '\'' +
+                ", profileSidebarFillColor='" + profileSidebarFillColor + '\'' +
+                ", profileSidebarBorderColor='" + profileSidebarBorderColor + '\'' +
+                ", friendsCount=" + friendsCount +
+                ", createdAt=" + createdAt +
+                ", favouritesCount=" + favouritesCount +
+                ", utcOffset=" + utcOffset +
+                ", timeZone='" + timeZone + '\'' +
+                ", profileBackgroundImageUrl='" + profileBackgroundImageUrl + '\'' +
+                ", profileBackgroundTile='" + profileBackgroundTile + '\'' +
+                ", following=" + following +
+                ", notifications=" + notifications+
+                ", statusesCount=" + statusesCount +
+                '}';
+        
+        if(statuses.get(lastStatus) != null){
+                aux+="message: " + statuses.get(lastStatus).getText() +
+                "user: " + this.name;
+        }
+        else{
+        	aux+="NENHUMA MENSAGEMMMM" +
+        		"user: "+this.name;
+        }
+        
+        return aux;
+    }
     
     /*
      * 

@@ -30,11 +30,11 @@ public class AddFollowersThread extends Thread {
 	public void run()
 	{
 		try {			
-			List<UserWithStatus> followers = controller.getTwitter().getFollowers(source.get("idTwitter").toString());
+			List<UserDeepT> followers = controller.getTwitter().getFollowersDeepT(source.get("idTwitter").toString());
 			int notAdded = 0;
 			boolean isShowingFollowers = source.getBoolean("isShowingFollowers");
 			
-			for(UserWithStatus user : followers)
+			for(UserDeepT user : followers)
 			{
 				UserDeepT u = gManager.getUser(user.getId());					
 				
@@ -43,7 +43,7 @@ public class AddFollowersThread extends Thread {
 					double x = source.getX();					
 					double y = source.getY();
 					
-					Node n = gManager.addNode(new UserDeepT(user));
+					Node n = gManager.addNode(user);
 					VisualItem newNode = gManager.getVisualization().getVisualItem(gManager.NODES, n);
 					PrefuseLib.setX(newNode, null, x);
 					PrefuseLib.setY(newNode, null, y);
