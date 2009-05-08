@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.BasicStroke;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -43,20 +44,27 @@ public class AggregateDragControl extends ControlAdapter {
             
         if(item instanceof NodeItem) {
         	NodeItem selectedItem = (NodeItem)item;
+        	selectedItem.setStroke(new BasicStroke(1.5f));
+        	selectedItem.setStrokeColor(gManager.getNodeStrokeColor());
+        	selectedItem.setFillColor(gManager.getSelectedItemColor());
+        	
         	Iterator<NodeItem> i = selectedItem.neighbors();
         	while(i.hasNext()) {
         		NodeItem neighbor = i.next();
         		boolean iAmSource = gManager.getEdge(selectedItem.getInt("id"), neighbor.getInt("id")) != -1;
         		boolean iAmTarget = gManager.getEdge(neighbor.getInt("id"), selectedItem.getInt("id")) != -1;
         		
+        		neighbor.setStroke(new BasicStroke(1.5f));
+        		neighbor.setStrokeColor(gManager.getNodeStrokeColor());
+        		
         		if(iAmSource && iAmTarget) {
-        			neighbor.setStrokeColor(ChartColor.LIGHT_GREEN.getRGB());
+        			neighbor.setFillColor(gManager.getFriendsAndFollowersColor());
         		}
         		else if(iAmSource) {
-        			neighbor.setStrokeColor(ChartColor.BLUE.getRGB());
+        			neighbor.setFillColor(gManager.getFriendsColor());
         		}
         		else {
-        			neighbor.setStrokeColor(ChartColor.RED.getRGB());
+        			neighbor.setFillColor(gManager.getFollowersColor());
         		}
         	}
         }
@@ -75,11 +83,16 @@ public class AggregateDragControl extends ControlAdapter {
         
         if(item instanceof NodeItem) {
         	NodeItem selectedItem = (NodeItem)item;
+        	//TODO se item estiver selecionado, voltar a cor de selecao
+        	selectedItem.setFillColor(ChartColor.TRANSLUCENT);
+        	selectedItem.setStrokeColor(ChartColor.TRANSLUCENT);
+        	
         	Iterator<NodeItem> i = selectedItem.neighbors();
         	while(i.hasNext()) {
-        		NodeItem neighbor = i.next();
+        		NodeItem neighbor = i.next();        		
         		//TODO se item estiver selecionado, voltar a cor de selecao
         		neighbor.setStrokeColor(ChartColor.TRANSLUCENT);
+        		neighbor.setFillColor(ChartColor.TRANSLUCENT);
         	}
         }
     }
