@@ -15,7 +15,7 @@ public class AccountMethods {
 		this.user = user;
 		this.password = password;
 	}
-	
+	/*
 	public void verifyCredentials()
 	{
 		Twitter twitter = new Twitter(user, password);
@@ -117,7 +117,7 @@ public class AccountMethods {
 	
 	
 	
-	
+	*/
 	
 	
 	

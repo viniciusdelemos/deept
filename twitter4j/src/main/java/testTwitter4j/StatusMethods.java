@@ -20,7 +20,7 @@ public class StatusMethods {
 	}
 	
 	/** Public Timeline **/
-
+/*
 	public void getPublicTimeline(){
 		
 		
@@ -50,9 +50,11 @@ public class StatusMethods {
 		this.printStatus(list);
 		
 	}
-	
+	*/
 	
 	/** Friends Timeline **/
+	
+	/*
 	
 	public void getFriendsTimeline(){
 		
@@ -202,9 +204,10 @@ public class StatusMethods {
 		
 	}
 	
+	*/
 	
 	/** User Timeline **/
-	
+	/*
 	public void getUserTimelineBySinceId(String id, int since_id, int count){
 		Twitter twitter = new Twitter(user, pass);
 		
@@ -401,9 +404,10 @@ public class StatusMethods {
 		this.printStatus(list);
 
 	}
+	*/
 	
 	/**  Get Replies **/
-	
+	/*
 	public void getReplies(){
 		
 		Twitter twitter = new Twitter(user, pass);
@@ -463,6 +467,7 @@ public class StatusMethods {
 		this.printStatus(status);
 		
 	}
+	*/
 	
 	/** Destroy **/
 	

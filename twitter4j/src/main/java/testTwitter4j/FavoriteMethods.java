@@ -70,7 +70,7 @@ public class FavoriteMethods {
 		
 		printStatus(status);
 	}
-	
+	/*
 	public void favoritesBySinceId(String id, long since_id){
 		
 		Twitter twitter = new Twitter(user, password);
@@ -88,7 +88,7 @@ public class FavoriteMethods {
 		
 	}
 	
-		
+		*/
 	public void favorites(String id, int page)
 	{
 		Twitter twitter = new Twitter(user,password);

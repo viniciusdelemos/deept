@@ -56,7 +56,7 @@ public class DirectMessageMethods {
 		
 	}
 	
-	
+	/*
 	public void getDirectMessages(long sinceId)
 	{
 		Twitter twitter = new Twitter(user,password);
@@ -145,7 +145,7 @@ public class DirectMessageMethods {
 		
 	}
 	
-	
+	*/
 	
 	public void getSentDirectMessages(int sinceId)
 	{

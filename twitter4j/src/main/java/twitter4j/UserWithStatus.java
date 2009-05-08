@@ -1,295 +1,76 @@
+/*
+Copyright (c) 2007-2009, Yusuke Yamamoto
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the Yusuke Yamamoto nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY Yusuke Yamamoto ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL Yusuke Yamamoto BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 package twitter4j;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import java.util.Date;
 
 /**
- * A data class representing Twitter User with status
+ * A data class representing Extended user information element<br>
+ *
+ * @author Yusuke Yamamoto - yusuke at mac.com
+ * @see <a href="http://apiwiki.twitter.com/REST%20API%20Documentation#Extendeduserinformationelement">Extended user information element</a>
+ * @deprecated use twitter4j.ExtendedUser instead
  */
-public class UserWithStatus extends User implements java.io.Serializable{
-	
-    private String profileBackgroundColor;
-    private String profileTextColor;
-    private String profileLinkColor;
-    private String profileSidebarFillColor;
-    private String profileSidebarBorderColor;
-    
-    private int friendsCount;
-    private Date createdAt; //<<<<<<<<
-    private int favouritesCount;
-    private String utcOffset; //<<<<<
-    private String timeZone; //<<<<<
-    private String profileBackgroundImageUrl; //<<<<<<
-    private String profileBackgroundTile; //<<<<<
-    
-    private int statusesCount;
-    private boolean notifications; //<<<<
-    private boolean following; //<<<<
-    
-    private Date statusCreatedAt;
-    private long statusId = -1;
-    private String statusText = null;
-    private String statusSource = null;
-    private boolean statusTruncated = false;
-    private long statusInReplyToStatusId = -1;
-    private int statusInReplyToUserId = -1;
-    private boolean statusFavorited = false;
-    private String statusInReplyToScreenName = null;
-    
-    private static final long serialVersionUID = -3338496376247577523L;
+public abstract class UserWithStatus extends User {
 
     public UserWithStatus(Element elem, Twitter twitter) throws TwitterException {
         super(elem, twitter);
-        
-        try{
-
-	        profileBackgroundColor = getChildText("profile_background_color", elem);
-	        profileTextColor = getChildText("profile_text_color", elem);
-	        profileLinkColor = getChildText("profile_link_color", elem);
-	        profileSidebarFillColor = getChildText("profile_sidebar_fill_color", elem);
-	        profileSidebarBorderColor = getChildText("profile_sidebar_border_color", elem);
-	        
-	        friendsCount = getChildInt("friends_count", elem);
-	        createdAt = getChildDate("created_at", elem);
-	        favouritesCount = getChildInt("favourites_count", elem);
-	        utcOffset = getChildText("utc_offset", elem);
-	        timeZone = getChildText("time_zone", elem);
-	        profileBackgroundImageUrl = getChildText("profile_background_image_url", elem);
-	        profileBackgroundTile = getChildText("profile_background_tile", elem);
-	        statusesCount = getChildInt("statuses_count", elem);
-	        notifications = getChildBoolean("profile_background_tile", elem);
-	        following = getChildBoolean("profile_background_tile", elem);
-        }catch(Exception e){
-        	
-        }
-        
-        if (!isProtected()) {
-        	
-            Element status = (Element)elem.getElementsByTagName("status").item(0);
-            
-            if(status != null){
-            
-	            statusCreatedAt = getChildDate("created_at", status);
-	            statusId = Long.valueOf(status.getElementsByTagName("id").item(0).getTextContent());
-	            statusText = getChildText("text", status);
-	            statusSource = getChildText("source", status);
-	            statusTruncated = getChildBoolean("truncated", status);
-	            statusInReplyToStatusId = getChildLong("in_reply_to_status_id", status);
-	            statusInReplyToUserId = getChildInt("in_reply_to_user_id", status);
-	            statusFavorited = getChildBoolean("favorited", status);
-	            statusInReplyToScreenName = getChildText("in_reply_to_screen_name", status);
-            
-            }
-        }
     }
 
-    public String getProfileBackgroundColor() {
-        return profileBackgroundColor;
-    }
+    public abstract String getProfileBackgroundColor();
 
-    public String getProfileTextColor() {
-        return profileTextColor;
-    }
+    public abstract String getProfileTextColor();
 
-    public String getProfileLinkColor() {
-        return profileLinkColor;
-    }
+    public abstract String getProfileLinkColor();
 
-    public String getProfileSidebarFillColor() {
-        return profileSidebarFillColor;
-    }
+    public abstract String getProfileSidebarFillColor();
 
-    public String getProfileSidebarBorderColor() {
-        return profileSidebarBorderColor;
-    }
+    public abstract String getProfileSidebarBorderColor();
 
-    public int getFriendsCount() {
-        return friendsCount;
-    }
+    public abstract int getFriendsCount();
 
-    public int getFavouritesCount() {
-        return favouritesCount;
-    }
+    public abstract Date getCreatedAt();
 
-    public int getStatusesCount() {
-        return statusesCount;
-    }
-    
-    public Date getCreatedAt() {
-		return createdAt;
-	}
+    public abstract int getFavouritesCount();
 
-	public String getUtcOffset() {
-		return utcOffset;
-	}
+    public abstract int getUtcOffset();
 
-	public String getTimeZone() {
-		return timeZone;
-	}
+    public abstract String getTimeZone();
 
-	public String getProfileBackgroundImageUrl() {
-		return profileBackgroundImageUrl;
-	}
+    public abstract String getProfileBackgroundImageUrl();
 
-	public String getProfileBackgroundTile() {
-		return profileBackgroundTile;
-	}
+    public abstract String getProfileBackgroundTile();
 
-	public boolean isNotifications() {
-		return notifications;
-	}
+    public abstract boolean isFollowing();
 
-	public boolean isFollowing() {
-		return following;
-	}
+    public abstract boolean isNotifications();
 
-	/**
-     * @return created_at or null if the user is protected
-     * @since twitter4j 1.1.0
-     */
-    public Date getStatusCreatedAt() {
-        return statusCreatedAt;
-    }
+    public abstract int getStatusesCount();
 
-    /**
-     *
-     * @return status id or -1 if the user is protected
-     */
-    public long getStatusId() {
-        return statusId;
-    }
-
-    /**
-     *
-     * @return status text or null if the user is protected
-     */
-    public String getStatusText() {
-        return statusText;
-    }
-
-    /**
-     *
-     * @return source or null if the user is protected
-     * @since 1.1.4
-     */
-    public String getStatusSource() {
-        return statusSource;
-    }
-
-    /**
-     *
-     * @return truncated or false if the user is protected
-     * @since 1.1.4
-     */
-    public boolean isStatusTruncated() {
-        return statusTruncated;
-    }
-
-    /**
-     *
-     * @return in_reply_to_status_id or -1 if the user is protected
-     * @since 1.1.4
-     */
-    public long getStatusInReplyToStatusId() {
-        return statusInReplyToStatusId;
-    }
-
-    /**
-     *
-     * @return in_reply_to_user_id or -1 if the user is protected
-     * @since 1.1.4
-     */
-    public int getStatusInReplyToUserId() {
-        return statusInReplyToUserId;
-    }
-
-    /**
-     *
-     * @return favorited or false if the user is protected
-     * @since 1.1.4
-     */
-    public boolean isStatusFavorited() {
-        return statusFavorited;
-    }
-
-    /**
-     *
-     * @return in_reply_to_screen_name or null if the user is protected
-     * @since 1.1.4
-     */
-
-    public String getStatusInReplyToScreenName() {
-        return -1 != statusInReplyToUserId ? statusInReplyToScreenName : null;
-    }
-    
-    public static List<UserWithStatus> constructUsersWithStatus(Document doc, Twitter twitter) throws TwitterException {
-        if (isRootNodeNilClasses(doc)) {
-            return new ArrayList<UserWithStatus>(0);
-        } else {
-            try {
-                ensureRootNodeNameIs("users", doc);
-                NodeList list = doc.getDocumentElement().getElementsByTagName(
-                        "user");
-                int size = list.getLength();
-                List<UserWithStatus> users = new ArrayList<UserWithStatus>(size);
-                for (int i = 0; i < size; i++) {
-                    users.add(new UserWithStatus((Element) list.item(i), twitter));
-                }
-                return users;
-            } catch (TwitterException te) {
-                if (isRootNodeNilClasses(doc)) {
-                    return new ArrayList<UserWithStatus>(0);
-                } else {
-                    throw te;
-                }
-            }
-        }
-    }
-
-
-    @Override
-    public int hashCode() {
-        return getId();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (null == obj) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        return obj instanceof User && ((User) obj).getId() == this.getId();
-    }
-
-    @Override
-     public String toString() {
-        return super.toString() + "\t"+ 
-        "UserWithStatus{" +
-                "profileBackgroundColor='" + profileBackgroundColor + '\'' +
-                ", profileTextColor='" + profileTextColor + '\'' +
-                ", profileLinkColor='" + profileLinkColor + '\'' +
-                ", profileSidebarFillColor='" + profileSidebarFillColor + '\'' +
-                ", profileSidebarBorderColor='" + profileSidebarBorderColor + '\'' +
-                ", friendsCount=" + friendsCount +
-                ", favouritesCount=" + favouritesCount +
-                ", statusesCount=" + statusesCount +
-                ", statusCreatedAt=" + statusCreatedAt +
-                ", statusId=" + statusId +
-                ", statusText='" + statusText + '\'' +
-                ", statusSource='" + statusSource + '\'' +
-                ", statusTruncated=" + statusTruncated +
-                ", statusInReplyToStatusId=" + statusInReplyToStatusId +
-                ", statusInReplyToUserId=" + statusInReplyToUserId +
-                ", statusFavorited=" + statusFavorited +
-                ", statusInReplyToScreenName='" + statusInReplyToScreenName + '\'' +
-                '}';
-    }
 }
