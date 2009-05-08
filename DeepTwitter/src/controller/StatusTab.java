@@ -285,7 +285,8 @@ public class StatusTab {
 			buttonSearchUpdates.setVisible(false);
 			buttonNewDirectMessage.setVisible(false);
 			break;
-		case DIRECT_MESSAGES:
+		case DIRECT_MESSAGES_RECEIVED:
+		case DIRECT_MESSAGES_SENT:
 			buttonAddUpdate.setVisible(false);
 			buttonSearchUpdates.setVisible(false);
 			txtCurrentUser.setVisible(false);

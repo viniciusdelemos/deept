@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import twitter4j.*;
+
+import model.twitter4j.UserDeepT;
 
 public class SocialNetwork {   
     private Map<Integer,UserDeepT> usersMap;

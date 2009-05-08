@@ -19,6 +19,7 @@ import model.threads.AddFollowersThread;
 import model.threads.AddFriendsThread;
 import model.threads.FollowUserThread;
 import model.threads.StatusesTableThread;
+import model.twitter4j.UserDeepT;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;

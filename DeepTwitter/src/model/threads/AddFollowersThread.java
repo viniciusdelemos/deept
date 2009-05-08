@@ -4,7 +4,7 @@ import java.util.List;
 
 import model.GraphicManager;
 import model.MessageType;
-import model.UserDeepT;
+import model.twitter4j.UserDeepT;
 
 import prefuse.data.Node;
 import prefuse.util.PrefuseLib;

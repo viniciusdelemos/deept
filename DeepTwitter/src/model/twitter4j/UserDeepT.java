@@ -1,4 +1,4 @@
-package model;
+package model.twitter4j;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -6,8 +6,6 @@ import java.util.Map;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import model.twitter4j.DirectMessageDeepT;
-import model.twitter4j.ExtendedUserDeepT;
 
 import twitter4j.DirectMessage;
 import twitter4j.ExtendedUser;
@@ -49,15 +47,69 @@ public class UserDeepT {
     private long lastStatus = -1;
     
     
-    private Map<Long,StatusDeepT> statuses;
+    //private Map<Long,StatusDeepT> statuses;
     
     //TODO implementar direct messages
     private Map<Integer,DirectMessageDeepT> directMessages;
     
+//ExtendedUserDeepT extende ExtendedUser!
     
-    public UserDeepT(ExtendedUserDeepT e) throws TwitterException{
-    	
-    	statuses = new HashMap<Long, StatusDeepT>();
+//    public UserDeepT(ExtendedUserDeepT e) throws TwitterException{
+//    	
+//    	statuses = new HashMap<Long, StatusDeepT>();
+//    	directMessages = new HashMap<Integer, DirectMessageDeepT>();
+//    	
+//    	//Data of User
+//    	this.id = e.getId();
+//        this.name = e.getName();
+//        this.screenName = e.getScreenName();
+//        this.location = e.getLocation();
+//        this.description = e.getDescription();
+//        this.profileImageUrl = e.getProfileImageURL();
+//        this.url = e.getURL();
+//        this.isProtected = e.isProtected();
+//        this.followersCount = e.getFavouritesCount();
+//        
+//        this.profileBackgroundColor = e.getProfileBackgroundColor();
+//        this.profileTextColor = e.getProfileTextColor();
+//        this.profileLinkColor = e.getProfileLinkColor();
+//        this.profileSidebarFillColor = e.getProfileSidebarFillColor();
+//        this.profileSidebarBorderColor = e.getProfileSidebarBorderColor();
+//        
+//        this.friendsCount = e.getFriendsCount();
+//        this.createdAt = e.getCreatedAt();
+//        this.favouritesCount = e.getFavouritesCount();
+//        this.utcOffset = e.getUtcOffset();
+//        this.timeZone = e.getTimeZone();
+//        this.profileBackgroundImageUrl = e.getProfileBackgroundImageUrl();
+//        this.profileBackgroundTile = e.getProfileBackgroundTile();
+//        
+//        this.statusesCount = e.getStatusesCount();
+//        this.notifications = e.isNotificationEnabled();
+//        this.following = e.isFollowing();
+//        
+//        //Status
+//        //se existe status
+//        if(e.getStatusId() > 0){
+//        	
+//        	if(e.getStatusId() > lastStatus)
+//        		lastStatus = e.getStatusId();
+//        	
+//        	StatusDeepT statusDeepT = new StatusDeepT(e.getStatusCreatedAt(),
+//        			e.getStatusId(), e.getStatusText(), e.getStatusSource(),
+//        			e.isStatusTruncated(), e.getStatusInReplyToStatusId(),
+//        			e.getStatusInReplyToUserId(), e.isStatusFavorited(),
+//        			e.getStatusInReplyToScreenName());
+//        	
+//        	//Se já tem a mensagem vai atualizar com novo bjeto
+//        	statuses.put(e.getStatusId(), statusDeepT);
+//       	
+//        }
+//   	
+//    }
+    
+    public UserDeepT(ExtendedUser e) throws TwitterException{    	
+    	//statuses = new HashMap<Long, StatusDeepT>();
     	directMessages = new HashMap<Integer, DirectMessageDeepT>();
     	
     	//Data of User
@@ -89,77 +141,23 @@ public class UserDeepT {
         this.notifications = e.isNotificationEnabled();
         this.following = e.isFollowing();
         
-        //Status
-        //se existe status
-        if(e.getStatusId() > 0){
-        	
-        	if(e.getStatusId() > lastStatus)
-        		lastStatus = e.getStatusId();
-        	
-        	StatusDeepT statusDeepT = new StatusDeepT(e.getStatusCreatedAt(),
-        			e.getStatusId(), e.getStatusText(), e.getStatusSource(),
-        			e.isStatusTruncated(), e.getStatusInReplyToStatusId(),
-        			e.getStatusInReplyToUserId(), e.isStatusFavorited(),
-        			e.getStatusInReplyToScreenName());
-        	
-        	//Se já tem a mensagem vai atualizar com novo bjeto
-        	statuses.put(e.getStatusId(), statusDeepT);
-       	
-        }
-   	
-    }
-    
-    public UserDeepT(ExtendedUser e) throws TwitterException{
-    	
-    	statuses = new HashMap<Long, StatusDeepT>();
-    	directMessages = new HashMap<Integer, DirectMessageDeepT>();
-    	
-    	//Data of User
-    	this.id = e.getId();
-        this.name = e.getName();
-        this.screenName = e.getScreenName();
-        this.location = e.getLocation();
-        this.description = e.getDescription();
-        this.profileImageUrl = e.getProfileImageURL();
-        this.url = e.getURL();
-        this.isProtected = e.isProtected();
-        this.followersCount = e.getFavouritesCount();
-        
-        this.profileBackgroundColor = e.getProfileBackgroundColor();
-        this.profileTextColor = e.getProfileTextColor();
-        this.profileLinkColor = e.getProfileLinkColor();
-        this.profileSidebarFillColor = e.getProfileSidebarFillColor();
-        this.profileSidebarBorderColor = e.getProfileSidebarBorderColor();
-        
-        this.friendsCount = e.getFriendsCount();
-        this.createdAt = e.getCreatedAt();
-        this.favouritesCount = e.getFavouritesCount();
-        this.utcOffset = e.getUtcOffset();
-        this.timeZone = e.getTimeZone();
-        this.profileBackgroundImageUrl = e.getProfileBackgroundImageUrl();
-        this.profileBackgroundTile = e.getProfileBackgroundTile();
-        
-        this.statusesCount = e.getStatusesCount();
-        this.notifications = e.isNotificationEnabled();
-        this.following = e.isFollowing();
-        
-        //Status
-        //se existe status
-        if(e.getStatusId() > 0){
-        	
-        	if(e.getStatusId() > lastStatus)
-        		lastStatus = e.getStatusId();
-        	
-        	StatusDeepT statusDeepT = new StatusDeepT(e.getStatusCreatedAt(),
-        			e.getStatusId(), e.getStatusText(), e.getStatusSource(),
-        			e.isStatusTruncated(), e.getStatusInReplyToStatusId(),
-        			e.getStatusInReplyToUserId(), e.isStatusFavorited(),
-        			e.getStatusInReplyToScreenName());
-        	
-        	//Se já tem a mensagem vai atualizar com novo bjeto
-        	statuses.put(e.getStatusId(), statusDeepT);
-       	
-        }
+//        //Status
+//        //se existe status
+//        if(e.getStatusId() > 0){
+//        	
+//        	if(e.getStatusId() > lastStatus)
+//        		lastStatus = e.getStatusId();
+//        	
+//        	StatusDeepT statusDeepT = new StatusDeepT(e.getStatusCreatedAt(),
+//        			e.getStatusId(), e.getStatusText(), e.getStatusSource(),
+//        			e.isStatusTruncated(), e.getStatusInReplyToStatusId(),
+//        			e.getStatusInReplyToUserId(), e.isStatusFavorited(),
+//        			e.getStatusInReplyToScreenName());
+//        	
+//        	//Se já tem a mensagem vai atualizar com novo bjeto
+//        	statuses.put(e.getStatusId(), statusDeepT);
+//       	
+//        }
    	
     }
     
@@ -269,9 +267,9 @@ public class UserDeepT {
 		return following;
 	}
 
-	public Map<Long, StatusDeepT> getStatuses() {
-		return statuses;
-	}
+//	public Map<Long, StatusDeepT> getStatuses() {
+//		return statuses;
+//	}
 
 	public Map<Integer, DirectMessageDeepT> getDirectMessages() {
 		return directMessages;
@@ -297,14 +295,14 @@ public class UserDeepT {
                 ", statusesCount=" + statusesCount +
                 '}';
         
-        if(statuses.get(lastStatus) != null){
-                aux+="message: " + statuses.get(lastStatus).getText() +
-                "user: " + this.name;
-        }
-        else{
-        	aux+="NENHUMA MENSAGEMMMM" +
-        		"user: "+this.name;
-        }
+//        if(statuses.get(lastStatus) != null){
+//                aux+="message: " + statuses.get(lastStatus).getText() +
+//                "user: " + this.name;
+//        }
+//        else{
+//        	aux+="NENHUMA MENSAGEMMMM" +
+//        		"user: "+this.name;
+//        }
         
         return aux;
     }

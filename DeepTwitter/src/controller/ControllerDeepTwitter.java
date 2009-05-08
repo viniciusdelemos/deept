@@ -25,11 +25,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import model.GraphicManager;
 import model.MessageType;
-import model.UserDeepT;
 import model.threads.StatusesTableThread;
 import model.twitter4j.ExtendedUserDeepT;
 import model.twitter4j.TwitterDeepT;
 import model.twitter4j.TwitterMod;
+import model.twitter4j.UserDeepT;
 import model.StatusesType;
 import prefuse.Display;
 import prefuse.data.Graph;
@@ -254,7 +254,7 @@ public class ControllerDeepTwitter {
 							case DIRECT_MESSAGES:
 								jSplitPane.setDividerLocation(431);
 								if(selectedTab.isActive()) return;
-								table = new StatusesTableThread(StatusesType.DIRECT_MESSAGES);
+								table = new StatusesTableThread(StatusesType.DIRECT_MESSAGES_RECEIVED);
 								break;
 							case SEARCH:
 								jSplitPane.setDividerLocation(431);
