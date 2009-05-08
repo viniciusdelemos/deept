@@ -1,13 +1,43 @@
+/*
+Copyright (c) 2007-2009, Yusuke Yamamoto
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the Yusuke Yamamoto nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY Yusuke Yamamoto ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL Yusuke Yamamoto BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 package twitter4j;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import twitter4j.http.HTMLEntity;
+import twitter4j.org.json.JSONObject;
+import twitter4j.org.json.JSONException;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +45,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.net.URLDecoder;
 
 /**
  * Super class of Twitter Response objects.
@@ -23,6 +54,7 @@ import java.util.TimeZone;
  * @see twitter4j.Status
  * @see twitter4j.User
  * @see twitter4j.UserWithStatus
+ * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public class TwitterResponse implements java.io.Serializable {
     private Map<String,SimpleDateFormat> formatMap = new HashMap<String,SimpleDateFormat>();
@@ -76,13 +108,12 @@ public class TwitterResponse implements java.io.Serializable {
         }
     }
 
-    protected String getChildText(String str, Element elem) {
-        return elem.getElementsByTagName(str).item(0).getTextContent();
+    protected String getChildText( String str, Element elem ) {
+        return HTMLEntity.unescape(elem.getElementsByTagName(str).getLength() > 0 ? elem.getElementsByTagName(str).item(0).getTextContent() : "");
     }
 
     protected int getChildInt(String str, Element elem) {
-        String str2 = elem.getElementsByTagName(str).item(0).
-                getTextContent();
+        String str2 = elem.getElementsByTagName(str).getLength() > 0 ? elem.getElementsByTagName(str).item(0).getTextContent() : null;
         if (null == str2 || "".equals(str2)) {
             return -1;
         } else {
@@ -91,8 +122,7 @@ public class TwitterResponse implements java.io.Serializable {
     }
 
     protected long getChildLong(String str, Element elem) {
-        String str2 = elem.getElementsByTagName(str).item(0).
-                getTextContent();
+        String str2 = elem.getElementsByTagName(str).getLength() > 0 ? elem.getElementsByTagName(str).item(0).getTextContent() : null;        
         if (null == str2 || "".equals(str2)) {
             return -1;
         } else {
@@ -100,11 +130,23 @@ public class TwitterResponse implements java.io.Serializable {
         }
     }
 
-    protected boolean getChildBoolean(String str, Element elem) {
-        return Boolean.valueOf(elem.getElementsByTagName(str).item(0).
-                getTextContent());
+    protected String getString(String name, JSONObject json){
+        String returnValue = null;
+        try {
+            try {
+                returnValue = URLDecoder.decode(json.getString(name), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                returnValue = json.getString(name);
+            }
+        } catch (JSONException ignore) {
+            // refresh_url could be missing
+        }
+        return returnValue;
     }
 
+    protected boolean getChildBoolean(String str, Element elem) {
+        return elem.getElementsByTagName(str).getLength() > 0 ? Boolean.valueOf(elem.getElementsByTagName(str).item(0).getTextContent()) : false;
+    }
     protected Date getChildDate(String str, Element elem) throws TwitterException {
         return getChildDate(str, elem, "EEE MMM d HH:mm:ss z yyyy");
     }

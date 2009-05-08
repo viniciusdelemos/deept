@@ -14,7 +14,7 @@ public class SocialGraphMethods {
 		this.user = user;
 		this.pass = pass;
 	}
-	
+	/*
 	public void getFriendsIds(String id){
 		
 		Twitter twitter = new Twitter(user, pass);
@@ -50,5 +50,5 @@ public class SocialGraphMethods {
 			System.out.println(l);
 		}
 	}
-
+*/
 }

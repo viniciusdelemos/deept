@@ -1,0 +1,50 @@
+
+axo que nao faz sentido status ter um UserDeepT, uma vez que um UserDeepT tem uma lista
+de status!
+
+VER TODO
+
+tem bug, de todos metodos que retornam lista de User, o unico que nao retorna o user com todas
+as informacoes sao os public timeline (é bug do twitter e nao do twitter4j)
+
+alterado modificador do abaixo na classe Status (DirectMessage):
+	static List<Status> constructStatuses(Document doc, Twitter twitter) throws TwitterException {
+	adicionado modificador PUBLIC, para poder acessar de outro pacote
+	
+	
+	
+alterado modificador de acesso da classe Twitter no atributo baseURL e source, de private para protected
+e Device para public
+
+metodo setSource(String source) de Twitter --> contem caracteres estranhos
+
+
+*** agora tem getMentions que substitui REPLIES
+*** nova classe ExtendedUser getUserDetail retorna isto, explicar um pouco
+
+introduce pagenation control class which replaces page, count, and since_id parameters
+
+no Twitter metodo Response get(String, boolean) so ele private, avisar japones, mudei para protected
+
+
+
+adicionei construtor vazio protected DirectMessage() em directMessage
+adicionei construtor vazio protected em Status, User
+
+antes sem public
+public static class Device {
+        final String DEVICE;
+
+        public Device(String device) {
+            DEVICE = device;
+        }
+    }
+    
+    
+
+troquei todos modificadores de acesso de ExtendedUser dos atributos de private para protected
+    
+    
+    
+    
+    
