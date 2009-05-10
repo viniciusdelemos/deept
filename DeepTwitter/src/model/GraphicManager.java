@@ -19,8 +19,6 @@ import model.threads.AddFollowersThread;
 import model.threads.AddFriendsThread;
 import model.threads.FollowUserThread;
 import model.threads.StatusesTableThread;
-import model.twitter4j.TwitterResponseDeepT;
-import model.twitter4j.UserDeepT;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -60,7 +58,9 @@ import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 import profusians.controls.GenericToolTipControl;
+import twitter4j.ExtendedUser;
 import twitter4j.TwitterException;
+import twitter4j.User;
 import controller.ControllerDeepTwitter;
 import controller.StatusTab;
 
@@ -273,32 +273,18 @@ public class GraphicManager extends Display {
     	m_vis.run("layout");    	
     }        
 	
-    public Node addNode(TwitterResponseDeepT u) {
-    	
-    	//É uma instancia de DirectMessage, e para adicionar no socialNetwork
-    	//é preciso do User mais Status, sendo assim é necessário fazer a requisicao.
-    	//Poderiamos simplesmente pegar o user do u.getDirectMessageDeepT().getSender()
-    	//mas ai nao teriamos o Status dele, e teriamos que copiar todos os dados dele para o atributo
-    	//para o atributo u.getUserDeepT
-    	if(u.getDirectMessageDeepT() != null){
-    		try{
-    			u = controller.getTwitter().getUserDetailDeepT(u.getDirectMessageDeepT().getSender_screen_name());
-    		} catch(TwitterException e){
-    			e.printStackTrace();
-    		}
-    	}
-    	
+    public Node addNode(User u) {    	  	
     	synchronized (m_vis) {
 			socialNetwork.addUser(u);
 			Node newNode = g.addNode();
 			newNode.set("id", numUsers);
-			newNode.set("idTwitter", u.getUserDeepT().getId());
-			newNode.set("name", u.getUserDeepT().getName());
-			newNode.set("image", u.getUserDeepT().getProfileImageUrl().toString());//sem tostring
+			newNode.set("idTwitter", u.getId());
+			newNode.set("name", u.getName());
+			newNode.set("image", u.getProfileImageURL().toString());//sem tostring
 			newNode.set("isOpen", false);
 			newNode.set("isShowingFriends", false);
 			newNode.set("isShowingFollowers", false);
-			nodesMap.put(u.getUserDeepT().getId(), newNode);
+			nodesMap.put(u.getId(), newNode);
 			if (numUsers == 0) {
 				VisualItem mainUser = getVisualization().getVisualItem(NODES,
 						newNode);
@@ -311,29 +297,18 @@ public class GraphicManager extends Display {
 		}    	
     }
     
-    public void searchAndAddUserToNetwork(TwitterResponseDeepT u) {
-    	
-    	TwitterResponseDeepT exists = null;
-    	
-    	//Se é mensagem direta
-    	if(u.getDirectMessageDeepT() != null)
-    		exists = getUser(u.getDirectMessageDeepT().getSender_id());
-    	else
-    		exists = getUser(u.getUserDeepT().getId());
-    	
+    public void searchAndAddUserToNetwork(User u) {    	
+    	//verifica se está na SocialNetwork
+    	User exists = getUser(u.getId());    	
     	VisualItem selectedNode;
     	
     	if(exists==null) {
     		Node n = addNode(u);
     		selectedNode = getVisualization().getVisualItem(NODES, n);    		
     	}			
-		else{
-			if(u.getDirectMessageDeepT() != null)
-				selectedNode = getVisualization().getVisualItem(NODES, getNodeByTwitterId(u.getDirectMessageDeepT().getSender_id()));
-			else
-				selectedNode = getVisualization().getVisualItem(NODES, getNodeByTwitterId(u.getUserDeepT().getId()));
-		}
-		
+		else
+			selectedNode = getVisualization().getVisualItem(NODES, getNodeByTwitterId(u.getId()));
+				
     	selectedNode.setStroke(new BasicStroke(1.2f));
     	selectedNode.setStrokeColor(ColorLib.color(ChartColor.blue));
     	selectedNode.setFillColor(ColorLib.color(ChartColor.DARK_CYAN));
@@ -445,7 +420,7 @@ public class GraphicManager extends Display {
 //		return getVisualization().getVisualItem(NODES, n);
 //	}
 		
-	public TwitterResponseDeepT getUser(int idTwitter) {
+	public User getUser(int idTwitter) {
 		return socialNetwork.getUser(idTwitter);
 	}
 	
@@ -557,7 +532,7 @@ public class GraphicManager extends Display {
 		
 		public void createPopupMenu(VisualItem item)
 		{
-			final String clickedUserName = getUser(item.getInt("idTwitter")).getUserDeepT().getScreenName();
+			final String clickedUserName = getUser(item.getInt("idTwitter")).getScreenName();
 			nodeMenu = new JPopupMenu();
 			
 			JMenuItem friends = new JMenuItem("Ver Amigos");

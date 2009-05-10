@@ -4,16 +4,11 @@ import java.util.List;
 
 import model.GraphicManager;
 import model.MessageType;
-import model.twitter4j.TwitterResponseDeepT;
-import model.twitter4j.UserDeepT;
-
 import prefuse.data.Node;
 import prefuse.util.PrefuseLib;
 import prefuse.visual.VisualItem;
-import twitter4j.TwitterAdapter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import twitter4j.UserWithStatus;
 import controller.ControllerDeepTwitter;
 
 public class AddFriendsThread extends Thread {
@@ -32,15 +27,15 @@ public class AddFriendsThread extends Thread {
 	{
 		try {
 			System.out.println("GETTING FRIENDS FOR "+source.get("name"));
-			List<TwitterResponseDeepT> friends = controller.getTwitter().getFriendsDeepT(source.get("idTwitter").toString());
+			List<User> friends = controller.getTwitter().getFriends(source.get("idTwitter").toString());
 			System.out.println("GOT FRIENDS FOR "+source.get("name"));
 
 			int notAdded = 0;
 			boolean isShowingFriends = source.getBoolean("isShowingFriends");
 			
-			for(TwitterResponseDeepT user : friends)
+			for(User user : friends)
 			{
-				TwitterResponseDeepT u = gManager.getUser(user.getUserDeepT().getId());					
+				User u = gManager.getUser(user.getId());					
 				
 				if(u == null)
 				{	
@@ -57,7 +52,7 @@ public class AddFriendsThread extends Thread {
 				}
 				else if(!isShowingFriends)
 				{
-					Node n = gManager.getNodeByTwitterId(u.getUserDeepT().getId());
+					Node n = gManager.getNodeByTwitterId(u.getId());
 					gManager.addEdge((Node)source.getSourceTuple(), n);
 					notAdded++;
 				}

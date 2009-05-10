@@ -25,16 +25,13 @@ import model.GraphicManager;
 import model.MessageType;
 import model.StatusesType;
 import model.threads.StatusesTableThread;
-import model.twitter4j.TwitterDeepT;
-import model.twitter4j.TwitterResponseDeepT;
-import model.twitter4j.UserDeepT;
 import prefuse.Display;
 import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
-import twitter4j.ExtendedUser;
 import twitter4j.RateLimitStatus;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
@@ -43,7 +40,7 @@ public class ControllerDeepTwitter {
 	private GUIMainWindow mainWindow;
 	private GUIAddUser guiAddUser;
 	private GUINewUpdate guiNewUpdate;
-	private TwitterDeepT twitter;
+	private Twitter twitter;
 	private GraphicManager gManager;
 	private boolean isTwitterUser;
 	private String loggedUserId;
@@ -70,7 +67,7 @@ public class ControllerDeepTwitter {
 		loginWindow.addLoginListener(new LoginListener());				
 	}
 	
-	public TwitterDeepT getTwitter() {
+	public Twitter getTwitter() {
 		return twitter;
 	}
 	
@@ -86,8 +83,21 @@ public class ControllerDeepTwitter {
 		return gManager.getUserName(Integer.parseInt(id));
 	}
 	
-	public void searchAndAddUserToNetwork(TwitterResponseDeepT u) {
+	public void searchAndAddUserToNetwork(User u) {
 		gManager.searchAndAddUserToNetwork(u);
+	}
+	
+	public void searchAndAddUserToNetwork(int id) {
+		try {
+			User u = gManager.getUser(id);
+			if(u == null) 
+				searchAndAddUserToNetwork(getTwitter().getUserDetail(String.valueOf(id)));			
+			else
+				searchAndAddUserToNetwork(u);	
+			
+		} catch (TwitterException e) {
+			showMessageDialog("Usuário não encontrado!",MessageType.WARNING);
+		}
 	}
 	
 	private static String getFormattedMessage(String message)
@@ -136,16 +146,16 @@ public class ControllerDeepTwitter {
 			boolean logInOK = false;
 			isTwitterUser = loginWindow.isTwitterUser();
 			
-			TwitterResponseDeepT user = null;
+			User user = null;
 			
 			try{
 				if(isTwitterUser)
 				{				
 					if(loginWindow.getUser().compareTo("")>0 && loginWindow.getPassword().compareTo("")>0)
 					{
-						twitter = new TwitterDeepT(loginWindow.getUser(),loginWindow.getPassword());
+						twitter = new Twitter(loginWindow.getUser(),loginWindow.getPassword());
 						
-						user = twitter.verifyCredentialsDeepT(); //Se usuario ou senha invalido,
+						user = twitter.verifyCredentials(); //Se usuario ou senha invalido,
 						//gerado excecao com statusCode = 401
 						
 						logInOK = true;
@@ -157,7 +167,7 @@ public class ControllerDeepTwitter {
 				{
 					if(loginWindow.getUser().compareTo("")>0)
 					{
-						twitter = new TwitterDeepT(loginWindow.getUser(),"");
+						twitter = new Twitter(loginWindow.getUser(),"");
 						logInOK = true;
 					}
 					else showMessageDialog("Por favor, preencha o campo de nome de usuário!",MessageType.WARNING);					
@@ -165,9 +175,9 @@ public class ControllerDeepTwitter {
 
 				if(logInOK)
 				{
-					TwitterResponseDeepT u = user;
+					User u = user;
 					
-					loggedUserId = String.valueOf(u.getUserDeepT().getId());
+					loggedUserId = String.valueOf(u.getId());
 					gManager = new GraphicManager();
 				
 					//User u2 = twitter.getAuthenticatedUser();
@@ -186,7 +196,7 @@ public class ControllerDeepTwitter {
 					tabManager = new StatusTabManager();
 					tabManager.setTabbedPane(windowTabs);
 					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //1
-					tabManager.addTab(StatusesType.REPLIES,"@"+u.getUserDeepT().getScreenName()); //2
+					tabManager.addTab(StatusesType.REPLIES,"@"+u.getScreenName()); //2
 					tabManager.addTab(StatusesType.FAVORITES,"Favoritos"); //3
 					tabManager.addTab(StatusesType.DIRECT_MESSAGES,"Mensagens"); //4
 					tabManager.addTab(StatusesType.SEARCH, "Busca"); //5
@@ -430,7 +440,7 @@ public class ControllerDeepTwitter {
 					String id = guiAddUser.getUser();
 					if(!id.equals("")) {
 						System.out.println("=> Requesting user to Twitter");
-						TwitterResponseDeepT u= twitter.getUserDetailDeepT(id);
+						User u = twitter.getUserDetail(id);
 						System.out.println("=> Got user");
 						gManager.searchAndAddUserToNetwork(u);								
 						guiAddUser.dispose();

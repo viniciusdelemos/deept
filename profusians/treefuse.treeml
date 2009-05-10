@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- prefuse TreeML Writer | Sat May 09 18:38:32 BRT 2009 -->
+<tree>
+  <declarations>
+    <attributeDecl name="title" type="String"/>
+    <attributeDecl name="text" type="String"/>
+  </declarations>
+
+  <branch>
+    <attribute name="title" value="good morning "/>
+    <attribute name="text" value="Welcome to treefuse my friend. Please press CTRL-H to get an overview over possible commands and ESC to escape from the read only help tree."/>
+    <leaf>
+      <attribute name="title" value="good morning "/>
+      <attribute name="text" value="Welcome to treefuse my friend. Please press CTRL-H to get an overview over possible commands and ESC to escape from the read only help tree."/>
+    </leaf>
+  </branch>
+</tree>

@@ -12,7 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -21,12 +20,9 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import model.ChartColor;
-import model.twitter4j.StatusDeepT;
-import model.twitter4j.TwitterResponseDeepT;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -41,15 +37,11 @@ import prefuse.action.layout.AxisLabelLayout;
 import prefuse.action.layout.AxisLayout;
 import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
-import prefuse.controls.ToolTipControl;
 import prefuse.data.Table;
-import prefuse.data.Tuple;
 import prefuse.data.expression.AndPredicate;
-import prefuse.data.query.ObjectRangeModel;
 import prefuse.data.query.RangeQueryBinding;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.util.ColorLib;
-import prefuse.util.DataLib;
 import prefuse.util.FontLib;
 import prefuse.util.UpdateListener;
 import prefuse.util.ui.JFastLabel;
@@ -60,7 +52,11 @@ import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTable;
 import prefuse.visual.sort.ItemSorter;
 import profusians.controls.GenericToolTipControl;
+import twitter4j.DirectMessage;
 import twitter4j.Status;
+import twitter4j.Tweet;
+import twitter4j.TwitterResponse;
+import twitter4j.User;
 
 public class TimelinePanel extends JPanel {
        
@@ -80,7 +76,7 @@ public class TimelinePanel extends JPanel {
 		STATUSES, X_AXIS, Y_AXIS
 	}
     
-    public TimelinePanel(List<TwitterResponseDeepT> statusesList) {
+    public TimelinePanel(List<TwitterResponse> statusesList) {
         super(new BorderLayout());
         
         final Visualization vis = new Visualization();
@@ -273,26 +269,53 @@ public class TimelinePanel extends JPanel {
         labelTotalStatuses.setFont(FontLib.getFont("Tahoma", 16));
     }
     
-    public StatusesDataTable getStatusesDataTable(List<TwitterResponseDeepT> statusesList) {
+    public StatusesDataTable getStatusesDataTable(List<TwitterResponse> statusesList) {
 		StatusesDataTable tbl = new StatusesDataTable();
 		tbl.addRows(statusesList.size());
 		int index = 0;
 		
-		for (TwitterResponseDeepT s : statusesList) {
+		for (TwitterResponse response : statusesList) {
 			try{
-				tbl.set(index, StatusesDataTable.ColNames.TEXT.toString(), s.getText());
-				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), s.getUserDeepT().getScreenName());//s.getUser().getScreenName());
-				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), s.getUserDeepT().getProfileImageUrl().toString());//s.getUser().getProfileImageURL().toString());
+				String text, screenName, profileImageURL;				
+				Date date;
+				
+				if(response instanceof Status) {
+					Status s = (Status) response;
+					text = s.getText();
+					screenName = s.getUser().getScreenName();
+					profileImageURL = s.getUser().getProfileImageURL().toString();
+					date = s.getCreatedAt();
+				}
+				else if (response instanceof DirectMessage) {
+					DirectMessage s = (DirectMessage) response;
+					text = s.getText();
+					screenName = s.getSender().getScreenName();
+					profileImageURL = s.getSender().getProfileImageURL().toString();
+					date = s.getCreatedAt();
+				}
+				else if (response instanceof Tweet) {
+					Tweet s = (Tweet) response;
+					text = s.getText();
+					screenName = s.getFromUser();
+					profileImageURL = s.getProfileImageUrl().toString();
+					date = s.getCreatedAt();
+				}
+				else
+					throw new IllegalArgumentException("Objeto inválido dentro da lista");
+				
+				tbl.set(index, StatusesDataTable.ColNames.TEXT.toString(), text);
+				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);//s.getUser().getScreenName());
+				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);//s.getUser().getProfileImageURL().toString());
 				//SETAR CATEGORIA
 				
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");		
-				String formatedTime = formatter.format(s.getStatusDeepT().getCreatedAt());
+				String formatedTime = formatter.format(date);
 				Date d = formatter.parse(formatedTime);
 				CustomDateHours formatedDate = new CustomDateHours(d.getTime());						
 				tbl.set(index, StatusesDataTable.ColNames.HOUR.toString(), formatedDate);
 
 				formatter = new SimpleDateFormat("EEE dd/MM/yyyy");
-				formatedTime = formatter.format(s.getStatusDeepT().getCreatedAt());
+				formatedTime = formatter.format(date);
 				d = formatter.parse(formatedTime);							
 				CustomDateDay day = new CustomDateDay(d.getTime());			
 
