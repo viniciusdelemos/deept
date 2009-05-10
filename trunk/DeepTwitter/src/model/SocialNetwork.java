@@ -5,27 +5,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import model.twitter4j.TwitterResponseDeepT;
 import model.twitter4j.UserDeepT;
 
 public class SocialNetwork {   
-    private Map<Integer,UserDeepT> usersMap;
+    private Map<Integer,TwitterResponseDeepT> usersMap;
     private List<UsersGroup> listUsersGroup;
     private int groupId;
     
     public SocialNetwork() {        
-        usersMap = new HashMap<Integer, UserDeepT>();     
+        usersMap = new HashMap<Integer, TwitterResponseDeepT>();     
         listUsersGroup = new ArrayList<UsersGroup>();
         groupId = 0;
     }
     
-	public UserDeepT getUser(int twitterId) {
+	public TwitterResponseDeepT getUser(int twitterId) {
 		return usersMap.get(twitterId);
 	}
 		
-	public void addUser(UserDeepT u)
+	public void addUser(TwitterResponseDeepT u)
 	{
 		//UserDeepT userDeepT = new UserDeepT(u);
-		usersMap.put(u.getId(), u);
+		usersMap.put(u.getUserDeepT().getId(), u);
 	}
 	
 	public int getNumUsers()

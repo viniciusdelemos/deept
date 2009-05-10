@@ -26,6 +26,7 @@ import javax.swing.SwingConstants;
 
 import model.ChartColor;
 import model.twitter4j.StatusDeepT;
+import model.twitter4j.TwitterResponseDeepT;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -77,7 +78,7 @@ public class TimelinePanel extends JPanel {
 		STATUSES, X_AXIS, Y_AXIS
 	}
     
-    public TimelinePanel(List<StatusDeepT> statusesList) {
+    public TimelinePanel(List<TwitterResponseDeepT> statusesList) {
         super(new BorderLayout());
         
         final Visualization vis = new Visualization();
@@ -262,26 +263,26 @@ public class TimelinePanel extends JPanel {
         labelTotalStatuses.setFont(FontLib.getFont("Tahoma", 16));
     }
     
-    public StatusesDataTable getStatusesDataTable(List<StatusDeepT> statusesList) {
+    public StatusesDataTable getStatusesDataTable(List<TwitterResponseDeepT> statusesList) {
 		StatusesDataTable tbl = new StatusesDataTable();
 		tbl.addRows(statusesList.size());
 		int index = 0;
 		
-		for (StatusDeepT s : statusesList) {
+		for (TwitterResponseDeepT s : statusesList) {
 			try{
 				tbl.set(index, StatusesDataTable.ColNames.STATUSDEEPT.toString(), s);
-				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), s.getUserTeste().getScreenName());//s.getUser().getScreenName());
-				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), s.getUserTeste().getProfileImageURL().toString());//s.getUser().getProfileImageURL().toString());
+				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), s.getUserDeepT().getScreenName());//s.getUser().getScreenName());
+				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), s.getUserDeepT().getProfileImageUrl().toString());//s.getUser().getProfileImageURL().toString());
 				//SETAR CATEGORIA
 				
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");		
-				String formatedTime = formatter.format(s.getCreatedAt());
+				String formatedTime = formatter.format(s.getStatusDeepT().getCreatedAt());
 				Date d = formatter.parse(formatedTime);
 				CustomDateHours formatedDate = new CustomDateHours(d.getTime());						
 				tbl.set(index, StatusesDataTable.ColNames.HOUR.toString(), formatedDate);
 
 				formatter = new SimpleDateFormat("EEE dd/MM/yyyy");
-				formatedTime = formatter.format(s.getCreatedAt());
+				formatedTime = formatter.format(s.getStatusDeepT().getCreatedAt());
 				d = formatter.parse(formatedTime);							
 				CustomDateDay day = new CustomDateDay(d.getTime());			
 

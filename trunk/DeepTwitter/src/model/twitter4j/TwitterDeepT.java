@@ -1,21 +1,18 @@
 package model.twitter4j;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
+import model.StatusesType;
 
-import twitter4j.DirectMessage;
 import twitter4j.ExtendedUser;
 import twitter4j.Paging;
+import twitter4j.Query;
+import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.TwitterException;
-import twitter4j.User;
-import twitter4j.Twitter.Device;
 import twitter4j.http.PostParameter;
 
 public class TwitterDeepT extends TwitterMod{
-	
 	
 	public TwitterDeepT(){
 		super();
@@ -32,28 +29,63 @@ public class TwitterDeepT extends TwitterMod{
 	public TwitterDeepT(String id, String password, String baseURL){
 		super(id, password, baseURL);
 	}
+
 	
-	/***** Public Timeline *****/
+	/* Search */
 	
-	public List<StatusDeepT> getPublicTimelineDeepT() throws TwitterException {
-		
-		ConvertStatusDeepT convertStatusDeepT = 
-			new ConvertStatusDeepT(super.getPublicTimeline());
-		
-		return convertStatusDeepT.convert();		
-		
+    /**
+     * <br>calls http://search.twitter.com/search
+     * @param query - the search condition
+     * @return the result
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @since Twitter4J 1.1.7
+     * @see <a href="http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-search">Twitter API Wiki / Twitter Search API Method: search</a>
+     */
+    public List<TwitterResponseDeepT> searchDeepT(Query query) throws TwitterException {
+    	
+    	QueryResult queryResult = 
+    		new QueryResult(get(searchBaseURL + "search.json", query.asPostParameters(), 
+    				false).asJSONObject(), this);
+    	
+    	return TwitterResponseDeepT.constructTwitterResponseDeepT(queryResult.getTweets(), this, StatusesType.SEARCH);
+    }
+	
+	
+	/* Public Timeline */
+	
+    /**
+     * Returns the 20 most recent statuses from non-protected users who have set a custom user icon.
+     * <br>calls http://twitter.com/statuses/public_timeline 
+     *
+     * @return list of statuses of the Public Timeline
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-public_timeline">Twitter API Wiki / Twitter REST API Method: statuses public_timeline</a>
+     */
+	public List<TwitterResponseDeepT> getPublicTimelineDeepT() throws TwitterException {
+        
+		return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL +
+                "statuses/public_timeline.xml", false).
+                asDocument(), this, StatusesType.PUBLIC_TIMELINE);
 	}
 	
-    public List<StatusDeepT> getPublicTimelineDeepT(long sinceID) throws TwitterException {
+    /**
+     * Returns only public statuses with an ID greater than (that is, more recent than) the specified ID.
+     * <br>calls http://twitter.com/statuses/public_timeline 
+     *
+     * @param sinceID returns only public statuses with an ID greater than (that is, more recent than) the specified ID
+     * @return the 20 most recent statuses
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-public_timeline">Twitter API Wiki / Twitter REST API Method: statuses public_timeline</a>
+     */
+    public List<TwitterResponseDeepT> getPublicTimelineDeepT(long sinceID) throws TwitterException {
     	
-    	ConvertStatusDeepT convertStatusDeepT = 
-			new ConvertStatusDeepT(super.getPublicTimeline(sinceID));
-		
-		return convertStatusDeepT.convert();
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL +
+                "statuses/public_timeline.xml", null, new Paging((long)sinceID), false).
+                asDocument(), this, StatusesType.PUBLIC_TIMELINE);
     }
     
     
-    /***** Friends Timeline *****/
+    /* Friends Timeline */
     
     /**
      * Returns the 20 most recent statuses posted in the last 24 hours from the authenticating1 user and that user's friends.
@@ -64,10 +96,11 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
      */
-    public List<StatusDeepT> getFriendsTimelineDeepT() throws
+    public List<TwitterResponseDeepT> getFriendsTimelineDeepT() throws
             TwitterException {
-        return StatusDeepT.constructStatusesDeepT(get(baseURL 
-        		+ "statuses/friends_timeline.xml", true).asDocument(), this);
+    	
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL 
+        		+ "statuses/friends_timeline.xml", true).asDocument(), this, StatusesType.UPDATES); 
     }
     
     /**
@@ -80,10 +113,10 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
      */
-    public List<StatusDeepT> getFriendsTimelineDeepT(Paging paging) throws TwitterException {
+    public List<TwitterResponseDeepT> getFriendsTimelineDeepT(Paging paging) throws TwitterException {
     	
-    	return StatusDeepT.constructStatusesDeepT(get(baseURL + 
-    			"statuses/friends_timeline.xml",null, paging, true).asDocument(), this);
+    	return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + 
+    			"statuses/friends_timeline.xml",null, paging, true).asDocument(), this, StatusesType.UPDATES);
     }
     
     /**
@@ -97,15 +130,16 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
      */
-    public List<StatusDeepT> getFriendsTimelineDeepT(String id, Paging paging) throws
+    public List<TwitterResponseDeepT> getFriendsTimelineDeepT(String id, Paging paging) throws
             TwitterException {
     	
-    	 return StatusDeepT.constructStatusesDeepT(get(baseURL + 
-    			 "statuses/friends_timeline/" + id + ".xml",null, paging, true).asDocument(), this);
+    	 return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + 
+    			 "statuses/friends_timeline/" + id + ".xml",null, paging, true).asDocument(), 
+    			 this, StatusesType.UPDATES);
     }
     
     
-    /***** User Timeline *****/
+    /* User Timeline */
     
     /**
      * Returns the most recent statuses posted in the last 24 hours from the specified userid.
@@ -119,7 +153,7 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 1.1.8
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
      */
-    public List<StatusDeepT> getUserTimelineDeepT(String id, int count,
+    public List<TwitterResponseDeepT> getUserTimelineDeepT(String id, int count,
                                                      long sinceId) throws TwitterException {
         
     	return getUserTimelineDeepT(id, new Paging(sinceId).count(count));
@@ -136,10 +170,10 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
      */
-    public List<StatusDeepT> getUserTimelineDeepT(String id, Paging paging) throws TwitterException {
+    public List<TwitterResponseDeepT> getUserTimelineDeepT(String id, Paging paging) throws TwitterException {
 
-        return StatusDeepT.constructStatusesDeepT(get(baseURL + "statuses/user_timeline/" + id + ".xml",
-                null, paging, true).asDocument(), this);
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/user_timeline/" + id + ".xml",
+                null, paging, true).asDocument(), this, StatusesType.UPDATES);
     }
     
     /**
@@ -151,10 +185,10 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
      */
-    public List<StatusDeepT> getUserTimelineDeepT(String id) throws TwitterException {
+    public List<TwitterResponseDeepT> getUserTimelineDeepT(String id) throws TwitterException {
 
-        return StatusDeepT.constructStatusesDeepT(get(baseURL + 
-        		"statuses/user_timeline/" + id + ".xml", true).asDocument(), this);
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + 
+        		"statuses/user_timeline/" + id + ".xml", true).asDocument(), this, StatusesType.UPDATES);
     }
     
     /**
@@ -165,10 +199,10 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
      */
-    public List<StatusDeepT> getUserTimelineDeepT() throws TwitterException {
+    public List<TwitterResponseDeepT> getUserTimelineDeepT() throws TwitterException {
 
-        return StatusDeepT.constructStatusesDeepT(get(baseURL + "statuses/user_timeline.xml"
-                , true).asDocument(), this);
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/user_timeline.xml"
+                , true).asDocument(), this, StatusesType.UPDATES);
     }
     
     /**
@@ -181,14 +215,14 @@ public class TwitterDeepT extends TwitterMod{
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
      * @since Twitter4J 2.0.1
      */
-    public List<StatusDeepT> getUserTimelineDeepT(Paging paging) throws TwitterException {
+    public List<TwitterResponseDeepT> getUserTimelineDeepT(Paging paging) throws TwitterException {
 
-        return StatusDeepT.constructStatusesDeepT(get(baseURL + "statuses/user_timeline.xml"
-                , null, paging, true).asDocument(), this);
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/user_timeline.xml"
+                , null, paging, true).asDocument(), this, StatusesType.UPDATES);
     }
     
     
-    /***** Mentions (Replies) *****/
+    /* Mentions (Replies) */
     
     /**
      * Returns the 20 most recent mentions (status containing @username) for the authenticating user.
@@ -199,10 +233,10 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-mentions">Twitter API Wiki / Twitter REST API Method: statuses mentions</a>
      */
-    public List<StatusDeepT> getMentionsDeepT() throws TwitterException {
+    public List<TwitterResponseDeepT> getMentionsDeepT() throws TwitterException {
 
-        return StatusDeepT.constructStatusesDeepT(get(baseURL + "statuses/mentions.xml",
-                null, true).asDocument(), this);
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/mentions.xml",
+                null, true).asDocument(), this, StatusesType.UPDATES);
     }
     
     /**
@@ -215,14 +249,14 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses-mentions">Twitter API Wiki / Twitter REST API Method: statuses mentions</a>
      */
-    public List<StatusDeepT> getMentionsDeepT(Paging paging) throws TwitterException {
+    public List<TwitterResponseDeepT> getMentionsDeepT(Paging paging) throws TwitterException {
     	
-        return StatusDeepT.constructStatusesDeepT(get(baseURL + "statuses/mentions.xml",
-                null, paging, true).asDocument(), this);
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/mentions.xml",
+                null, paging, true).asDocument(), this, StatusesType.UPDATES);
     }
     
     
-    /***** Status *****/
+    /* Status */
     
     /**
      * Returns a single status, specified by the id parameter. The status's author will be returned inline.
@@ -234,9 +268,10 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses show">Twitter API Wiki / Twitter REST API Method: statuses show</a>
      */
-    public StatusDeepT showStatusDeepT(long id) throws TwitterException {
+    public TwitterResponseDeepT showStatusDeepT(long id) throws TwitterException {
     	
-        return new StatusDeepT(get(baseURL + "statuses/show/" + id + ".xml", false).asDocument().getDocumentElement(), this);
+        return new TwitterResponseDeepT(get(baseURL + "statuses/show/" + id + ".xml", false).asDocument().getDocumentElement(), 
+        		this, StatusesType.UPDATES);
     }
     
     /**
@@ -250,10 +285,12 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses update">Twitter API Wiki / Twitter REST API Method: statuses update</a>
      */
-    public StatusDeepT updateStatusDeepT(String status) throws TwitterException {
+    public TwitterResponseDeepT updateStatusDeepT(String status) throws TwitterException {
     	
-    	return new StatusDeepT(http.post(baseURL + "statuses/update.xml",
-                new PostParameter[]{new PostParameter("status", status), new PostParameter("source", source)}, true).asDocument().getDocumentElement(), this);
+    	return new TwitterResponseDeepT(http.post(baseURL + "statuses/update.xml",
+                new PostParameter[]{new PostParameter("status", status), 
+    			new PostParameter("source", source)}, true).asDocument().getDocumentElement(), 
+    			this, StatusesType.UPDATES);
     }
     
     /**
@@ -268,10 +305,13 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses update">Twitter API Wiki / Twitter REST API Method: statuses update</a>
      */
-    public StatusDeepT updateStatusDeepT(String status, long inReplyToStatusId) throws TwitterException {
+    public TwitterResponseDeepT updateStatusDeepT(String status, long inReplyToStatusId) throws TwitterException {
 
-    	 return new StatusDeepT(http.post(baseURL + "statuses/update.xml",
-                 new PostParameter[]{new PostParameter("status", status), new PostParameter("in_reply_to_status_id", String.valueOf(inReplyToStatusId)), new PostParameter("source", source)}, true).asDocument().getDocumentElement(), this);
+    	 return new TwitterResponseDeepT(http.post(baseURL + "statuses/update.xml",
+                 new PostParameter[]{new PostParameter("status", status), 
+    			 new PostParameter("in_reply_to_status_id", String.valueOf(inReplyToStatusId)), 
+    			 new PostParameter("source", source)}, true).asDocument().getDocumentElement(), 
+    			 this, StatusesType.UPDATES);
     }
     
     /**
@@ -284,14 +324,15 @@ public class TwitterDeepT extends TwitterMod{
      * @since 1.0.5
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses destroy">Twitter API Wiki / Twitter REST API Method: statuses destroy</a>
      */
-    public StatusDeepT destroyStatusDeepT(long statusId) throws TwitterException {
+    public TwitterResponseDeepT destroyStatusDeepT(long statusId) throws TwitterException {
     	
-        return new StatusDeepT(http.post(baseURL + "statuses/destroy/" + statusId + ".xml",
-                new PostParameter[0], true).asDocument().getDocumentElement(), this);
+        return new TwitterResponseDeepT(http.post(baseURL + "statuses/destroy/" + statusId + ".xml",
+                new PostParameter[0], true).asDocument().getDocumentElement(), 
+                this, StatusesType.UPDATES);
     }
     
     
-    /***** User *****/
+    /* User */
     
     /**
      * Returns the specified user's friends, each with current status inline.
@@ -301,16 +342,11 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses friends">Twitter API Wiki / Twitter REST API Method: statuses friends</a>
      */
-    public List<UserDeepT> getFriendsDeepT() throws TwitterException {
-    	
-    	
-    	List<ExtendedUserDeepT> users = 
-    		ExtendedUserDeepT.constructExtendedUserDeepT(get(baseURL + "statuses/friends.xml", true).asDocument(), this);
-    	
-    	ConvertUserDeepT convertUserDeepT  = 
-			new ConvertUserDeepT(users);
-		
-		return convertUserDeepT.convert();
+    public List<TwitterResponseDeepT> getFriendsDeepT() throws TwitterException {
+   	
+    	return
+    		TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + 
+    				"statuses/friends.xml", true).asDocument(), this, StatusesType.USER);
     }
 
     /**
@@ -323,16 +359,12 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses friends">Twitter API Wiki / Twitter REST API Method: statuses friends</a>
      */
-    public List<UserDeepT> getFriendsDeepT(Paging paging) throws TwitterException {
+    public List<TwitterResponseDeepT> getFriendsDeepT(Paging paging) throws TwitterException {
 
-    	List<ExtendedUserDeepT> users = 
-    		ExtendedUserDeepT.constructExtendedUserDeepT(get(baseURL + "statuses/friends.xml", null,
-                    paging, true).asDocument(), this);
-    	
-    	ConvertUserDeepT convertUserDeepT  = 
-			new ConvertUserDeepT(users);
-		
-		return convertUserDeepT.convert();
+    	return
+    		TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/friends.xml", null,
+                    paging, true).asDocument(), this, StatusesType.USER);
+
     }
     
     /**
@@ -344,16 +376,11 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses friends">Twitter API Wiki / Twitter REST API Method: statuses friends</a>
      */
-    public List<UserDeepT> getFriendsDeepT(String id) throws TwitterException {
+    public List<TwitterResponseDeepT> getFriendsDeepT(String id) throws TwitterException {
         
-    	List<ExtendedUserDeepT> users = 
-    		ExtendedUserDeepT.constructExtendedUserDeepT(get(baseURL + "statuses/friends/" + id + ".xml"
-                    , true).asDocument(), this);
-    	
-    	ConvertUserDeepT convertUserDeepT  = 
-			new ConvertUserDeepT(users);
-		
-		return convertUserDeepT.convert();
+    	return
+    		TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/friends/" + id + ".xml"
+                    , true).asDocument(), this, StatusesType.USER);
     }
     
     /**
@@ -367,16 +394,11 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses friends">Twitter API Wiki / Twitter REST API Method: statuses friends</a>
      */
-    public List<UserDeepT> getFriendsDeepT(String id, Paging paging) throws TwitterException {
+    public List<TwitterResponseDeepT> getFriendsDeepT(String id, Paging paging) throws TwitterException {
         
-        List<ExtendedUserDeepT> users = 
-    		ExtendedUserDeepT.constructExtendedUserDeepT(get(baseURL + "statuses/friends/" + id + ".xml"
-                    , null, paging, true).asDocument(), this);
-    	
-    	ConvertUserDeepT convertUserDeepT  = 
-			new ConvertUserDeepT(users);
-		
-		return convertUserDeepT.convert();
+        return
+        	TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/friends/" + id + ".xml"
+                    , null, paging, true).asDocument(), this, StatusesType.USER);
     }
     
     /**
@@ -387,15 +409,11 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses followers">Twitter API Wiki / Twitter REST API Method: statuses followers</a>
      */
-    public List<UserDeepT> getFollowersDeepT() throws TwitterException {
+    public List<TwitterResponseDeepT> getFollowersDeepT() throws TwitterException {
 
-        List<ExtendedUserDeepT> users = 
-    		ExtendedUserDeepT.constructExtendedUserDeepT(get(baseURL + "statuses/followers.xml", true).asDocument(), this);
-    	
-    	ConvertUserDeepT convertUserDeepT  = 
-			new ConvertUserDeepT(users);
-		
-		return convertUserDeepT.convert();
+        return
+        	TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + 
+        			"statuses/followers.xml", true).asDocument(), this, StatusesType.USER);
     }
     
     /**
@@ -408,16 +426,11 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses followers">Twitter API Wiki / Twitter REST API Method: statuses followers</a>
      */
-    public List<UserDeepT> getFollowersDeepT(Paging paging) throws TwitterException {
+    public List<TwitterResponseDeepT> getFollowersDeepT(Paging paging) throws TwitterException {
 
-        List<ExtendedUserDeepT> users = 
-    		ExtendedUserDeepT.constructExtendedUserDeepT(get(baseURL + "statuses/followers.xml", null
-                    , paging, true).asDocument(), this);
-    	
-    	ConvertUserDeepT convertUserDeepT  = 
-			new ConvertUserDeepT(users);
-		
-		return convertUserDeepT.convert();
+        return
+        	TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/followers.xml", null
+                    , paging, true).asDocument(), this, StatusesType.USER);
     }
     
     /**
@@ -430,15 +443,11 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 1.1.0
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses followers">Twitter API Wiki / Twitter REST API Method: statuses followers</a>
      */
-    public List<UserDeepT> getFollowersDeepT(String id) throws TwitterException {
+    public List<TwitterResponseDeepT> getFollowersDeepT(String id) throws TwitterException {
         
-        List<ExtendedUserDeepT> users = 
-    		ExtendedUserDeepT.constructExtendedUserDeepT(get(baseURL + "statuses/followers/" + id + ".xml", true).asDocument(), this);
-    	
-    	ConvertUserDeepT convertUserDeepT  = 
-			new ConvertUserDeepT(users);
-		
-		return convertUserDeepT.convert();
+        return
+        	TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + 
+        		"statuses/followers/" + id + ".xml", true).asDocument(), this, StatusesType.USER);
     }
     
     /**
@@ -452,16 +461,11 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses followers">Twitter API Wiki / Twitter REST API Method: statuses followers</a>
      */
-    public List<UserDeepT> getFollowersDeepT(String id, Paging paging) throws TwitterException {
+    public List<TwitterResponseDeepT> getFollowersDeepT(String id, Paging paging) throws TwitterException {
 
-        List<ExtendedUserDeepT> users = 
-    		ExtendedUserDeepT.constructExtendedUserDeepT(get(baseURL + "statuses/followers/" + id +
-                    ".xml", null, paging, true).asDocument(), this);
-    	
-    	ConvertUserDeepT convertUserDeepT  = 
-			new ConvertUserDeepT(users);
-		
-		return convertUserDeepT.convert();
+        return
+        	TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + "statuses/followers/" + id +
+                    ".xml", null, paging, true).asDocument(), this, StatusesType.USER);
     }
     
     /**
@@ -470,19 +474,15 @@ public class TwitterDeepT extends TwitterMod{
      * @return List of User
      * @throws TwitterException when Twitter service or network is unavailable
      */
-    public List<UserDeepT> getFeaturedDeepT() throws TwitterException {
+    public List<TwitterResponseDeepT> getFeaturedDeepT() throws TwitterException {
 
-        List<ExtendedUserDeepT> users = 
-    		ExtendedUserDeepT.constructExtendedUserDeepT(get(baseURL + "statuses/featured.xml", true).asDocument(), this);
-    	
-    	ConvertUserDeepT convertUserDeepT  = 
-			new ConvertUserDeepT(users);
-		
-		return convertUserDeepT.convert();
+        return
+        	TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL + 
+        		"statuses/featured.xml", true).asDocument(), this, StatusesType.USER);
     }
     
     
-    /***** Direct Messages *****/
+    /* Direct Messages */
     
     /**
      * Returns a list of the direct messages sent to the authenticating user.
@@ -492,11 +492,11 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-direct_messages">Twitter API Wiki / Twitter REST API Method: direct_messages</a>
      */
-    public List<DirectMessageDeepT> getDirectMessagesDeepT() throws TwitterException {
+    public List<TwitterResponseDeepT> getDirectMessagesDeepT() throws TwitterException {
     	
     	return 
-    		DirectMessageDeepT.constructDirectMessagesDeepT(get(baseURL
-    				+ "direct_messages.xml", true).asDocument(), this);
+    		TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL
+    				+ "direct_messages.xml", true).asDocument(), this, StatusesType.DIRECT_MESSAGES_RECEIVED);
     }
     
     /**
@@ -508,11 +508,12 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-direct_messages">Twitter API Wiki / Twitter REST API Method: direct_messages</a>
      */
-    public List<DirectMessageDeepT> getDirectMessagesDeepT(Paging paging) throws TwitterException {
+    public List<TwitterResponseDeepT> getDirectMessagesDeepT(Paging paging) throws TwitterException {
 
         return 
-        	DirectMessageDeepT.constructDirectMessagesDeepT(get(baseURL
-        			+ "direct_messages.xml", null, paging, true).asDocument(), this);
+        	TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL
+        			+ "direct_messages.xml", null, paging, true).asDocument(), 
+        			this, StatusesType.DIRECT_MESSAGES_RECEIVED);
     }
     
     /**
@@ -523,10 +524,11 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-direct_messages sent">Twitter API Wiki / Twitter REST API Method: direct_messages sent</a>
      */
-    public List<DirectMessageDeepT> getSentDirectMessagesDeepT() throws
+    public List<TwitterResponseDeepT> getSentDirectMessagesDeepT() throws
             TwitterException {
-        return DirectMessageDeepT.constructDirectMessagesDeepT(get(baseURL +
-                "direct_messages/sent.xml", new PostParameter[0], true).asDocument(), this);
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL +
+                "direct_messages/sent.xml", new PostParameter[0], true).asDocument(), 
+                this, StatusesType.DIRECT_MESSAGES_SENT);
     }
     
     /**
@@ -539,10 +541,11 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-direct_messages sent">Twitter API Wiki / Twitter REST API Method: direct_messages sent</a>
      */
-    public List<DirectMessageDeepT> getSentDirectMessagesDeepT(Paging paging) throws
+    public List<TwitterResponseDeepT> getSentDirectMessagesDeepT(Paging paging) throws
             TwitterException {
-        return DirectMessageDeepT.constructDirectMessagesDeepT(get(baseURL +
-                "direct_messages/sent.xml", new PostParameter[0],paging, true).asDocument(), this);
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL +
+                "direct_messages/sent.xml", new PostParameter[0],paging, true).asDocument(), 
+                this, StatusesType.DIRECT_MESSAGES_SENT);
     }
     
     /**
@@ -556,12 +559,12 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-direct_messages new">Twitter API Wiki / Twitter REST API Method: direct_messages new</a>
      */
-    public DirectMessageDeepT sendDirectMessageDeepT(String id,
+    public TwitterResponseDeepT sendDirectMessageDeepT(String id,
                                                         String text) throws TwitterException {
-        return new DirectMessageDeepT(http.post(baseURL + "direct_messages/new.xml",
+        return new TwitterResponseDeepT(http.post(baseURL + "direct_messages/new.xml",
                 new PostParameter[]{new PostParameter("user", id),
                         new PostParameter("text", text)}, true).
-                asDocument().getDocumentElement(), this);
+                asDocument().getDocumentElement(), this, StatusesType.DIRECT_MESSAGES);
     }
     
     /**
@@ -574,14 +577,16 @@ public class TwitterDeepT extends TwitterMod{
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-direct_messages destroy">Twitter API Wiki / Twitter REST API Method: direct_messages destroy</a>
      * @since Twitter4J 2.0.1
      */
-    public DirectMessageDeepT destroyDirectMessageDeepT(int id) throws
+    public TwitterResponseDeepT destroyDirectMessageDeepT(int id) throws
             TwitterException {
-        return new DirectMessageDeepT(http.post(baseURL +
-                "direct_messages/destroy/" + id + ".xml", new PostParameter[0], true).asDocument().getDocumentElement(), this);
+        return new TwitterResponseDeepT(http.post(baseURL +
+                "direct_messages/destroy/" + id + ".xml", 
+                new PostParameter[0], true).asDocument().getDocumentElement(), 
+                this, StatusesType.DIRECT_MESSAGES);
     }
     
     
-    /***** Follow *****/
+    /* Follow */
     
     /**
      * Befriends the user specified in the ID parameter as the authenticating user.  Returns the befriended user in the requested format when successful.  Returns a string describing the failure condition when unsuccessful.
@@ -592,16 +597,11 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-friendships create">Twitter API Wiki / Twitter REST API Method: friendships create</a>
      */
-    public UserDeepT createFriendshipDeepT(String id) throws TwitterException {
+    public TwitterResponseDeepT createFriendshipDeepT(String id) throws TwitterException {
     	
-    	
-        ExtendedUserDeepT extendedUserDeepT = new ExtendedUserDeepT(http.post(baseURL 
+        return new TwitterResponseDeepT(http.post(baseURL 
         		+ "friendships/create/" + id + ".xml", new PostParameter[0], true).
-                asDocument().getDocumentElement(), this);
-        
-        UserDeepT udt = new UserDeepT(extendedUserDeepT);
-        
-        return udt;
+                asDocument().getDocumentElement(), this, StatusesType.USER);
     }
     
     /**
@@ -614,21 +614,17 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.2
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-friendships create">Twitter API Wiki / Twitter REST API Method: friendships create</a>
      */
-    public UserDeepT createFriendshipDeepT(String id, boolean follow) throws TwitterException {
+    public TwitterResponseDeepT createFriendshipDeepT(String id, boolean follow) throws TwitterException {
         
-    	ExtendedUserDeepT extendedUserDeepT = new ExtendedUserDeepT(http.post(baseURL 
+    	return new TwitterResponseDeepT(http.post(baseURL 
     			+ "friendships/create/" + id + ".xml"
                 , new PostParameter[]{new PostParameter("follow"
                         , String.valueOf(follow))}, true).asDocument()
-                .getDocumentElement(), this);
-    	
-    	UserDeepT udt = new UserDeepT(extendedUserDeepT);
-    	
-    	return udt;
+                .getDocumentElement(), this, StatusesType.USER);
     }
     
     
-    /***** Stop Follow *****/
+    /* Stop Follow */
     
     /**
      * Discontinues friendship with the user specified in the ID parameter as the authenticating user.  Returns the un-friended user in the requested format when successful.  Returns a string describing the failure condition when unsuccessful.
@@ -639,13 +635,11 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-friendships destroy">Twitter API Wiki / Twitter REST API Method: friendships destroy</a>
      */
-    public UserDeepT destroyFriendshipDeepT(String id) throws TwitterException {
-        ExtendedUserDeepT extendedUserDeepT = new ExtendedUserDeepT(http.post(baseURL + "friendships/destroy/" + id + ".xml", new PostParameter[0], true).
-                asDocument().getDocumentElement(), this);
-        
-        UserDeepT udt = new UserDeepT(extendedUserDeepT);
-        
-        return udt;
+    public TwitterResponseDeepT destroyFriendshipDeepT(String id) throws TwitterException {
+
+    	return new TwitterResponseDeepT(http.post(baseURL + "friendships/destroy/" + id + ".xml", 
+    			new PostParameter[0], true).asDocument().getDocumentElement(), 
+    			this, StatusesType.USER);
     }
     
     /**
@@ -657,13 +651,11 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 1.0.4
      * @see <a href="http://apiwiki.twitter.com/REST%20API%20Documentation#account/updatelocation">Twitter REST API Documentation &gt; Account Methods &gt; account/update_location</a>
      */
-    public UserDeepT updateLocationDeepT(String location) throws TwitterException {
-        ExtendedUserDeepT extendedUserDeepT = new ExtendedUserDeepT(http.post(baseURL + "account/update_location.xml", new PostParameter[]{new PostParameter("location", location)}, true).
-                asDocument().getDocumentElement(), this);
-        
-        UserDeepT udt = new UserDeepT(extendedUserDeepT);
-        
-        return udt;
+    public TwitterResponseDeepT updateLocationDeepT(String location) throws TwitterException {
+
+    	return new TwitterResponseDeepT(http.post(baseURL + "account/update_location.xml", 
+    			new PostParameter[]{new PostParameter("location", location)}, true).
+                asDocument().getDocumentElement(), this, StatusesType.USER);
     }
     
     /**
@@ -675,17 +667,14 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 1.0.4
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-account update_delivery_device">Twitter API Wiki / Twitter REST API Method: account update_delivery_device</a>
      */
-    public UserDeepT updateDeliverlyDeviceDeepT(Device device) throws TwitterException {
-        ExtendedUserDeepT extendedUserDeepT = new ExtendedUserDeepT(http.post(baseURL + "account/update_delivery_device.xml", new PostParameter[]{new PostParameter("device", device.DEVICE)}, true).
-                asDocument().getDocumentElement(), this);
-        
-        UserDeepT udt = new UserDeepT(extendedUserDeepT);
-        
-        return udt;
+    public TwitterResponseDeepT updateDeliverlyDeviceDeepT(Device device) throws TwitterException {
+    	
+    	return new TwitterResponseDeepT(http.post(baseURL + "account/update_delivery_device.xml", new PostParameter[]{new PostParameter("device", device.DEVICE)}, true).
+                asDocument().getDocumentElement(), this, StatusesType.USER);
     }
     
     
-    /***** Favorites *****/
+    /* Favorites */
     
     /**
      * Returns the 20 most recent favorite statuses for the authenticating user or user specified by the ID parameter in the requested format.
@@ -695,11 +684,11 @@ public class TwitterDeepT extends TwitterMod{
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-favorites">Twitter API Wiki / Twitter REST API Method: favorites</a>
      * @since Twitter4J 2.0.1
      */
-    public List<StatusDeepT> getFavoritesDeepT() throws TwitterException {
+    public List<TwitterResponseDeepT> getFavoritesDeepT() throws TwitterException {
         
-        return StatusDeepT.constructStatusesDeepT(get(baseURL 
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL 
         		+ "favorites.xml", new PostParameter[0], true).
-                asDocument(), this);
+                asDocument(), this, StatusesType.FAVORITES);
     }
     
     /**
@@ -711,11 +700,11 @@ public class TwitterDeepT extends TwitterMod{
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-favorites">Twitter API Wiki / Twitter REST API Method: favorites</a>
      * @since Twitter4J 2.0.1
      */
-    public List<StatusDeepT> getFavoritesDeepT(int page) throws TwitterException {
+    public List<TwitterResponseDeepT> getFavoritesDeepT(int page) throws TwitterException {
         
-        return StatusDeepT.constructStatusesDeepT(get(baseURL 
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL 
         		+ "favorites.xml", "page", String.valueOf(page), true).
-                asDocument(), this);
+                asDocument(), this, StatusesType.FAVORITES);
     }
     
     /**
@@ -727,11 +716,11 @@ public class TwitterDeepT extends TwitterMod{
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-favorites">Twitter API Wiki / Twitter REST API Method: favorites</a>
      * @since Twitter4J 2.0.1
      */
-    public List<StatusDeepT> getFavoritesDeepT(String id) throws TwitterException {
+    public List<TwitterResponseDeepT> getFavoritesDeepT(String id) throws TwitterException {
     	
-        return StatusDeepT.constructStatusesDeepT(get(baseURL 
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL 
         		+ "favorites/" + id + ".xml", new PostParameter[0], true).
-                asDocument(), this);
+                asDocument(), this, StatusesType.FAVORITES);
     }
     
     /**
@@ -744,11 +733,11 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-favorites">Twitter API Wiki / Twitter REST API Method: favorites</a>
      */
-    public List<StatusDeepT> getFavoritesDeepT(String id, int page) throws TwitterException {
+    public List<TwitterResponseDeepT> getFavoritesDeepT(String id, int page) throws TwitterException {
     	
-        return StatusDeepT.constructStatusesDeepT(get(baseURL 
+        return TwitterResponseDeepT.constructTwitterResponseDeepT(get(baseURL 
         		+ "favorites/" + id + ".xml", "page", String.valueOf(page), true).
-                asDocument(), this);
+                asDocument(), this, StatusesType.FAVORITES);
     }
     
     /**
@@ -759,10 +748,10 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-favorites create">Twitter API Wiki / Twitter REST API Method: favorites create</a>
      */
-    public StatusDeepT createFavoriteDeepT(long id) throws TwitterException {
+    public TwitterResponseDeepT createFavoriteDeepT(long id) throws TwitterException {
     	
-        return new StatusDeepT(http.post(baseURL + "favorites/create/" + id + ".xml", true).
-                asDocument().getDocumentElement(), this);
+        return new TwitterResponseDeepT(http.post(baseURL + "favorites/create/" + id + ".xml", true).
+                asDocument().getDocumentElement(), this, StatusesType.FAVORITES);
     }
     
     /**
@@ -773,14 +762,14 @@ public class TwitterDeepT extends TwitterMod{
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-favorites destroy">Twitter API Wiki / Twitter REST API Method: favorites destroy</a>
      */
-    public StatusDeepT destroyFavoriteDeepT(long id) throws TwitterException {
+    public TwitterResponseDeepT destroyFavoriteDeepT(long id) throws TwitterException {
        
-    	return new StatusDeepT(http.post(baseURL + "favorites/create/" + id + ".xml", true).
-                asDocument().getDocumentElement(), this);
+    	return new TwitterResponseDeepT(http.post(baseURL + "favorites/create/" + id + ".xml", true).
+                asDocument().getDocumentElement(), this, StatusesType.FAVORITES);
     }
     
     
-    /***** Notifications *****/
+    /* Notifications */
     
     /**
      * Enables notifications for updates from the specified user to the authenticating user.  Returns the specified user when successful.
@@ -791,13 +780,10 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-notifications follow">Twitter API Wiki / Twitter REST API Method: notifications follow</a>
      */
-    public UserDeepT enableNotificationDeepT(String id) throws TwitterException {
-        ExtendedUserDeepT extendedUserDeepT = new ExtendedUserDeepT (http.post(baseURL + "notifications/follow/" + id + ".xml", true).
-                asDocument().getDocumentElement(), this);
-        
-        UserDeepT udt = new UserDeepT(extendedUserDeepT);
-        
-        return udt;
+    public TwitterResponseDeepT enableNotificationDeepT(String id) throws TwitterException {
+
+    	return new TwitterResponseDeepT(http.post(baseURL + "notifications/follow/" + id + ".xml", true).
+                asDocument().getDocumentElement(), this, StatusesType.USER);
     }
     
     /**
@@ -809,14 +795,10 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-notifications leave">Twitter API Wiki / Twitter REST API Method: notifications leave</a>
      */
-    public UserDeepT disableNotificationDeepT(String id) throws TwitterException {
-        ExtendedUserDeepT extendedUserDeepT  = new ExtendedUserDeepT (http.post(baseURL + "notifications/leave/" + id + ".xml", true).
-                asDocument().getDocumentElement(), this);
-        
-        UserDeepT udt = new UserDeepT(extendedUserDeepT);
-        
-        return udt;
-       
+    public TwitterResponseDeepT disableNotificationDeepT(String id) throws TwitterException {
+    	
+    	return new TwitterResponseDeepT(http.post(baseURL + "notifications/leave/" + id + ".xml", true).
+                asDocument().getDocumentElement(), this, StatusesType.USER);
     }
     
     
@@ -831,13 +813,10 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-blocks create">Twitter API Wiki / Twitter REST API Method: blocks create</a>
      */
-    public UserDeepT createBlockDeepT(String id) throws TwitterException {
-        ExtendedUserDeepT extendedUserDeepT = new ExtendedUserDeepT(http.post(baseURL + "blocks/create/" + id + ".xml", true).
-                asDocument().getDocumentElement(), this);
-        
-        UserDeepT udt = new UserDeepT(extendedUserDeepT);
-        
-        return udt;
+    public TwitterResponseDeepT createBlockDeepT(String id) throws TwitterException {
+    	
+    	return new TwitterResponseDeepT(http.post(baseURL + "blocks/create/" + id + ".xml", true).
+                asDocument().getDocumentElement(), this, StatusesType.USER);
     }
     
     /**
@@ -849,78 +828,39 @@ public class TwitterDeepT extends TwitterMod{
      * @since Twitter4J 2.0.1
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-blocks destroy">Twitter API Wiki / Twitter REST API Method: blocks destroy</a>
      */
-    public UserDeepT destroyBlockDeepT(String id) throws TwitterException {
-        ExtendedUserDeepT extendedUserDeepT = new ExtendedUserDeepT(http.post(baseURL + "blocks/destroy/" + id + ".xml", true).
-                asDocument().getDocumentElement(), this);
-        
-        UserDeepT udt = new UserDeepT(extendedUserDeepT);
-        
-        return udt;
-    }
-    
-    
-    
-    /**
-     * class to convert statuses list of Status to statuses list of StatusDeepT 
-     * @author Vinicius
-     *
-     */
-    private class ConvertStatusDeepT{
-    	
-    	List<Status> statuses;
-    	List<StatusDeepT> statusesDeepT;
-    	
-    	
-    	public ConvertStatusDeepT(List<Status> statuses){
-    		this.statuses = statuses;
-    		
-    		statusesDeepT = new ArrayList<StatusDeepT>();
-    	}
-    	
-    	public List<StatusDeepT> convert() throws TwitterException{
-    		for(Status s : statuses){
-    			
-    			//TODO fazer construtor receber status (status + mais user normal)
-    			StatusDeepT sdt = new StatusDeepT(s);
-    			
-    			statusesDeepT.add(sdt);
-    		}
-    		
-    		return statusesDeepT;
-    	}
+    public TwitterResponseDeepT destroyBlockDeepT(String id) throws TwitterException {
+    	return new TwitterResponseDeepT(http.post(baseURL + "blocks/destroy/" + id + ".xml", true).
+                asDocument().getDocumentElement(), this, StatusesType.USER);
     }
     
     /**
-     * class to convert statuses list of Status to statuses list of StatusDeepT 
-     * @author Vinicius
+     * Returns an HTTP 200 OK response code and a representation of the requesting user if authentication was successful; returns a 401 status code and an error message if not.  Use this method to test if supplied user credentials are valid.
      *
+     * @return extended user
+     * @since Twitter4J 2.0.0
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-account verify_credentials">Twitter API Wiki / Twitter REST API Method: account verify_credentials</a>
      */
-    private class ConvertUserDeepT{
+    public TwitterResponseDeepT verifyCredentialsDeepT() throws TwitterException {
     	
-    	List<ExtendedUserDeepT> users;
-    	List<UserDeepT> usersDeepT;;
-    	
-    	
-    	public ConvertUserDeepT(List<ExtendedUserDeepT> users){
-    		this.users = users;
-    		
-    		usersDeepT = new ArrayList<UserDeepT>();
-    	}
-    	
-    	public List<UserDeepT> convert() throws TwitterException{
-    		for(ExtendedUserDeepT u : users){
-    			
-    			UserDeepT udt = new UserDeepT(u);
-    			
-    			usersDeepT.add(udt);
-    		}
-    		
-    		return usersDeepT;
-    	}
+    	return new TwitterResponseDeepT(get(baseURL + 
+    			"account/verify_credentials.xml", true).asDocument().getDocumentElement(), this, StatusesType.USER);
+    }
+    
+    /**
+     * Returns extended information of a given user, specified by ID or screen name as per the required id parameter below.  This information includes design settings, so third party developers can theme their widgets according to a given user's preferences.
+     * <br>calls http://twitter.com/users/show 
+     *
+     * @param id the ID or screen name of the user for whom to request the detail
+     * @return ExtendedUser
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-users show">Twitter API Wiki / Twitter REST API Method: users show</a>
+     */
+    public TwitterResponseDeepT getUserDetailDeepT(String id) throws TwitterException {
+        return new TwitterResponseDeepT(get(baseURL + "users/show/" + id + ".xml", true).asDocument().getDocumentElement(), 
+        		this, StatusesType.USER);
     }
 	
 	
-	
-	
+
 
 }

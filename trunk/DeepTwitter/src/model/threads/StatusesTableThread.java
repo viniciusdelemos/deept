@@ -29,6 +29,7 @@ import model.twitter4j.DirectMessageDeepT;
 import model.twitter4j.StatusDeepT;
 import model.twitter4j.TwitterDeepT;
 import model.twitter4j.TwitterMod;
+import model.twitter4j.TwitterResponseDeepT;
 import model.twitter4j.UserDeepT;
 import twitter4j.ExtendedUser;
 import twitter4j.Paging;
@@ -82,7 +83,7 @@ public class StatusesTableThread {
 		return panel;
 	}
 	
-	private JPanel getPanel(final StatusDeepT s) {		
+	private JPanel getPanel(final TwitterResponseDeepT s) {		
         JPanel updatePanel = new JPanel(new GridBagLayout());        
         gbc = new GridBagConstraints();
         
@@ -108,8 +109,13 @@ public class StatusesTableThread {
 //			userPicture = new ImageIcon(u2.getProfileImageURL());
 //			screenName = u2.getScreenName();
 //			}
-		User u = s.getUserTeste();
-		userPicture = new ImageIcon(u.getProfileImageURL());		
+		UserDeepT u = null;
+		if(s.getDirectMessageDeepT() != null)
+			u = s.getDirectMessageDeepT().getSender();
+		else
+			u = s.getUserDeepT();
+		
+		userPicture = new ImageIcon(u.getProfileImageUrl());		
 
 		if(userPicture.getIconHeight()>48 || userPicture.getIconWidth()>48) {
 			Image image = userPicture.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
@@ -125,7 +131,7 @@ public class StatusesTableThread {
 				interactiveImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				controller.searchAndAddUserToNetwork(s.getUserTeste());//s.getUser());
+				controller.searchAndAddUserToNetwork(s);//s.getUser());
 			}
 		});
 		
@@ -143,10 +149,18 @@ public class StatusesTableThread {
 		editorPane.setFont(new Font("Calibri",0,13));
 		editorPane.setBackground(updatePanel.getBackground());
 		
+		if(s.getDirectMessageDeepT() != null){
 		editorPane.setText("<b><a href=http://www.twitter.com/"+u.getScreenName()+">"
 				+u.getScreenName()+"</a></b>"
-				+": "+processText(s.getText()));
+				+": "+processText(s.getDirectMessageDeepT().getText()));
 				//+"<br>"+s.getCreatedAt().toString());
+		}
+		else{
+			editorPane.setText("<b><a href=http://www.twitter.com/"+u.getScreenName()+">"
+					+u.getScreenName()+"</a></b>"
+					+": "+processText(s.getStatusDeepT().getText()));
+					//+"<br>"+s.getCreatedAt().toString());			
+		}
 		
 		
 		editorPane.addHyperlinkListener(new HyperlinkListener() {
@@ -171,7 +185,7 @@ public class StatusesTableThread {
         return updatePanel;
     }
 	
-	private JPanel addButtonsToPanel(final JPanel updatePanel, final StatusDeepT s) {
+	private JPanel addButtonsToPanel(final JPanel updatePanel, final TwitterResponseDeepT s) {
 		gbc.weightx = 0;
         gbc.gridx = 2;
         gbc.gridy = 0;
@@ -187,7 +201,7 @@ public class StatusesTableThread {
 				replyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				controller.openGUINewUpdateWindow(s.getUserTeste().getScreenName(),StatusesType.REPLIES);//s.getUser().getScreenName(),StatusesType.REPLIES);				
+				controller.openGUINewUpdateWindow(s.getUserDeepT().getScreenName(),StatusesType.REPLIES);//s.getUser().getScreenName(),StatusesType.REPLIES);				
 			}
 		});
 		updatePanel.add(replyButton,gbc);
@@ -200,10 +214,20 @@ public class StatusesTableThread {
         
 		final JLabel favoriteButton = new JLabel();
 		ImageIcon starIcon;
-		if(s.isFavorited()) 
-			starIcon = new ImageIcon(getClass().getResource("../../star_on.png"));		
-		else 
+		
+		//Pois se for Direct Message, tem que fazer outra consulta para ver
+		//se é favorito, pois esta informacao nao tem na direct message
+		if(s.getStatusDeepT() != null){
+		
+			if(s.getStatusDeepT().isFavorited()) 
+				starIcon = new ImageIcon(getClass().getResource("../../star_on.png"));		
+			else 
+				starIcon = new ImageIcon(getClass().getResource("../../star_off.png"));
+		}
+		else
 			starIcon = new ImageIcon(getClass().getResource("../../star_off.png"));
+			//TODO talvez fosse bom nao carregar o icone
+		
 		favoriteButton.setIcon(starIcon);	
 		favoriteButton.setToolTipText("Favorite");
 		favoriteButton.addMouseListener(new MouseAdapter(){
@@ -214,11 +238,11 @@ public class StatusesTableThread {
 				try{
 					int isOff = favoriteButton.getIcon().toString().indexOf("star_off");
 					if(isOff>0) {
-						controller.getTwitter().createFavorite(s.getId());
+						controller.getTwitter().createFavorite(s.getStatusDeepT().getId());
 						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../../star_on.png")));
 					}
 					else {
-						controller.getTwitter().destroyFavorite(s.getId());
+						controller.getTwitter().destroyFavorite(s.getStatusDeepT().getId());
 						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../../star_off.png")));
 						if(statusesType == StatusesType.FAVORITES) {
 							System.out.println("removing favorite panel");
@@ -244,7 +268,22 @@ public class StatusesTableThread {
 //			id = s.getExtendedUser().getId();
 //		id = s.getUserTeste().getId();
 		
-		if(loggedUserId == s.getUserTeste().getId()) {
+		int IdUser;
+		final long IdMessage;
+		
+		if(s.getDirectMessageDeepT() != null){
+			
+			IdUser = s.getDirectMessageDeepT().getSender_id();
+			IdMessage = s.getDirectMessageDeepT().getId();
+			
+		}else{
+			
+			IdUser = s.getUserDeepT().getId();
+			IdMessage = s.getStatusDeepT().getId();
+			
+		}
+		
+		if(loggedUserId == IdUser) {
 			gbc.weightx = 0;
 			gbc.gridx = 2;
 			gbc.gridy = 0;
@@ -265,7 +304,7 @@ public class StatusesTableThread {
 	                            null, "Tem certeza que deseja deletar este update?","Atenção",
 	                            JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null);
 						if (n == JOptionPane.YES_OPTION) {
-							controller.getTwitter().destroyStatus(s.getId());
+							controller.getTwitter().destroyStatusDeepT(IdMessage);
 							panel.remove(updatePanel);
 							rows--;
 							panel.revalidate();
@@ -359,7 +398,7 @@ public class StatusesTableThread {
 		return keepTableUpdated.isThreadSuspended();
 	}
 	
-	public List<StatusDeepT> getStatusesList() {				
+	public List<TwitterResponseDeepT> getStatusesList() {				
 		return keepTableUpdated.getStatusesList();
 	}
 	
@@ -371,8 +410,8 @@ public class StatusesTableThread {
 		private boolean threadSuspended;
 		private Map<Long,Status> favoritesMap;// = new HashMap<Long,Status>();
 		
-		private List<DirectMessageDeepT> directMessagesList; //TROQUEI O TIPO SO PARA TESTAR				
-		private List<StatusDeepT> statusesList, allStatusesList;		
+		private List<TwitterResponseDeepT> directMessagesList; //TROQUEI O TIPO SO PARA TESTAR				
+		private List<TwitterResponseDeepT> statusesList, allStatusesList;		
 
 		
 		public KeepTableUpdated() {			
@@ -380,8 +419,8 @@ public class StatusesTableThread {
 			c = new GridBagConstraints();
 			threadSuspended = false;
 			lastStatusId = -1;
-			statusesList = new ArrayList<StatusDeepT>();
-			allStatusesList = new ArrayList<StatusDeepT>();
+			statusesList = new ArrayList<TwitterResponseDeepT>();
+			allStatusesList = new ArrayList<TwitterResponseDeepT>();
 		}
 		
 		public synchronized void pauseThread() {
@@ -401,7 +440,7 @@ public class StatusesTableThread {
 			return threadSuspended;
 		}
 		
-		public List<StatusDeepT> getStatusesList() {				
+		public List<TwitterResponseDeepT> getStatusesList() {				
 			return allStatusesList;
 		}
 		
@@ -425,7 +464,7 @@ public class StatusesTableThread {
 						}
 					}
 					
-					statusesList = new ArrayList<StatusDeepT>();
+					statusesList = new ArrayList<TwitterResponseDeepT>();
 					
 					switch(statusesType)
 					{
@@ -471,16 +510,16 @@ public class StatusesTableThread {
 					
 					case DIRECT_MESSAGES_RECEIVED:
 						if(lastStatusId < 0) 
-							directMessagesList = twitter.getDirectMessagesDeepT();
+							statusesList = twitter.getDirectMessagesDeepT();
 						else
-							directMessagesList = twitter.getDirectMessagesDeepT(new Paging(lastStatusId));						
+							statusesList = twitter.getDirectMessagesDeepT(new Paging(lastStatusId));						
 						break;
 					
 					case DIRECT_MESSAGES_SENT:
 						if(lastStatusId < 0) 
-							directMessagesList = twitter.getSentDirectMessagesDeepT();
+							statusesList = twitter.getSentDirectMessagesDeepT();
 						else
-							directMessagesList = twitter.getSentDirectMessagesDeepT(new Paging(lastStatusId));
+							statusesList = twitter.getSentDirectMessagesDeepT(new Paging(lastStatusId));
 						break;
 						
 					case SEARCH:
@@ -491,12 +530,15 @@ public class StatusesTableThread {
 							query.setSinceId(lastStatusId);
 						query.setRpp(updatesToGet);
 						
-						QueryResult results = twitter.search(query);					
-							
-						for(int i=0; i<results.getTweets().size(); i++) {
-							Tweet t = results.getTweets().get(i);
-							statusesList.add(new StatusDeepT(t));
-						}
+						
+						statusesList =
+							twitter.searchDeepT(query);
+						
+						//Voce adicionava os tweets em lista de status, agora nao precisa mais
+//						for(int i=0; i<results.getTweets().size(); i++) {
+//							Tweet t = results.getTweets().get(i);
+//							statusesList.add(new TwitterResponseDeepT(t));
+//						}
 						break;
 
 					case PUBLIC_TIMELINE:
@@ -507,9 +549,11 @@ public class StatusesTableThread {
 						break;
 					}
 					
+					/*
 					for(DirectMessage m : directMessagesList) {
 						System.out.println(m);//statusesList.add(new StatusDeepT(m));
-					}					
+					}
+					*/					
 					
 					//TODO
 					if(statusesType == StatusesType.FAVORITES) {
@@ -517,17 +561,53 @@ public class StatusesTableThread {
 					}
 					
 					if(!statusesList.isEmpty()) {
+						
+						if(statusesList.get(0).getDirectMessageDeepT() != null){
+							
+							//checa se nova msg é mais nova do que ultima adicionada ao painel
+							System.out.println("update mais novo: "+statusesList.get(0).getDirectMessageDeepT().getId());
+							System.out.println("last status id: "+lastStatusId);
+							if(statusesList.get(0).getDirectMessageDeepT().getId() > lastStatusId)
+							{
+								lastStatusId = statusesList.get(0).getDirectMessageDeepT().getId();
+								if(empty != null) panel.remove(empty);							
+								//de trás para frente, para adicionar as mais recentes em cima
+								for(int i=statusesList.size()-1; i>=0; i--) {
+								//for(int i=0; i<statusesList.size(); i++) {
+									TwitterResponseDeepT s = statusesList.get(i);
+									System.out.println(s);
+									c.weightx = 0.5;
+									c.fill = GridBagConstraints.HORIZONTAL;
+									c.gridx = 0;
+									panel.add(getPanel(s),c,0);			
+									rows++;
+									panel.revalidate();
+									allStatusesList.add(0,s);								
+								}
+								empty = new JPanel();
+								empty.add(new JLabel(""));
+								c.weightx = 0.5;
+								c.weighty = 1;
+								c.fill = GridBagConstraints.HORIZONTAL;
+								c.gridx = 0;
+								c.anchor = GridBagConstraints.PAGE_END;
+								panel.add(empty,c);
+								panel.revalidate();
+							}
+							
+						}
+						else{
 						//checa se nova msg é mais nova do que ultima adicionada ao painel
-						System.out.println("update mais novo: "+statusesList.get(0).getId());
+						System.out.println("update mais novo: "+statusesList.get(0).getStatusDeepT().getId());
 						System.out.println("last status id: "+lastStatusId);
-						if(statusesList.get(0).getId()>lastStatusId)
+						if(statusesList.get(0).getStatusDeepT().getId()>lastStatusId)
 						{
-							lastStatusId = statusesList.get(0).getId();
+							lastStatusId = statusesList.get(0).getStatusDeepT().getId();
 							if(empty != null) panel.remove(empty);							
 							//de trás para frente, para adicionar as mais recentes em cima
 							for(int i=statusesList.size()-1; i>=0; i--) {
 							//for(int i=0; i<statusesList.size(); i++) {
-								StatusDeepT s = statusesList.get(i);
+								TwitterResponseDeepT s = statusesList.get(i);
 								System.out.println(s);
 								c.weightx = 0.5;
 								c.fill = GridBagConstraints.HORIZONTAL;
@@ -547,7 +627,8 @@ public class StatusesTableThread {
 							panel.add(empty,c);
 							panel.revalidate();
 						}
-					}				
+					}
+					}
 					Thread.sleep(interval);	
 					System.out.println("running " + statusesType + " para " + controller.getUserName(getUserId()));
 				} catch (TwitterException e) {
