@@ -52,7 +52,7 @@ public class QueryResult extends TwitterResponse {
     private List<Tweet> tweets;
     private static final long serialVersionUID = -9059136565234613286L;
 
-    /*package*/ QueryResult(JSONObject json, Twitter twitter) throws TwitterException {
+    public QueryResult(JSONObject json, Twitter twitter) throws TwitterException {
         try {
             sinceId = json.getLong("since_id");
             maxId = json.getLong("max_id");
