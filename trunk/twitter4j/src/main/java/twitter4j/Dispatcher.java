@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package twitter4j;
 
 import java.util.LinkedList;
-import java.util.Queue;
+import java.util.List;
 
 /**
  *
@@ -35,7 +35,7 @@ import java.util.Queue;
  */
 /*package*/ class Dispatcher {
     private ExecuteThread[] threads;
-    private Queue<Runnable> q = new LinkedList<Runnable> ();
+    private List<Runnable> q = new LinkedList<Runnable> ();
     public Dispatcher(String name){
         this(name,1);
     }
@@ -48,7 +48,9 @@ import java.util.Queue;
         }
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                shutdown();
+                if (active) {
+                    shutdown();
+                }
             }
         });
     }
@@ -63,11 +65,13 @@ import java.util.Queue;
     }
     Object ticket = new Object();
     public Runnable poll(){
-        while(true){
+        while(active){
             synchronized(q){
-                Runnable task = q.poll();
-                if (null != task) {
-                    return task;
+                if (q.size() > 0) {
+                    Runnable task = q.remove(0);
+                    if (null != task) {
+                        return task;
+                    }
                 }
             }
             synchronized (ticket) {
@@ -77,17 +81,19 @@ import java.util.Queue;
                 }
             }
         }
+        return null;
     }
 
     private boolean active = true;
 
     public synchronized void shutdown() {
         if (active) {
-            for (int i = 0; i < threads.length; i++) {
-                threads[i].shutdown();
+            active = false;
+            for (ExecuteThread thread : threads) {
+                thread.shutdown();
             }
-            synchronized (q) {
-                q.notify();
+            synchronized (ticket) {
+                ticket.notify();
             }
         } else {
             throw new IllegalStateException("Already shutdown");
@@ -110,10 +116,12 @@ class ExecuteThread extends Thread {
     public void run() {
         while (alive) {
             Runnable task = q.poll();
-            try{
-                task.run();
-            }catch(Exception ex){
-                ex.printStackTrace();
+            if (null != task) {
+                try {
+                    task.run();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }

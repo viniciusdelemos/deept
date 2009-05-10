@@ -9,8 +9,8 @@
 	<classpathentry kind="lib" path="lib/logback-core-0.9.6.jar"/>
 	<classpathentry kind="lib" path="lib/rome-0.9.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.0.jar"/>
-	<classpathentry kind="lib" path="twitter4j-2.0.1-javadoc.jar"/>
-	<classpathentry kind="lib" path="twitter4j-2.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="twitter4j-2.0.1.jar"/>
+	<classpathentry kind="lib" path="twitter4j-2.0.3-javadoc.jar"/>
+	<classpathentry kind="lib" path="twitter4j-2.0.3-sources.jar"/>
+	<classpathentry kind="lib" path="twitter4j-2.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

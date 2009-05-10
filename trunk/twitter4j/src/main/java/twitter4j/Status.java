@@ -29,6 +29,7 @@ package twitter4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import twitter4j.http.Response;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,21 +62,33 @@ public class Status extends TwitterResponse implements java.io.Serializable {
     followers_count 
  */
 
-    protected Date createdAt;
-    protected long id;
-    protected String text;
-    protected String source;
-    protected boolean isTruncated;
-    protected long inReplyToStatusId;
-    protected int inReplyToUserId;
-    protected boolean isFavorited;
+    private Date createdAt;
+    private long id;
+    private String text;
+    private String source;
+    private boolean isTruncated;
+    private long inReplyToStatusId;
+    private int inReplyToUserId;
+    private boolean isFavorited;
     private static final long serialVersionUID = 1608000492860584608L;
 
-    /*package*/Status(Element elem, Twitter twitter) throws TwitterException {
-        super();
+    /*package*/Status(Response res, Twitter twitter) throws TwitterException {
+        super(res);
+        Element elem = res.asDocument().getDocumentElement();
+        init(res, elem, twitter);
+    }
+
+    /*package*/Status(Response res, Element elem, Twitter twitter) throws
+            TwitterException {
+        super(res);
+        init(res, elem, twitter);
+    }
+
+    private void init(Response res, Element elem, Twitter twitter) throws
+            TwitterException {
         ensureRootNodeNameIs("status", elem);
-        user = new User((Element) elem.getElementsByTagName("user").item(0),
-                twitter);
+        user = new User(res, (Element) elem.getElementsByTagName("user").item(0)
+                , twitter);
         id = getChildLong("id", elem);
         text = getChildText("text", elem);
         source = getChildText("source", elem);
@@ -84,11 +97,6 @@ public class Status extends TwitterResponse implements java.io.Serializable {
         inReplyToStatusId = getChildInt("in_reply_to_status_id", elem);
         inReplyToUserId = getChildInt("in_reply_to_user_id", elem);
         isFavorited = getChildBoolean("favorited", elem);
-    }
-    
-    protected Status() throws TwitterException {
-    	super();
-    	
     }
 
     /**
@@ -184,8 +192,9 @@ public class Status extends TwitterResponse implements java.io.Serializable {
     }
 
     /*package*/
-    public static List<Status> constructStatuses(Document doc,
+    static List<Status> constructStatuses(Response res,
                                           Twitter twitter) throws TwitterException {
+        Document doc = res.asDocument();
         if (isRootNodeNilClasses(doc)) {
             return new ArrayList<Status>(0);
         } else {
@@ -197,7 +206,7 @@ public class Status extends TwitterResponse implements java.io.Serializable {
                 List<Status> statuses = new ArrayList<Status>(size);
                 for (int i = 0; i < size; i++) {
                     Element status = (Element) list.item(i);
-                    statuses.add(new Status(status, twitter));
+                    statuses.add(new Status(res, status, twitter));
                 }
                 return statuses;
             } catch (TwitterException te) {

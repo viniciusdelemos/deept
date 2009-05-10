@@ -26,6 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
+import twitter4j.http.Response;
 import twitter4j.org.json.JSONArray;
 import twitter4j.org.json.JSONException;
 import twitter4j.org.json.JSONObject;
@@ -52,17 +53,19 @@ public class QueryResult extends TwitterResponse {
     private List<Tweet> tweets;
     private static final long serialVersionUID = -9059136565234613286L;
 
-    public QueryResult(JSONObject json, Twitter twitter) throws TwitterException {
+    /*package*/ QueryResult(Response res, Twitter twitter) throws TwitterException {
+        super(res);
+        JSONObject json = res.asJSONObject();
         try {
             sinceId = json.getLong("since_id");
             maxId = json.getLong("max_id");
-            refreshUrl = getString("refresh_url", json);
+            refreshUrl = getString("refresh_url", json, true);
 
             resultsPerPage = json.getInt("results_per_page");
-            warning = getString("warning", json);
+            warning = getString("warning", json, false);
             completedIn = json.getDouble("completed_in");
             page = json.getInt("page");
-            query = getString("query", json);
+            query = getString("query", json, true);
             JSONArray array = json.getJSONArray("results");
             tweets = new ArrayList<Tweet>(array.length());
             for (int i = 0; i < array.length(); i++) {
