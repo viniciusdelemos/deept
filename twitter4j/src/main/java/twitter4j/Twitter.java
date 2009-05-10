@@ -46,7 +46,7 @@ import java.util.TimeZone;
 public class Twitter implements java.io.Serializable {
     protected HttpClient http = null;
     protected String baseURL = "http://twitter.com/";
-    private String searchBaseURL = "http://search.twitter.com/";
+    protected String searchBaseURL = "http://search.twitter.com/";
     protected String source;
 
     private boolean usePostForcibly = false;

@@ -98,7 +98,7 @@ public class TwitterResponse implements java.io.Serializable {
         return "nil-classes".equals(root) || "nilclasses".equals(root);
     }
 
-    private static String toString(Element doc) {
+    protected static String toString(Element doc) {
         try {
             StringWriter output = new StringWriter();
             TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(output));
