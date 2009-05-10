@@ -549,6 +549,7 @@ public class StatusesTableThread {
 						break;
 					}
 					
+
 					/*
 					for(DirectMessage m : directMessagesList) {
 						System.out.println(m);//statusesList.add(new StatusDeepT(m));

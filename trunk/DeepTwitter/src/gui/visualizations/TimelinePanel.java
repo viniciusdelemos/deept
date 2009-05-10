@@ -41,6 +41,7 @@ import prefuse.action.layout.AxisLabelLayout;
 import prefuse.action.layout.AxisLayout;
 import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
+import prefuse.controls.ToolTipControl;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.expression.AndPredicate;
@@ -58,6 +59,7 @@ import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTable;
 import prefuse.visual.sort.ItemSorter;
+import profusians.controls.GenericToolTipControl;
 import twitter4j.Status;
 
 public class TimelinePanel extends JPanel {
@@ -69,7 +71,7 @@ public class TimelinePanel extends JPanel {
     private JFastLabel labelDetails;
     
     private Visualization m_vis;
-    private Display m_display;
+    private Display display;
     private Rectangle2D m_dataB = new Rectangle2D.Double();
     private Rectangle2D m_xlabB = new Rectangle2D.Double();
     private Rectangle2D m_ylabB = new Rectangle2D.Double();
@@ -156,8 +158,8 @@ public class TimelinePanel extends JPanel {
         };
         filter.addExpressionListener(lstnr);
                 
-        m_display = new Display(vis);
-        m_display.setItemSorter(new ItemSorter() {
+        display = new Display(vis);
+        display.setItemSorter(new ItemSorter() {
             public int score(VisualItem item) {
                 int score = super.score(item);
                 if (item.isInGroup(Group.STATUSES.toString()))
@@ -165,10 +167,10 @@ public class TimelinePanel extends JPanel {
                 return score;
             }
         });
-        m_display.setBorder(BorderFactory.createEmptyBorder(10,50,50,10));
-        m_display.setSize(700,450);
-        m_display.setHighQuality(true);
-        m_display.addComponentListener(new ComponentAdapter() {
+        display.setBorder(BorderFactory.createEmptyBorder(10,50,50,10));
+        display.setSize(700,450);
+        display.setHighQuality(true);
+        display.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 displayLayout();
             }
@@ -182,12 +184,20 @@ public class TimelinePanel extends JPanel {
         labelTotalStatuses.setPreferredSize(new Dimension(500,20));
         labelTotalStatuses.setHorizontalAlignment(SwingConstants.RIGHT);
         labelTotalStatuses.setVerticalAlignment(SwingConstants.BOTTOM);
+                
+        String descriptions[] = { "Tweet:", "Usuário:", "Data:" };
+        String data[] = { StatusesDataTable.ColNames.TEXT.toString(),
+        		StatusesDataTable.ColNames.SCREEN_NAME.toString(),
+        		StatusesDataTable.ColNames.FULL_DATE.toString()};// +" "+ StatusesDataTable.ColNames.HOUR.toString()};
+
+    	GenericToolTipControl toolTipControl = new GenericToolTipControl(descriptions,data,200);
+
+    	display.addControlListener(toolTipControl);
         
         //ToolTipControl ttc = new ToolTipControl("label");
         Control hoverc = new ControlAdapter() {
             public void itemEntered(VisualItem item, MouseEvent evt) {
                 if ( item.isInGroup(Group.STATUSES.toString()) ) {
-                	System.out.println(item);
                 	labelTotalStatuses.setText(item.getString(StatusesDataTable.ColNames.SCREEN_NAME.toString()));
                 	item.setFillColor(item.getStrokeColor());
                 	item.setStrokeColor(ColorLib.rgb(0,0,0));
@@ -204,7 +214,7 @@ public class TimelinePanel extends JPanel {
             }
         };
         //m_display.addControlListener(ttc);
-        m_display.addControlListener(hoverc);
+        display.addControlListener(hoverc);       
         
         this.addComponentListener(lstnr);
         
@@ -238,11 +248,11 @@ public class TimelinePanel extends JPanel {
         horizontalSlider.setMinExtent(dayQuery.getModel().getMinimum());
         horizontalSlider.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                m_display.setHighQuality(false);
+                display.setHighQuality(false);
             }
             public void mouseReleased(MouseEvent e) {
-                m_display.setHighQuality(true);
-                m_display.repaint();
+                display.setHighQuality(true);
+                display.repaint();
             }
         });
         
@@ -250,7 +260,7 @@ public class TimelinePanel extends JPanel {
         vis.run("xlabels");
         
         add(infoBox, BorderLayout.NORTH);
-        add(m_display, BorderLayout.CENTER);
+        add(display, BorderLayout.CENTER);
         add(verticalSlider, BorderLayout.EAST);
         add(horizontalSlider, BorderLayout.SOUTH);
         //ADICIONAR CAIXA DE BUSCA SOH PARA STATUSES DO USER LOGADO
@@ -270,7 +280,7 @@ public class TimelinePanel extends JPanel {
 		
 		for (TwitterResponseDeepT s : statusesList) {
 			try{
-				tbl.set(index, StatusesDataTable.ColNames.STATUSDEEPT.toString(), s);
+				tbl.set(index, StatusesDataTable.ColNames.TEXT.toString(), s.getText());
 				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), s.getUserDeepT().getScreenName());//s.getUser().getScreenName());
 				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), s.getUserDeepT().getProfileImageUrl().toString());//s.getUser().getProfileImageURL().toString());
 				//SETAR CATEGORIA
@@ -287,6 +297,8 @@ public class TimelinePanel extends JPanel {
 				CustomDateDay day = new CustomDateDay(d.getTime());			
 
 				tbl.set(index, StatusesDataTable.ColNames.DAY.toString(), day);
+				tbl.set(index, StatusesDataTable.ColNames.FULL_DATE.toString(), day+" "+formatedDate);
+				
 				index++;		
 			}
 			catch(Exception e) {
@@ -347,9 +359,9 @@ public class TimelinePanel extends JPanel {
 //	}
     
     public void displayLayout() {
-    	Insets i = m_display.getInsets();
-        int w = m_display.getWidth();
-        int h = m_display.getHeight();
+    	Insets i = display.getInsets();
+        int w = display.getWidth();
+        int h = display.getHeight();
         int iw = i.left+i.right;
         int ih = i.top+i.bottom;
         int aw = 45;
