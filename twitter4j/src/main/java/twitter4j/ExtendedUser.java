@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package twitter4j;
 
 import org.w3c.dom.Element;
+import twitter4j.http.Response;
 
 import java.util.Date;
 
@@ -64,25 +65,26 @@ public class ExtendedUser extends UserWithStatus {
      notifications
      statuses_count 
     */
-    protected String profileBackgroundColor;
-    protected String profileTextColor;
-    protected String profileLinkColor;
-    protected String profileSidebarFillColor;
-    protected String profileSidebarBorderColor;
-    protected int friendsCount;
-    protected Date createdAt;
-    protected int favouritesCount;
-    protected int utcOffset;
-    protected String timeZone;
-    protected String profileBackgroundImageUrl;
-    protected String profileBackgroundTile;
-    protected boolean following;
-    protected boolean notificationEnabled;
-    protected int statusesCount;
+    private String profileBackgroundColor;
+    private String profileTextColor;
+    private String profileLinkColor;
+    private String profileSidebarFillColor;
+    private String profileSidebarBorderColor;
+    private int friendsCount;
+    private Date createdAt;
+    private int favouritesCount;
+    private int utcOffset;
+    private String timeZone;
+    private String profileBackgroundImageUrl;
+    private String profileBackgroundTile;
+    private boolean following;
+    private boolean notificationEnabled;
+    private int statusesCount;
     private static final long serialVersionUID = -8486230870587454252L;
 
-    public ExtendedUser(Element elem, Twitter twitter) throws TwitterException {
-        super(elem, twitter);
+    public ExtendedUser(Response res, Twitter twitter) throws TwitterException {
+        super(res, twitter);
+        Element elem = res.asDocument().getDocumentElement();
         profileBackgroundColor = getChildText("profile_background_color", elem);
         profileTextColor = getChildText("profile_text_color", elem);
         profileLinkColor = getChildText("profile_link_color", elem);

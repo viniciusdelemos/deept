@@ -26,62 +26,68 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
-import junit.framework.TestCase;
-
-import java.util.Map;
+import twitter4j.org.json.JSONException;
+import twitter4j.org.json.JSONObject;
 
 /**
+ * A data class representing Treand.
+ *
  * @author Yusuke Yamamoto - yusuke at mac.com
+ * @since Twitter4J 2.0.2
  */
-public class DispatcherTest extends TestCase {
-    private Dispatcher dispatcher = null;
+public class Trend implements java.io.Serializable{
+    private String name;
+    private String url = null;
+    private String query = null;
+    private static final long serialVersionUID = 1925956704460743946L;
 
-    public DispatcherTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        dispatcher = null;
-    }
-    public int count;
-
-    public void testInvokeLater() throws Exception{
-        String name = "test";
-        int threadcount = 1;
-        dispatcher = new Dispatcher(name, threadcount);
-        count = 0;
-        dispatcher.invokeLater(new IncrementTask());
-        dispatcher.invokeLater(new IncrementTask());
-        dispatcher.invokeLater(new IncrementTask());
-        Thread.sleep(300);
-        assertTrue(existsThread(name));
-        assertEquals(3,count);
-        dispatcher.shutdown();
-        Thread.sleep(500);
-        assertFalse(existsThread(name));
-    }
-    private boolean existsThread(String name){
-        boolean exists = false;
-        Map<Thread,StackTraceElement[]> allThreads = Thread.getAllStackTraces();
-        for(Thread thread : allThreads.keySet()){
-            if(-1 != thread.getName().indexOf(name)){
-                exists = true;
-                break;
-            }
+    public Trend(JSONObject json) throws JSONException {
+        this.name = json.getString("name");
+        if (!json.isNull("url")) {
+            this.url = json.getString("url");
         }
-        return exists;
+        if (!json.isNull("query")) {
+            this.query = json.getString("query");
+        }
     }
 
-    class IncrementTask implements Runnable {
-        public void run() {
-            System.out.println("executed");
-            count++;
-        }
-    };
+    public String getName() {
+        return name;
+    }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Trend)) return false;
+
+        Trend trend = (Trend) o;
+
+        if (!name.equals(trend.name)) return false;
+        if (!url.equals(trend.url)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + url.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Trend{" +
+                "name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }
