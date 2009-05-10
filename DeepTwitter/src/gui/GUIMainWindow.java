@@ -40,6 +40,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonShowAll = new javax.swing.JButton();
         checkBoxCurvedEdges = new javax.swing.JCheckBox();
         labelAPILimit = new javax.swing.JLabel();
+        checkBoxToolTipControl = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         buttonAddUpdate = new javax.swing.JButton();
@@ -136,6 +137,11 @@ public class GUIMainWindow extends javax.swing.JFrame {
         labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         labelAPILimit.setText("Requisições API:");
 
+        checkBoxToolTipControl.setBackground(new java.awt.Color(255, 255, 255));
+        checkBoxToolTipControl.setText("infos de usuário");
+        checkBoxToolTipControl.setActionCommand("checkBoxToolTipControl");
+        checkBoxToolTipControl.setName("checkBoxToolTipControl"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -143,9 +149,10 @@ public class GUIMainWindow extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(checkBoxToolTipControl)
                     .addComponent(labelAPILimit)
-                    .addComponent(checkBoxCurvedEdges)
                     .addComponent(labelFilter)
+                    .addComponent(checkBoxCurvedEdges)
                     .addComponent(checkBoxHighQuality)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(buttonShowAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -178,11 +185,13 @@ public class GUIMainWindow extends javax.swing.JFrame {
                 .addComponent(checkBoxHighQuality)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(checkBoxCurvedEdges)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(checkBoxToolTipControl)
                 .addGap(7, 7, 7)
                 .addComponent(labelFilter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(labelAPILimit)
-                .addContainerGap(195, Short.MAX_VALUE))
+                .addContainerGap(172, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Interações", jPanel1);
@@ -401,6 +410,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
 
         checkBoxHighQuality.addActionListener(listener);
         checkBoxCurvedEdges.addActionListener(listener);
+        checkBoxToolTipControl.addActionListener(listener);
 	}
 
     public boolean isHighQuality() {
@@ -409,6 +419,10 @@ public class GUIMainWindow extends javax.swing.JFrame {
 
     public boolean isCurvedEdges() {
         return checkBoxCurvedEdges.isSelected();
+    }
+    
+    public boolean isToolTipControlOn() {
+        return checkBoxToolTipControl.isSelected();
     }
 
     public boolean isStatusBarVisible() {
@@ -446,7 +460,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     public void setCloseUserEnabled(boolean b) {
         buttonCloseUpdates.setEnabled(b);
     }
-    
+
     public void setRateLimitStatus(int left, int total, Date resetDate) {
         labelAPILimit.setText("Requisições API: "+left+"/"+total+" Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
     }
@@ -472,6 +486,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonUpdate;
     private javax.swing.JCheckBox checkBoxCurvedEdges;
     private javax.swing.JCheckBox checkBoxHighQuality;
+    private javax.swing.JCheckBox checkBoxToolTipControl;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;

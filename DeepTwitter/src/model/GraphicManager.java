@@ -59,6 +59,7 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
+import profusians.controls.GenericToolTipControl;
 import twitter4j.TwitterException;
 import controller.ControllerDeepTwitter;
 import controller.StatusTab;
@@ -82,6 +83,7 @@ public class GraphicManager extends Display {
     private SocialNetwork socialNetwork; 
     private VisualItem selectionBox;	
 	private PanControl panControl;
+	private GenericToolTipControl toolTipControl;
 	private EdgeRenderer edgeRenderer;
 	private TupleSet selectedNodes;
 	private AggregateTable groupTable;
@@ -257,6 +259,15 @@ public class GraphicManager extends Display {
     	addControlListener(new ListenerAdapter(this));
     	//addPaintListener(new ZoneBorderDrawing(zoneManager));
     	//addControlListener(new CenterOnClickControl(1000));
+    	
+    	String descriptions[] = { "Nome:", "Twitter ID:" };
+    	String data[] = { "name", "idTwitter" };
+
+    	toolTipControl = new GenericToolTipControl(descriptions,
+    		data, 100);
+
+    	addControlListener(toolTipControl);
+    	toolTipControl.setEnabled(false);
 
     	//executar ações associadas ao layout    	
     	m_vis.run("layout");    	
@@ -485,7 +496,11 @@ public class GraphicManager extends Display {
 	}
 		
 	public void setPanControlOn(boolean b) {
-		panControl.setEnabled(b);
+		panControl.setEnabled(b);		
+	}
+	
+	public void setToolTipControlOn(boolean b) {
+		toolTipControl.setEnabled(b);		
 	}
 	
 	public void clearSelection()

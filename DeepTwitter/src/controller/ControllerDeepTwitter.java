@@ -453,6 +453,9 @@ public class ControllerDeepTwitter {
 			else if(cmd.equals("checkBoxCurvedEdges")) {
 				gManager.setEdgeType(mainWindow.isCurvedEdges());
 			}
+			else if(cmd.equals("checkBoxToolTipControl")) {
+				gManager.setToolTipControlOn(mainWindow.isToolTipControlOn());
+			}
 		}
 	}
 	
