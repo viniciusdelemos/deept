@@ -3,12 +3,15 @@ package prefuse.demos;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import java.text.ChoiceFormat;
 import java.text.NumberFormat;
 import java.util.Iterator;
 
@@ -17,6 +20,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import prefuse.Constants;
@@ -133,12 +137,14 @@ public class Congress extends JPanel {
                 
         vis.setRendererFactory(new RendererFactory() {
             AbstractShapeRenderer sr = new ShapeRenderer();
-            Renderer arY = new AxisRenderer(Constants.RIGHT, Constants.TOP);
             Renderer arX = new AxisRenderer(Constants.CENTER, Constants.FAR_BOTTOM);
+    		Renderer arY = new AxisRenderer(Constants.FAR_LEFT, Constants.CENTER);
+    	    
             
             public Renderer getRenderer(VisualItem item) {
-                return item.isInGroup("ylab") ? arY :
-                       item.isInGroup("xlab") ? arX : sr;
+            	if(item.isInGroup("ylab")) return arY;
+            	else if(item.isInGroup("xlab")) return arX;
+            	else return sr;
             }
         });
         
@@ -162,23 +168,26 @@ public class Congress extends JPanel {
                 Constants.Y_AXIS, VisiblePredicate.TRUE);
         //yaxis.setScale(Constants.LOG_SCALE);
         yaxis.setRangeModel(receiptsQ.getModel());
-        receiptsQ.getNumberModel().setValueRange(0,65000000,0,65000000);
+        //receiptsQ.getNumberModel().setValueRange(0,65000000,0,65000000);
         
         xaxis.setLayoutBounds(m_dataB);
         yaxis.setLayoutBounds(m_dataB);
         
-        AxisLabelLayout ylabels = new AxisLabelLayout("ylab", yaxis, m_ylabB);
+        AxisLabelLayout ylabels = new AxisLabelLayout("ylab", yaxis,m_ylabB);
         NumberFormat nf = NumberFormat.getCurrencyInstance();
         nf.setMaximumFractionDigits(0);
         ylabels.setNumberFormat(nf);
         
-        AxisLabelLayout xlabels = new AxisLabelLayout("xlab", xaxis, m_xlabB, 15);
+        AxisLabelLayout xlabels = new AxisLabelLayout("xlab", xaxis,m_xlabB, 15);
+        xlabels.setSpacing(15);
         vis.putAction("xlabels", xlabels);
+        
+        
         
         // dems = blue, reps = red, other = gray
         int[] palette = new int[] {
             ColorLib.rgb(150,150,255), ColorLib.rgb(255,150,150),
-            ColorLib.rgb(180,180,180)
+            ColorLib.rgb(0,255,0)
         };
         DataColorAction color = new DataColorAction(group, "Party",
                 Constants.ORDINAL, VisualItem.STROKECOLOR, palette);
@@ -206,6 +215,7 @@ public class Congress extends JPanel {
         update.add(xaxis);
         update.add(yaxis);
         update.add(ylabels);
+        update.add(xlabels);
         update.add(new RepaintAction());
         vis.putAction("update", update);
         
@@ -228,7 +238,7 @@ public class Congress extends JPanel {
                 return score;
             }
         });
-        m_display.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        m_display.setBorder(BorderFactory.createEmptyBorder(10,80,10,10));
         m_display.setSize(700,450);
         m_display.setHighQuality(true);
         m_display.addComponentListener(new ComponentAdapter() {
@@ -314,7 +324,7 @@ public class Congress extends JPanel {
         vis.run("xlabels");
         
         add(infoBox, BorderLayout.NORTH);
-        add(m_display, BorderLayout.CENTER);
+        add(new JScrollPane(m_display), BorderLayout.CENTER);
         add(slider, BorderLayout.EAST);
         add(radioBox, BorderLayout.SOUTH);
         UILib.setColor(this, ColorLib.getColor(255,255,255), Color.GRAY);
@@ -330,11 +340,11 @@ public class Congress extends JPanel {
         int h = m_display.getHeight();
         int iw = i.left+i.right;
         int ih = i.top+i.bottom;
-        int aw = 85;
+        int aw = 45;
         int ah = 15;
-        
-        m_dataB.setRect(i.left, i.top, w-iw-aw, h-ih-ah);
-        m_xlabB.setRect(i.left, h-ah-i.bottom, w-iw-aw, ah-10);
+        System.out.println("x"+i.left+" y="+i.top+" width: "+(w-iw-aw)+" height: "+(h-ih-ah));
+        m_dataB.setRect(i.left+20, i.top, w-iw-aw, h-ih-ah);
+        m_xlabB.setRect(i.left+20, h-ah-i.bottom, w-iw-aw, ah-10);        
         m_ylabB.setRect(i.left, i.top, w-iw, h-ih-ah);
         
         m_vis.run("update");

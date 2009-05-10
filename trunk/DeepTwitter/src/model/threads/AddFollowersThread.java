@@ -4,16 +4,11 @@ import java.util.List;
 
 import model.GraphicManager;
 import model.MessageType;
-import model.twitter4j.TwitterResponseDeepT;
-import model.twitter4j.UserDeepT;
-
 import prefuse.data.Node;
 import prefuse.util.PrefuseLib;
-import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import twitter4j.UserWithStatus;
 import controller.ControllerDeepTwitter;
 
 public class AddFollowersThread extends Thread {
@@ -31,13 +26,13 @@ public class AddFollowersThread extends Thread {
 	public void run()
 	{
 		try {			
-			List<TwitterResponseDeepT> followers = controller.getTwitter().getFollowersDeepT(source.get("idTwitter").toString());
+			List<User> followers = controller.getTwitter().getFollowers(source.get("idTwitter").toString());
 			int notAdded = 0;
 			boolean isShowingFollowers = source.getBoolean("isShowingFollowers");
 			
-			for(TwitterResponseDeepT user : followers)
+			for(User user : followers)
 			{
-				TwitterResponseDeepT u = gManager.getUser(user.getUserDeepT().getId());					
+				User u = gManager.getUser(user.getId());					
 				
 				if(u == null)
 				{	
@@ -54,7 +49,7 @@ public class AddFollowersThread extends Thread {
 				}
 				else if(!isShowingFollowers)
 				{
-					Node n = gManager.getNodeByTwitterId(u.getUserDeepT().getId());
+					Node n = gManager.getNodeByTwitterId(u.getId());
 					gManager.addEdge(n,(Node)source.getSourceTuple());
 					notAdded++;
 				}

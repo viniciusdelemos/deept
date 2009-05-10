@@ -102,8 +102,8 @@ public class GenericToolTipControl extends ControlAdapter {
 
 	if (someInfo) {
 	    m_sbuf.append("</table>");
-	    m_sbuf
-		    .append("<hr size=1 width=\"97%\"><div align=\"right\"><font color=\"#999999\">esc to close&nbsp;</font></div>");
+	    //m_sbuf
+		    //.append("<hr size=1 width=\"97%\"><div align=\"right\"><font color=\"#999999\">esc to close&nbsp;</font></div>");
 	    m_sbuf.append("</html>");
 
 	     Display disp = (Display) e.getSource(); // the display
