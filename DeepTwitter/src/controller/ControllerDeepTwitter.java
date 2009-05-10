@@ -9,10 +9,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -25,12 +23,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import model.GraphicManager;
 import model.MessageType;
-import model.threads.StatusesTableThread;
-import model.twitter4j.ExtendedUserDeepT;
-import model.twitter4j.TwitterDeepT;
-import model.twitter4j.TwitterMod;
-import model.twitter4j.UserDeepT;
 import model.StatusesType;
+import model.threads.StatusesTableThread;
+import model.twitter4j.TwitterDeepT;
+import model.twitter4j.TwitterResponseDeepT;
+import model.twitter4j.UserDeepT;
 import prefuse.Display;
 import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
@@ -38,11 +35,8 @@ import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
 import twitter4j.ExtendedUser;
 import twitter4j.RateLimitStatus;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import twitter4j.UserWithStatus;
-import twitter4j.examples.Update;
 
 public class ControllerDeepTwitter {
 	private GUILoginDeepTwitter loginWindow;
@@ -92,19 +86,7 @@ public class ControllerDeepTwitter {
 		return gManager.getUserName(Integer.parseInt(id));
 	}
 	
-	public void searchAndAddUserToNetwork(User u){
-		try{
-			ExtendedUser extendedUser = twitter.verifyCredentials();
-			UserDeepT userDeepT = new UserDeepT(extendedUser);
-			gManager.searchAndAddUserToNetwork(userDeepT);
-		}catch(TwitterException e){
-			e.printStackTrace();
-			//nao é grave, só coloquei assim para poder ver no console se acontecer
-			System.out.println("PROBLEMA MUIIIIIIIIIIIIIITO GRAVE");
-		}
-	}
-	
-	public void searchAndAddUserToNetwork(UserDeepT u) {
+	public void searchAndAddUserToNetwork(TwitterResponseDeepT u) {
 		gManager.searchAndAddUserToNetwork(u);
 	}
 	
@@ -154,7 +136,7 @@ public class ControllerDeepTwitter {
 			boolean logInOK = false;
 			isTwitterUser = loginWindow.isTwitterUser();
 			
-			ExtendedUser user = null;
+			TwitterResponseDeepT user = null;
 			
 			try{
 				if(isTwitterUser)
@@ -163,7 +145,7 @@ public class ControllerDeepTwitter {
 					{
 						twitter = new TwitterDeepT(loginWindow.getUser(),loginWindow.getPassword());
 						
-						user = twitter.verifyCredentials(); //Se usuario ou senha invalido,
+						user = twitter.verifyCredentialsDeepT(); //Se usuario ou senha invalido,
 						//gerado excecao com statusCode = 401
 						
 						logInOK = true;
@@ -183,9 +165,9 @@ public class ControllerDeepTwitter {
 
 				if(logInOK)
 				{
-					UserDeepT u = new UserDeepT(user);
+					TwitterResponseDeepT u = user;
 					
-					loggedUserId = String.valueOf(u.getId());
+					loggedUserId = String.valueOf(u.getUserDeepT().getId());
 					gManager = new GraphicManager();
 				
 					//User u2 = twitter.getAuthenticatedUser();
@@ -204,7 +186,7 @@ public class ControllerDeepTwitter {
 					tabManager = new StatusTabManager();
 					tabManager.setTabbedPane(windowTabs);
 					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //1
-					tabManager.addTab(StatusesType.REPLIES,"@"+u.getScreenName()); //2
+					tabManager.addTab(StatusesType.REPLIES,"@"+u.getUserDeepT().getScreenName()); //2
 					tabManager.addTab(StatusesType.FAVORITES,"Favoritos"); //3
 					tabManager.addTab(StatusesType.DIRECT_MESSAGES,"Mensagens"); //4
 					tabManager.addTab(StatusesType.SEARCH, "Busca"); //5
@@ -448,8 +430,7 @@ public class ControllerDeepTwitter {
 					String id = guiAddUser.getUser();
 					if(!id.equals("")) {
 						System.out.println("=> Requesting user to Twitter");
-						ExtendedUser extendedUser = twitter.getUserDetail(id);
-						UserDeepT u = new UserDeepT(extendedUser);
+						TwitterResponseDeepT u= twitter.getUserDetailDeepT(id);
 						System.out.println("=> Got user");
 						gManager.searchAndAddUserToNetwork(u);								
 						guiAddUser.dispose();

@@ -4,6 +4,7 @@ import java.util.List;
 
 import model.GraphicManager;
 import model.MessageType;
+import model.twitter4j.TwitterResponseDeepT;
 import model.twitter4j.UserDeepT;
 
 import prefuse.data.Node;
@@ -31,15 +32,15 @@ public class AddFriendsThread extends Thread {
 	{
 		try {
 			System.out.println("GETTING FRIENDS FOR "+source.get("name"));
-			List<UserDeepT> friends = controller.getTwitter().getFriendsDeepT(source.get("idTwitter").toString());
+			List<TwitterResponseDeepT> friends = controller.getTwitter().getFriendsDeepT(source.get("idTwitter").toString());
 			System.out.println("GOT FRIENDS FOR "+source.get("name"));
 
 			int notAdded = 0;
 			boolean isShowingFriends = source.getBoolean("isShowingFriends");
 			
-			for(UserDeepT user : friends)
+			for(TwitterResponseDeepT user : friends)
 			{
-				UserDeepT u = gManager.getUser(user.getId());					
+				TwitterResponseDeepT u = gManager.getUser(user.getUserDeepT().getId());					
 				
 				if(u == null)
 				{	
@@ -56,7 +57,7 @@ public class AddFriendsThread extends Thread {
 				}
 				else if(!isShowingFriends)
 				{
-					Node n = gManager.getNodeByTwitterId(u.getId());
+					Node n = gManager.getNodeByTwitterId(u.getUserDeepT().getId());
 					gManager.addEdge((Node)source.getSourceTuple(), n);
 					notAdded++;
 				}
