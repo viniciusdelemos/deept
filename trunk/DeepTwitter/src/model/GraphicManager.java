@@ -101,7 +101,7 @@ public class GraphicManager extends Display {
     	//modo qualidade - setar para falso para melhor desempenho
     	isHighQuality = true;
     	numUsers = 0;
-    	groupId = 1;
+    	groupId = 0;
     	
     	g = new Graph(true);
     	g.addColumn("id", int.class);//Integer.class);
@@ -111,6 +111,7 @@ public class GraphicManager extends Display {
     	g.addColumn("isOpen", boolean.class); 
     	g.addColumn("isShowingFriends", boolean.class);
     	g.addColumn("isShowingFollowers", boolean.class);
+    	g.addColumn("groupId", int.class);
     	g.addColumn("weight", float.class);
     	   	
     	// add visual data groups
@@ -284,7 +285,8 @@ public class GraphicManager extends Display {
 			newNode.set("isOpen", false);
 			newNode.set("isShowingFriends", false);
 			newNode.set("isShowingFollowers", false);
-			nodesMap.put(u.getId(), newNode);
+			newNode.set("groupId", -1);
+			nodesMap.put(u.getId(), newNode);			
 			if (numUsers == 0) {
 				VisualItem mainUser = getVisualization().getVisualItem(NODES,
 						newNode);
@@ -316,7 +318,6 @@ public class GraphicManager extends Display {
     }
     
     public void centerItem(VisualItem item) {
-    	System.out.println(item);
     	double scale = getScale();
 		double displayX = getDisplayX();
 		double displayY = getDisplayY();
@@ -340,7 +341,6 @@ public class GraphicManager extends Display {
 		g.removeEdge(e);
 	}
     
-
     public void setEdgeType(boolean isCurved) {
     	if(isCurved)
     		edgeType = Constants.EDGE_TYPE_CURVE;
@@ -348,26 +348,48 @@ public class GraphicManager extends Display {
     		edgeType = Constants.EDGE_TYPE_LINE;
     	edgeRenderer.setEdgeType(edgeType);
     }
-    
-    
-    public void createGroup()
+        
+    public void addGroup()
 	{
-		//ZoneShape zone = new RectangularZoneShape(x,y,w,h);
-		//int i = zoneManager.createAndAddZone(zone);
-    	if(selectedNodes.getTupleCount()<2) {
+		if(selectedNodes.getTupleCount()<2) {
     		controller.showMessageDialog("Você deve selecionar dois ou mais usuários para criar um grupo.",MessageType.INFORMATION);
     		return;
     	}
     	AggregateItem group = (AggregateItem)groupTable.addItem();    	
-    	group.setInt("id", groupId);    	
+    	group.setInt("id", groupId);    
+    	   	
+    	Iterator<NodeItem> selected = selectedNodes.tuples();    	
+    	while(selected.hasNext())
+    		addToGroup(selected.next(), group);    		
     	
+    	clearSelection();
     	groupId++;
-    	
-    	NodeItem currentItem;
-    	NodeItem previousItem = null;
-    	Iterator selected = selectedNodes.tuples();
-    	
-//    	while(selected.hasNext()) {
+	}
+    
+    public void addToGroup(NodeItem n, AggregateItem group) {
+    	int groupId = group.getInt("id");
+    	group.addItem(n);
+		n.setInt("groupId", groupId);
+		//alterar o peso de sua aresta para o grupo se distanciar dos demais nodos
+		Iterator edges = n.edges();
+		while(edges.hasNext()) {
+			EdgeItem edge = (EdgeItem)edges.next();
+			NodeItem source = edge.getSourceItem();
+			NodeItem target = edge.getTargetItem();
+			if(source == n) {
+				if(!group.containsItem(target))
+					edge.set("weight", 340f);    				
+				else
+					edge.set("weight", 0f);
+			}
+			if(target == n) {
+				if(!group.containsItem(source))
+					edge.set("weight", 340f);
+				else
+					edge.set("weight", 0f);
+			}
+//TODO: linkar nodos com nodos do grupoo			
+//	    	while(selected.hasNext()) {
 //    		
 //    		currentItem = (NodeItem)selected.next();
 //    		if(previousItem != null) {
@@ -375,31 +397,33 @@ public class GraphicManager extends Display {
 //    		}
 //    		previousItem = currentItem;
 //    	}
+			//previousItem = currentItem;
+		}
+    }
+    
+    public void removeFromGroup(NodeItem n) {
+    	int groupId = n.getInt("groupId");
+    	if(groupId<0) return;
     	
-    	while(selected.hasNext()) {
-    		currentItem = (NodeItem)selected.next();  
-    		group.addItem(currentItem); 
-    		//alterar o peso de sua aresta para o grupo se distanciar dos demais nodos
-    		Iterator edges = currentItem.edges();
-    		while(edges.hasNext()) {
-    			EdgeItem edge = (EdgeItem)edges.next();
-    			NodeItem source = edge.getSourceItem();
-    			NodeItem target = edge.getTargetItem();
-    			if(source == currentItem) {
-    				if(!group.containsItem(target)) {
-    					edge.set("weight", 340);
-    				}
-    			}
-    			if(target == currentItem) {
-    				if(!group.containsItem(source)) {
-    					edge.set("weight", 340);
-    				}
-    			}
-    			previousItem = currentItem;
-    		}    		
-    	}    	
-    	clearSelection();
-	}
+    	AggregateItem ai = (AggregateItem) groupTable.getItem(groupId);
+    	ai.removeItem(n);
+    	n.setInt("groupId", -1);
+    	//TODO para os amigos e nao ele
+    	n.setFloat("weight", 0f);
+    }
+    
+    public void removeGroup(AggregateItem ai) {
+    	Iterator<NodeItem> i = ai.items();
+    	while(i.hasNext()) {
+    		NodeItem n = i.next();
+    		removeFromGroup(n);
+    	}
+    	groupTable.removeRow(ai.getInt("id"));    
+    }
+    
+    public AggregateTable getGroups() {
+    	return groupTable;
+    }
     
 	public Node getNodeById(int id) {
 		return g.getNode(id);
@@ -545,6 +569,7 @@ public class GraphicManager extends Display {
     		JMenuItem openURL = new JMenuItem("Abrir URL");
     		JMenuItem block = new JMenuItem("Bloquear"); 
     		JMenuItem followers = new JMenuItem("Ver Seguidores");
+    		JMenuItem removeFromGroup = new JMenuItem("Remover do Grupo");
     		 
     		Integer loggedUserId = Integer.parseInt(controller.getLoggedUserId());
     		Node mainUserNode = getNodeByTwitterId(loggedUserId);			
@@ -572,7 +597,8 @@ public class GraphicManager extends Display {
     			//TODO inserir algo para mostrar que bloqueou e remover amizade entre os 2!    			
     			nodeMenu.add(block);
     		}
-    		
+    		if(clickedNode.getInt("groupId")>=0)
+    			nodeMenu.add(removeFromGroup);
     		nodeMenu.addSeparator();
     		nodeMenu.add(openURL);
 			
@@ -647,7 +673,11 @@ public class GraphicManager extends Display {
     			public void actionPerformed(ActionEvent e) {
     				new URLLinkAction("http://www.twitter.com/"+clickedUserName);					
     			}});
-    		
+    		removeFromGroup.addActionListener(new ActionListener(){
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    				removeFromGroup((NodeItem)clickedItem);				
+    			}});
     		//create popupMenu for 'background'
     		//JPopupMenu backgroundMenu = new JPopupMenu(); 
     		// ....
@@ -656,7 +686,7 @@ public class GraphicManager extends Display {
 		
 		public void itemClicked(VisualItem item, MouseEvent e) {
 			clickedItem = item;
-			System.out.println(item);
+			//System.out.println(item);
 			if (!(item instanceof NodeItem)) return;
 			
 			//zoneManager.addItemToZone((NodeItem)item, 0);				
