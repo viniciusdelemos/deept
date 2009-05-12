@@ -2,14 +2,21 @@ package model;
 
 import java.awt.BasicStroke;
 import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import prefuse.Display;
 import prefuse.controls.ControlAdapter;
+import prefuse.data.tuple.TupleSet;
 import prefuse.visual.AggregateItem;
+import prefuse.visual.AggregateTable;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
@@ -41,7 +48,6 @@ public class AggregateDragControl extends ControlAdapter {
         activeItem = item;
         //if ( !(item instanceof AggregateItem) )
             setFixed(item, true);
-            
         if(item instanceof NodeItem) {
         	NodeItem selectedItem = (NodeItem)item;
         	selectedItem.setStroke(new BasicStroke(1.5f));
@@ -84,15 +90,20 @@ public class AggregateDragControl extends ControlAdapter {
         if(item instanceof NodeItem) {
         	NodeItem selectedItem = (NodeItem)item;
         	//TODO se item estiver selecionado, voltar a cor de selecao
-        	selectedItem.setFillColor(ChartColor.TRANSLUCENT);
-        	selectedItem.setStrokeColor(ChartColor.TRANSLUCENT);
+//        	TupleSet selectedNodes = gManager.getTupleSet(GraphicManager.SELECTED_NODES);
+//        	if(!selectedNodes.containsTuple(selectedItem)) {
+        		selectedItem.setFillColor(ChartColor.TRANSLUCENT);
+        		selectedItem.setStrokeColor(ChartColor.TRANSLUCENT);
+//        	}
         	
         	Iterator<NodeItem> i = selectedItem.neighbors();
         	while(i.hasNext()) {
         		NodeItem neighbor = i.next();        		
         		//TODO se item estiver selecionado, voltar a cor de selecao
-        		neighbor.setStrokeColor(ChartColor.TRANSLUCENT);
-        		neighbor.setFillColor(ChartColor.TRANSLUCENT);
+//        		if(!selectedNodes.containsTuple(selectedItem)) {
+        			neighbor.setStrokeColor(ChartColor.TRANSLUCENT);
+        			neighbor.setFillColor(ChartColor.TRANSLUCENT);
+//        		}
         	}
         }
     }
@@ -114,8 +125,26 @@ public class AggregateDragControl extends ControlAdapter {
      */
     public void itemReleased(VisualItem item, MouseEvent e) {
         if (!SwingUtilities.isLeftMouseButton(e)) return;
+        AggregateTable at = gManager.getGroups();
         if ( dragged ) {
             activeItem = null;
+            if(item instanceof NodeItem)
+            	for(int i=0; i<at.getRowCount(); i++) {
+            		final AggregateItem group = (AggregateItem)at.getItem(i);
+            		if(item.getBounds().intersects(group.getBounds()) && item.getInt("groupId")<0) {
+            			JPopupMenu menu = new JPopupMenu();
+            			JMenuItem addToGroup = new JMenuItem("Adicionar ao grupo");
+            			final NodeItem ni = (NodeItem) item;
+            			addToGroup.addActionListener(new ActionListener(){
+            				@Override
+            				public void actionPerformed(ActionEvent arg0) {
+            					gManager.addToGroup(ni,group);
+            				}});
+            			menu.add(addToGroup);
+            			menu.show(e.getComponent(), e.getX(), e.getY());
+            			break;
+            	}
+            }            
             setFixed(item, false);
             dragged = false;
         }            
