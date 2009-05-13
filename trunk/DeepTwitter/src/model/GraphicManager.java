@@ -88,6 +88,7 @@ public class GraphicManager extends Display {
 	private TupleSet selectedNodes;
 	private AggregateTable groupTable;
 	private ControllerDeepTwitter controller;
+	private float WEIGHT_VALUE;
 	
     public GraphicManager()
     {    	
@@ -102,6 +103,7 @@ public class GraphicManager extends Display {
     	isHighQuality = true;
     	numUsers = 0;
     	groupId = 0;
+    	WEIGHT_VALUE = 370f;
     	
     	g = new Graph(true);
     	g.addColumn("id", int.class);//Integer.class);
@@ -378,13 +380,13 @@ public class GraphicManager extends Display {
 			NodeItem target = edge.getTargetItem();
 			if(source == n) {
 				if(!group.containsItem(target))
-					edge.set("weight", 340f);    				
+					edge.set("weight", WEIGHT_VALUE);    				
 				else
 					edge.set("weight", 0f);
 			}
 			if(target == n) {
 				if(!group.containsItem(source))
-					edge.set("weight", 340f);
+					edge.set("weight", WEIGHT_VALUE);
 				else
 					edge.set("weight", 0f);
 			}			
@@ -561,6 +563,11 @@ public class GraphicManager extends Display {
 		
 		public void createPopupMenu(VisualItem item)
 		{
+			if(item instanceof AggregateItem) {
+				System.out.println("Aggregate");				
+				return;
+			}
+			
 			final String clickedUserName = getUser(item.getInt("idTwitter")).getScreenName();
 			nodeMenu = new JPopupMenu();
 			
@@ -691,7 +698,7 @@ public class GraphicManager extends Display {
 		
 		public void itemClicked(VisualItem item, MouseEvent e) {
 			clickedItem = item;
-			//System.out.println(item);
+			System.out.println(item);
 			if (!(item instanceof NodeItem)) return;
 			
 			//zoneManager.addItemToZone((NodeItem)item, 0);				
