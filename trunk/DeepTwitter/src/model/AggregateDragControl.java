@@ -17,6 +17,7 @@ import prefuse.controls.ControlAdapter;
 import prefuse.data.tuple.TupleSet;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
+import prefuse.visual.EdgeItem;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
@@ -48,6 +49,7 @@ public class AggregateDragControl extends ControlAdapter {
         activeItem = item;
         //if ( !(item instanceof AggregateItem) )
             setFixed(item, true);
+            if(item instanceof EdgeItem) System.out.println(item);
         if(item instanceof NodeItem) {
         	NodeItem selectedItem = (NodeItem)item;
         	selectedItem.setStroke(new BasicStroke(1.5f));
