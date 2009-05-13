@@ -330,9 +330,9 @@ public class GraphicManager extends Display {
 		animatePan(moveX, moveY, 1000);
     }
     
-    public void addEdge(Node source, Node target) {
+    public Edge addEdge(Node source, Node target) {
     	synchronized(m_vis) {
-    		g.addEdge(source, target);	
+    		return g.addEdge(source, target);	
     	}
 	}
     
@@ -371,9 +371,9 @@ public class GraphicManager extends Display {
     	group.addItem(n);
 		n.setInt("groupId", groupId);
 		//alterar o peso de sua aresta para o grupo se distanciar dos demais nodos
-		Iterator edges = n.edges();
+		Iterator<EdgeItem> edges = n.edges();
 		while(edges.hasNext()) {
-			EdgeItem edge = (EdgeItem)edges.next();
+			EdgeItem edge = edges.next();
 			NodeItem source = edge.getSourceItem();
 			NodeItem target = edge.getTargetItem();
 			if(source == n) {
@@ -387,17 +387,19 @@ public class GraphicManager extends Display {
 					edge.set("weight", 340f);
 				else
 					edge.set("weight", 0f);
-			}
-//TODO: linkar nodos com nodos do grupoo			
-//	    	while(selected.hasNext()) {
-//    		
-//    		currentItem = (NodeItem)selected.next();
-//    		if(previousItem != null) {
-//    			addEdge((Node)previousItem.getSourceTuple(), (Node)currentItem.getSourceTuple());
-//    		}
-//    		previousItem = currentItem;
-//    	}
-			//previousItem = currentItem;
+			}			
+		}
+		
+		Iterator<NodeItem> nodes = group.items();
+		while(nodes.hasNext()) {
+			NodeItem next = nodes.next();
+			Edge e = g.addEdge((Node)next.getSourceTuple(), (Node)n.getSourceTuple());			
+			//setando -1 para indicar que eh aresta invisível
+			e.setFloat("weight", -1f); 		
+			VisualItem edge = getVisualization().getVisualItem(EDGES,e);			
+			edge.setStrokeColor(ChartColor.RED.getRGB());
+			edge.setFillColor(Color.blue.getRGB());
+			edge.setStroke(new BasicStroke(0f));
 		}
     }
     
@@ -408,8 +410,11 @@ public class GraphicManager extends Display {
     	AggregateItem ai = (AggregateItem) groupTable.getItem(groupId);
     	ai.removeItem(n);
     	n.setInt("groupId", -1);
-    	//TODO para os amigos e nao ele
-    	n.setFloat("weight", 0f);
+    	Iterator<EdgeItem> i = n.edges();
+    	while(i.hasNext()) {
+    		EdgeItem edge = i.next();
+    		edge.setFloat("weight", 0f);
+    	}
     }
     
     public void removeGroup(AggregateItem ai) {
