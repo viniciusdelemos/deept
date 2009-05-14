@@ -47,6 +47,8 @@ public class AggregateDragControl extends ControlAdapter {
         Display d = (Display)e.getSource();
         if(!(item instanceof EdgeItem))
         	d.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        else
+        	System.out.println(item);
         activeItem = item;
         //if ( !(item instanceof AggregateItem) )
             setFixed(item, true);

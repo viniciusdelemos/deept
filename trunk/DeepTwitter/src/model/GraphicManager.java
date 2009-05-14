@@ -132,6 +132,7 @@ public class GraphicManager extends Display {
     	edgeRenderer = new EdgeRenderer(edgeType,prefuse.Constants.EDGE_ARROW_FORWARD);
     	edgeRenderer.setArrowHeadSize(20,20);   
     	edgeRenderer.setDefaultLineWidth(2);   	
+    	
     	//edgeRenderer.setHorizontalAlignment1(prefuse.Constants.CENTER);
     	//edgeRenderer.setHorizontalAlignment2(prefuse.Constants.CENTER);
     	
@@ -168,9 +169,11 @@ public class GraphicManager extends Display {
 
     	ColorAction edgeStroke = new ColorAction(EDGES, VisualItem.STROKECOLOR);
     	edgeStroke.setDefaultColor(edgeColor); 
+    	edgeStroke.add("weight==-1", ChartColor.TRANSLUCENT);
 
     	ColorAction edgeArrow = new ColorAction(EDGES,VisualItem.FILLCOLOR);
     	edgeArrow.setDefaultColor(edgeColor);
+    	edgeArrow.add("weight==-1", ChartColor.TRANSLUCENT);
     	
     	ColorAction groupStroke = new ColorAction(GROUPS, VisualItem.STROKECOLOR);
         groupStroke.setDefaultColor(ColorLib.gray(200));
@@ -339,9 +342,15 @@ public class GraphicManager extends Display {
 	}
     
     public void removeEdge(Node source, Node target) {
-		Edge e = g.getEdge(source, target);
-		g.removeEdge(e);
+    	Edge e = g.getEdge(source, target);
+    	removeEdge(e);
 	}
+    
+    public void removeEdge(Edge e) {
+    	synchronized(m_vis) {
+    		g.removeEdge(e);    
+    	}
+    }
     
     public void setEdgeType(boolean isCurved) {
     	if(isCurved)
@@ -395,13 +404,9 @@ public class GraphicManager extends Display {
 		Iterator<NodeItem> nodes = group.items();
 		while(nodes.hasNext()) {
 			NodeItem next = nodes.next();
-			Edge e = g.addEdge((Node)next.getSourceTuple(), (Node)n.getSourceTuple());			
-			//setando -1 para indicar que eh aresta invisível
-			e.setFloat("weight", -1f); 		
-			VisualItem edge = getVisualization().getVisualItem(EDGES,e);			
-			edge.setStrokeColor(ChartColor.RED.getRGB());
-			edge.setFillColor(Color.blue.getRGB());
-			edge.setStroke(new BasicStroke(0f));
+			Edge e = addEdge((Node)next.getSourceTuple(), (Node)n.getSourceTuple());			
+			//setando -1 para indicar que é aresta falsa (invisível)
+			e.setFloat("weight", -1f);
 		}
     }
     
@@ -413,10 +418,27 @@ public class GraphicManager extends Display {
     	ai.removeItem(n);
     	n.setInt("groupId", -1);
     	Iterator<EdgeItem> i = n.edges();
+    	
+    	//TODO: trocar esta gambiarra por algo menos custoso?
+    	boolean aindaTem = true;
+    	while(aindaTem)
     	while(i.hasNext()) {
-    		EdgeItem edge = i.next();
-    		edge.setFloat("weight", 0f);
+    		try{
+    			EdgeItem edge = i.next();
+    			if(edge.getFloat("weight")==WEIGHT_VALUE) 
+    				edge.setFloat("weight", 0f);
+    			else if(edge.getFloat("weight")==-1.0f) 
+    				removeEdge((Edge)edge.getSourceTuple());
+    		}
+    		catch(IllegalArgumentException e) {
+    			aindaTem = true;
+    			i = n.edges();
+    			System.out.println("TODO: loop de gambiarra (tentar evitar)");
+    		}
+    		aindaTem = false;
     	}
+    	
+    	
     }
     
     public void removeGroup(AggregateItem ai) {
@@ -561,10 +583,9 @@ public class GraphicManager extends Display {
 		    rect = new Rectangle2D.Float();							
 		}
 		
-		public void createPopupMenu(VisualItem item)
+		public void createNodeMenu(NodeItem item)
 		{
-			if(item instanceof AggregateItem) {
-				System.out.println("Aggregate");				
+			if(!(item instanceof NodeItem)) {
 				return;
 			}
 			
@@ -584,20 +605,19 @@ public class GraphicManager extends Display {
     		JMenuItem removeFromGroup = new JMenuItem("Remover do Grupo");
     		 
     		Integer loggedUserId = Integer.parseInt(controller.getLoggedUserId());
-    		Node mainUserNode = getNodeByTwitterId(loggedUserId);			
-			Node clickedNode = (Node)item.getSourceTuple();
+    		Node mainUserNode = getNodeByTwitterId(loggedUserId);
 			
 			nodeMenu.add(updates);
     		nodeMenu.add(friends); //é necessário?
     		nodeMenu.add(followers);
     		nodeMenu.add(favorites);
     		
-    		if(!clickedNode.get("idTwitter").equals(loggedUserId)) { 
+    		if(!item.get("idTwitter").equals(loggedUserId)) { 
     			nodeMenu.addSeparator();
     			nodeMenu.add(sendReply);
     			nodeMenu.add(sendMessage);
     			//verifica se estou seguindo o usuário destino
-    			int edge = g.getEdge(mainUserNode.getInt("id"), clickedNode.getInt("id"));
+    			int edge = g.getEdge(mainUserNode.getInt("id"), item.getInt("id"));
     			if(edge == -1) 
     				nodeMenu.add(follow);    			
     			else 
@@ -609,7 +629,7 @@ public class GraphicManager extends Display {
     			//TODO inserir algo para mostrar que bloqueou e remover amizade entre os 2!    			
     			nodeMenu.add(block);
     		}
-    		if(clickedNode.getInt("groupId")>=0)
+    		if(item.getInt("groupId")>=0)
     			nodeMenu.add(removeFromGroup);
     		nodeMenu.addSeparator();
     		nodeMenu.add(openURL);
@@ -694,18 +714,31 @@ public class GraphicManager extends Display {
     		//JPopupMenu backgroundMenu = new JPopupMenu(); 
     		// ....
     		//addNode.addActionListener(this);
-		}	
+		}
+		
+		public void createGroupMenu(final AggregateItem item) {
+			nodeMenu = new JPopupMenu();
+			JMenuItem removeGroup = new JMenuItem("Deletar Grupo");
+			nodeMenu.add(removeGroup);
+			
+			removeGroup.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					removeGroup(item);
+				}});
+		}
 		
 		public void itemClicked(VisualItem item, MouseEvent e) {
 			clickedItem = item;
-			System.out.println(item);
-			if (!(item instanceof NodeItem)) return;
-			
-			//zoneManager.addItemToZone((NodeItem)item, 0);				
-			
+				
+			if(!(clickedItem instanceof NodeItem || clickedItem instanceof AggregateItem)) return;
+					
 			if(SwingUtilities.isRightMouseButton(e))
 			{				
-				createPopupMenu(item);
+				if(clickedItem instanceof AggregateItem) 
+					createGroupMenu((AggregateItem)item);		
+				else if (clickedItem instanceof NodeItem)
+					createNodeMenu((NodeItem)item);
 				nodeMenu.show(e.getComponent(), e.getX(), e.getY());
 				clickedItem.setFixed(true);
 			}
