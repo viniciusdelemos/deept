@@ -417,7 +417,7 @@ public class ControllerDeepTwitter {
 				}					
 			}
 			else if(cmd.equals("buttonNewGroup")) {
-				gManager.addGroup();
+				gManager.getGroupManager().addGroup();
 			}
 			else if(cmd.equals("buttonAddUser")) {
 				if(guiAddUser == null) {

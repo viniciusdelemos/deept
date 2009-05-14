@@ -306,7 +306,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jToolBar1.add(jSeparator5);
 
         buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
-        buttonTimeline.setToolTipText("Configurações");
+        buttonTimeline.setToolTipText("Ver timeline de atualizações");
         buttonTimeline.setActionCommand("buttonTimeline");
         buttonTimeline.setFocusable(false);
         buttonTimeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);

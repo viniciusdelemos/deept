@@ -143,7 +143,7 @@ public class AggregateDragControl extends ControlAdapter {
             			addToGroup.addActionListener(new ActionListener(){
             				@Override
             				public void actionPerformed(ActionEvent arg0) {
-            					gManager.addToGroup(ni,group);
+            					gManager.getGroupManager().addToGroup(ni,group);
             				}});
             			menu.add(addToGroup);
             			menu.show(e.getComponent(), e.getX(), e.getY());

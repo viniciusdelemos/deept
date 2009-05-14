@@ -9,12 +9,12 @@ import twitter4j.User;
 
 public class SocialNetwork {   
     private Map<Integer,User> usersMap;
-    private List<UsersGroup> listUsersGroup;
+    private List<GroupManager> listUsersGroup;
     private int groupId;
     
     public SocialNetwork() {        
         usersMap = new HashMap<Integer, User>();     
-        listUsersGroup = new ArrayList<UsersGroup>();
+        listUsersGroup = new ArrayList<GroupManager>();
         groupId = 0;
     }
     
