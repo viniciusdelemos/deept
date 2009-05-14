@@ -16,5 +16,5 @@ public class WeightedForceDirectedLayout extends ForceDirectedLayout {
 			return e.getFloat("weight"); 
 		else 
 			return super.getSpringLength(e); 
-	} 
+	}
 } 
