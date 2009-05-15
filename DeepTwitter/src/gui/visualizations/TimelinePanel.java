@@ -5,6 +5,7 @@ import gui.visualizations.StatusesDataTable.ColNames;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -87,7 +88,8 @@ public class TimelinePanel extends JPanel {
                 
         vis.setRendererFactory(new TimelineRenderFactory());
         
-        SearchQueryBinding idSearchQuery = new SearchQueryBinding(vt, ColNames.SCREEN_NAME.toString());
+        SearchQueryBinding screenNameSearchQuery = new SearchQueryBinding(vt, ColNames.SCREEN_NAME.toString());
+        SearchQueryBinding textSearchQuery = new SearchQueryBinding(vt, ColNames.TEXT.toString());
         
         AxisLayout xAxis = new AxisLayout(Group.STATUSES.toString(), 
 				StatusesDataTable.ColNames.DAY.toString(), Constants.X_AXIS);        
@@ -106,7 +108,8 @@ public class TimelinePanel extends JPanel {
         xAxis.setLayoutBounds(m_dataB);
         yAxis.setLayoutBounds(m_dataB);
         
-        AndPredicate filter = new AndPredicate(idSearchQuery.getPredicate());
+        AndPredicate filter = new AndPredicate(screenNameSearchQuery.getPredicate());
+        filter.add(textSearchQuery.getPredicate());
         filter.add(hourQuery.getPredicate());
         filter.add(dayQuery.getPredicate());
         
@@ -222,15 +225,19 @@ public class TimelinePanel extends JPanel {
         infoBox.add(labelTotalStatuses);
         infoBox.add(Box.createHorizontalStrut(5));
         
-        // set up search box
-        JSearchPanel searcher = idSearchQuery.createSearchPanel();
-        searcher.setLabelText("Screen Name: ");
-        searcher.setBorder(BorderFactory.createEmptyBorder(5,5,5,0));
+        JSearchPanel screenNameSearcher = screenNameSearchQuery.createSearchPanel();
+        screenNameSearcher.setLabelText("User: ");
+        screenNameSearcher.setBorder(BorderFactory.createEmptyBorder(5,5,5,0));
+        screenNameSearcher.setPreferredSize(new Dimension(150,30));
+        JSearchPanel textSearcher = textSearchQuery.createSearchPanel();
+        textSearcher.setLabelText("Text: ");
+        textSearcher.setBorder(BorderFactory.createEmptyBorder(5,5,5,0));
+        textSearcher.setPreferredSize(new Dimension(170,30));
         
-        // create dynamic queries
         Box radioBox = new Box(BoxLayout.X_AXIS);
         radioBox.add(Box.createHorizontalStrut(5));
-        radioBox.add(searcher);
+        radioBox.add(screenNameSearcher);
+        radioBox.add(textSearcher);
         radioBox.add(Box.createHorizontalGlue());
         radioBox.add(Box.createHorizontalStrut(5));        
         radioBox.add(Box.createHorizontalStrut(16));
@@ -242,6 +249,7 @@ public class TimelinePanel extends JPanel {
         JRangeSlider horizontalSlider = dayQuery.createHorizontalRangeSlider();
         horizontalSlider.setThumbColor(ChartColor.LIGHT_GRAY);
         horizontalSlider.setMinExtent(dayQuery.getModel().getMinimum());
+        horizontalSlider.setPreferredSize(new Dimension(100,20));
         horizontalSlider.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 display.setHighQuality(false);
@@ -255,16 +263,19 @@ public class TimelinePanel extends JPanel {
         vis.run("draw");
         vis.run("xlabels");
         
+        JPanel p = new JPanel(new GridLayout(2,1));
+        p.add(horizontalSlider);
+        p.add(radioBox);
+        
         add(infoBox, BorderLayout.NORTH);
         add(display, BorderLayout.CENTER);
         add(verticalSlider, BorderLayout.EAST);
-        add(horizontalSlider, BorderLayout.SOUTH);
-        //ADICIONAR CAIXA DE BUSCA SOH PARA STATUSES DO USER LOGADO
-        //add(radioBox, BorderLayout.SOUTH);
-        UILib.setColor(this, ColorLib.getColor(255,255,255), Color.GRAY);
+        //add(horizontalSlider, BorderLayout.SOUTH);
+        add(p, BorderLayout.SOUTH);
+        UILib.setColor(this, ColorLib.getColor(255,255,255), Color.DARK_GRAY);
         verticalSlider.setForeground(ChartColor.VERY_LIGHT_BLUE);
         horizontalSlider.setForeground(ChartColor.VERY_LIGHT_BLUE);
-        UILib.setFont(radioBox, FontLib.getFont("Tahoma", 15));
+        UILib.setFont(radioBox, FontLib.getFont("Tahoma", 12));
         labelDetails.setFont(FontLib.getFont("Tahoma", 18));
         labelTotalStatuses.setFont(FontLib.getFont("Tahoma", 16));
     }

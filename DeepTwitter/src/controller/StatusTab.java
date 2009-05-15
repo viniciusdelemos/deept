@@ -1,5 +1,6 @@
 package controller;
 
+import gui.GUINewUpdate;
 import gui.visualizations.GUITimeline;
 
 import java.awt.event.ActionEvent;
@@ -74,35 +75,41 @@ public class StatusTab {
 		if(selectedTable == null) {
 			JPanel content = newTable.getContent();
 			jScrollPane6.setViewportView(content);
+			if(newTable.getType() == StatusesType.DIRECT_MESSAGES_RECEIVED)
+				userId = "received";
+			else if(newTable.getType() == StatusesType.DIRECT_MESSAGES_SENT)
+				userId = "sent";
+			else 
+				setCurrentUserName(controller.getUserName(userId));
 			tablesMap.put(userId,newTable);
-			idArray.add(userId);			
+			idArray.add(userId);
 			if(hasMultiplePanels) {	
 				currentTable = idArray.size()-1;
 				reconfigButtons();
-			}			
+			}
 		}
 		else {
 			currentTable = idArray.indexOf(userId);
 			jScrollPane6.setViewportView(selectedTable.getContent());
-			reconfigButtons();
+			if(selectedTable.getType()!=StatusesType.DIRECT_MESSAGES_RECEIVED &&
+					selectedTable.getType()!=StatusesType.DIRECT_MESSAGES_SENT)
+				reconfigButtons();
 			jScrollPane6.revalidate();
 		}
-		reconfigOnOffButton();
-		setCurrentUserName(controller.getUserName(userId));
+		reconfigOnOffButton();		
 	}
 	
 	private void setPanelContent(String userId) {
-		StatusesTableThread selectedTable = tablesMap.get(userId);		
+		StatusesTableThread selectedTable = tablesMap.get(userId);
 		jScrollPane6.setViewportView(selectedTable.getContent());
 		jScrollPane6.revalidate();
 		reconfigOnOffButton();
-		setCurrentUserName(controller.getUserName(userId));		
+		if(selectedTable.getType()!=StatusesType.DIRECT_MESSAGES_RECEIVED &&
+				selectedTable.getType()!=StatusesType.DIRECT_MESSAGES_SENT)
+			setCurrentUserName(controller.getUserName(userId));		
 	}
 	
 	public void setCurrentUserName(String name) {
-		//labelCurrentUser.setText(name);
-		//Dimension d = labelCurrentUser.getPreferredSize();
-		//labelCurrentUser.setPreferredSize(new Dimension(d.width+60,d.height));
 		txtCurrentUser.setText(name);
 	}
 	
@@ -285,8 +292,7 @@ public class StatusTab {
 			buttonSearchUpdates.setVisible(false);
 			buttonNewDirectMessage.setVisible(false);
 			break;
-		case DIRECT_MESSAGES_RECEIVED:
-		case DIRECT_MESSAGES_SENT:
+		case DIRECT_MESSAGES:
 			buttonAddUpdate.setVisible(false);
 			buttonSearchUpdates.setVisible(false);
 			txtCurrentUser.setVisible(false);
@@ -340,6 +346,7 @@ public class StatusTab {
 	}
 	
 	private void reconfigButtons() {
+		System.out.println("idArray.size == "+idArray.size());
 		if(idArray.size()<=1) {
 			buttonPreviousUser.setEnabled(false);
 			buttonNextUser.setEnabled(false);
@@ -364,6 +371,7 @@ public class StatusTab {
 	
 	private void reconfigOnOffButton() {
 		String id = idArray.get(currentTable);
+		System.out.println("THIS ID is "+id);
 		buttonTurnOnOff.setSelected(!tablesMap.get(id).isThreadSuspended());		
 	}
 	
@@ -390,20 +398,25 @@ public class StatusTab {
 				setPanelContent(userId);
 			}
 			else if(cmd.equals("buttonInbox")) {
+				currentTable = 0;
 				if(!buttonOutbox.isSelected())
 						buttonInbox.setSelected(true);
 				else {
-					System.out.println("carregar painel inbox");
+					setPanelContent("received");					
 				}
-				buttonOutbox.setSelected(false);
+				buttonOutbox.setSelected(false);				
 			}
 			else if(cmd.equals("buttonOutbox")) {
+				currentTable=1;
 				if(!buttonInbox.isSelected())
 					buttonOutbox.setSelected(true);
 				else {
-					System.out.println("carregar painel outbox");
+					if(tablesMap.get("sent")==null)
+						setPanelContent(new StatusesTableThread(StatusesType.DIRECT_MESSAGES_SENT));
+					else
+						setPanelContent("sent");					
 				}
-				buttonInbox.setSelected(false);
+				buttonInbox.setSelected(false);				
 			}
 			else if(cmd.equals("buttonCloseUpdates")) {
 				String id = idArray.get(currentTable);
@@ -446,6 +459,9 @@ public class StatusTab {
 			}
 			else if(cmd.equals("buttonSearchUpdates")) {
 				setPanelContent(new StatusesTableThread(StatusesType.SEARCH,txtCurrentUser.getText()));
+			}
+			else if(cmd.equals("buttonNewDirectMessage")) {
+				controller.openGUINewUpdateWindow("",StatusesType.DIRECT_MESSAGES);
 			}
 			else
 				System.out.println(cmd);

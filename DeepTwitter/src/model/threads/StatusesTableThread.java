@@ -57,7 +57,7 @@ public class StatusesTableThread {
 	private int senderId;
 	private long responseId, lastResponseId;
 	private Date date;
-	boolean isFavorited, isStatus;
+	private TwitterResponse currentResponse;
 	
 	public StatusesTableThread (StatusesType type, String userIdOrSearchQuery) {		
 		this(type);
@@ -79,7 +79,10 @@ public class StatusesTableThread {
 		senderId = -1;
 		responseId = -1;
 		date = null;
-		isFavorited = isStatus = false;
+	}
+	
+	public StatusesType getType() {
+		return statusesType;
 	}
 
 	public JPanel getContent() {		
@@ -182,12 +185,13 @@ public class StatusesTableThread {
 		ImageIcon replyIcon = new ImageIcon(getClass().getResource("../../reply.jpg"));	
 		replyButton.setIcon(replyIcon);		
 		replyButton.setToolTipText("Reply");
+		final String screenNameAux = screenName;
 		replyButton.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(java.awt.event.MouseEvent arg0) {
 				replyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				controller.openGUINewUpdateWindow(screenName,StatusesType.REPLIES);//s.getUser().getScreenName(),StatusesType.REPLIES);				
+				controller.openGUINewUpdateWindow(screenNameAux,StatusesType.REPLIES);//s.getUser().getScreenName(),StatusesType.REPLIES);				
 			}
 		});
 		updatePanel.add(replyButton,gbc);
@@ -198,44 +202,46 @@ public class StatusesTableThread {
         gbc.insets = new Insets(1,0,0,0);
         gbc.anchor = GridBagConstraints.CENTER;
         
-		final JLabel favoriteButton = new JLabel();
-		ImageIcon starIcon;
+		final long responseIdAux = responseId;
 		
-		if(isFavorited && isStatus) 
+		if(currentResponse instanceof Status) {
+			final JLabel favoriteButton = new JLabel();
+			ImageIcon starIcon;
+			
+			if(((Status)currentResponse).isFavorited())
 				starIcon = new ImageIcon(getClass().getResource("../../star_on.png"));		
 			else 
-				starIcon = new ImageIcon(getClass().getResource("../../star_off.png"));
-		
-		favoriteButton.setIcon(starIcon);	
-		favoriteButton.setToolTipText("Favorite");
-		favoriteButton.addMouseListener(new MouseAdapter(){
-			public void mouseEntered(java.awt.event.MouseEvent arg0) {
-				favoriteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			}
-			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				try{
-					int isOff = favoriteButton.getIcon().toString().indexOf("star_off");
-					if(isOff>0) {
-						controller.getTwitter().createFavorite(responseId);
-						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../../star_on.png")));
-					}
-					else {
-						controller.getTwitter().destroyFavorite(responseId);
-						favoriteButton.setIcon(new ImageIcon(getClass().getResource("../../star_off.png")));
-						if(statusesType == StatusesType.FAVORITES) {
-							System.out.println("removing favorite panel");
-							panel.remove(updatePanel);
-							rows--;
+				starIcon = new ImageIcon(getClass().getResource("../../star_off.png"));		
+			favoriteButton.setIcon(starIcon);	
+			favoriteButton.setToolTipText("Favorite");			
+			favoriteButton.addMouseListener(new MouseAdapter(){
+				public void mouseEntered(java.awt.event.MouseEvent arg0) {
+					favoriteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+				public void mouseClicked(java.awt.event.MouseEvent arg0) {
+					try{
+						int isOff = favoriteButton.getIcon().toString().indexOf("star_off");
+						if(isOff>0) {
+							controller.getTwitter().createFavorite(responseIdAux);
+							favoriteButton.setIcon(new ImageIcon(getClass().getResource("../../star_on.png")));
 						}
-					}				
-					panel.revalidate();
+						else {
+							controller.getTwitter().destroyFavorite(responseIdAux);
+							favoriteButton.setIcon(new ImageIcon(getClass().getResource("../../star_off.png")));
+							if(statusesType == StatusesType.FAVORITES) {
+								panel.remove(updatePanel);
+								rows--;
+							}
+						}				
+						panel.revalidate();
+					}
+					catch(TwitterException e) {
+						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
+					}
 				}
-				catch(TwitterException e) {
-					controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
-				}
-			}
-		});
-		updatePanel.add(favoriteButton,gbc);
+			});
+			updatePanel.add(favoriteButton,gbc);
+		}
 		
 		int loggedUserId = Integer.parseInt(controller.getLoggedUserId());
 		
@@ -260,7 +266,7 @@ public class StatusesTableThread {
 	                            null, "Tem certeza que deseja deletar este update?","Atenção",
 	                            JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null);
 						if (n == JOptionPane.YES_OPTION) {
-							controller.getTwitter().destroyStatus(responseId);
+							controller.getTwitter().destroyStatus(responseIdAux);
 							panel.remove(updatePanel);
 							rows--;
 							panel.revalidate();
@@ -276,6 +282,7 @@ public class StatusesTableThread {
 	}
 	
 	private void loadData(TwitterResponse response) {	
+		currentResponse = response;
 		if(response instanceof Status) {
 			Status s = (Status) response;
 			responseId = s.getId();
@@ -285,35 +292,28 @@ public class StatusesTableThread {
 			profileImageURL = s.getUser().getProfileImageURL();
 			senderId = s.getUser().getId();
 			date = s.getCreatedAt();
-			isFavorited = s.isFavorited();
-			isStatus = true;
 		}
 		else if (response instanceof DirectMessage) {
-			DirectMessage s = (DirectMessage) response;
-			responseId = s.getId();
-			text = s.getText();
-			screenName = s.getSender().getScreenName();
-			profileImageURL = s.getSender().getProfileImageURL();
-			senderId = s.getSender().getId();
-			date = s.getCreatedAt();
-			isFavorited = false;
-			isStatus = false;
+			DirectMessage dm = (DirectMessage) response;
+			responseId = dm.getId();
+			text = dm.getText();
+			screenName = dm.getSender().getScreenName();
+			profileImageURL = dm.getSender().getProfileImageURL();
+			senderId = dm.getSender().getId();
+			date = dm.getCreatedAt();
 		}
 		else if (response instanceof Tweet) {
-			Tweet s = (Tweet) response;
-			responseId = s.getId();
-			text = s.getText();
-			screenName = s.getFromUser();
-			senderId = s.getFromUserId();
+			Tweet t = (Tweet) response;
+			responseId = t.getId();
+			text = t.getText();
+			screenName = t.getFromUser();
+			senderId = t.getFromUserId();
 			try {
-				profileImageURL = new URL(s.getProfileImageUrl());
+				profileImageURL = new URL(t.getProfileImageUrl());
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
-			date = s.getCreatedAt();
-			//nao tem favorited
-			isFavorited = false;
-			isStatus = false;
+			date = t.getCreatedAt();
 		}
 		else
 			throw new IllegalArgumentException("Objeto inválido dentro da lista");
@@ -561,8 +561,8 @@ public class StatusesTableThread {
 					
 					if(!statusesList.isEmpty()) {
 						//checa se nova msg é mais nova do que ultima adicionada ao painel
-						System.out.println("update mais novo: "+responseId);
-						System.out.println("last status id: "+lastResponseId);
+						System.out.println("response mais novo: "+responseId);
+						System.out.println("last response id: "+lastResponseId);
 						if(responseId>=lastResponseId)
 						{
 							//lastStatusId = statusesList.get(0).getId();
@@ -576,7 +576,6 @@ public class StatusesTableThread {
 								c.gridx = 0;
 								panel.add(getPanel(),c,0);			
 								rows++;
-								panel.revalidate();
 								allStatusesList.add(0,statusesList.get(i));								
 							}
 							empty = new JPanel();
@@ -605,6 +604,7 @@ public class StatusesTableThread {
 						break;
 					}
 					else if(e.getStatusCode()==-1) {
+						//TODO ignorar esta
 						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
 					}
 					else

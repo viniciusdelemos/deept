@@ -110,6 +110,7 @@ public class GraphicManager extends Display {
     	g.addColumn("idTwitter",int.class); //Integer.class);
     	g.addColumn("name", String.class);
     	g.addColumn("image", String.class);//URL.class);
+    	//g.addColumn("lastStatus", String.class);
     	g.addColumn("isOpen", boolean.class); 
     	g.addColumn("isShowingFriends", boolean.class);
     	g.addColumn("isShowingFollowers", boolean.class);
