@@ -127,6 +127,10 @@ public class Status extends TwitterResponse implements java.io.Serializable {
     public String getText() {
         return this.text;
     }
+    
+    public void setText(String t) {
+    	text = t;
+    }
 
     /**
      * Returns the source

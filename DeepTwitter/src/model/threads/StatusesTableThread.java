@@ -145,7 +145,7 @@ public class StatusesTableThread {
 		
 		editorPane.setText("<b><a href=http://www.twitter.com/"+screenName+">"
 					+screenName+"</a></b>"
-					+": "+processText(text));
+					+": "+text);
 					//+"<br>"+s.getCreatedAt().toString());			
 				
 		
@@ -279,7 +279,8 @@ public class StatusesTableThread {
 		if(response instanceof Status) {
 			Status s = (Status) response;
 			responseId = s.getId();
-			text = s.getText();
+			text = processText(s.getText());
+			s.setText(text);
 			screenName = s.getUser().getScreenName();
 			profileImageURL = s.getUser().getProfileImageURL();
 			senderId = s.getUser().getId();
@@ -399,7 +400,7 @@ public class StatusesTableThread {
 	}
 	
 	public List<TwitterResponse> getStatusesList() {				
-		return keepTableUpdated.getStatusesList();
+		return  keepTableUpdated.getStatusesList();
 	}
 	
 	class KeepTableUpdated extends Thread {		

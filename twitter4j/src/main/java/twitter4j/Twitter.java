@@ -648,7 +648,7 @@ public class Twitter implements java.io.Serializable {
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-public_timeline">Twitter API Wiki / Twitter REST API Method: statuses public_timeline</a>
      */
-    public List<Status> getPublicTimeline(int sinceID) throws
+    public List<Status> getPublicTimeline(long sinceID) throws
             TwitterException {
         return Status.constructStatuses(get(baseURL +
                 "statuses/public_timeline.xml", null, new Paging((long) sinceID)

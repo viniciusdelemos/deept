@@ -290,8 +290,7 @@ public class GraphicManager extends Display {
 			newNode.set("groupId", -1);
 			nodesMap.put(u.getId(), newNode);			
 			if (numUsers == 0) {
-				VisualItem mainUser = getVisualization().getVisualItem(NODES,
-						newNode);
+				VisualItem mainUser = getVisualization().getVisualItem(NODES,newNode);
 				mainUser.setStroke(new BasicStroke(2));
 				mainUser.setStrokeColor(nodeStrokeColor);
 				mainUser.setFillColor(mainUserColor);
@@ -378,10 +377,10 @@ public class GraphicManager extends Display {
 		return n.getString("name");
 	}
 	
-//	public VisualItem getLoggedUser() {
-//		int id = Integer.parseInt(ControllerDeepTwitter.getLoggedUserId());
+//	public Node getMainUser() {
+//		int id = Integer.parseInt(controller.getLoggedUserId());
 //		Node n = getNodeByTwitterId(id);
-//		return getVisualization().getVisualItem(NODES, n);
+//		return (Node)getVisualization().getVisualItem(NODES, n);
 //	}
 		
 	public User getUser(int idTwitter) {
