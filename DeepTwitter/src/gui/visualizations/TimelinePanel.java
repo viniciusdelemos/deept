@@ -263,9 +263,11 @@ public class TimelinePanel extends JPanel {
         vis.run("draw");
         vis.run("xlabels");
         
-        JPanel p = new JPanel(new GridLayout(2,1));
+        GridLayout gl = new GridLayout(2,1);
+        //gl.setVgap(10);
+        JPanel p = new JPanel(gl);
         p.add(horizontalSlider);
-        p.add(radioBox);
+        //p.add(radioBox);
         
         add(infoBox, BorderLayout.NORTH);
         add(display, BorderLayout.CENTER);

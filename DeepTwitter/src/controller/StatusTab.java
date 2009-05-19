@@ -346,7 +346,6 @@ public class StatusTab {
 	}
 	
 	private void reconfigButtons() {
-		System.out.println("idArray.size == "+idArray.size());
 		if(idArray.size()<=1) {
 			buttonPreviousUser.setEnabled(false);
 			buttonNextUser.setEnabled(false);
@@ -371,7 +370,6 @@ public class StatusTab {
 	
 	private void reconfigOnOffButton() {
 		String id = idArray.get(currentTable);
-		System.out.println("THIS ID is "+id);
 		buttonTurnOnOff.setSelected(!tablesMap.get(id).isThreadSuspended());		
 	}
 	
