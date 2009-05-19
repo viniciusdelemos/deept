@@ -11,9 +11,13 @@ import java.awt.event.MouseAdapter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
@@ -23,12 +27,16 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import prefuse.data.Tuple;
+import prefuse.util.DataLib;
+import prefuse.util.collections.DefaultLiteralComparator;
+import prefuse.visual.VisualTable;
+
 import model.ChartColor;
 import model.MessageType;
 import model.StatusesType;
 import model.URLLinkAction;
 import twitter4j.DirectMessage;
-import twitter4j.ExtendedUser;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -37,13 +45,12 @@ import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterResponse;
-import twitter4j.User;
 import controller.ControllerDeepTwitter;
 
 public class StatusesTableThread {
 	private int rows;
 	private String userId, searchQuery;
-	private boolean isTwitterUser;	
+	private boolean isTwitterUser, isGroup;	
 	private long interval;
 	private JPanel panel;
 	private KeepTableUpdated keepTableUpdated;
@@ -481,7 +488,8 @@ public class StatusesTableThread {
 								aux = twitter.getUserTimeline(userId, updatesToGet, lastResponseId);
 								//talvez seja melhor fazer userId, new Paging().count(updatesToGet).sinceId(lastStatusId)
 								//testar
-						}						
+						}		
+						System.out.println("GOT UPDATES");
 						break;
 
 					case FAVORITES:
@@ -543,7 +551,7 @@ public class StatusesTableThread {
 						if(lastResponseId<0)							
 							aux = twitter.getPublicTimeline();
 						else
-							aux = twitter.getPublicTimeline(lastResponseId);
+							aux = twitter.getPublicTimeline(lastResponseId);						
 						break;
 					}
 					
@@ -553,6 +561,8 @@ public class StatusesTableThread {
 							statusesList.add((TwitterResponse)x);
 						}					
 					}
+					
+					//Collections.sort(statusesList);
 					
 					//TODO
 					if(statusesType == StatusesType.FAVORITES) {
@@ -617,6 +627,18 @@ public class StatusesTableThread {
 			}
 		}
 	}
+	
+//	public Status[] ordinalArray(List<? extends TwitterResponse> list, String field)
+//	{
+//		HashSet set = new HashSet();
+//		for(int i=0; i<list.size(); i++)
+//			set.add(((Tuple)tuples.next()).get(field));
+//
+//		// sort the unique values
+//		Object[] o = set.toArray();
+//		Arrays. sort(o, DefaultLiteralComparator.getInstance());
+//		return o;
+//	}
 }
 
 

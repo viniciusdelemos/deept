@@ -87,7 +87,7 @@ public class GraphicManager extends Display {
 	private EdgeRenderer edgeRenderer;
 	private TupleSet selectedNodes;
 	private ControllerDeepTwitter controller;
-	private float WEIGHT_VALUE;
+	private float weight_value;
 	private GroupManager groupManager;
 	
     public GraphicManager()
@@ -103,7 +103,7 @@ public class GraphicManager extends Display {
     	isHighQuality = true;
     	numUsers = 0;
     	groupId = 0;
-    	WEIGHT_VALUE = 370f;
+    	weight_value = 370f;
     	
     	g = new Graph(true);
     	g.addColumn("id", int.class);//Integer.class);
@@ -638,8 +638,9 @@ public class GraphicManager extends Display {
 			timelineGroup.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
+					StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);
+					//tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES,clickedItem.getString("idTwitter")));
 					//TODO
-					System.out.println("Timeline Grupos");
 				}});
 			removeGroup.addActionListener(new ActionListener(){
 				@Override
@@ -848,10 +849,10 @@ public class GraphicManager extends Display {
 	}
 	
 	public void setWeightValue(float v) {
-		WEIGHT_VALUE = v;
+		weight_value = v;
 	}
 	
 	public float getWeightValue() {
-		return WEIGHT_VALUE;
+		return weight_value;
 	}
 }
