@@ -80,7 +80,12 @@ public class ControllerDeepTwitter {
 	}
 	
 	public String getUserName(String id) {
-		return gManager.getUserName(Integer.parseInt(id));
+		try{
+			return gManager.getUserName(Integer.parseInt(id));
+		}
+		catch(NumberFormatException e) {
+			return id;
+		}
 	}
 	
 	public void searchAndAddUserToNetwork(User u) {
@@ -455,10 +460,14 @@ public class ControllerDeepTwitter {
 				}
 			}			
 			else if(cmd.equals("buttonClearSelection")) {
-				gManager.clearSelection();
+				gManager.clearSelection();				
 			}
 			else if(cmd.equals("checkBoxHighQuality")) {						
-				gManager.setHighQuality(mainWindow.isHighQuality());					
+				//gManager.setHighQuality(mainWindow.isHighQuality());
+				if(mainWindow.isHighQuality())
+					gManager.getVisualization().run("layout");
+				else
+					gManager.getVisualization().cancel("layout");
 			}
 			else if(cmd.equals("checkBoxCurvedEdges")) {
 				gManager.setEdgeType(mainWindow.isCurvedEdges());

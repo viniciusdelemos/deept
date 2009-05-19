@@ -79,6 +79,8 @@ public class StatusTab {
 				userId = "received";
 			else if(newTable.getType() == StatusesType.DIRECT_MESSAGES_SENT)
 				userId = "sent";
+			else if(newTable.isGroup())
+				setCurrentUserName(userId);
 			else 
 				setCurrentUserName(controller.getUserName(userId));
 			tablesMap.put(userId,newTable);

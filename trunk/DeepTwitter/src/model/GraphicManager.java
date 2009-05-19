@@ -638,9 +638,19 @@ public class GraphicManager extends Display {
 			timelineGroup.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);
-					//tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES,clickedItem.getString("idTwitter")));
-					//TODO
+					controller.selectTab(1);
+					String groupName = "Grupo "+item.getString("id");
+					int aggSize = item.getAggregateSize();
+					String[] ids = new String[aggSize];
+					Iterator<NodeItem> nodes = item.items();
+					int cont = 0;
+					while(nodes.hasNext()) {
+						NodeItem next = nodes.next();
+						ids[cont] = String.valueOf(next.getInt("idTwitter"));
+						cont++;
+					}					
+					StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);					
+					tab.setPanelContent(new StatusesTableThread(ids,groupName));					
 				}});
 			removeGroup.addActionListener(new ActionListener(){
 				@Override
