@@ -39,7 +39,7 @@ import java.util.List;
  * A data class representing one single status of a user.
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class Status extends TwitterResponse implements java.io.Serializable {
+public class Status extends TwitterResponse implements java.io.Serializable, Comparable<Status> {
 /*
 <status>
   created_at
@@ -250,4 +250,9 @@ public class Status extends TwitterResponse implements java.io.Serializable {
                 ", user=" + user +
                 '}';
     }
+
+	@Override
+	public int compareTo(Status s) {
+		return this.getCreatedAt().compareTo(s.getCreatedAt());
+	}
 }
