@@ -36,6 +36,7 @@ import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterResponse;
+import twitter4j.User;
 import controller.ControllerDeepTwitter;
 
 public class StatusesTableThread {
@@ -205,7 +206,10 @@ public class StatusesTableThread {
 				replyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 			public void mouseClicked(java.awt.event.MouseEvent arg0) {
-				controller.openGUINewUpdateWindow(screenNameAux,StatusesType.REPLIES);//s.getUser().getScreenName(),StatusesType.REPLIES);				
+				if(currentResponse instanceof DirectMessage) 
+					controller.openGUINewUpdateWindow(screenNameAux,StatusesType.DIRECT_MESSAGES);
+				else
+					controller.openGUINewUpdateWindow(screenNameAux,StatusesType.REPLIES);
 			}
 		});
 		updatePanel.add(replyButton,gbc);
@@ -259,7 +263,7 @@ public class StatusesTableThread {
 
 		int loggedUserId = Integer.parseInt(controller.getLoggedUserId());
 
-		if(loggedUserId == senderId) {
+		if(loggedUserId == senderId || currentResponse instanceof DirectMessage) {
 			gbc.weightx = 0;
 			gbc.gridx = 2;
 			gbc.gridy = 0;
@@ -280,7 +284,10 @@ public class StatusesTableThread {
 								null, "Tem certeza que deseja deletar este update?","Atenção",
 								JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null);
 						if (n == JOptionPane.YES_OPTION) {
-							controller.getTwitter().destroyStatus(responseIdAux);
+							if(currentResponse instanceof DirectMessage)
+								controller.getTwitter().destroyDirectMessage(responseIdAux);
+							else
+								controller.getTwitter().destroyStatus(responseIdAux);
 							panel.remove(updatePanel);
 							rows--;
 							panel.revalidate();
@@ -311,9 +318,14 @@ public class StatusesTableThread {
 			DirectMessage dm = (DirectMessage) response;
 			responseId = dm.getId();
 			text = dm.getText();
-			screenName = dm.getSender().getScreenName();
-			profileImageURL = dm.getSender().getProfileImageURL();
-			senderId = dm.getSender().getId();
+			User u;
+			if(statusesType==StatusesType.DIRECT_MESSAGES_SENT)
+				u = dm.getRecipient();
+			else
+				u = dm.getSender();
+			screenName = u.getScreenName();
+			profileImageURL = u.getProfileImageURL();
+			senderId = u.getId();
 			date = dm.getCreatedAt();
 		}
 		else if (response instanceof Tweet) {

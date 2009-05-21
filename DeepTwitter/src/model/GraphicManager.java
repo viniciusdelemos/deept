@@ -392,6 +392,10 @@ public class GraphicManager extends Display {
 		return g.getEdge(source, target);
 	}
 	
+	public Edge getEdge(int id) {
+		return g.getEdge(id);
+	}
+	
 	public SocialNetwork getSocialNetwork() {
     	return socialNetwork;
     }
@@ -505,6 +509,7 @@ public class GraphicManager extends Display {
 			
 			JMenuItem friends = new JMenuItem("Ver Amigos");
 			JMenuItem updates = new JMenuItem("Ver Tweets");
+			JMenuItem timeline = new JMenuItem("Ver Timeline");
 			JMenuItem favorites = new JMenuItem("Ver Favoritos");			
     		JMenuItem follow = new JMenuItem("Seguir");//("Follow",'f') para adicionar atalho
     		JMenuItem leave = new JMenuItem("Deixar");
@@ -519,6 +524,7 @@ public class GraphicManager extends Display {
     		Node mainUserNode = getNodeByTwitterId(loggedUserId);
 			
 			popupMenu.add(updates);
+			popupMenu.add(timeline);
     		popupMenu.add(friends); //é necessário?
     		popupMenu.add(followers);
     		popupMenu.add(favorites);
@@ -550,6 +556,8 @@ public class GraphicManager extends Display {
 				follow.setEnabled(false);
 				leave.setEnabled(false);
 				block.setEnabled(false);
+				sendReply.setEnabled(false);
+				sendMessage.setEnabled(false);
 			}   		
 			
     		//follow.setMnemonic(KeyEvent.VK_F);
@@ -569,6 +577,11 @@ public class GraphicManager extends Display {
 					controller.selectTab(1);
 				}    			
     		});
+    		timeline.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub					
+				}});
     		followers.addActionListener(new ActionListener(){
     			@Override
     			public void actionPerformed(ActionEvent arg0) {
@@ -629,17 +642,19 @@ public class GraphicManager extends Display {
 		
 		public void createGroupMenu(final AggregateItem item) {
 			popupMenu = new JPopupMenu();
-			JMenuItem timelineGroup = new JMenuItem("Ver Timeline do Grupo");
+			JMenuItem updates = new JMenuItem("Ver Tweets");
+			JMenuItem timeline = new JMenuItem("Ver Timeline");
 			JMenuItem removeGroup = new JMenuItem("Deletar Grupo");
 			
-			popupMenu.add(timelineGroup);
+			popupMenu.add(updates);
+			popupMenu.add(timeline);
 			popupMenu.add(removeGroup);
 			
-			timelineGroup.addActionListener(new ActionListener(){
+			updates.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					controller.selectTab(1);
-					String groupName = "Grupo "+item.getString("id");
+					String groupName = "Grupo "+(item.getInt("id")+1);
 					int aggSize = item.getAggregateSize();
 					String[] ids = new String[aggSize];
 					Iterator<NodeItem> nodes = item.items();
@@ -651,6 +666,11 @@ public class GraphicManager extends Display {
 					}					
 					StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);					
 					tab.setPanelContent(new StatusesTableThread(ids,groupName));					
+				}});
+			timeline.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub					
 				}});
 			removeGroup.addActionListener(new ActionListener(){
 				@Override

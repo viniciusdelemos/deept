@@ -80,13 +80,16 @@ public class AggregateLayout extends Layout {
     private static void addPoint(double[] pts, int idx, 
                                  VisualItem item, int growth)
     {
-        Rectangle2D b = item.getBounds();
-        double minX = (b.getMinX())-growth, minY = (b.getMinY())-growth;
-        double maxX = (b.getMaxX())+growth, maxY = (b.getMaxY())+growth;
-        pts[idx]   = minX; pts[idx+1] = minY;
-        pts[idx+2] = minX; pts[idx+3] = maxY;
-        pts[idx+4] = maxX; pts[idx+5] = minY;
-        pts[idx+6] = maxX; pts[idx+7] = maxY;
+    	try{
+    		Rectangle2D b = item.getBounds();
+    		double minX = (b.getMinX())-growth, minY = (b.getMinY())-growth;
+    		double maxX = (b.getMaxX())+growth, maxY = (b.getMaxY())+growth;
+    		pts[idx]   = minX; pts[idx+1] = minY;
+    		pts[idx+2] = minX; pts[idx+3] = maxY;
+    		pts[idx+4] = maxX; pts[idx+5] = minY;
+    		pts[idx+6] = maxX; pts[idx+7] = maxY;
+    	}
+    	catch(ArrayIndexOutOfBoundsException e){}
     }
     
 } // end of class AggregateLayout

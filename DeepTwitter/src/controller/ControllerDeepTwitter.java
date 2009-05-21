@@ -158,11 +158,9 @@ public class ControllerDeepTwitter {
 				{				
 					if(loginWindow.getUser().compareTo("")>0 && loginWindow.getPassword().compareTo("")>0)
 					{
-						twitter = new Twitter(loginWindow.getUser(),loginWindow.getPassword());
-						
+						twitter = new Twitter(loginWindow.getUser(),loginWindow.getPassword());						
 						user = twitter.verifyCredentials(); //Se usuario ou senha invalido,
-						//gerado excecao com statusCode = 401
-						
+						//gerado excecao com statusCode = 401						
 						logInOK = true;
 						//	else showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);
 					}
@@ -173,6 +171,7 @@ public class ControllerDeepTwitter {
 					if(loginWindow.getUser().compareTo("")>0)
 					{
 						twitter = new Twitter(loginWindow.getUser(),"");
+						user = twitter.getUserDetail(twitter.getUserId());
 						logInOK = true;
 					}
 					else showMessageDialog("Por favor, preencha o campo de nome de usuário!",MessageType.WARNING);					
@@ -180,9 +179,7 @@ public class ControllerDeepTwitter {
 
 				if(logInOK)
 				{
-					User u = user;
-					
-					loggedUserId = String.valueOf(u.getId());
+					loggedUserId = String.valueOf(user.getId());
 					gManager = new GraphicManager();
 				
 					//User u2 = twitter.getAuthenticatedUser();
@@ -201,7 +198,7 @@ public class ControllerDeepTwitter {
 					tabManager = new StatusTabManager();
 					tabManager.setTabbedPane(windowTabs);
 					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //1
-					tabManager.addTab(StatusesType.REPLIES,"@"+u.getScreenName()); //2
+					tabManager.addTab(StatusesType.REPLIES,"@"+user.getScreenName()); //2
 					tabManager.addTab(StatusesType.FAVORITES,"Favoritos"); //3
 					tabManager.addTab(StatusesType.DIRECT_MESSAGES,"Mensagens"); //4
 					tabManager.addTab(StatusesType.SEARCH, "Busca"); //5
@@ -290,7 +287,7 @@ public class ControllerDeepTwitter {
 					mainWindow.setLocationRelativeTo(null);
 					mainWindow.setVisible(true);					
 					
-					gManager.addNode(u);
+					gManager.addNode(user);
 					
 					updateRateLimit = new UpdateRateLimitThread(rateLimitSleepTime);
 					

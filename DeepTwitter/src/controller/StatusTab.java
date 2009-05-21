@@ -1,6 +1,5 @@
 package controller;
 
-import gui.GUINewUpdate;
 import gui.visualizations.GUITimeline;
 
 import java.awt.event.ActionEvent;

@@ -1729,7 +1729,7 @@ public class Twitter implements java.io.Serializable {
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-direct_messages%C2%A0destroy">Twitter API Wiki / Twitter REST API Method: direct_messages destroy</a>
      * @since Twitter4J 2.0.1
      */
-    public DirectMessage destroyDirectMessage(int id) throws
+    public DirectMessage destroyDirectMessage(long id) throws
             TwitterException {
         return new DirectMessage(http.post(baseURL +
                 "direct_messages/destroy/" + id + ".xml", new PostParameter[0], true), this);
