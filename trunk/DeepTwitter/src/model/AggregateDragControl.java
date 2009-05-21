@@ -60,10 +60,10 @@ public class AggregateDragControl extends ControlAdapter {
 
 			Iterator<NodeItem> i = selectedItem.neighbors();
 			while(i.hasNext()) {
-				NodeItem neighbor = i.next();
+				NodeItem neighbor = i.next();				
 				boolean iAmSource = gManager.getEdge(selectedItem.getInt("id"), neighbor.getInt("id")) != -1;
 				boolean iAmTarget = gManager.getEdge(neighbor.getInt("id"), selectedItem.getInt("id")) != -1;
-
+				
 				neighbor.setStroke(new BasicStroke(1.5f));
 				neighbor.setStrokeColor(gManager.getNodeStrokeColor());
 
