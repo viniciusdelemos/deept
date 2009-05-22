@@ -197,7 +197,7 @@ public class StatusesTableThread {
 		gbc.anchor = GridBagConstraints.NORTH;
 
 		final JLabel replyButton = new JLabel();	
-		ImageIcon replyIcon = new ImageIcon(getClass().getResource("../../reply.jpg"));	
+		ImageIcon replyIcon = new ImageIcon(getClass().getResource("../../reply.png"));	
 		replyButton.setIcon(replyIcon);		
 		replyButton.setToolTipText("Reply");
 		final String screenNameAux = screenName;
@@ -267,7 +267,10 @@ public class StatusesTableThread {
 			gbc.weightx = 0;
 			gbc.gridx = 2;
 			gbc.gridy = 0;
-			gbc.anchor = GridBagConstraints.SOUTH;
+			if(currentResponse instanceof DirectMessage)
+				gbc.anchor = GridBagConstraints.CENTER;
+			else
+				gbc.anchor = GridBagConstraints.SOUTH;
 			gbc.insets = new Insets(0,0,4,0);
 
 			final JLabel deleteButton = new JLabel();
