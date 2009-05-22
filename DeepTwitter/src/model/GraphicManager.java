@@ -1,5 +1,8 @@
 package model;
 
+import gui.visualizations.StatusesDataTable;
+import gui.visualizations.TimelinePanel.Group;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -89,6 +92,7 @@ public class GraphicManager extends Display {
 	private ControllerDeepTwitter controller;
 	private float weight_value;
 	private GroupManager groupManager;
+	private LabelRenderer nodeRenderer;
 	
     public GraphicManager()
     {    	
@@ -121,13 +125,12 @@ public class GraphicManager extends Display {
     	VisualGraph vg = m_vis.addGraph(GRAPH, g);
     	m_vis.setInteractive(EDGES, null, false);
 
-    	LabelRenderer nodeRenderer = new LabelRenderer("name", "image");
+    	nodeRenderer = new LabelRenderer("name", "image");
     	nodeRenderer.setVerticalAlignment(Constants.BOTTOM);       
     	nodeRenderer.setHorizontalPadding(0);
     	nodeRenderer.setVerticalPadding(0);        	
     	nodeRenderer.setMaxImageDimensions(100,100);
     	nodeRenderer.setRoundedCorner(8,8);
-
 
     	edgeType = Constants.EDGE_TYPE_LINE;
     	edgeRenderer = new EdgeRenderer(edgeType,prefuse.Constants.EDGE_ARROW_FORWARD);
@@ -291,12 +294,13 @@ public class GraphicManager extends Display {
 			newNode.set("groupId", -1);
 			nodesMap.put(u.getId(), newNode);			
 			if (numUsers == 0) {
+				nodeRenderer.getImageFactory().preloadImages(m_vis.items(NODES),"image");
 				VisualItem mainUser = getVisualization().getVisualItem(NODES,newNode);
 				mainUser.setStroke(new BasicStroke(2));
 				mainUser.setStrokeColor(nodeStrokeColor);
 				mainUser.setFillColor(mainUserColor);
 			}
-			numUsers++;
+			numUsers++;			
 			return newNode;
 		}    	
     }

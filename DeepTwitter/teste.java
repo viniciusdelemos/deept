@@ -323,13 +323,41 @@ public class TimelinePanel extends JPanel {
     
     public StatusesDataTable getStatusesDataTable(List<TwitterResponse> statusesList) {
 		StatusesDataTable tbl = new StatusesDataTable();
-		tbl.addRows(statusesList.size());
-		int index = 0;
+		tbl.addRows(statusesList.size()+1);
+		int index = 1;
+		Date date = null;
+		if(statusesList.get(0) instanceof Status) 
+			date = ((Status)statusesList.get(0)).getCreatedAt();
+		else if (statusesList.get(0) instanceof DirectMessage) 
+			date = ((DirectMessage)statusesList.get(0)).getCreatedAt();
+		else if (statusesList.get(0) instanceof Tweet) 
+			date = ((Tweet)statusesList.get(0)).getCreatedAt();
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(Calendar.DAY_OF_MONTH,1);
+		//tbl.set(index, StatusesDataTable.ColNames.TEXT.toString(), "");
+		//tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);//s.getUser().getScreenName());
+		//tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);//s.getUser().getProfileImageURL().toString());
+		try{SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");		
+		String formatedTime = formatter.format(c.getTime());
+		Date d = formatter.parse(formatedTime);
+		CustomDateHours formatedDate = new CustomDateHours(d.getTime());						
+		tbl.set(index, StatusesDataTable.ColNames.HOUR.toString(), formatedDate);
+
+		formatter = new SimpleDateFormat("EEE dd/MM/yyyy");
+		formatedTime = formatter.format(date);
+		d = formatter.parse(formatedTime);							
+		CustomDateDay day = new CustomDateDay(d.getTime());			
+
+		tbl.set(0, StatusesDataTable.ColNames.DAY.toString(), day);
+		tbl.set(0, StatusesDataTable.ColNames.FULL_DATE.toString(), day+" "+formatedDate);
+		
 		
 		for (TwitterResponse response : statusesList) {
-			try{
+			
 				String text, screenName, profileImageURL;				
-				Date date;
+								
 				if(response instanceof Status) {
 					Status s = (Status) response;
 					text = s.getText();
@@ -359,27 +387,25 @@ public class TimelinePanel extends JPanel {
 				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);//s.getUser().getProfileImageURL().toString());
 				//SETAR CATEGORIA
 				
-				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");		
-				String formatedTime = formatter.format(date);
-				Date d = formatter.parse(formatedTime);
-				CustomDateHours formatedDate = new CustomDateHours(d.getTime());						
+				formatter = new SimpleDateFormat("HH:mm:ss");		
+				formatedTime = formatter.format(date);
+				d = formatter.parse(formatedTime);
+				formatedDate = new CustomDateHours(d.getTime());						
 				tbl.set(index, StatusesDataTable.ColNames.HOUR.toString(), formatedDate);
 
 				formatter = new SimpleDateFormat("EEE dd/MM/yyyy");
 				formatedTime = formatter.format(date);
 				d = formatter.parse(formatedTime);							
-				CustomDateDay day = new CustomDateDay(d.getTime());			
+				day = new CustomDateDay(d.getTime());			
 
 				tbl.set(index, StatusesDataTable.ColNames.DAY.toString(), day);
 				tbl.set(index, StatusesDataTable.ColNames.FULL_DATE.toString(), day+" "+formatedDate);
 				
 				index++;		
-			}
-			catch(Exception e) {
-				System.out.println("*****Exception******\n");
-				e.printStackTrace();
-			}
+			
+			
 		}
+		}catch(Exception e) {e.printStackTrace();}
 		return tbl;
 	}
 	
