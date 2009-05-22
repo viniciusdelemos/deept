@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -201,6 +202,7 @@ public class StatusesTableThread {
 		replyButton.setIcon(replyIcon);		
 		replyButton.setToolTipText("Reply");
 		final String screenNameAux = screenName;
+		final long responseIdAux = responseId;
 		replyButton.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(java.awt.event.MouseEvent arg0) {
 				replyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -220,7 +222,7 @@ public class StatusesTableThread {
 		gbc.insets = new Insets(1,0,0,0);
 		gbc.anchor = GridBagConstraints.CENTER;
 
-		final long responseIdAux = responseId;
+		//final long responseIdAux = responseId;
 
 		if(currentResponse instanceof Status) {
 			final JLabel favoriteButton = new JLabel();
@@ -441,7 +443,7 @@ public class StatusesTableThread {
 
 	class KeepTableUpdated extends Thread {		
 		private GridBagConstraints c;
-		private JPanel empty;
+		//private JPanel empty;
 		private Twitter twitter = controller.getTwitter();
 		private boolean threadSuspended;
 		//private Map<Long,Status> favoritesMap;// = new HashMap<Long,Status>();
@@ -623,7 +625,7 @@ public class StatusesTableThread {
 						//checa se nova msg é mais nova do que ultima adicionada ao painel
 						//System.out.println("response mais novo: "+responseId);
 						//System.out.println("last response id: "+lastResponseId[0]);						
-						if(empty != null) panel.remove(empty);							
+						//if(empty != null) panel.remove(empty);							
 						//de trás para frente, para adicionar as mais recentes em cima
 						for(int i=statusesList.size()-1; i>=0; i--) {
 							loadData(statusesList.get(i));								
@@ -634,14 +636,14 @@ public class StatusesTableThread {
 							rows++;
 							allStatusesList.add(0,statusesList.get(i));								
 						}
-						empty = new JPanel();
-						empty.add(new JLabel(""));
+						//empty = new JPanel();
+						//empty.add(new JLabel(""));
 						c.weightx = 0.5;
 						c.weighty = 1;
 						c.fill = GridBagConstraints.HORIZONTAL;
 						c.gridx = 0;
 						c.anchor = GridBagConstraints.PAGE_END;
-						panel.add(empty,c);
+						//panel.add(empty,c);						
 						panel.revalidate();
 					}
 					if(isGroup)

@@ -9,21 +9,31 @@ import prefuse.render.ShapeRenderer;
 import prefuse.visual.expression.InGroupPredicate;
 
 public final class TimelineRenderFactory extends DefaultRendererFactory {
-
-	public TimelineRenderFactory() {
-		super();
+	Renderer labelRenderer, shapeRenderer;
+	
+	public TimelineRenderFactory(boolean isGroup) {
+		super();		
+		labelRenderer = new LabelRenderer(null,StatusesDataTable.ColNames.IMAGE_URL.toString());		
+		((LabelRenderer)labelRenderer).setMaxImageDimensions(50,50);
+		shapeRenderer = new ShapeRenderer(13);
 		
-		//Renderer renderer = new LabelRenderer(null,StatusesDataTable.ColNames.IMAGE_URL.toString());
-		Renderer renderer = new ShapeRenderer(13);
 		Renderer axisX = new RotateLabelAxisRenderer(Constants.CENTER, Constants.FAR_BOTTOM);
 		Renderer axisY = new AxisRenderer(Constants.FAR_LEFT, Constants.CENTER);
 	    
-	    this.setDefaultRenderer(renderer);
-        this.add(new InGroupPredicate(TimelinePanel.Group.STATUSES.toString()), renderer);
+		if(isGroup)
+			this.setDefaultRenderer(labelRenderer);
+		else
+			this.setDefaultRenderer(shapeRenderer);
+		
         this.add(new InGroupPredicate(TimelinePanel.Group.X_AXIS.toString()), axisX);
         this.add(new InGroupPredicate(TimelinePanel.Group.Y_AXIS.toString()), axisY);
 	}
 	
-	//inserir método para setar o renderer
+	public void switchRenderer() {
+		if(this.getDefaultRenderer() instanceof LabelRenderer)
+			this.setDefaultRenderer(shapeRenderer);
+		else
+			this.setDefaultRenderer(labelRenderer);
+	}
 
 }

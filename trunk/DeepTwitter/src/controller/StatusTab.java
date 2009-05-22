@@ -43,7 +43,7 @@ public class StatusTab {
 	private StatusesType type;
 	private TabListener tabListener;
 	private int currentTable;
-	private boolean hasMultiplePanels;
+	private boolean hasMultiplePanels, isGroup;
 	private ArrayList<String> idArray;
 	private ControllerDeepTwitter controller;
 	
@@ -70,7 +70,8 @@ public class StatusTab {
 	
 	public void setPanelContent(StatusesTableThread newTable) {
 		String userId = newTable.getUserId();
-		StatusesTableThread selectedTable = tablesMap.get(userId);		
+		StatusesTableThread selectedTable = tablesMap.get(userId);	
+		isGroup = newTable.isGroup();
 		if(selectedTable == null) {
 			JPanel content = newTable.getContent();
 			jScrollPane6.setViewportView(content);
@@ -78,7 +79,7 @@ public class StatusTab {
 				userId = "received";
 			else if(newTable.getType() == StatusesType.DIRECT_MESSAGES_SENT)
 				userId = "sent";
-			else if(newTable.isGroup())
+			else if(isGroup)
 				setCurrentUserName(userId);
 			else 
 				setCurrentUserName(controller.getUserName(userId));
@@ -454,7 +455,7 @@ public class StatusTab {
 			}
 			else if(cmd.equals("buttonTimeline")) {
 				String userId = idArray.get(currentTable);
-				new GUITimeline(tablesMap.get(userId).getStatusesList());
+				new GUITimeline(tablesMap.get(userId).getStatusesList(),isGroup);
 			}
 			else if(cmd.equals("buttonSearchUpdates")) {
 				setPanelContent(new StatusesTableThread(StatusesType.SEARCH,txtCurrentUser.getText()));
