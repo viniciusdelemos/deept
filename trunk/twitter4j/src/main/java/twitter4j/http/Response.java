@@ -45,55 +45,51 @@ import java.util.zip.GZIPInputStream;
 
 /**
  * A data class representing HTTP Response
+ *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class Response implements java.io.Serializable {
-    static DocumentBuilder builder = null;
-    static {
-        try {
-            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (ParserConfigurationException ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
+public class Response {
+    private final static boolean DEBUG = Boolean.getBoolean("twitter4j.debug");
 
+    private static ThreadLocal<DocumentBuilder> builders =
+            new ThreadLocal<DocumentBuilder>() {
+                @Override
+                protected DocumentBuilder initialValue() {
+                    try {
+                        return
+                                DocumentBuilderFactory.newInstance()
+                                        .newDocumentBuilder();
+                    } catch (ParserConfigurationException ex) {
+                        throw new ExceptionInInitializerError(ex);
+                    }
+                }
+            };
 
     private int statusCode;
-    private Document response = null;
-    private String responseString = null;
+    private Document responseAsDocument = null;
+    private String responseAsString = null;
     private InputStream is;
-    private SAXException saxe = null;
     private HttpURLConnection con;
-    private static final long serialVersionUID = -8868373803067492270L;
+    private boolean streamConsumed = false;
+
 
     public Response(HttpURLConnection con) throws IOException {
+        this.con = con;
         this.statusCode = con.getResponseCode();
-        BufferedReader br = null;
-        InputStream is = null;
         if (statusCode == 200) {
             is = con.getInputStream();
         } else {
             is = con.getErrorStream();
         }
-        if("gzip".equals(con.getContentEncoding())){
+        if ("gzip".equals(con.getContentEncoding())) {
             // the response is gzipped
             is = new GZIPInputStream(is);
         }
+    }
 
-        this.con = con;
-
-        try {
-            br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            StringBuffer buf = new StringBuffer();
-            String line;
-            while (null != (line = br.readLine())) {
-                buf.append(line).append("\n");
-            }
-            this.responseString = buf.toString();
-            this.is = new ByteArrayInputStream(responseString.getBytes("UTF-8"));
-        } catch (NullPointerException ignore) {
-            throw new IOException(ignore.getMessage());
-        }
+    // for test purpose
+    /*package*/ Response(String content) {
+        this.responseAsString = content;
     }
 
     public int getStatusCode() {
@@ -104,37 +100,87 @@ public class Response implements java.io.Serializable {
         return con.getHeaderField(name);
     }
 
-    public String asString() {
-        return responseString;
-    }
-
+    /**
+     * Returns the response stream.<br>
+     * This method cannot be called after calling asString() or asDcoument()<br>
+     * It is suggested to call disconnect() after consuming the stream.
+     *
+     * Disconnects the internal HttpURLConnection silently.
+     * @return response body stream
+     * @throws TwitterException
+     * @see #disconnect()
+     */
     public InputStream asStream() {
+        if(streamConsumed){
+            throw new IllegalStateException("Stream already consumed.");
+        }
         return is;
     }
 
-    public Document asDocument() throws TwitterException{
-        if(null == saxe && null == response){
+    /**
+     * Returns the response body as string.<br>
+     * Disconnects the internal HttpURLConnection silently.
+     * @return response body
+     * @throws TwitterException
+     */
+    public String asString() throws TwitterException{
+        if(null == responseAsString){
+            BufferedReader br;
             try {
-                this.response = builder.parse(new ByteArrayInputStream(
-                        responseString.getBytes("UTF-8")));
-            } catch (SAXException saxe) {
-                this.saxe = saxe;
+                InputStream stream = asStream();
+                br = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+                StringBuffer buf = new StringBuffer();
+                String line;
+                while (null != (line = br.readLine())) {
+                    buf.append(line).append("\n");
+                }
+                this.responseAsString = buf.toString();
+                log(responseAsString);
+                stream.close();
+                con.disconnect();
+                streamConsumed = true;
+            } catch (NullPointerException npe) {
+                // don't remember in which case npe can be thrown
+                throw new TwitterException(npe.getMessage(), npe);
             } catch (IOException ioe) {
-                //should never reach here
-                throw new TwitterException("Twitter returned a non-XML response", ioe);
+                throw new TwitterException(ioe.getMessage(), ioe);
             }
         }
-        if(null != saxe){
-            throw new TwitterException("Twitter returned a non-XML response:" + responseString, saxe);
-        }
-        return response;
+        return responseAsString;
     }
 
+    /**
+     * Returns the response body as org.w3c.dom.Document.<br>
+     * Disconnects the internal HttpURLConnection silently.
+     * @return response body as org.w3c.dom.Document
+     * @throws TwitterException
+     */
+    public Document asDocument() throws TwitterException {
+        if (null == responseAsDocument) {
+            try {
+                // it should be faster to read the inputstream directly.
+                // but makes it difficult to troubleshoot
+                this.responseAsDocument = builders.get().parse(new ByteArrayInputStream(asString().getBytes("UTF-8")));
+            } catch (SAXException saxe) {
+                throw new TwitterException("The response body was not well-formed:\n" + responseAsString, saxe);
+            } catch (IOException ioe) {
+                throw new TwitterException("There's something with the connection.", ioe);
+            }
+        }
+        return responseAsDocument;
+    }
+
+    /**
+     * Returns the response body as twitter4j.org.json.JSONObject.<br>
+     * Disconnects the internal HttpURLConnection silently.
+     * @return response body as twitter4j.org.json.JSONObject
+     * @throws TwitterException
+     */
     public JSONObject asJSONObject() throws TwitterException {
         try {
-            return new JSONObject(this.responseString);
+            return new JSONObject(asString());
         } catch (JSONException jsone) {
-            throw new TwitterException(jsone.getMessage() + ":" + this.responseString);
+            throw new TwitterException(jsone.getMessage() + ":" + this.responseAsString);
         }
     }
 
@@ -146,9 +192,33 @@ public class Response implements java.io.Serializable {
         }
     }
 
-    @Override
-    public String toString(){
-        return responseString;
+    public void disconnect(){
+        con.disconnect();
     }
 
+    @Override
+    public String toString() {
+        if(null == responseAsString){
+            return responseAsString;
+        }
+        return "Response{" +
+                "statusCode=" + statusCode +
+                ", response=" + responseAsDocument +
+                ", responseString='" + responseAsString + '\'' +
+                ", is=" + is +
+                ", con=" + con +
+                '}';
+    }
+
+    private void log(String message) {
+        if (DEBUG) {
+            System.out.println("[" + new java.util.Date() + "]" + message);
+        }
+    }
+
+    private void log(String message, String message2) {
+        if (DEBUG) {
+            log(message + message2);
+        }
+    }
 }

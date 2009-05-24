@@ -29,7 +29,6 @@ package twitter4j.http;
 import twitter4j.TwitterException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -59,7 +58,7 @@ public class HttpClient implements java.io.Serializable {
     private final int BAD_GATEWAY = 502;// Bad Gateway: Twitter is down or being upgraded.
     private final int SERVICE_UNAVAILABLE = 503;// Service Unavailable: The Twitter servers are up, but overloaded with requests. Try again later. The search and trend methods use this to indicate when you are being rate limited.
 
-    private final boolean DEBUG = Boolean.getBoolean("twitter4j.debug");
+    private final static boolean DEBUG = Boolean.getBoolean("twitter4j.debug");
 
     private String basic;
     private int retryCount = 0;
@@ -378,13 +377,10 @@ public class HttpClient implements java.io.Serializable {
         int retriedCount;
         int retry = retryCount + 1;
         Response res = null;
-        // update the status
-//        lastURL = url;
         for (retriedCount = 0; retriedCount < retry; retriedCount++) {
             int responseCode = -1;
             try {
                 HttpURLConnection con = null;
-                InputStream is = null;
                 OutputStream osw = null;
                 try {
                     con = getConnection(url);
@@ -424,10 +420,12 @@ public class HttpClient implements java.io.Serializable {
                             }
                         }
                     }
-                    log(res.toString());
-                    con.disconnect();
                     if (responseCode != OK) {
-                        if (responseCode != INTERNAL_SERVER_ERROR || retriedCount == retryCount) {
+                        if ((responseCode != INTERNAL_SERVER_ERROR &&
+                                // sometime method call fails with 403
+                                // http://code.google.com/p/twitter-api/issues/detail?id=597&colspec=ID%20Stars%20Type%20Status%20Priority%20Owner%20Summary%20Opened%20Modified%20Component
+                                responseCode != FORBIDDEN)
+                                || retriedCount == retryCount) {
                             throw new TwitterException(getCause(responseCode) + "\n" + res.toString(), responseCode);
                         }
                         // will retry if the status code is INTERNAL_SERVER_ERROR 
@@ -436,15 +434,7 @@ public class HttpClient implements java.io.Serializable {
                     }
                 } finally {
                     try {
-                        is.close();
-                    } catch (Exception ignore) {
-                    }
-                    try {
                         osw.close();
-                    } catch (Exception ignore) {
-                    }
-                    try {
-                        con.disconnect();
                     } catch (Exception ignore) {
                     }
                 }
@@ -455,6 +445,7 @@ public class HttpClient implements java.io.Serializable {
                 }
             }
             try {
+                log("Sleeping " + retryIntervalMillis +" millisecs for next retry.");
                 Thread.sleep(retryIntervalMillis);
             } catch (InterruptedException ignore) {
                 //nothing to do

@@ -36,7 +36,7 @@ public class RequestToken extends OAuthToken {
     private HttpClient httpClient;
     private static final long serialVersionUID = -8214365845469757952L;
 
-    RequestToken(Response res, HttpClient httpClient) {
+    RequestToken(Response res, HttpClient httpClient) throws TwitterException{
         super(res);
         this.httpClient = httpClient;
     }
