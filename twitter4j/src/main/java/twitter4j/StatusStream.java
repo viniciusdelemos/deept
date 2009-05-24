@@ -24,43 +24,62 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package twitter4j.http;
+package twitter4j;
 
-import twitter4j.TwitterException;
+import twitter4j.http.Response;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
- * Representing authorized Access Token which is passed to the service provider in order to access protected resources.<br>
- * the token and token secret can be stored into some persistent stores such as file system or RDBMS for the further accesses.
+ *
  * @author Yusuke Yamamoto - yusuke at mac.com
+ * @since Twitter4J 2.0.4
  */
-public class AccessToken extends OAuthToken {
-    private static final long serialVersionUID = -8344528374458826291L;
-    private String screenName;
-    private int userId;
-    
-    
-    AccessToken(Response res) throws TwitterException {
-        super(res);
+public class StatusStream {
+    private boolean streamAlive = true;
+    private BufferedReader br;
+    private InputStream is;
+    private Response response;
+
+    /*package*/ StatusStream(InputStream stream) throws IOException {
+        this.is = stream;
+        this.br = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
     }
-    // for test unit
-    AccessToken(String str) {
-        super(str);
-        screenName = getParameter("screen_name");
-        userId = Integer.parseInt(getParameter("user_id"));
+    /*package*/ StatusStream(Response response) throws IOException {
+        this(response.asStream());
+        this.response = response;
+    }
+    public Status next() throws TwitterException{
+        if(!streamAlive){
+            throw new IllegalStateException("Stream already closed.");
+        }
+        try {
+            String line;
+            while (streamAlive) {
+                line = br.readLine();
+                if (null != line && line.length() > 0) {
+                    return new Status(line);
+                }
+            }
+            throw new TwitterException("Stream closed.");
+        } catch (IOException e) {
+            try {
+                is.close();
+            } catch (IOException ignore) {
+            }
+            streamAlive = false;
+            throw new TwitterException("Stream closed.", e);
+        }
 
     }
-
-    public AccessToken(String token, String tokenSecret) {
-        super(token, tokenSecret);
+    public void close() throws IOException{
+        is.close();
+        br.close();
+        if(null != response){
+            response.disconnect();
+        }
     }
-    
-	public String getScreenName() {
-		return screenName;
-	}
-
-	public int getUserId() {
-		return userId;
-	}
-    
 }
-

@@ -2404,6 +2404,73 @@ public class AsyncTwitter extends Twitter {
         destroyBlockAsync(id, new TwitterAdapter());
     }
 
+
+    /**
+     * Tests if a friendship exists between two users.
+     * <br>This method calls http://twitter.com/blocks/exists/id.xml
+     *
+     * @param id The ID or screen_name of the potentially blocked user.
+     * @since Twitter4J 2.0.4
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-exists">Twitter API Wiki / Twitter REST API Method: blocks exists</a>
+     */
+    public void existsBlockAsync(String id, TwitterListener listener) {
+        getDispatcher().invokeLater(new AsyncTask(EXISTS_BLOCK, listener, new String[]{id}) {
+            public void invoke(TwitterListener listener, Object[] args) throws TwitterException {
+                listener.gotExistsBlock(existsBlock((String) args[0]));
+            }
+        });
+    }
+
+    /**
+     * Returns a list of user objects that the authenticating user is blocking.
+     * <br>This method calls http://twitter.com/blocks/blocking.xml
+     *
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @since Twitter4J 2.0.4
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-blocking">Twitter API Wiki / Twitter REST API Method: blocks blocking</a>
+     */
+    public void getBlockingUsersAsync(TwitterListener listener) throws
+            TwitterException {
+        getDispatcher().invokeLater(new AsyncTask(GET_BLOCKING_USERS, listener, null) {
+            public void invoke(TwitterListener listener, Object[] args) throws TwitterException {
+                listener.gotBlockingUsers(getBlockingUsers());
+            }
+        });
+    }
+
+    /**
+     * Returns a list of user objects that the authenticating user is blocking.
+     * <br>This method calls http://twitter.com/blocks/blocking.xml
+     *
+     * @param page the number of page
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @since Twitter4J 2.0.4
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-blocking">Twitter API Wiki / Twitter REST API Method: blocks blocking</a>
+     */
+    public void getBlockingUsersAsync(int page, TwitterListener listener) throws
+            TwitterException {
+        getDispatcher().invokeLater(new AsyncTask(GET_BLOCKING_USERS, listener, new Integer[]{page}) {
+            public void invoke(TwitterListener listener, Object[] args) throws TwitterException {
+                listener.gotBlockingUsers(getBlockingUsers((Integer)args[0]));
+            }
+        });
+    }
+
+    /**
+     * Returns an array of numeric user ids the authenticating user is blocking.
+     * <br>This method calls http://twitter.com/blocks/blocking/ids
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @since Twitter4J 2.0.4
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-blocking-ids">Twitter API Wiki / Twitter REST API Method: blocks blocking ids</a>
+     */
+    public void getBlockingUsersIDsAsync(TwitterListener listener) throws TwitterException {
+        getDispatcher().invokeLater(new AsyncTask(GET_BLOCKING_USERS_IDS, listener, null) {
+            public void invoke(TwitterListener listener, Object[] args) throws TwitterException {
+                listener.gotBlockingUsersIDs(getBlockingUsersIDs());
+            }
+        });
+    }
+
     /* Help Methods */
 
     /**
@@ -2576,6 +2643,10 @@ public class AsyncTwitter extends Twitter {
      */
     public final static int UNBLOCK = 23;
     public final static int DESTROYED_BLOCK = 42;
+    private static final int EXISTS_BLOCK = 48;
+    private static final int GET_BLOCKING_USERS = 49;
+    private static final int GET_BLOCKING_USERS_IDS = 50;
+
     public final static int TEST = 24;
     /**
      * @deprecated not supported by Twitter API anymore

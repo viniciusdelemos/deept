@@ -23,54 +23,16 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 */
 package twitter4j;
 
-import twitter4j.http.Response;
-
-import java.util.Date;
-
 /**
- * A data class representing Extended user information element<br>
- *
  * @author Yusuke Yamamoto - yusuke at mac.com
- * @see <a href="http://apiwiki.twitter.com/REST%20API%20Documentation#Extendeduserinformationelement">Extended user information element</a>
- * @deprecated use twitter4j.ExtendedUser instead
+ * @since Twitter4J 2.0.4
  */
-public abstract class UserWithStatus extends User {
+public interface StatusListener {
+    void onStatus(Status status);
 
-    public UserWithStatus(Response res, Twitter twitter) throws TwitterException {
-        super(res, twitter);
-    }
-
-    public abstract String getProfileBackgroundColor();
-
-    public abstract String getProfileTextColor();
-
-    public abstract String getProfileLinkColor();
-
-    public abstract String getProfileSidebarFillColor();
-
-    public abstract String getProfileSidebarBorderColor();
-
-    public abstract int getFriendsCount();
-
-    public abstract Date getCreatedAt();
-
-    public abstract int getFavouritesCount();
-
-    public abstract int getUtcOffset();
-
-    public abstract String getTimeZone();
-
-    public abstract String getProfileBackgroundImageUrl();
-
-    public abstract String getProfileBackgroundTile();
-
-    public abstract boolean isFollowing();
-
-    public abstract boolean isNotifications();
-
-    public abstract int getStatusesCount();
-
+    void onException(Exception ex);
 }

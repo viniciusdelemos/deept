@@ -57,12 +57,14 @@ public class TwitterTestUnit extends TestCase {
         pass2 = p.getProperty("pass2");
         pass3 = p.getProperty("pass3");
         twitterAPI1 = new Twitter(id1, pass1);
-        twitterAPI1.setRetryCount(3);
-        twitterAPI1.setRetryIntervalSecs(10);
+        twitterAPI1.setRetryCount(5);
+        twitterAPI1.setRetryIntervalSecs(5);
         twitterAPI2 = new Twitter(id2, pass2);
-        twitterAPI2.setRetryCount(3);
-        twitterAPI2.setRetryIntervalSecs(10);
+        twitterAPI2.setRetryCount(5);
+        twitterAPI2.setRetryIntervalSecs(5);
         unauthenticated = new Twitter();
+        unauthenticated.setRetryCount(5);
+        unauthenticated.setRetryIntervalSecs(5);
     }
 
     protected void tearDown() throws Exception {
@@ -119,7 +121,7 @@ public class TwitterTestUnit extends TestCase {
 
     }
     public void testGetUserDetail() throws Exception{
-        ExtendedUser uws = twitterAPI1.getUserDetail(id1);
+        User uws = twitterAPI1.getUserDetail(id1);
         assertEquals(id1, uws.getName());
         assertEquals(id1,uws.getScreenName());
         assertNotNull(uws.getLocation());
@@ -158,7 +160,7 @@ public class TwitterTestUnit extends TestCase {
 
         //test case for TFJ-91 null pointer exception getting user detail on users with no statuses
         //http://yusuke.homeip.net/jira/browse/TFJ-91
-        twitterAPI1.getUserDetail("twit4jnoupdate");
+        unauthenticated.getUserDetail("twit4jnoupdate");
         twitterAPI1.getUserDetail("tigertest");
     }
 
@@ -251,7 +253,7 @@ public class TwitterTestUnit extends TestCase {
     }
 
     public void testAccountMethods() throws Exception{
-        ExtendedUser original = twitterAPI1.verifyCredentials();
+        User original = twitterAPI1.verifyCredentials();
 
         String newName, newURL, newLocation, newDescription;
         String neu = "new";
@@ -260,7 +262,7 @@ public class TwitterTestUnit extends TestCase {
         newLocation = original.getLocation()+neu;
         newDescription = original.getDescription()+neu;
 
-        ExtendedUser altered = twitterAPI1.updateProfile(
+        User altered = twitterAPI1.updateProfile(
                 newName, null, newURL, newLocation, newDescription);
         twitterAPI1.updateProfile(original.getName()
                 , null, original.getURL().toString(), original.getLocation(), original.getDescription());
@@ -287,8 +289,9 @@ public class TwitterTestUnit extends TestCase {
         } catch (twitter4j.TwitterException te) {
         }
         assertTrue(twitterAPI1.existsFriendship(id1,id2));
+        assertFalse(twitterAPI1.existsFriendship(id1,"al3x"));
 
-        ExtendedUser eu;
+        User eu;
         eu = twitterAPI1.updateProfileColors("f00", "f0f", "0ff", "0f0", "f0f");
         assertEquals("f00", eu.getProfileBackgroundColor());
         assertEquals("f0f", eu.getProfileTextColor());
@@ -413,6 +416,7 @@ public class TwitterTestUnit extends TestCase {
             user = twitterAPI2.destroyFriendship(id1);
         } catch (TwitterException te) {
             //ensure destory id1 before the actual test
+            //ensure destory id1 before the actual test
         }
 
         try {
@@ -424,7 +428,7 @@ public class TwitterTestUnit extends TestCase {
         assertEquals(id1, user.getName());
         // the Twitter API is not returning appropriate notifications value
         // http://code.google.com/p/twitter-api/issues/detail?id=474
-//        ExtendedUser detail = twitterAPI2.getUserDetail(id1);
+//        User detail = twitterAPI2.getUserDetail(id1);
 //        assertTrue(detail.isNotificationEnabled());
         try {
             user = twitterAPI2.createFriendship(id2);
@@ -498,6 +502,18 @@ public class TwitterTestUnit extends TestCase {
     public void testBlock() throws Exception {
         twitterAPI2.createBlock(id1);
         twitterAPI2.destroyBlock(id1);
+        assertFalse(twitterAPI1.existsBlock("twit4j2"));
+        assertTrue(twitterAPI1.existsBlock("twit4jblock"));
+        List<User> users = twitterAPI1.getBlockingUsers();
+        assertEquals(1, users.size());
+        assertEquals(39771963, users.get(0).getId());
+        users = twitterAPI1.getBlockingUsers(1);
+        assertEquals(1, users.size());
+        assertEquals(39771963, users.get(0).getId());
+
+        IDs ids = twitterAPI1.getBlockingUsersIDs();
+        assertEquals(1, ids.getIDs().length);
+        assertEquals(39771963, ids.getIDs()[0]);
     }
 
 
@@ -589,7 +605,7 @@ public class TwitterTestUnit extends TestCase {
 
         trendsList = unauthenticated.getDailyTrends();
         assertTrue(100000 > (trends.getAsOf().getTime() - System.currentTimeMillis()));
-        assertEquals(24, trendsList.size());
+        assertTrue(20 < trendsList.size());
         assertTrends(trendsList,20);
 
         trendsList = unauthenticated.getDailyTrends(new Date(), true);
@@ -624,174 +640,174 @@ public class TwitterTestUnit extends TestCase {
     }
 
     public void testProperties() throws Exception{
-        Twitter twitter;
+        TwitterSupport twitterSupport;
         String test = "t4j";
         String override = "system property";
 
 
         System.getProperties().remove("twitter4j.user");
-        twitter = new Twitter();
-        assertNull(twitter.getUserId());
+        twitterSupport = new Twitter();
+        assertNull(twitterSupport.getUserId());
 
-        twitter.setUserId(test);
-        assertEquals(test, twitter.getUserId());
+        twitterSupport.setUserId(test);
+        assertEquals(test, twitterSupport.getUserId());
         System.setProperty("twitter4j.user", override);
-        twitter = new Twitter();
-        assertEquals(override, twitter.getUserId());
-        twitter.setUserId(test);
-        assertEquals(override, twitter.getUserId());
+        twitterSupport = new Twitter();
+        assertEquals(override, twitterSupport.getUserId());
+        twitterSupport.setUserId(test);
+        assertEquals(override, twitterSupport.getUserId());
         System.getProperties().remove("twitter4j.user");
 
         System.getProperties().remove("twitter4j.password");
-        twitter = new Twitter();
-        assertNull(twitter.getPassword());
+        twitterSupport = new Twitter();
+        assertNull(twitterSupport.getPassword());
 
-        twitter.setPassword(test);
-        assertEquals(test, twitter.getPassword());
+        twitterSupport.setPassword(test);
+        assertEquals(test, twitterSupport.getPassword());
         System.setProperty("twitter4j.password", override);
-        twitter = new Twitter();
-        assertEquals(override, twitter.getPassword());
-        twitter.setPassword(test);
-        assertEquals(override, twitter.getPassword());
+        twitterSupport = new Twitter();
+        assertEquals(override, twitterSupport.getPassword());
+        twitterSupport.setPassword(test);
+        assertEquals(override, twitterSupport.getPassword());
         System.getProperties().remove("twitter4j.password");
 
 
         System.getProperties().remove("twitter4j.source");
-        twitter = new Twitter();
-        assertEquals("Twitter4J", twitter.getSource());
+        twitterSupport = new Twitter();
+        assertEquals("Twitter4J", twitterSupport.getSource());
 
-        twitter.setSource(test);
-        assertEquals(test, twitter.getSource());
+        twitterSupport.setSource(test);
+        assertEquals(test, twitterSupport.getSource());
         System.setProperty("twitter4j.source", override);
-        twitter = new Twitter();
-        assertEquals(override, twitter.getSource());
-        twitter.setSource(test);
-        assertEquals(override, twitter.getSource());
+        twitterSupport = new Twitter();
+        assertEquals(override, twitterSupport.getSource());
+        twitterSupport.setSource(test);
+        assertEquals(override, twitterSupport.getSource());
         System.getProperties().remove("twitter4j.source");
 
 
         System.getProperties().remove("twitter4j.clientVersion");
-        twitter = new Twitter();
-        assertEquals(Twitter.VERSION, twitter.getClientVersion());
+        twitterSupport = new Twitter();
+        assertEquals(TwitterSupport.VERSION, twitterSupport.getClientVersion());
 
-        twitter.setClientVersion(test);
-        assertEquals(test, twitter.getClientVersion());
+        twitterSupport.setClientVersion(test);
+        assertEquals(test, twitterSupport.getClientVersion());
         System.setProperty("twitter4j.clientVersion", override);
-        twitter = new Twitter();
-        assertEquals(override, twitter.getClientVersion());
-        twitter.setClientVersion(test);
-        assertEquals(override, twitter.getClientVersion());
+        twitterSupport = new Twitter();
+        assertEquals(override, twitterSupport.getClientVersion());
+        twitterSupport.setClientVersion(test);
+        assertEquals(override, twitterSupport.getClientVersion());
         System.getProperties().remove("twitter4j.clientVersion");
 
 
         System.getProperties().remove("twitter4j.clientURL");
-        twitter = new Twitter();
-        assertEquals("http://yusuke.homeip.net/twitter4j/en/twitter4j-" + twitter.VERSION + ".xml", twitter.getClientURL());
+        twitterSupport = new Twitter();
+        assertEquals("http://yusuke.homeip.net/twitter4j/en/twitter4j-" + twitterSupport.VERSION + ".xml", twitterSupport.getClientURL());
 
-        twitter.setClientURL(test);
-        assertEquals(test, twitter.getClientURL());
+        twitterSupport.setClientURL(test);
+        assertEquals(test, twitterSupport.getClientURL());
         System.setProperty("twitter4j.clientURL", override);
-        twitter = new Twitter();
-        assertEquals(override, twitter.getClientURL());
-        twitter.setClientURL(test);
-        assertEquals(override, twitter.getClientURL());
+        twitterSupport = new Twitter();
+        assertEquals(override, twitterSupport.getClientURL());
+        twitterSupport.setClientURL(test);
+        assertEquals(override, twitterSupport.getClientURL());
         System.getProperties().remove("twitter4j.clientURL");
 
 
 
         System.getProperties().remove("twitter4j.http.userAgent");
-        twitter = new Twitter();
-        assertEquals("twitter4j http://yusuke.homeip.net/twitter4j/ /" + twitter.VERSION, twitter.http.getRequestHeader("User-Agent"));
+        twitterSupport = new Twitter();
+        assertEquals("twitter4j http://yusuke.homeip.net/twitter4j/ /" + twitterSupport.VERSION, twitterSupport.http.getRequestHeader("User-Agent"));
 
-        twitter.setUserAgent(test);
-        assertEquals(test, twitter.getUserAgent());
+        twitterSupport.setUserAgent(test);
+        assertEquals(test, twitterSupport.getUserAgent());
         System.setProperty("twitter4j.http.userAgent", override);
-        twitter = new Twitter();
-        assertEquals(override, twitter.getUserAgent());
-        twitter.setUserAgent(test);
-        assertEquals(override, twitter.getUserAgent());
+        twitterSupport = new Twitter();
+        assertEquals(override, twitterSupport.getUserAgent());
+        twitterSupport.setUserAgent(test);
+        assertEquals(override, twitterSupport.getUserAgent());
         System.getProperties().remove("twitter4j.http.userAgent");
 
         System.getProperties().remove("twitter4j.http.proxyHost");
-        twitter = new Twitter();
-        assertEquals(null, twitter.http.getProxyHost());
+        twitterSupport = new Twitter();
+        assertEquals(null, twitterSupport.http.getProxyHost());
 
-        twitter.setHttpProxy(test,10);
-        assertEquals(test, twitter.http.getProxyHost());
+        twitterSupport.setHttpProxy(test,10);
+        assertEquals(test, twitterSupport.http.getProxyHost());
         System.setProperty("twitter4j.http.proxyHost", override);
-        twitter = new Twitter();
-        assertEquals(override, twitter.http.getProxyHost());
-        twitter.setHttpProxy(test,10);
-        assertEquals(override, twitter.http.getProxyHost());
+        twitterSupport = new Twitter();
+        assertEquals(override, twitterSupport.http.getProxyHost());
+        twitterSupport.setHttpProxy(test,10);
+        assertEquals(override, twitterSupport.http.getProxyHost());
         System.getProperties().remove("twitter4j.http.proxyHost");
 
         System.getProperties().remove("twitter4j.http.proxyPort");
-        twitter = new Twitter();
-        assertEquals(0, twitter.http.getProxyPort());
+        twitterSupport = new Twitter();
+        assertEquals(0, twitterSupport.http.getProxyPort());
 
-        twitter.setHttpProxy(test,10);
-        assertEquals(10, twitter.http.getProxyPort());
+        twitterSupport.setHttpProxy(test,10);
+        assertEquals(10, twitterSupport.http.getProxyPort());
         System.setProperty("twitter4j.http.proxyPort", "100");
-        twitter = new Twitter();
-        assertEquals(100, twitter.http.getProxyPort());
-        twitter.setHttpProxy(test,10);
-        assertEquals(100, twitter.http.getProxyPort());
+        twitterSupport = new Twitter();
+        assertEquals(100, twitterSupport.http.getProxyPort());
+        twitterSupport.setHttpProxy(test,10);
+        assertEquals(100, twitterSupport.http.getProxyPort());
         System.getProperties().remove("twitter4j.http.proxyPort");
 
 
         System.getProperties().remove("twitter4j.http.proxyUser");
-        twitter = new Twitter();
-        assertEquals(null, twitter.http.getProxyAuthUser());
+        twitterSupport = new Twitter();
+        assertEquals(null, twitterSupport.http.getProxyAuthUser());
 
-        twitter.setHttpProxyAuth(test,test);
-        assertEquals(test, twitter.http.getProxyAuthUser());
+        twitterSupport.setHttpProxyAuth(test,test);
+        assertEquals(test, twitterSupport.http.getProxyAuthUser());
         System.setProperty("twitter4j.http.proxyUser", override);
-        twitter = new Twitter();
-        assertEquals(override, twitter.http.getProxyAuthUser());
-        twitter.setHttpProxyAuth(test,test);
-        assertEquals(override, twitter.http.getProxyAuthUser());
+        twitterSupport = new Twitter();
+        assertEquals(override, twitterSupport.http.getProxyAuthUser());
+        twitterSupport.setHttpProxyAuth(test,test);
+        assertEquals(override, twitterSupport.http.getProxyAuthUser());
         System.getProperties().remove("twitter4j.http.proxyUser");
 
 
         System.getProperties().remove("twitter4j.http.proxyPassword");
-        twitter = new Twitter();
-        assertEquals(null, twitter.http.getProxyAuthPassword());
+        twitterSupport = new Twitter();
+        assertEquals(null, twitterSupport.http.getProxyAuthPassword());
 
-        twitter.setHttpProxyAuth(test,test);
-        assertEquals(test, twitter.http.getProxyAuthPassword());
+        twitterSupport.setHttpProxyAuth(test,test);
+        assertEquals(test, twitterSupport.http.getProxyAuthPassword());
         System.setProperty("twitter4j.http.proxyPassword",  override);
-        twitter = new Twitter();
-        assertEquals(override, twitter.http.getProxyAuthPassword());
-        twitter.setHttpProxyAuth(test,test);
-        assertEquals(override, twitter.http.getProxyAuthPassword());
+        twitterSupport = new Twitter();
+        assertEquals(override, twitterSupport.http.getProxyAuthPassword());
+        twitterSupport.setHttpProxyAuth(test,test);
+        assertEquals(override, twitterSupport.http.getProxyAuthPassword());
         System.getProperties().remove("twitter4j.http.proxyPassword");
 
 
         System.getProperties().remove("twitter4j.http.connectionTimeout");
-        twitter = new Twitter();
-        assertEquals(10000, twitter.http.getConnectionTimeout());
+        twitterSupport = new Twitter();
+        assertEquals(10000, twitterSupport.http.getConnectionTimeout());
 
-        twitter.setHttpConnectionTimeout(10);
-        assertEquals(10, twitter.http.getConnectionTimeout());
+        twitterSupport.setHttpConnectionTimeout(10);
+        assertEquals(10, twitterSupport.http.getConnectionTimeout());
         System.setProperty("twitter4j.http.connectionTimeout", "100");
-        twitter = new Twitter();
-        assertEquals(100, twitter.http.getConnectionTimeout());
-        twitter.setHttpConnectionTimeout(10);
-        assertEquals(100, twitter.http.getConnectionTimeout());
+        twitterSupport = new Twitter();
+        assertEquals(100, twitterSupport.http.getConnectionTimeout());
+        twitterSupport.setHttpConnectionTimeout(10);
+        assertEquals(100, twitterSupport.http.getConnectionTimeout());
         System.getProperties().remove("twitter4j.http.connectionTimeout");
 
 
         System.getProperties().remove("twitter4j.http.readTimeout");
-        twitter = new Twitter();
-        assertEquals(30000, twitter.http.getReadTimeout());
+        twitterSupport = new Twitter();
+        assertEquals(30000, twitterSupport.http.getReadTimeout());
 
-        twitter.setHttpReadTimeout(10);
-        assertEquals(10, twitter.http.getReadTimeout());
+        twitterSupport.setHttpReadTimeout(10);
+        assertEquals(10, twitterSupport.http.getReadTimeout());
         System.setProperty("twitter4j.http.readTimeout",  "100");
-        twitter = new Twitter();
-        assertEquals(100, twitter.http.getReadTimeout());
-        twitter.setHttpConnectionTimeout(10);
-        assertEquals(100, twitter.http.getReadTimeout());
+        twitterSupport = new Twitter();
+        assertEquals(100, twitterSupport.http.getReadTimeout());
+        twitterSupport.setHttpConnectionTimeout(10);
+        assertEquals(100, twitterSupport.http.getReadTimeout());
         System.getProperties().remove("twitter4j.http.readTimeout");
     }
 }

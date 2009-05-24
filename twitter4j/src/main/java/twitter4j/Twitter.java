@@ -43,31 +43,18 @@ import java.util.TimeZone;
  * A java reporesentation of the <a href="http://apiwiki.twitter.com/">Twitter API</a>
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class Twitter implements java.io.Serializable {
-    protected HttpClient http = null;
+public class Twitter extends TwitterSupport {
     private String baseURL = "http://twitter.com/";
     private String searchBaseURL = "http://search.twitter.com/";
-    private String source;
-
-    private boolean usePostForcibly = false;
-    private static final int MAX_COUNT = 200;
-    private static final long serialVersionUID = -7550633067620779906L;
-    /*package*/ static final String VERSION = "2.0.3";
+    private static final long serialVersionUID = -1486360080128882436L;
 
     public Twitter() {
-        http = new HttpClient();
-        setUserAgent("twitter4j http://yusuke.homeip.net/twitter4j/ /" + VERSION);
-        setSource("Twitter4J");
-        setClientVersion(VERSION);
-        setClientURL("http://yusuke.homeip.net/twitter4j/en/twitter4j-" + VERSION + ".xml");
+        super();
         format.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         http.setRequestTokenURL("http://twitter.com/oauth/request_token");
         http.setAuthorizationURL("http://twitter.com/oauth/authorize");
         http.setAccessTokenURL("http://twitter.com/oauth/access_token");
-        // ensure userid and password are initialized with system properties
-        setUserId(null);
-        setPassword(null);
     }
 
     public Twitter(String baseURL) {
@@ -86,60 +73,6 @@ public class Twitter implements java.io.Serializable {
         setUserId(id);
         setPassword(password);
         this.baseURL = baseURL;
-    }
-
-    /**
-     * Sets the User-Agent header. System property -Dtwitter4j.http.userAgent overrides this attribute.
-     * @param userAgent UserAgent
-     * @since Twitter4J 1.1.8
-     */
-    public void setUserAgent(String userAgent){
-        http.setUserAgent(System.getProperty("twitter4j.http.userAgent", userAgent));
-    }
-
-    /**
-     *
-     * @return UserAgent
-     * @since Twitter4J 1.1.8
-     */
-    public String getUserAgent(){
-        return http.getUserAgent();
-    }
-
-    /**
-     * Sets the X-Twitter-Client-Version header. System property -Dtwitter4j.clientVersion overrides this attribute.
-     * @param version client version
-     * @since Twitter4J 1.1.8
-     */
-    public void setClientVersion(String version){
-        setRequestHeader("X-Twitter-Client-Version", System.getProperty("twitter4j.clientVersion", version));
-    }
-
-    /**
-     *
-     * @return client version
-     * @since Twitter4J 1.1.8
-     */
-    public String getClientVersion(){
-        return http.getRequestHeader("X-Twitter-Client-Version");
-    }
-
-    /**
-     * Sets the X-Twitter-Client-URL header. System property -Dtwitter4j.clientURL overrides this attribute.
-     * @param clientURL client URL
-     * @since Twitter4J 1.1.8
-     */
-    public void setClientURL(String clientURL){
-        setRequestHeader("X-Twitter-Client-URL",System.getProperty("twitter4j.clientURL", clientURL));
-    }
-
-    /**
-     *
-     * @return client URL
-     * @since Twitter4J 1.1.8
-     */
-    public String getClientURL(){
-        return http.getRequestHeader("X-Twitter-Client-URL");
     }
 
     /**
@@ -177,42 +110,6 @@ public class Twitter implements java.io.Serializable {
      */
     public String getSearchBaseURL(){
         return this.searchBaseURL;
-    }
-
-    /**
-     * Sets the userid
-     *
-     * @param userId new userid
-     */
-    public synchronized void setUserId(String userId) {
-        http.setUserId(System.getProperty("twitter4j.user", userId));
-    }
-
-    /**
-     * Returns authenticating userid
-     *
-     * @return userid
-     */
-    public String getUserId() {
-        return http.getUserId();
-    }
-
-    /**
-     * Sets the password
-     *
-     * @param password new password
-     */
-    public synchronized void setPassword(String password) {
-        http.setPassword(System.getProperty("twitter4j.password", password));
-    }
-
-    /**
-     * Returns authenticating password
-     *
-     * @return password
-     */
-    public String getPassword() {
-        return http.getPassword();
     }
 
     /**
@@ -285,103 +182,7 @@ public class Twitter implements java.io.Serializable {
 
 
     /**
-     * Enables use of HTTP proxy
-     *
-     * @param proxyHost proxy host, can be overridden system property -Dtwitter4j.http.proxyHost , -Dhttp.proxyHost
-     * @param proxyPort proxy port, can be overridden system property -Dtwitter4j.http.proxyPort , -Dhttp.proxyPort
-     * @since Twitter4J 1.1.6
-     */
-    public void setHttpProxy(String proxyHost, int proxyPort) {
-        http.setProxyHost(proxyHost);
-        http.setProxyPort(proxyPort);
-    }
-
-    /**
-     * Adds authentication on HTTP proxy
-     *
-     * @param proxyUser proxy user, can be overridden system property -Dtwitter4j.http.proxyUser
-     * @param proxyPass proxy password, can be overridden system property -Dtwitter4j.http.proxyPassword
-     * @since Twitter4J 1.1.6
-     */
-    public void setHttpProxyAuth(String proxyUser, String proxyPass) {
-        http.setProxyAuthUser(proxyUser);
-        http.setProxyAuthPassword(proxyPass);
-    }
-
-    /**
-     * Sets a specified timeout value, in milliseconds, to be used when opening a communications link to the Twitter API.
-     * System property -Dtwitter4j.http.connectionTimeout overrides this attribute.
-     *
-     * @param connectionTimeout an int that specifies the connect timeout value in milliseconds
-     * @since Twitter4J 1.1.6
-     */
-    public void setHttpConnectionTimeout(int connectionTimeout) {
-        http.setConnectionTimeout(connectionTimeout);
-    }
-
-    /**
-     * Sets the read timeout to a specified timeout, in milliseconds.
-     *
-     * @param readTimeout an int that specifies the timeout value to be used in milliseconds
-     * @since Twitter4J 1.1.6
-     */
-    public void setHttpReadTimeout(int readTimeout) {
-        http.setReadTimeout(readTimeout);
-    }
-
-    /**
-     * Sets X-Twitter-Client http header and the source parameter that will be passed by updating methods. System property -Dtwitter4j.source overrides this attribute.
-     * System property -Dtwitter4j.source overrides this attribute.
-     *
-     * @param source the new source
-     * @see <a href='http://apiwiki.twitter.com/FAQ#HowdoIget“fromMyApp”appendedtoupdatessentfrommyAPIapplication'>How do I get "from [MyApp]" appended to updates sent from my API application?</a>
-     * @see <a href="http://twitter.com/help/request_source">Twitter - Request a link to your application</a>
-     */
-    public void setSource(String source) {
-        this.source = System.getProperty("twitter4j.source", source);
-        setRequestHeader("X-Twitter-Client", this.source);
-    }
-
-    /**
-     * Returns the source
-     *
-     * @return source
-     */
-    public String getSource() {
-        return this.source;
-    }
-
-    /**
-     * Sets the request header name/value combination
-     * see Twitter Fan Wiki for detail.
-     * http://twitter.pbwiki.com/API-Docs#RequestHeaders
-     *
-     * @param name  the name of the request header
-     * @param value the value of the request header
-     */
-    public void setRequestHeader(String name, String value) {
-        http.setRequestHeader(name, value);
-    }
-
-    /**
-     * Set true to force using POST method communicating to the server
-     *
-     * @param forceUsePost if true POST method will be used forcibly
-     * @deprecated some methods don't accept POST method anymore
-     */
-    public void forceUsePost(boolean forceUsePost) {
-        this.usePostForcibly = forceUsePost;
-    }
-
-    /**
-     * @return true if POST is used forcibly
-     */
-    public boolean isUsePostForced() {
-        return this.usePostForcibly;
-    }
-
-    /**
-     * Issues an HTTP GET request. POST method will be used instead in case forceUsePost is set true.
+     * Issues an HTTP GET request.
      *
      * @param url          the request url
      * @param authenticate if true, the request will be sent with BASIC authentication header
@@ -394,7 +195,7 @@ public class Twitter implements java.io.Serializable {
     }
 
     /**
-     * Issues an HTTP GET request. POST method will be used instead in case forceUsePost is set true.
+     * Issues an HTTP GET request.
      *
      * @param url          the request url
      * @param authenticate if true, the request will be sent with BASIC authentication header
@@ -409,7 +210,7 @@ public class Twitter implements java.io.Serializable {
     }
 
     /**
-     * Issues an HTTP GET request. POST method will be used instead in case forceUsePost is set true.
+     * Issues an HTTP GET request.
      *
      * @param url          the request url
      * @param name1        the name of the first parameter
@@ -426,7 +227,7 @@ public class Twitter implements java.io.Serializable {
     }
 
     /**
-     * Issues an HTTP GET request. POST method will be used instead in case forceUsePost is set true.
+     * Issues an HTTP GET request.
      *
      * @param url          the request url
      * @param params       the request parameters
@@ -435,22 +236,14 @@ public class Twitter implements java.io.Serializable {
      * @throws TwitterException when Twitter service or network is unavailable
      */
     protected Response get(String url, PostParameter[] params, boolean authenticate) throws TwitterException {
-        if (usePostForcibly) {
-            if (null == params) {
-                return http.post(url, new PostParameter[0], authenticate);
-            } else {
-                return http.post(url, params, authenticate);
-            }
-        } else {
-            if (null != params && params.length > 0) {
-                url += "?" + HttpClient.encodeParameters(params);
-            }
-            return http.get(url, authenticate);
+        if (null != params && params.length > 0) {
+            url += "?" + HttpClient.encodeParameters(params);
         }
+        return http.get(url, authenticate);
     }
 
     /**
-     * Issues an HTTP GET request. POST method will be used instead in case forceUsePost is set true.
+     * Issues an HTTP GET request.
      *
      * @param url          the request url
      * @param params       the request parameters
@@ -462,9 +255,6 @@ public class Twitter implements java.io.Serializable {
     protected Response get(String url, PostParameter[] params, Paging paging, boolean authenticate) throws TwitterException {
         if (null != paging) {
             List<PostParameter> pagingParams = new ArrayList<PostParameter>(4);
-            if (-1 != paging.getCount()) {
-                pagingParams.add(new PostParameter("count", String.valueOf(paging.getCount())));
-            }
             if (-1 != paging.getMaxId()) {
                 pagingParams.add(new PostParameter("max_id", String.valueOf(paging.getMaxId())));
             }
@@ -474,7 +264,7 @@ public class Twitter implements java.io.Serializable {
             if (-1 != paging.getPage()) {
                 pagingParams.add(new PostParameter("page", String.valueOf(paging.getPage())));
             }
-            if (-1 != paging.getSinceId()) {
+            if (-1 != paging.getCount()) {
                 if (-1 != url.indexOf("search")) {
                     // search api takes "rpp"
                     // http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-search
@@ -894,9 +684,6 @@ public class Twitter implements java.io.Serializable {
      */
     public List<Status> getUserTimeline(String id, int count
             , Date since) throws TwitterException {
-        if (MAX_COUNT < count) {
-            throw new IllegalArgumentException("count may not be greater than " + MAX_COUNT + " for performance purposes.");
-        }
         return Status.constructStatuses(get(baseURL + "statuses/user_timeline/" + id + ".xml",
                 "since", format.format(since), "count", String.valueOf(count), true), this);
     }
@@ -964,9 +751,6 @@ public class Twitter implements java.io.Serializable {
      */
     public List<Status> getUserTimeline(String id, int count) throws
             TwitterException {
-        if (MAX_COUNT < count) {
-            throw new IllegalArgumentException("count may not be greater than " + MAX_COUNT + " for performance purposes.");
-        }
         return Status.constructStatuses(get(baseURL + "statuses/user_timeline/" + id + ".xml",
                 "count", String.valueOf(count), true), this);
     }
@@ -983,9 +767,6 @@ public class Twitter implements java.io.Serializable {
      * @deprecated using long sinceId is suggested.
      */
     public List<Status> getUserTimeline(int count, Date since) throws TwitterException {
-        if (MAX_COUNT < count) {
-            throw new IllegalArgumentException("count may not be greater than " + MAX_COUNT + " for performance purposes.");
-        }
         return Status.constructStatuses(get(baseURL + "statuses/user_timeline.xml",
                 "since", format.format(since), "count", String.valueOf(count), true), this);
     }
@@ -1326,12 +1107,13 @@ public class Twitter implements java.io.Serializable {
      * <br>This method calls http://twitter.com/users/show
      *
      * @param id the ID or screen name of the user for whom to request the detail
-     * @return ExtendedUser
+     * @return User
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-users%C2%A0show">Twitter API Wiki / Twitter REST API Method: users show</a>
      */
-    public ExtendedUser getUserDetail(String id) throws TwitterException {
-        return new ExtendedUser(get(baseURL + "users/show/" + id + ".xml", true), this);
+    public User getUserDetail(String id) throws TwitterException {
+        return new User(get(baseURL + "users/show/" + id + ".xml"
+                , http.isAuthenticationEnabled()), this);
     }
 
     /* User Methods */
@@ -1774,7 +1556,7 @@ public class Twitter implements java.io.Serializable {
      */
     public User createFriendship(String id, boolean follow) throws TwitterException {
         return new User(http.post(baseURL + "friendships/create/" + id + ".xml"
-                , new PostParameter[]{new PostParameter("follow"
+                , new PostParameter[]{new PostParameter("getFollowStream"
                         , String.valueOf(follow))}, true)
                 , this);
     }
@@ -1987,13 +1769,13 @@ public class Twitter implements java.io.Serializable {
     /**
      * Returns an HTTP 200 OK response code and a representation of the requesting user if authentication was successful; returns a 401 status code and an error message if not.  Use this method to test if supplied user credentials are valid.
      *
-     * @return extended user
+     * @return user
      * @since Twitter4J 2.0.0
      * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-account%C2%A0verify_credentials">Twitter API Wiki / Twitter REST API Method: account verify_credentials</a>
      */
-    public ExtendedUser verifyCredentials() throws TwitterException {
-        return new ExtendedUser(get(baseURL + "account/verify_credentials.xml"
+    public User verifyCredentials() throws TwitterException {
+        return new User(get(baseURL + "account/verify_credentials.xml"
                 , true), this);
     }
 
@@ -2024,7 +1806,7 @@ public class Twitter implements java.io.Serializable {
      * @since Twitter4J 2.0.2
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-account%C2%A0update_profile">Twitter REST API Documentation &gt; Account Methods &gt; account/update_location</a>
      */
-    public ExtendedUser updateProfile(String name, String email, String url
+    public User updateProfile(String name, String email, String url
             , String location, String description) throws TwitterException {
         List<PostParameter> profile = new ArrayList<PostParameter>(5);
         addParameterToList(profile, "name", name);
@@ -2032,7 +1814,7 @@ public class Twitter implements java.io.Serializable {
         addParameterToList(profile, "url", url);
         addParameterToList(profile, "location", location);
         addParameterToList(profile, "description", description);
-        return new ExtendedUser(http.post(baseURL + "account/update_profile.xml"
+        return new User(http.post(baseURL + "account/update_profile.xml"
                 , profile.toArray(new PostParameter[profile.size()]), true), this);
     }
 
@@ -2086,7 +1868,7 @@ public class Twitter implements java.io.Serializable {
      * @since Twitter4J 2.0.0
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-account%C2%A0update_profile_colors">Twitter API Wiki / Twitter REST API Method: account update_profile_colors</a>
      */
-    public ExtendedUser updateProfileColors(
+    public User updateProfileColors(
             String profileBackgroundColor,
             String profileTextColor,
             String profileLinkColor,
@@ -2104,7 +1886,7 @@ public class Twitter implements java.io.Serializable {
                 , profileSidebarFillColor);
         addParameterToList(colors, "profile_sidebar_border_color"
                 , profileSidebarBorderColor);
-        return new ExtendedUser(http.post(baseURL +
+        return new User(http.post(baseURL +
                 "account/update_profile_colors.xml",
                 colors.toArray(new PostParameter[colors.size()]), true), this);
     }
@@ -2267,7 +2049,7 @@ public class Twitter implements java.io.Serializable {
      * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-notifications%C2%A0follow">Twitter API Wiki / Twitter REST API Method: notifications follow</a>
      */
     public User enableNotification(String id) throws TwitterException {
-        return new User(http.post(baseURL + "notifications/follow/" + id + ".xml", true), this);
+        return new User(http.post(baseURL + "notifications/getFollowStream/" + id + ".xml", true), this);
     }
 
     /**
@@ -2353,6 +2135,72 @@ public class Twitter implements java.io.Serializable {
         return new User(http.post(baseURL + "blocks/destroy/" + id + ".xml", true), this);
     }
 
+
+    /**
+     * Tests if a friendship exists between two users.
+     * <br>This method calls http://twitter.com/blocks/exists/id.xml
+     *
+     * @param id The ID or screen_name of the potentially blocked user.
+     * @return  if the authenticating user is blocking a target user
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @since Twitter4J 2.0.4
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-exists">Twitter API Wiki / Twitter REST API Method: blocks exists</a>
+     */
+    public boolean existsBlock(String id) throws TwitterException {
+        try{
+            return -1 == get(baseURL + "blocks/exists/" + id + ".xml", true).
+                    asString().indexOf("<error>You are not blocking this user.</error>");
+        }catch(TwitterException te){
+            if(te.getStatusCode() == 404){
+                return false;
+            }
+            throw te;
+        }
+    }
+
+    /**
+     * Returns a list of user objects that the authenticating user is blocking.
+     * <br>This method calls http://twitter.com/blocks/blocking.xml
+     *
+     * @return a list of user objects that the authenticating user
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @since Twitter4J 2.0.4
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-blocking">Twitter API Wiki / Twitter REST API Method: blocks blocking</a>
+     */
+    public List<User> getBlockingUsers() throws
+            TwitterException {
+        return User.constructUsers(get(baseURL +
+                "blocks/blocking.xml", true), this);
+    }
+
+    /**
+     * Returns a list of user objects that the authenticating user is blocking.
+     * <br>This method calls http://twitter.com/blocks/blocking.xml
+     *
+     * @param page the number of page
+     * @return a list of user objects that the authenticating user
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @since Twitter4J 2.0.4
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-blocking">Twitter API Wiki / Twitter REST API Method: blocks blocking</a>
+     */
+    public List<User> getBlockingUsers(int page) throws
+            TwitterException {
+        return User.constructUsers(get(baseURL +
+                "blocks/blocking.xml?page=" + page, true), this);
+    }
+
+    /**
+     * Returns an array of numeric user ids the authenticating user is blocking.
+     * <br>This method calls http://twitter.com/blocks/blocking/ids
+     * @return Returns an array of numeric user ids the authenticating user is blocking.
+     * @throws TwitterException when Twitter service or network is unavailable
+     * @since Twitter4J 2.0.4
+     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-blocking-ids">Twitter API Wiki / Twitter REST API Method: blocks blocking ids</a>
+     */
+    public IDs getBlockingUsersIDs() throws TwitterException {
+        return new IDs(get(baseURL + "blocks/blocking/ids.xml", true));
+    }
+
     /* Help Methods */
     /**
      * Returns the string "ok" in the requested format with a 200 OK HTTP status code.
@@ -2372,13 +2220,13 @@ public class Twitter implements java.io.Serializable {
      * The call Twitter.getAuthenticatedUser() is equivalent to the call:<br>
      * twitter.getUserDetail(twitter.getUserId());
      *
-     * @return UserWithStatus
+     * @return User
      * @throws TwitterException when Twitter service or network is unavailable
      * @since Twitter4J 1.1.3
      * @deprecated Use verifyCredentials() instead
      */
-    public ExtendedUser getAuthenticatedUser() throws TwitterException {
-        return new ExtendedUser(get(baseURL + "account/verify_credentials.xml", true),this);
+    public User getAuthenticatedUser() throws TwitterException {
+        return new User(get(baseURL + "account/verify_credentials.xml", true),this);
     }
 
     /**
@@ -2399,14 +2247,6 @@ public class Twitter implements java.io.Serializable {
     private SimpleDateFormat format = new SimpleDateFormat(
             "EEE, d MMM yyyy HH:mm:ss z", Locale.ENGLISH);
 
-    public void setRetryCount(int retryCount) {
-        http.setRetryCount(retryCount);
-    }
-
-    public void setRetryIntervalSecs(int retryIntervalSecs) {
-        http.setRetryIntervalSecs(retryIntervalSecs);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -2414,7 +2254,6 @@ public class Twitter implements java.io.Serializable {
 
         Twitter twitter = (Twitter) o;
 
-        if (usePostForcibly != twitter.usePostForcibly) return false;
         if (!baseURL.equals(twitter.baseURL)) return false;
         if (!format.equals(twitter.format)) return false;
         if (!http.equals(twitter.http)) return false;
@@ -2430,7 +2269,6 @@ public class Twitter implements java.io.Serializable {
         result = 31 * result + baseURL.hashCode();
         result = 31 * result + searchBaseURL.hashCode();
         result = 31 * result + source.hashCode();
-        result = 31 * result + (usePostForcibly ? 1 : 0);
         result = 31 * result + format.hashCode();
         return result;
     }
@@ -2442,7 +2280,6 @@ public class Twitter implements java.io.Serializable {
                 ", baseURL='" + baseURL + '\'' +
                 ", searchBaseURL='" + searchBaseURL + '\'' +
                 ", source='" + source + '\'' +
-                ", usePostForcibly=" + usePostForcibly +
                 ", format=" + format +
                 '}';
     }
