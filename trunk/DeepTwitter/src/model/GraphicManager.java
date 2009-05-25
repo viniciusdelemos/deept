@@ -1,8 +1,5 @@
 package model;
 
-import gui.visualizations.StatusesDataTable;
-import gui.visualizations.TimelinePanel.Group;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -61,8 +58,6 @@ import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 import profusians.controls.GenericToolTipControl;
-import twitter4j.ExtendedUser;
-import twitter4j.TwitterException;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
 import controller.StatusTab;
@@ -110,11 +105,23 @@ public class GraphicManager extends Display {
     	weight_value = 370f;
     	
     	g = new Graph(true);
-    	g.addColumn("id", int.class);//Integer.class);
-    	g.addColumn("idTwitter",int.class); //Integer.class);
+    	g.addColumn("id", int.class);
+    	g.addColumn("idTwitter",int.class);
     	g.addColumn("name", String.class);
-    	g.addColumn("image", String.class);//URL.class);
-    	//g.addColumn("lastStatus", String.class);
+    	g.addColumn("image", String.class);
+    	
+    	g.addColumn("location", String.class);
+    	g.addColumn("description", String.class);
+    	g.addColumn("protected", Boolean.class);
+    	g.addColumn("friendsCount", int.class);
+    	g.addColumn("followersCount", int.class);
+    	g.addColumn("statusesCount", int.class);
+//    	getFavouritesCount()
+//    	getProfileBackgroundImageUrl()
+//    	getProfileBackgroundColor()
+//    	getProfileTextColor()
+    	
+    	g.addColumn("latestStatus", String.class);
     	g.addColumn("isOpen", boolean.class); 
     	g.addColumn("isShowingFriends", boolean.class);
     	g.addColumn("isShowingFollowers", boolean.class);
@@ -267,12 +274,11 @@ public class GraphicManager extends Display {
     	//addPaintListener(new ZoneBorderDrawing(zoneManager));
     	//addControlListener(new CenterOnClickControl(1000));
     	
-    	String descriptions[] = { "Nome:", "Twitter ID:" };
-    	String data[] = { "name", "idTwitter" };
+    	String descriptions[] = { "Nome:", "Último Status: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Statuses:" };
+    	String data[] = { "name", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount" };
 
-    	toolTipControl = new GenericToolTipControl(descriptions,
-    		data, 100);
-
+    	toolTipControl = new GenericToolTipControl(descriptions,data,200);
+    	
     	addControlListener(toolTipControl);
     	toolTipControl.setEnabled(false);
 
@@ -287,14 +293,23 @@ public class GraphicManager extends Display {
 			newNode.set("id", numUsers);
 			newNode.set("idTwitter", u.getId());
 			newNode.set("name", u.getName());
-			newNode.set("image", u.getProfileImageURL().toString());//sem tostring
+			newNode.set("image", u.getProfileImageURL().toString());
+			newNode.set("latestStatus",u.getStatusText());
+			
+			newNode.set("location", u.getLocation());
+			newNode.set("description", u.getDescription());
+			newNode.set("protected", u.isProtected());
+			newNode.set("friendsCount", u.getFriendsCount());
+			newNode.set("followersCount", u.getFollowersCount());
+			newNode.set("statusesCount", u.getStatusesCount());
+			
 			newNode.set("isOpen", false);
 			newNode.set("isShowingFriends", false);
 			newNode.set("isShowingFollowers", false);
 			newNode.set("groupId", -1);
 			nodesMap.put(u.getId(), newNode);			
 			if (numUsers == 0) {
-				nodeRenderer.getImageFactory().preloadImages(m_vis.items(NODES),"image");
+				//nodeRenderer.getImageFactory().preloadImages(m_vis.items(NODES),"image");
 				VisualItem mainUser = getVisualization().getVisualItem(NODES,newNode);
 				mainUser.setStroke(new BasicStroke(2));
 				mainUser.setStrokeColor(nodeStrokeColor);
@@ -303,6 +318,10 @@ public class GraphicManager extends Display {
 			numUsers++;			
 			return newNode;
 		}    	
+    }
+    
+    public LabelRenderer getRenderer() {
+    	return nodeRenderer;
     }
     
     public void searchAndAddUserToNetwork(User u) {    	

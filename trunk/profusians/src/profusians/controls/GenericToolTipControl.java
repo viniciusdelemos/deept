@@ -82,22 +82,23 @@ public class GenericToolTipControl extends ControlAdapter {
 
 	m_sbuf.delete(0, m_sbuf.length());
 
-	m_sbuf.append("<html><table>");
+	m_sbuf.append("<html><table border=\"0\" cellpadding=\"2\" cellspacing=\"1\">");
 
 	boolean someInfo = false;
 
 	for (int i = 0; i < m_fields.length; i++) {
-	    if (vi.canGetString(m_fields[i])) {
-		value = vi.getString(m_fields[i]);
-		if ((value != null) && (value.length() > 0)) {
-		    m_sbuf.append("<tr valign='top'><td><b>");
-		    m_sbuf.append(m_texts[i] + "</b></td><td width="
-			    + m_maxWidth + ">");
-		    m_sbuf.append(value);
-		    someInfo = true;
+		if (vi.canGetString(m_fields[i])) {
+			value = vi.getString(m_fields[i]);
+			if ((value != null) && (value.length() > 0)) {
+				m_sbuf.append("<tr valign='top'><td><b>");
+				m_sbuf.append(m_texts[i] + "</b></td><td width="+ m_maxWidth +">");
+				if(m_fields[i]=="latestStatus") m_sbuf.append("<font color=\"Blue\">");
+				m_sbuf.append(value);
+				if(m_fields[i]=="latestStatus") m_sbuf.append("</font>");
+				someInfo = true;
+			}
+			m_sbuf.append("</td></tr>");
 		}
-		m_sbuf.append("</td></tr>");
-	    }
 	}
 
 	if (someInfo) {

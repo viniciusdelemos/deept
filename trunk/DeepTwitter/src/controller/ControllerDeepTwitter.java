@@ -29,6 +29,7 @@ import model.StatusesType;
 import model.threads.StatusesTableThread;
 import prefuse.Display;
 import prefuse.data.Graph;
+import prefuse.data.Node;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
@@ -89,6 +90,10 @@ public class ControllerDeepTwitter {
 		catch(NumberFormatException e) {
 			return id;
 		}
+	}
+	
+	public Node getNode(int id) {
+		return gManager.getNodeByTwitterId(id);
 	}
 	
 	public void searchAndAddUserToNetwork(User u) {
@@ -289,7 +294,7 @@ public class ControllerDeepTwitter {
 					
 					gManager.addNode(user);
 					
-					updateRateLimit = new UpdateRateLimitThread(rateLimitSleepTime);
+					updateRateLimit = new UpdateRateLimitThread(rateLimitSleepTime);					
 				}	
 			} catch (TwitterException ex) {
 				if(ex.getStatusCode()==400)
@@ -481,7 +486,7 @@ public class ControllerDeepTwitter {
 		public void run() {
 			while(true) {
 				try {
-					System.out.println("UPDATING RATE LIMIT");
+					System.out.println("UPDATING RATE LIMIT");					
 					rlt = twitter.rateLimitStatus();
 					mainWindow.setRateLimitStatus(rlt.getRemainingHits(),rlt.getHourlyLimit(),rlt.getDateTime());
 					Thread.sleep(sleepTime);
