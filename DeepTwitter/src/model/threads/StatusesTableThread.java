@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import prefuse.data.Node;
+
 import model.ChartColor;
 import model.MessageType;
 import model.StatusesType;
@@ -313,16 +315,26 @@ public class StatusesTableThread {
 			Status s = (Status) response;
 			responseId = s.getId();
 			text = processText(s.getText());
+			//para poder exibir links
 			s.setText(text);
 			screenName = s.getUser().getScreenName();
 			profileImageURL = s.getUser().getProfileImageURL();
 			senderId = s.getUser().getId();
 			date = s.getCreatedAt();
+			System.out.println(s.getCreatedAt().toString());
+			System.out.println("=>"+s.getCreatedAt().toGMTString());
+			
+			//setando no nodo a ultima atualizacao
+			Node userNode = controller.getNode(senderId);
+			if(userNode!=null)
+				synchronized(userNode) {
+					userNode.set("latestStatus", text);
+				}
 		}
 		else if (response instanceof DirectMessage) {
 			DirectMessage dm = (DirectMessage) response;
 			responseId = dm.getId();
-			text = dm.getText();
+			text = processText(dm.getText());
 			User u;
 			if(statusesType==StatusesType.DIRECT_MESSAGES_SENT)
 				u = dm.getRecipient();
@@ -336,7 +348,7 @@ public class StatusesTableThread {
 		else if (response instanceof Tweet) {
 			Tweet t = (Tweet) response;
 			responseId = t.getId();
-			text = t.getText();
+			text = processText(t.getText());
 			screenName = t.getFromUser();
 			senderId = t.getFromUserId();
 			try {
@@ -348,6 +360,7 @@ public class StatusesTableThread {
 		}
 		else
 			throw new IllegalArgumentException("Objeto inválido dentro da lista");
+		
 		if(!isGroup)
 			lastResponseId[0] = responseId;
 	}

@@ -87,7 +87,7 @@ public class TimelinePanel extends JPanel {
     
     public TimelinePanel(List<TwitterResponse> statusesList, boolean isGroup) {
         super(new BorderLayout());
-        
+        System.out.println("isGroup == "+isGroup);
         final Visualization vis = new Visualization();
         m_vis = vis;
         
@@ -96,9 +96,11 @@ public class TimelinePanel extends JPanel {
         
 		final TimelineRenderFactory timelineRenderFactory = new TimelineRenderFactory(isGroup);		
         vis.setRendererFactory(timelineRenderFactory);
+        if(isGroup)
+        	((LabelRenderer)timelineRenderFactory.getDefaultRenderer()).getImageFactory().preloadImages(m_vis.items(Group.STATUSES.toString()),StatusesDataTable.ColNames.IMAGE_URL.toString());
         
         SearchQueryBinding screenNameSearchQuery = new SearchQueryBinding(vt, ColNames.SCREEN_NAME.toString());
-        SearchQueryBinding textSearchQuery = new SearchQueryBinding(vt, ColNames.TEXT.toString());
+        SearchQueryBinding textSearchQuery = new SearchQueryBinding(vt, ColNames.STATUS.toString());
         
         AxisLayout xAxis = new AxisLayout(Group.STATUSES.toString(), 
 				StatusesDataTable.ColNames.DAY.toString(), Constants.X_AXIS);        
@@ -193,9 +195,8 @@ public class TimelinePanel extends JPanel {
         labelTotalStatuses.setHorizontalAlignment(SwingConstants.RIGHT);
         labelTotalStatuses.setVerticalAlignment(SwingConstants.BOTTOM);
                 
-        String descriptions[] = { "Tweet:", "Usuário:", "Data:" };
-        String data[] = { StatusesDataTable.ColNames.TEXT.toString(),
-        		StatusesDataTable.ColNames.SCREEN_NAME.toString(),
+        String descriptions[] = { "Usuário:", "Status:", "Data:" };
+        String data[] = { StatusesDataTable.ColNames.SCREEN_NAME.toString(), StatusesDataTable.ColNames.STATUS.toString(),
         		StatusesDataTable.ColNames.FULL_DATE.toString()};// +" "+ StatusesDataTable.ColNames.HOUR.toString()};
 
     	GenericToolTipControl toolTipControl = new GenericToolTipControl(descriptions,data,200);
@@ -354,7 +355,7 @@ public class TimelinePanel extends JPanel {
 				else
 					throw new IllegalArgumentException("Objeto inválido dentro da lista");
 				
-				tbl.set(index, StatusesDataTable.ColNames.TEXT.toString(), text);
+				tbl.set(index, StatusesDataTable.ColNames.STATUS.toString(), text);
 				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);//s.getUser().getScreenName());
 				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);//s.getUser().getProfileImageURL().toString());
 				//SETAR CATEGORIA
