@@ -45,10 +45,9 @@ public class StatusTab {
 	private int currentTable;
 	private boolean hasMultiplePanels, isGroup;
 	private ArrayList<String> idArray;
-	private ControllerDeepTwitter controller;
+	private ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
 	
 	public StatusTab(JTabbedPane pane, StatusesType type, String name) {
-		controller = ControllerDeepTwitter.getInstance();
 		initComponents();
 		pane.addTab(name, createAndGetPanel(type));
 		this.type = type;

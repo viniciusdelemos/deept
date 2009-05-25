@@ -14,10 +14,9 @@ public class FollowUserThread extends Thread {
 		GraphicManager gManager;
 		VisualItem targetItem;
 		boolean follow;
-		ControllerDeepTwitter controller;
+		ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
 		
 	public FollowUserThread(GraphicManager gManager, VisualItem item, boolean follow) {
-		controller = ControllerDeepTwitter.getInstance();
 		this.gManager = gManager;	
 		targetItem = item;
 		this.follow = follow;

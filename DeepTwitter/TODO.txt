@@ -3,7 +3,6 @@ TODO:
 - terminar visualização de grupos;
 - criar visualização de categorias;
 - permitir ver o timeline sem precisar mostrar as atualizacoes no painel (pcausa da OutOfMemoryException);
-- atualizar ultimo status do usuario em seu nodo da rede;
 - criar visualização de membros + ativos (vamos mesmo fazer esta?);
 - implementar categorias para mostrar nas visualizações;
 - consertar aba de favoritos (está repetindo informacoes);

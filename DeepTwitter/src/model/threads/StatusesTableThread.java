@@ -52,7 +52,7 @@ public class StatusesTableThread {
 	private int updatesToGet;
 	private StatusesType statusesType;
 	private GridBagConstraints gbc;
-	private ControllerDeepTwitter controller;
+	private ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
 
 	private String text, screenName, groupName;
 	private String[] userId;
@@ -87,7 +87,6 @@ public class StatusesTableThread {
 		this.statusesType = type;
 		this.userId = null;
 		this.searchQuery = null;
-		controller = ControllerDeepTwitter.getInstance();
 		isTwitterUser = controller.isTwitterUser();		
 		rows = 0;
 		interval = 2000;//120000; //2 minutos
@@ -320,9 +319,7 @@ public class StatusesTableThread {
 			screenName = s.getUser().getScreenName();
 			profileImageURL = s.getUser().getProfileImageURL();
 			senderId = s.getUser().getId();
-			date = s.getCreatedAt();
-			System.out.println(s.getCreatedAt().toString());
-			System.out.println("=>"+s.getCreatedAt().toGMTString());
+			date = s.getCreatedAt();			
 			
 			//setando no nodo a ultima atualizacao
 			Node userNode = controller.getNode(senderId);
@@ -634,10 +631,7 @@ public class StatusesTableThread {
 						//adicionar/remover do mapa e do painel!
 					}
 
-					if(!statusesList.isEmpty()) {
-						//checa se nova msg é mais nova do que ultima adicionada ao painel
-						//System.out.println("response mais novo: "+responseId);
-						//System.out.println("last response id: "+lastResponseId[0]);						
+					if(!statusesList.isEmpty()) {										
 						//if(empty != null) panel.remove(empty);							
 						//de trás para frente, para adicionar as mais recentes em cima
 						for(int i=statusesList.size()-1; i>=0; i--) {

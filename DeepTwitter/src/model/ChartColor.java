@@ -50,10 +50,10 @@ package model;
     import java.awt.Paint;
     
     /**
-052     * Class to extend the number of Colors available to the charts. This
-053     * extends the java.awt.Color object and extends the number of final
-054     * Colors publically accessible.
-055     */
+     * Class to extend the number of Colors available to the charts. This
+     * extends the java.awt.Color object and extends the number of final
+     * Colors publically accessible.
+     */
     public class ChartColor extends Color {
     
         /** A very dark red color. */

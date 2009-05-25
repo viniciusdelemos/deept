@@ -14,10 +14,9 @@ import controller.ControllerDeepTwitter;
 public class AddFollowersThread extends Thread {
 		VisualItem source;	
 		GraphicManager gManager;
-		ControllerDeepTwitter controller;
+		ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
 		
 	public AddFollowersThread(GraphicManager gManager, VisualItem s) {
-		controller = ControllerDeepTwitter.getInstance();
 		this.gManager = gManager;		
 		this.source = s;
 		this.start();
