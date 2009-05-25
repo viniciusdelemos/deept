@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -59,6 +60,7 @@ import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 import profusians.controls.GenericToolTipControl;
 import twitter4j.User;
+import controller.CategoryController;
 import controller.ControllerDeepTwitter;
 import controller.StatusTab;
 
@@ -107,6 +109,7 @@ public class GraphicManager extends Display {
     	g = new Graph(true);
     	g.addColumn("id", int.class);
     	g.addColumn("idTwitter",int.class);
+    	g.addColumn("screenName", String.class);
     	g.addColumn("name", String.class);
     	g.addColumn("image", String.class);
     	
@@ -292,6 +295,7 @@ public class GraphicManager extends Display {
 			Node newNode = g.addNode();
 			newNode.set("id", numUsers);
 			newNode.set("idTwitter", u.getId());
+			newNode.set("screenName", u.getScreenName());
 			newNode.set("name", u.getName());
 			newNode.set("image", u.getProfileImageURL().toString());
 			newNode.set("latestStatus",u.getStatusText());
@@ -317,7 +321,9 @@ public class GraphicManager extends Display {
 			}
 			numUsers++;			
 			return newNode;
-		}    	
+		}    
+    	
+
     }
     
     public LabelRenderer getRenderer() {
@@ -394,6 +400,10 @@ public class GraphicManager extends Display {
 	
 	public Node getNodeByTwitterId(int id) {
 		return nodesMap.get(id);			
+	}
+	
+	public String getUserNameByScreenName(String screenName){
+		return socialNetwork.getUserNameByScreenName(screenName);
 	}
 	
 	public String getUserName(int id) {
@@ -668,10 +678,12 @@ public class GraphicManager extends Display {
 			JMenuItem updates = new JMenuItem("Ver Tweets");
 			JMenuItem timeline = new JMenuItem("Ver Timeline");
 			JMenuItem removeGroup = new JMenuItem("Deletar Grupo");
+			JMenuItem categoriesGroup = new JMenuItem("Categorias do Grupo");
 			
 			popupMenu.add(updates);
 			popupMenu.add(timeline);
 			popupMenu.add(removeGroup);
+			popupMenu.add(categoriesGroup);
 			
 			updates.addActionListener(new ActionListener(){
 				@Override
@@ -700,6 +712,31 @@ public class GraphicManager extends Display {
 				public void actionPerformed(ActionEvent arg0) {
 					groupManager.removeGroup(item);
 				}});
+			categoriesGroup.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent arg0){
+					
+//					
+//					
+//					List<NodeItem> itens = new ArrayList<NodeItem>();
+//					
+//					AggregateItem ai = item;
+//					Iterator<NodeItem> iterator = ai.items();
+//
+//					while(iterator.hasNext()){
+//						NodeItem nodeItem = iterator.next();
+//						itens.add(nodeItem);
+//					}
+					
+					
+					CategoryController categoryController = 
+						new CategoryController(item);
+					
+					
+				}
+			}
+			);
+			
 		}
 		
 		public void itemClicked(VisualItem item, MouseEvent e) {

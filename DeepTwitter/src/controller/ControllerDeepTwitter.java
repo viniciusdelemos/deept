@@ -11,6 +11,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -81,6 +82,12 @@ public class ControllerDeepTwitter {
 	
 	public boolean isTwitterUser() {
 		return isTwitterUser;
+	}
+	
+	public String getUserNameByScreenName(String screenName){
+		
+		return gManager.getUserNameByScreenName(screenName);
+		
 	}
 	
 	public String getUserName(String id) {
