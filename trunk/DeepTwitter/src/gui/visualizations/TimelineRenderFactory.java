@@ -1,6 +1,5 @@
 package gui.visualizations;
 
-import gui.visualizations.TimelinePanel.Group;
 import prefuse.Constants;
 import prefuse.render.AxisRenderer;
 import prefuse.render.DefaultRendererFactory;

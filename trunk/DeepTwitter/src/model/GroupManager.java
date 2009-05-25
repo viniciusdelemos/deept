@@ -17,11 +17,10 @@ public class GroupManager {
 	private int id;
 	private AggregateTable groupTable;
 	private GraphicManager gManager;
-	private ControllerDeepTwitter controller;
+	private ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
 	private TupleSet selectedNodes;
 	
 	public GroupManager(GraphicManager gManager) {
-		controller = ControllerDeepTwitter.getInstance();
 		this.gManager = gManager;		
 		groupTable = gManager.getVisualization().addAggregates(GraphicManager.GROUPS);
     	groupTable.addColumn(VisualItem.POLYGON, float[].class);

@@ -2,10 +2,11 @@ package gui.visualizations;
 
 import gui.visualizations.StatusesDataTable.ColNames;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +16,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
@@ -45,7 +46,6 @@ import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
 import prefuse.data.Table;
 import prefuse.data.expression.AndPredicate;
-import prefuse.data.expression.OrPredicate;
 import prefuse.data.query.RangeQueryBinding;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.render.LabelRenderer;
@@ -57,6 +57,7 @@ import prefuse.util.ui.JFastLabel;
 import prefuse.util.ui.JRangeSlider;
 import prefuse.util.ui.JSearchPanel;
 import prefuse.util.ui.UILib;
+import prefuse.visual.EdgeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTable;
 import prefuse.visual.sort.ItemSorter;
@@ -65,7 +66,6 @@ import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.TwitterResponse;
-import twitter4j.User;
 
 public class TimelinePanel extends JPanel {
        
@@ -74,6 +74,7 @@ public class TimelinePanel extends JPanel {
     private int visibleStatuses;
     private JFastLabel labelTotalStatuses = new JFastLabel(visibleStatuses+" updates");
     private JFastLabel labelDetails;
+    private boolean categoriesOn;
     
     private Visualization m_vis;
     private Display display;
@@ -87,7 +88,6 @@ public class TimelinePanel extends JPanel {
     
     public TimelinePanel(List<TwitterResponse> statusesList, boolean isGroup) {
         super(new BorderLayout());
-        System.out.println("isGroup == "+isGroup);
         final Visualization vis = new Visualization();
         m_vis = vis;
         
@@ -208,16 +208,22 @@ public class TimelinePanel extends JPanel {
             public void itemEntered(VisualItem item, MouseEvent evt) {
                 if ( item.isInGroup(Group.STATUSES.toString()) ) {
                 	labelTotalStatuses.setText(item.getString(StatusesDataTable.ColNames.SCREEN_NAME.toString()));
-                	item.setFillColor(item.getStrokeColor());
+                	if(!categoriesOn)
+                		item.setFillColor(item.getStrokeColor());
                 	item.setStrokeColor(ColorLib.rgb(0,0,0));
+                	item.setStroke(new BasicStroke(1.5f));
+                	display.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));	
                 	item.getVisualization().repaint();
                 }
             }
             public void itemExited(VisualItem item, MouseEvent evt) {
                 if ( item.isInGroup(Group.STATUSES.toString()) ) {
                   labelTotalStatuses.setText(statusesCountText);
-                  item.setFillColor(item.getEndFillColor());
+                  if(!categoriesOn)
+                	  item.setFillColor(item.getEndFillColor());
                   item.setStrokeColor(item.getEndStrokeColor());
+                  item.setStroke(new BasicStroke(1f));
+                  display.setCursor(Cursor.getDefaultCursor());	
                   item.getVisualization().repaint();
                 }
             }
@@ -260,17 +266,40 @@ public class TimelinePanel extends JPanel {
 				if(timelineRenderFactory.getDefaultRenderer() instanceof LabelRenderer) {
 					timelineRenderFactory.switchRenderer();
 					displayLayout();
-				}					
+				}
 			}});
         buttonPhotos.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {				
 				if(timelineRenderFactory.getDefaultRenderer() instanceof ShapeRenderer) {
+					
 					timelineRenderFactory.switchRenderer();					
 					((LabelRenderer)timelineRenderFactory.getDefaultRenderer()).getImageFactory().preloadImages(m_vis.items(Group.STATUSES.toString()),StatusesDataTable.ColNames.IMAGE_URL.toString());
 					displayLayout();
 				}
 			}}); 
+        
+        JButton buttonCategoryManager = new JButton("Gerenciar Categorias");        
+        buttonCategoryManager.addActionListener(new ActionListener(){
+        	@Override
+        	public void actionPerformed(ActionEvent arg0) {				
+        		//TODO abrir janela de config de categorias
+        	}});
+        
+        JButton buttonCategorize = new JButton("Categorizar Atualizações");        
+        buttonCategorize.addActionListener(new ActionListener(){
+        	@Override
+        	public void actionPerformed(ActionEvent arg0) {			
+        		categoriesOn = true;
+        		//TODO categorizar updates!
+        		Iterator<VisualItem> i = m_vis.items(Group.STATUSES.toString());
+				while(i.hasNext()) {
+					VisualItem item = i.next();
+					item.setFillColor(ChartColor.yellow.getRGB());
+				}
+				//TODO: exibir combobox com categorias + cor
+				displayLayout();
+        	}});
         
         Box radioBox = new Box(BoxLayout.X_AXIS);
         radioBox.add(Box.createHorizontalStrut(5));
@@ -279,6 +308,9 @@ public class TimelinePanel extends JPanel {
         radioBox.add(Box.createHorizontalStrut(15));
         radioBox.add(buttonShapes);
         radioBox.add(buttonPhotos);
+        radioBox.add(Box.createHorizontalStrut(15));
+        radioBox.add(buttonCategoryManager);
+        radioBox.add(buttonCategorize);
         radioBox.add(Box.createHorizontalGlue()); 
         
         JRangeSlider verticalSlider = hourQuery.createVerticalRangeSlider();
@@ -356,8 +388,8 @@ public class TimelinePanel extends JPanel {
 					throw new IllegalArgumentException("Objeto inválido dentro da lista");
 				
 				tbl.set(index, StatusesDataTable.ColNames.STATUS.toString(), text);
-				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);//s.getUser().getScreenName());
-				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);//s.getUser().getProfileImageURL().toString());
+				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);
+				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);
 				//SETAR CATEGORIA
 				
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");		
