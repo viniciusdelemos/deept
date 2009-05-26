@@ -1,4 +1,4 @@
-package model;
+package examples.categorias;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,20 +8,20 @@ import twitter4j.Tweet;
 
 public class CategoriesGroup {
 	
-	private List<Category> listCategory;
+	private List<CategoryVinicius> listCategory;
 	private int color;
 	
 	private List<Tweet> tweets;
 	
 		
-	public CategoriesGroup(int color, List<Category> listCategory){
+	public CategoriesGroup(int color, List<CategoryVinicius> listCategory){
 		this.listCategory = listCategory;
 		this.color = color;
 		this.tweets = new ArrayList<Tweet>();
 	}
 
 
-	public List<Category> getListCategory() {
+	public List<CategoryVinicius> getListCategory() {
 		return listCategory;
 	}
 
@@ -38,22 +38,22 @@ public class CategoriesGroup {
 		return tweets;
 	}
 	
-	public boolean equalListCategoryWord(List<Category> paramList){
+	public boolean equalListCategoryWord(List<CategoryVinicius> paramList){
 		
 		//Coloca para falso o contabilizado
-		for(Category c : listCategory){
+		for(CategoryVinicius c : listCategory){
 			c.accounted = false;
 		}
 		
 		//Coloca para falso o contabilizado
-		for(Category cw : paramList){
+		for(CategoryVinicius cw : paramList){
 			cw.accounted = false;
 		}
 		
 		//Marca as contabilizacoes se achar igual
-		for(Category c : listCategory){
+		for(CategoryVinicius c : listCategory){
 			
-			for(Category param : paramList){
+			for(CategoryVinicius param : paramList){
 				
 				if(param.getCategory().equals(c.getCategory())){
 					//cw.accounted = true;
@@ -63,12 +63,12 @@ public class CategoriesGroup {
 		}
 		
 		//Verifica se marcou todos do listCategorWord
-		for(Category c : listCategory){
+		for(CategoryVinicius c : listCategory){
 			if(c.accounted == false)
 				return false;
 		}
 		
-		for(Category cw : paramList){
+		for(CategoryVinicius cw : paramList){
 			if(cw.accounted == false)
 				return false;
 		}

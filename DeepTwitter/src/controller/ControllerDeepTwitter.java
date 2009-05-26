@@ -4,14 +4,11 @@ import gui.GUIAddUser;
 import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
 import gui.GUINewUpdate;
-import gui.visualizations.StatusesDataTable;
-import gui.visualizations.TimelinePanel.Group;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -34,7 +31,6 @@ import prefuse.data.Node;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
-import prefuse.render.LabelRenderer;
 import twitter4j.RateLimitStatus;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -84,11 +80,11 @@ public class ControllerDeepTwitter {
 		return isTwitterUser;
 	}
 	
-	public String getUserNameByScreenName(String screenName){
-		
-		return gManager.getUserNameByScreenName(screenName);
-		
-	}
+//	public String getUserNameByScreenName(String screenName){
+//		
+//		return gManager.getUserNameByScreenName(screenName);
+//		
+//	}
 	
 	public String getUserName(String id) {
 		try{

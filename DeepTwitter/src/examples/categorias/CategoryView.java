@@ -1,4 +1,4 @@
-package gui.visualizations;
+package examples.categorias;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -7,19 +7,15 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import controller.CategoryController;
 
 import model.ChartColor;
 import prefuse.Constants;
