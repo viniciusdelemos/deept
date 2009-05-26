@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 import twitter4j.Status;
 import twitter4j.Tweet;
@@ -104,6 +106,11 @@ public class CategoryManager {
 		testList.add("odeio");
 		addWords("Sentimentos", testList);
 		
+		c = addCategory("Teste");
+		c.addWord("I am");
+		c.addWord("@");
+		c.addWord("is");
+		
 		c = removeCategory("VaiSerRemovida");
 		//System.out.println(c);	
 		
@@ -112,15 +119,43 @@ public class CategoryManager {
 	
 	public void setCategory(TwitterResponse response) {
 		if(response instanceof Status) {
-			Status s = (Status)response;
-			//TODO
+			Status status = (Status)response;
+			StringTokenizer tokens = new StringTokenizer(status.getText());
+			System.out.println("Status: "+status.getText());
+
+			while(tokens. hasMoreTokens()) {
+				System.out.println(tokens.nextToken());
+			}
+//			for(Category c : getCategories()) {
+//				for(String s : c.getWords()) {
+//					try{
+//						String aux = tokens.nextToken(s);
+//						System.out.println("  AUX: "+aux);
+//						System.out.println("Category: "+c.getName()+" pela palavra "+s);
+//					}
+//					catch(NoSuchElementException e) {System.out.println("Nao tem a palavra "+s);}
+//				}
+//			}
+			
+//			if(s.getCategory() == null) {
+//			//TODO categoriza
+//		}
+//		else if(getCategory(s.getCategory()).getVersion() != s.getCategoryVersion()) {
+//			//categoriza novamente
+//		}
 		}
 		else if(response instanceof Tweet) {
 			Tweet t = (Tweet)response;
 			//TODO
 		}
 		else
-			throw new IllegalArgumentException("Tipo de objeto inválido para este métodos. Aceitos: Status, Tweet");
+			throw new IllegalArgumentException("Tipo de objeto inválido para este método. Aceitos: Status, Tweet");
+	}
+	
+	private void categorize(TwitterResponse response) {
+		for(Category c : getCategories()) {
+			
+		}
 	}
 	
 	public String toString() {

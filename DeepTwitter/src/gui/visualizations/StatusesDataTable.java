@@ -5,11 +5,12 @@ public final class StatusesDataTable extends Table {
 	
 	public enum ColNames {
 		//TODO categoria...
-		STATUS, SCREEN_NAME, IMAGE_URL, HOUR, DAY, FULL_DATE 
+		ID, STATUS, SCREEN_NAME, IMAGE_URL, HOUR, DAY, FULL_DATE 
 	}
 	
 	public StatusesDataTable() {
-		super();		
+		super();
+		this.addColumn(ColNames.ID.toString(), int.class);
 		this.addColumn(ColNames.SCREEN_NAME.toString(), String.class);
 		this.addColumn(ColNames.STATUS.toString(), String.class);
 		this.addColumn(ColNames.IMAGE_URL.toString(), String.class);
