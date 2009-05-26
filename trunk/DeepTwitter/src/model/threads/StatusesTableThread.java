@@ -315,7 +315,7 @@ public class StatusesTableThread {
 			responseId = s.getId();
 			text = processText(s.getText());
 			//para poder exibir links
-			s.setText(text);
+			//TODO s.setText(text);
 			screenName = s.getUser().getScreenName();
 			profileImageURL = s.getUser().getProfileImageURL();
 			senderId = s.getUser().getId();

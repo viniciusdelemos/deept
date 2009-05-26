@@ -29,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
+import controller.CategoryManager;
+
 import model.ChartColor;
 import prefuse.Constants;
 import prefuse.Display;
@@ -36,6 +38,7 @@ import prefuse.Visualization;
 import prefuse.action.ActionList;
 import prefuse.action.GroupAction;
 import prefuse.action.RepaintAction;
+import prefuse.action.animate.AxisLabelAnimator;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
 import prefuse.action.assignment.DataShapeAction;
@@ -74,7 +77,7 @@ public class TimelinePanel extends JPanel {
     private int visibleStatuses;
     private JFastLabel labelTotalStatuses = new JFastLabel(visibleStatuses+" updates");
     private JFastLabel labelDetails;
-    private boolean categoriesOn;
+    private boolean categoriesOn, isStatusOrTweet;
     
     private Visualization m_vis;
     private Display display;
@@ -86,7 +89,7 @@ public class TimelinePanel extends JPanel {
 		STATUSES, X_AXIS, Y_AXIS
 	}
     
-    public TimelinePanel(List<TwitterResponse> statusesList, boolean isGroup) {
+    public TimelinePanel(final List<TwitterResponse> statusesList, boolean isGroup) {
         super(new BorderLayout());
         final Visualization vis = new Visualization();
         m_vis = vis;
@@ -291,6 +294,13 @@ public class TimelinePanel extends JPanel {
         	@Override
         	public void actionPerformed(ActionEvent arg0) {			
         		categoriesOn = true;
+        		CategoryManager cManager = CategoryManager.getInstance();
+        		System.out.println("Setando Categorias");
+        		for(int i=0; i<statusesList.size(); i++) {
+        			cManager.setCategory(statusesList.get(i));
+        		}
+        		System.out.println("Terminei de setar Categorias!");
+        		
         		//TODO categorizar updates!
         		Iterator<VisualItem> i = m_vis.items(Group.STATUSES.toString());
 				while(i.hasNext()) {
@@ -309,8 +319,10 @@ public class TimelinePanel extends JPanel {
         radioBox.add(buttonShapes);
         radioBox.add(buttonPhotos);
         radioBox.add(Box.createHorizontalStrut(15));
-        radioBox.add(buttonCategoryManager);
-        radioBox.add(buttonCategorize);
+        if(isStatusOrTweet) {
+        	radioBox.add(buttonCategoryManager);
+        	radioBox.add(buttonCategorize);
+        }
         radioBox.add(Box.createHorizontalGlue()); 
         
         JRangeSlider verticalSlider = hourQuery.createVerticalRangeSlider();
@@ -360,7 +372,7 @@ public class TimelinePanel extends JPanel {
 		int index = 0;
 		
 		for (TwitterResponse response : statusesList) {
-			try{
+			try{				
 				String text, screenName, profileImageURL;				
 				Date date;
 				if(response instanceof Status) {
@@ -368,7 +380,8 @@ public class TimelinePanel extends JPanel {
 					text = s.getText();
 					screenName = s.getUser().getScreenName();
 					profileImageURL = s.getUser().getProfileImageURL().toString();
-					date = s.getCreatedAt();
+					date = s.getCreatedAt();		
+					isStatusOrTweet = true;
 				}
 				else if (response instanceof DirectMessage) {
 					DirectMessage s = (DirectMessage) response;
@@ -376,6 +389,7 @@ public class TimelinePanel extends JPanel {
 					screenName = s.getSender().getScreenName();
 					profileImageURL = s.getSender().getProfileImageURL().toString();
 					date = s.getCreatedAt();
+					isStatusOrTweet = false;
 				}
 				else if (response instanceof Tweet) {
 					Tweet s = (Tweet) response;
@@ -383,6 +397,7 @@ public class TimelinePanel extends JPanel {
 					screenName = s.getFromUser();
 					profileImageURL = s.getProfileImageUrl().toString();
 					date = s.getCreatedAt();
+					isStatusOrTweet = true;
 				}
 				else
 					throw new IllegalArgumentException("Objeto inválido dentro da lista");
@@ -411,7 +426,7 @@ public class TimelinePanel extends JPanel {
 			catch(Exception e) {
 				System.out.println("*****Exception******\n");
 				e.printStackTrace();
-			}
+			}			
 		}
 		return tbl;
 	}

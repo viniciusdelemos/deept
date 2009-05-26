@@ -35,7 +35,9 @@ import twitter4j.org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A data class representing one single status of a user.
@@ -53,6 +55,8 @@ public class Status extends TwitterResponse implements java.io.Serializable, Com
     private boolean isFavorited;
     private String inReplyToScreenName;
     private static final long serialVersionUID = 1608000492860584608L;
+    
+    //private Map<String,Integer> categories = new HashMap<String,Integer>();
 
     /*package*/Status(Response res, Twitter twitter) throws TwitterException {
         super(res);
@@ -130,9 +134,9 @@ public class Status extends TwitterResponse implements java.io.Serializable, Com
     }
     
     
-    public void setText(String t) {
-    	text = t;
-    }
+//    public void setText(String t) {
+//    	text = t;
+//    }
 
     /**
      * Returns the source
@@ -267,5 +271,17 @@ public class Status extends TwitterResponse implements java.io.Serializable, Com
 	public int compareTo(Status s) {
 		return this.getCreatedAt().compareTo(s.getCreatedAt());
 	}
-
+	
+//	public void addCategory(String c, int version) {
+//		category. = c;
+//		categoryVersion = version;
+//	}
+//	
+//	public String getCategory() {
+//		return category;
+//	}
+//	
+//	public int getCategoryVersion() {
+//		return categoryVersion;
+//	}
 }
