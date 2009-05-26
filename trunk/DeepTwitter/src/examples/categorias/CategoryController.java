@@ -1,6 +1,4 @@
-package controller;
-
-import gui.visualizations.CategoryView;
+package examples.categorias;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,20 +6,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import model.CategoriesGroup;
-import model.Category;
-import model.DeepTwitterException;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.NodeItem;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Tweet;
 import twitter4j.TwitterException;
+import controller.ControllerDeepTwitter;
 
 public class CategoryController {
 	
 	private AggregateItem users;
-	private List<Category> categories;
+	private List<CategoryVinicius> categories;
 	private ControllerDeepTwitter controller;
 	private CategoryView categoryView;
 	
@@ -35,7 +31,7 @@ public class CategoryController {
 		//this.mainWindow = mainWindow;
 		
 		this.users = selectedUsers;
-		this.categories = new ArrayList<Category>();
+		this.categories = new ArrayList<CategoryVinicius>();
 		
 		this.controller = ControllerDeepTwitter.getInstance();
 		
@@ -119,8 +115,9 @@ public class CategoryController {
 
 				for (Tweet t : wg.getTweets()) {
 
-					categoryView.addNode(wg.getColor(), t, controller
-							.getUserNameByScreenName(t.getFromUser()));
+//					categoryView.addNode(wg.getColor(), t, controller
+//							.getUserNameByScreenName(t.getFromUser()));
+					System.out.println("Descomentar esta linha");
 				}
 			}
 			
@@ -221,11 +218,11 @@ public class CategoryController {
 
 
 
-	private List<Category> categoriesOfStatus(String status){
+	private List<CategoryVinicius> categoriesOfStatus(String status){
 		
-		List<Category> categoriesOfStatus = new ArrayList<Category>();
+		List<CategoryVinicius> categoriesOfStatus = new ArrayList<CategoryVinicius>();
 		
-		for(Category c : categories){
+		for(CategoryVinicius c : categories){
 			
 			for(String s : c.getWords()){
 				if(status.toLowerCase().contains(s.toLowerCase())
@@ -253,7 +250,7 @@ public class CategoryController {
 		
 		for(Tweet t : tweets){
 			
-			List<Category> listCategoryStatus = null;
+			List<CategoryVinicius> listCategoryStatus = null;
 			
 			listCategoryStatus =
 				categoriesOfStatus(t.getText());
@@ -295,7 +292,7 @@ public class CategoryController {
 	 * @return Retorna o WordsGroup igual que contenha TODAS CategoryWord passada por parametro, se nao tiver retorna null
 	 * @throws DeepTwitterException 
 	 */
-	private CategoriesGroup hasWordsGroup(List<CategoriesGroup> wordsGroup, List<Category> listCategory) throws DeepTwitterException{
+	private CategoriesGroup hasWordsGroup(List<CategoriesGroup> wordsGroup, List<CategoryVinicius> listCategory) throws DeepTwitterException{
 		
 		if(wordsGroup.size() == 0)
 			return null;
@@ -352,7 +349,7 @@ public class CategoryController {
 		
 		
 		//Words of categories
-		for(Category c : categories){
+		for(CategoryVinicius c : categories){
 			
 			for(String  s : c.getWords()){
 				if(listWords.contains(s) == false){
@@ -400,31 +397,31 @@ public class CategoryController {
 	private void openCategories(){
 		
 		
-		Category category1 = new Category("Temporary");
+		CategoryVinicius category1 = new CategoryVinicius("Temporary");
 		category1.addWord("medication");
 		category1.addWord("notebook");
 		//category1.addWord("entendeu");
 		
-		Category category2 = new Category("FelipeVeiga");
+		CategoryVinicius category2 = new CategoryVinicius("FelipeVeiga");
 		category2.addWord("Confusion");
 		category2.addWord("lost");
 		category2.addWord("TwitterFon");
 		
-		Category category3 = new Category("ericasFish");
+		CategoryVinicius category3 = new CategoryVinicius("ericasFish");
 		//category3.addWord("without");
 		category3.addWord("tweet");
 		
 		category3.addWord("human");
 		category3.addWord("Mummy");
 		
-		Category category4 = new Category("outra categoria");
+		CategoryVinicius category4 = new CategoryVinicius("outra categoria");
 		//TODO tratar espacoes em branco nos requests
 		category4.addWord("metro");
 		category4.addWord("iPhone");
 		category4.addWord("reply");
 		category4.addWord("human");
 		
-		Category category5 = new Category("rotta");
+		CategoryVinicius category5 = new CategoryVinicius("rotta");
 		category5.addWord("setzinhos");
 		category5.addWord("luxo");
 		
@@ -447,7 +444,7 @@ public class CategoryController {
 			
 			
 			
-			for(Category cw : wg.getListCategory()){
+			for(CategoryVinicius cw : wg.getListCategory()){
 				
 				print += "\n\t Category:" + cw.getCategory();
 				

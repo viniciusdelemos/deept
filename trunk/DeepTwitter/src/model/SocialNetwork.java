@@ -1,9 +1,7 @@
 package model;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,20 +22,20 @@ public class SocialNetwork {
 		return usersMap.get(twitterId);
 	}
 	
-	public String getUserNameByScreenName(String screenName){
-		
-		Iterator<User> users = usersMap.values().iterator();
-		
-		while(users.hasNext()){
-			User u = users.next();
-			if(u.getScreenName().equals(screenName)){
-				return u.getName();
-			}
-		}
-		
-		return null;
-		
-	}
+//	public String getUserNameByScreenName(String screenName){
+//		
+//		Iterator<User> users = usersMap.values().iterator();
+//		
+//		while(users.hasNext()){
+//			User u = users.next();
+//			if(u.getScreenName().equals(screenName)){
+//				return u.getName();
+//			}
+//		}
+//		
+//		return null;
+//		
+//	}
 	
 			
 	public void addUser(User u)

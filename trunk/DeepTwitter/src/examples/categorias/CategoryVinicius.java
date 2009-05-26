@@ -1,14 +1,18 @@
-package examples;
+package examples.categorias;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Category {
+import com.sun.org.apache.bcel.internal.generic.ACONST_NULL;
+
+public class CategoryVinicius {
+	
+	boolean accounted = false;
 
 	private String category;
 	private List<String> words;
 
-	public Category(String category) {
+	public CategoryVinicius(String category) {
 		this.category = category;
 		this.words = new ArrayList<String>();
 	}
@@ -22,6 +26,10 @@ public class Category {
 			return true;
 		}
 	}
+	
+	public String getCategory(){
+		return category;
+	}
 
 	public List<String> getWords() {
 		return words;
@@ -30,6 +38,10 @@ public class Category {
 	public void setWords(List<String> words) {
 		this.words = words;
 	}
+	
+	
+	
+	
 	
 	
 	/*

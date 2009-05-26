@@ -1,4 +1,4 @@
-package model;
+package examples.categorias;
 
 public class DeepTwitterException extends Exception{
 	
