@@ -13,12 +13,12 @@ import twitter4j.Tweet;
 import twitter4j.TwitterResponse;
 
 public class CategoryManager {	
-	private Map<String,Category> categories;
+	private Map<String,Category> categoriesMap;
+	private Map<Long,List<String>> responsesCategoriesMap;
 	
 	private CategoryManager(){
 		//construtor private previne chamadas nao autorizadas ao construtor.	
-		System.out.println("inside CategoryManager constructor");
-		categories = new HashMap<String,Category>();		
+		categoriesMap = new HashMap<String,Category>();		
 		loadTestCategories();
 	}
 	
@@ -31,13 +31,13 @@ public class CategoryManager {
 	}
 	
 	public Category getCategory(String name) {
-		return categories.get(name);
+		return categoriesMap.get(name);
 	}
 	
 	public Category addCategory(String name) {
-		if(categories.containsKey(name)) return categories.get(name);
+		if(categoriesMap.containsKey(name)) return categoriesMap.get(name);
 		Category c = new Category(name);
-		categories.put(name, c);
+		categoriesMap.put(name, c);
 		return c;
 	}
 	
@@ -49,7 +49,7 @@ public class CategoryManager {
 	}
 	
 	public boolean addWord(String category, String word) {
-		Category c = categories.get(category);
+		Category c = categoriesMap.get(category);
 		if(c == null) return false;
 		return c.addWord(word);		
 	}
@@ -61,20 +61,20 @@ public class CategoryManager {
 	}
 	
 	public boolean removeWord(String category, String word) {
-		Category c = categories.get(category);
+		Category c = categoriesMap.get(category);
 		if(c == null) return false;
 		return c.removeWord(word);
 	}
 	
 	public Category removeCategory(String name) {
-		return categories.remove(name);
+		return categoriesMap.remove(name);
 	}
 	
 	public List<Category> getCategories() {
 		List<Category> list = new ArrayList<Category>();
-		Iterator<String> i = categories.keySet().iterator();
+		Iterator<String> i = categoriesMap.keySet().iterator();
 		while(i.hasNext()) {
-			list.add(categories.get(i.next()));
+			list.add(categoriesMap.get(i.next()));
 		}
 		return list;
 	}
@@ -110,36 +110,30 @@ public class CategoryManager {
 		c.addWord("I am");
 		c.addWord("@");
 		c.addWord("is");
+		c.addWord("RT");
+		c.addWord("a");
 		
 		c = removeCategory("VaiSerRemovida");
-		//System.out.println(c);	
-		
+		//System.out.println(c);			
 		//System.out.println(this.toString());		
 	}
 	
 	public void setCategory(TwitterResponse response) {
 		if(response instanceof Status) {
 			Status status = (Status)response;
-			StringTokenizer tokens = new StringTokenizer(status.getText());
-			System.out.println("Status: "+status.getText());
+			String text = status.getText();			
 
-			while(tokens. hasMoreTokens()) {
-				System.out.println(tokens.nextToken());
+			for(Category c : getCategories()) {
+				for(String word : c.getWords()) {
+					TagParser parser = new TagParser(text,word);
+					//if(parser.hasTag())
+					//se fazer parte da categoria, 
+				}
 			}
-//			for(Category c : getCategories()) {
-//				for(String s : c.getWords()) {
-//					try{
-//						String aux = tokens.nextToken(s);
-//						System.out.println("  AUX: "+aux);
-//						System.out.println("Category: "+c.getName()+" pela palavra "+s);
-//					}
-//					catch(NoSuchElementException e) {System.out.println("Nao tem a palavra "+s);}
-//				}
-//			}
+
 			
-//			if(s.getCategory() == null) {
-//			//TODO categoriza
-//		}
+			
+
 //		else if(getCategory(s.getCategory()).getVersion() != s.getCategoryVersion()) {
 //			//categoriza novamente
 //		}
@@ -152,11 +146,7 @@ public class CategoryManager {
 			throw new IllegalArgumentException("Tipo de objeto inválido para este método. Aceitos: Status, Tweet");
 	}
 	
-	private void categorize(TwitterResponse response) {
-		for(Category c : getCategories()) {
-			
-		}
-	}
+	
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
