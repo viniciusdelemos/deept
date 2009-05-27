@@ -111,7 +111,7 @@ public class StatusesTableThread {
 		return panel;
 	}
 
-	private JPanel getPanel() {		
+	private JPanel getPanel() {
 		JPanel updatePanel = new JPanel(new GridBagLayout());        
 		gbc = new GridBagConstraints();
 
@@ -123,12 +123,15 @@ public class StatusesTableThread {
 		gbc.weightx = 0;		
 		gbc.gridx = 0;
 		gbc.insets = new Insets(0,3,0,1);
-
+		
 		JLabel interactiveImageAux;
 		ImageIcon userPicture = null;		
-
+		
+		long start = System.currentTimeMillis();
 		userPicture = new ImageIcon(profileImageURL);	
-
+		long stop = System.currentTimeMillis(); // stop timing
+        System.out.println("TimeMillis: " + (stop - start)); // print execution time
+        
 		if(userPicture.getIconHeight()>48 || userPicture.getIconWidth()>48) {
 			Image image = userPicture.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
 			interactiveImageAux = new JLabel(new ImageIcon(image));
@@ -137,7 +140,7 @@ public class StatusesTableThread {
 			interactiveImageAux = new JLabel(userPicture);
 
 		final JLabel interactiveImage = interactiveImageAux;
-		//com senderId apenas retornaria sempre o ultimo user
+		//com senderId apenas, retornaria sempre o ultimo user
 		final int senderIdAux = senderId;
 
 		interactiveImage.addMouseListener(new MouseAdapter(){
@@ -187,7 +190,7 @@ public class StatusesTableThread {
 
 		if(isTwitterUser)
 			updatePanel = addButtonsToPanel(updatePanel);
-
+		
 		return updatePanel;
 	}
 
@@ -672,6 +675,7 @@ public class StatusesTableThread {
 					else if(e.getStatusCode()==-1) {
 						//TODO ignorar esta
 						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
+						break;
 					}
 					else
 						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);

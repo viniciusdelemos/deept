@@ -274,8 +274,7 @@ public class TimelinePanel extends JPanel {
         buttonPhotos.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {				
-				if(timelineRenderFactory.getDefaultRenderer() instanceof ShapeRenderer) {
-					
+				if(timelineRenderFactory.getDefaultRenderer() instanceof ShapeRenderer) {					
 					timelineRenderFactory.switchRenderer();					
 					((LabelRenderer)timelineRenderFactory.getDefaultRenderer()).getImageFactory().preloadImages(m_vis.items(Group.STATUSES.toString()),StatusesDataTable.ColNames.IMAGE_URL.toString());
 					displayLayout();
@@ -300,11 +299,12 @@ public class TimelinePanel extends JPanel {
         			cManager.setCategory(statusesList.get(i));
         		}
         		System.out.println("Terminei de setar Categorias!");
-        		
-        		//TODO categorizar updates!
+        		        		
         		Iterator<VisualItem> i = m_vis.items(Group.STATUSES.toString());
 				while(i.hasNext()) {
 					VisualItem item = i.next();
+					
+					item.get(StatusesDataTable.ColNames.ID.toString());
 					item.setFillColor(ChartColor.yellow.getRGB());
 				}
 				//TODO: exibir combobox com categorias + cor
@@ -375,8 +375,10 @@ public class TimelinePanel extends JPanel {
 			try{				
 				String text, screenName, profileImageURL;				
 				Date date;
+				long id = -1;
 				if(response instanceof Status) {
 					Status s = (Status) response;
+					id = s.getId();
 					text = s.getText();
 					screenName = s.getUser().getScreenName();
 					profileImageURL = s.getUser().getProfileImageURL().toString();
@@ -385,14 +387,16 @@ public class TimelinePanel extends JPanel {
 				}
 				else if (response instanceof DirectMessage) {
 					DirectMessage s = (DirectMessage) response;
+					id = s.getId();
 					text = s.getText();
 					screenName = s.getSender().getScreenName();
 					profileImageURL = s.getSender().getProfileImageURL().toString();
 					date = s.getCreatedAt();
 					isStatusOrTweet = false;
 				}
-				else if (response instanceof Tweet) {
+				else if (response instanceof Tweet) {					
 					Tweet s = (Tweet) response;
+					id = s.getId();
 					text = s.getText();
 					screenName = s.getFromUser();
 					profileImageURL = s.getProfileImageUrl().toString();
@@ -402,6 +406,7 @@ public class TimelinePanel extends JPanel {
 				else
 					throw new IllegalArgumentException("Objeto inválido dentro da lista");
 				
+				tbl.set(index, StatusesDataTable.ColNames.ID.toString(), id);
 				tbl.set(index, StatusesDataTable.ColNames.STATUS.toString(), text);
 				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);
 				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);
