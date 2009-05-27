@@ -295,18 +295,26 @@ public class TimelinePanel extends JPanel {
         		categoriesOn = true;
         		CategoryManager cManager = CategoryManager.getInstance();
         		System.out.println("Setando Categorias");
-        		for(int i=0; i<statusesList.size(); i++) {
-        			cManager.setCategory(statusesList.get(i));
+        		
+        		TwitterResponse tr;
+        		long responseId = -1;
+        		for(int i=0; i<statusesList.size(); i++) {        			
+        			tr = statusesList.get(i);
+        			//substituir estes ifs com instance of atraves da classe ResponseDeepT :)
+        			if(tr instanceof Status) responseId = ((Status)tr).getId();
+        			else if(tr instanceof Tweet) responseId = ((Tweet)tr).getId();
+        			
+        			String expr = "ID='"+responseId+"'";
+        			System.out.println("expression: "+expr);
+        			Iterator<VisualItem> it = m_vis.items(Group.STATUSES.toString(),expr);
+        			VisualItem item = null;
+    				while(it.hasNext()) { //deve retornar apenas 1!
+    					item = it.next();
+    				}        			
+        			cManager.categorizeResponse(tr,item);
         		}
         		System.out.println("Terminei de setar Categorias!");
-        		        		
-        		Iterator<VisualItem> i = m_vis.items(Group.STATUSES.toString());
-				while(i.hasNext()) {
-					VisualItem item = i.next();
-					
-					item.get(StatusesDataTable.ColNames.ID.toString());
-					item.setFillColor(ChartColor.yellow.getRGB());
-				}
+        		
 				//TODO: exibir combobox com categorias + cor
 				displayLayout();
         	}});
@@ -406,7 +414,7 @@ public class TimelinePanel extends JPanel {
 				else
 					throw new IllegalArgumentException("Objeto inválido dentro da lista");
 				
-				tbl.set(index, StatusesDataTable.ColNames.ID.toString(), id);
+				tbl.set(index, StatusesDataTable.ColNames.ID.toString(), String.valueOf(id));
 				tbl.set(index, StatusesDataTable.ColNames.STATUS.toString(), text);
 				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);
 				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);

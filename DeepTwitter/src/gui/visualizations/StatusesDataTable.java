@@ -10,7 +10,7 @@ public final class StatusesDataTable extends Table {
 	
 	public StatusesDataTable() {
 		super();
-		this.addColumn(ColNames.ID.toString(), long.class);
+		this.addColumn(ColNames.ID.toString(), String.class);
 		this.addColumn(ColNames.SCREEN_NAME.toString(), String.class);
 		this.addColumn(ColNames.STATUS.toString(), String.class);
 		this.addColumn(ColNames.IMAGE_URL.toString(), String.class);

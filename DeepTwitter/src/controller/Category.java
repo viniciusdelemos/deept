@@ -1,38 +1,47 @@
 package controller;
 
+import java.awt.Paint;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.ws.Response;
 
 public class Category {
 
 	private String name;
-	private List<String> words;
-	private int version;
+	private Map<String,CategoryWord> words;
+	private Paint color;
 
 	public Category(String name) {
 		this.name = name;
-		this.words = new ArrayList<String>();
-		this.version = 0;
+		this.words = new  HashMap<String,CategoryWord>();
 	}
 
 	public boolean addWord(String word) {
-		word = word.toLowerCase();
-		if (words.contains(word))
+		if (words.containsKey(word))
 			return false;
 		else {
-			words.add(word);
-			version++;
+			words.put(word,new CategoryWord(word.toLowerCase()));
 			return true;
 		}		
 	}
 	
+	public void addWords(List<String> words) {
+		for(String s : words) {
+			addWord(s);
+		}
+	}
+	
 	public boolean removeWord(String word) {
-		word = word.toLowerCase();
-		if (!words.contains(word))
+		if (!words.containsKey(word))
 			return false;
 		else {
 			words.remove(word);
-			version++;
 			return true;
 		}
 	}
@@ -40,34 +49,42 @@ public class Category {
 	public String getName() {
 		return name;
 	}
+	
+	public void setName(String n) {
+		name = n;
+	}
 
-	public List<String> getWords() {
-		return words;
+	public CategoryWord[] getWords() {
+		return words.values().toArray(new CategoryWord[0]);
 	}
 
 	public void setWords(List<String> words) {
 		clearWords();
 		for(String s : words) {
-			addWord(s.toLowerCase());
+			addWord(s);
 		}		
 	}
 	
-	public void clearWords() {
-		words.clear();
-		version++;
+	public void setPaintColor(Paint p) {
+		color = p;
 	}
 	
-	public int getVersion() {
-		return version;
+	public Paint getColor() {
+		return color;
+	}
+	 
+	public void clearWords() {
+		words.clear();
 	}
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(name+" = {");
-		for(String s : words) {
-			sb.append(s+",");
+		Iterator<String> i = words.keySet().iterator();
+		while(i.hasNext()) {
+			sb.append(i.next()+",");
 		}
 		sb.append("}");
 		return sb.toString();
-	}
+	}	
 }

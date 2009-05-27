@@ -1,24 +1,39 @@
 package controller;
 
+import java.awt.Color;
+import java.awt.Paint;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.StringTokenizer;
+
+import model.ChartColor;
+
+import prefuse.visual.VisualItem;
+
+import com.sun.xml.internal.bind.v2.runtime.RuntimeUtil.ToStringAdapter;
 
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.TwitterResponse;
 
 public class CategoryManager {	
-	private Map<String,Category> categoriesMap;
-	private Map<Long,List<String>> responsesCategoriesMap;
+	private Map<String,Category> categoriesMap;	
+	private TagParser tagParser;
+	private int relatedResponsesCount;
+	private Paint[] colorArray;
+	private int colorIndex;
 	
 	private CategoryManager(){
 		//construtor private previne chamadas nao autorizadas ao construtor.	
-		categoriesMap = new HashMap<String,Category>();		
+		categoriesMap = new HashMap<String,Category>();	
+		relatedResponsesCount = 0;
+		colorArray = ChartColor.createDefaultPaintArray();
+		colorIndex = new Random().nextInt(colorArray.length);
 		loadTestCategories();
 	}
 	
@@ -37,7 +52,11 @@ public class CategoryManager {
 	public Category addCategory(String name) {
 		if(categoriesMap.containsKey(name)) return categoriesMap.get(name);
 		Category c = new Category(name);
+		c.setPaintColor(colorArray[colorIndex]);
 		categoriesMap.put(name, c);
+		colorIndex++;
+		if(colorIndex>=colorArray.length)
+			colorIndex = 0;
 		return c;
 	}
 	
@@ -70,6 +89,21 @@ public class CategoryManager {
 		return categoriesMap.remove(name);
 	}
 	
+	public boolean setCategoryName(String oldName, String newName) {
+		Category c = categoriesMap.get(oldName);
+		if(c!=null) {
+			c.setName(newName);
+			categoriesMap.put(newName, c);
+			categoriesMap.remove(oldName);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean setCategoryName(Category c, String newName) {
+		return setCategoryName(c.getName(),newName);
+	}
+	
 	public List<Category> getCategories() {
 		List<Category> list = new ArrayList<Category>();
 		Iterator<String> i = categoriesMap.keySet().iterator();
@@ -82,6 +116,8 @@ public class CategoryManager {
 	private void loadTestCategories(){	
 		Category c = addCategory("Diversão");
 		c.addWord("festa");
+		c.addWord("festa");
+		c.addWord("amigos");
 		c.addWord("amigos");
 		c.addWord("rir");
 		
@@ -110,50 +146,76 @@ public class CategoryManager {
 		c.addWord("I am");
 		c.addWord("@");
 		c.addWord("is");
+		c.addWord("festa");
 		c.addWord("RT");
-		c.addWord("a");
 		
-		c = removeCategory("VaiSerRemovida");
+		c = removeCategory("VaiSerRemovida");	
+		
 		//System.out.println(c);			
 		//System.out.println(this.toString());		
 	}
 	
-	public void setCategory(TwitterResponse response) {
+	public void categorizeResponse(TwitterResponse response, VisualItem item) {
 		if(response instanceof Status) {
 			Status status = (Status)response;
 			String text = status.getText();			
-
-			for(Category c : getCategories()) {
-				for(String word : c.getWords()) {
-					TagParser parser = new TagParser(text,word);
-					//if(parser.hasTag())
-					//se fazer parte da categoria, 
-				}
-			}
-
-			
-			
-
-//		else if(getCategory(s.getCategory()).getVersion() != s.getCategoryVersion()) {
-//			//categoriza novamente
-//		}
+			long responseId = status.getId();			
+			categorize(responseId,text,item);			
 		}
 		else if(response instanceof Tweet) {
 			Tweet t = (Tweet)response;
-			//TODO
+			String text = t.getText();			
+			long responseId = t.getId();			
+			categorize(responseId,text,item);	
 		}
 		else
 			throw new IllegalArgumentException("Tipo de objeto inválido para este método. Aceitos: Status, Tweet");
 	}
 	
+	public void categorize(long responseId, String text, VisualItem item) {
+		for(Category c : getCategories()) {
+			for(CategoryWord word : c.getWords())
+				if(!word.hasRelatedResponse(responseId)) {
+					tagParser = new TagParser(text,word.getName());
+					if(tagParser.hasTag()) {
+						word.addRelatedResponse(responseId);	
+						formatItem(item,c);
+						System.out.println("response "+responseId+" categorizada em "+c.getName()+" pela palavra "+word.getName()+" e cor"+c.getColor());
+						relatedResponsesCount++;
+					}
+				}
+				else {
+					formatItem(item,c);
+				}	
+		}
+		if(relatedResponsesCount>=1000) {
+			clearRelatedResponses();
+			System.out.println("* cleared related responses");
+		}
+	}
 	
+	public void formatItem(VisualItem item, Category c) {
+		item.setFillColor(((Color)colorArray[colorIndex]).getRGB());
+	}
+	
+	public String getFormatedText(String startTag, String endTag) {
+		if(tagParser!=null)
+			return tagParser.getFormatedText(startTag, endTag);
+		return null;
+	}
+	
+	public void clearRelatedResponses() {
+		for(Category c : getCategories()) 
+			for(CategoryWord word : c.getWords())
+				word.clearRelatedResponses();
+	}
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for(Category x : getCategories()) {
 			sb.append(x.getName()+"\n");
-			for(String s : x.getWords()) {
-				sb.append("  "+s+"\n");
+			for(CategoryWord s : x.getWords()) {
+				sb.append("  "+s.getName()+"\n");
 			}
 		}
 		return sb.toString();
