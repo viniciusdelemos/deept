@@ -1,5 +1,7 @@
 package controller;
 
+import gui.visualizations.StatusesDataTable;
+
 import java.awt.Color;
 import java.awt.Paint;
 import java.util.ArrayList;
@@ -142,12 +144,34 @@ public class CategoryManager {
 		testList.add("odeio");
 		addWords("Sentimentos", testList);
 		
-		c = addCategory("Teste");
-		c.addWord("I am");
-		c.addWord("@");
+		c = addCategory("Inglês");
+		c.addWord("I");
+		c.addWord("are");
 		c.addWord("is");
-		c.addWord("festa");
-		c.addWord("RT");
+		c.addWord("hi");
+		c.addWord("am");
+		c.addWord("i am");
+		c.addWord("my");
+		
+		c = addCategory("Futebol");
+		c.addWord("gerAl");
+		c.addWord("grêmiO");
+		c.addWord("SOCcer");
+		
+		c = addCategory("Risada");
+		c.addWord("rá");
+		
+		c = addCategory("VitorFasano");
+		c.addWord("VF");
+		
+		c = addCategory("Teste");
+		c.addWord("mp");
+		c.addWord("Dem");
+		c.addWord("nios");
+		
+		c = addCategory("Gay");
+		c.addWord("VF");
+		c.addWord("gay");
 		
 		c = removeCategory("VaiSerRemovida");	
 		
@@ -178,9 +202,12 @@ public class CategoryManager {
 				if(!word.hasRelatedResponse(responseId)) {
 					tagParser = new TagParser(text,word.getName());
 					if(tagParser.hasTag()) {
+						System.out.println(text);
+							System.out.println("palavra: "+word.getName());
+						
 						word.addRelatedResponse(responseId);	
 						formatItem(item,c);
-						System.out.println("response "+responseId+" categorizada em "+c.getName()+" pela palavra "+word.getName()+" e cor"+c.getColor());
+						//System.out.println("response "+responseId+" categorizada em "+c.getName()+" pela palavra "+word.getName()+" e cor "+c.getColor());
 						relatedResponsesCount++;
 					}
 				}
@@ -195,7 +222,17 @@ public class CategoryManager {
 	}
 	
 	public void formatItem(VisualItem item, Category c) {
-		item.setFillColor(((Color)colorArray[colorIndex]).getRGB());
+		String categories = item.getString(StatusesDataTable.ColNames.CATEGORIES.toString());
+		
+		if(categories!=null) {
+			categories = categories + ", " + c.getName();
+			item.setFillColor(Color.black.getRGB());
+			item.setString(StatusesDataTable.ColNames.CATEGORIES.toString(), categories);
+		}
+		else {
+			item.setFillColor(((Color)c.getColor()).getRGB());
+			item.setString(StatusesDataTable.ColNames.CATEGORIES.toString(), c.getName());
+		}
 	}
 	
 	public String getFormatedText(String startTag, String endTag) {
