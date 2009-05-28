@@ -29,8 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
-import controller.CategoryManager;
-
 import model.ChartColor;
 import prefuse.Constants;
 import prefuse.Display;
@@ -38,7 +36,6 @@ import prefuse.Visualization;
 import prefuse.action.ActionList;
 import prefuse.action.GroupAction;
 import prefuse.action.RepaintAction;
-import prefuse.action.animate.AxisLabelAnimator;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
 import prefuse.action.assignment.DataShapeAction;
@@ -60,7 +57,6 @@ import prefuse.util.ui.JFastLabel;
 import prefuse.util.ui.JRangeSlider;
 import prefuse.util.ui.JSearchPanel;
 import prefuse.util.ui.UILib;
-import prefuse.visual.EdgeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTable;
 import prefuse.visual.sort.ItemSorter;
@@ -69,6 +65,7 @@ import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.TwitterResponse;
+import controller.CategoryManager;
 
 public class TimelinePanel extends JPanel {
        
@@ -198,9 +195,10 @@ public class TimelinePanel extends JPanel {
         labelTotalStatuses.setHorizontalAlignment(SwingConstants.RIGHT);
         labelTotalStatuses.setVerticalAlignment(SwingConstants.BOTTOM);
                 
-        String descriptions[] = { "Usuário:", "Status:", "Data:" };
+        String descriptions[] = { "Usuário:", "Status:", "Categorias:","Data:" };
         String data[] = { StatusesDataTable.ColNames.SCREEN_NAME.toString(), StatusesDataTable.ColNames.STATUS.toString(),
-        		StatusesDataTable.ColNames.FULL_DATE.toString()};// +" "+ StatusesDataTable.ColNames.HOUR.toString()};
+        		StatusesDataTable.ColNames.CATEGORIES.toString(),
+        		StatusesDataTable.ColNames.FULL_DATE.toString()};
 
     	GenericToolTipControl toolTipControl = new GenericToolTipControl(descriptions,data,200);
 
@@ -305,7 +303,6 @@ public class TimelinePanel extends JPanel {
         			else if(tr instanceof Tweet) responseId = ((Tweet)tr).getId();
         			
         			String expr = "ID='"+responseId+"'";
-        			System.out.println("expression: "+expr);
         			Iterator<VisualItem> it = m_vis.items(Group.STATUSES.toString(),expr);
         			VisualItem item = null;
     				while(it.hasNext()) { //deve retornar apenas 1!
@@ -418,7 +415,6 @@ public class TimelinePanel extends JPanel {
 				tbl.set(index, StatusesDataTable.ColNames.STATUS.toString(), text);
 				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);
 				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);
-				//SETAR CATEGORIA
 				
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");		
 				String formatedTime = formatter.format(date);

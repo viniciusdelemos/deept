@@ -93,8 +93,10 @@ public class GenericToolTipControl extends ControlAdapter {
 				m_sbuf.append("<tr valign='top'><td><b>");
 				m_sbuf.append(m_texts[i] + "</b></td><td width="+ m_maxWidth +">");
 				if(m_fields[i]=="latestStatus") m_sbuf.append("<font color=\"Blue\">");
+				if(m_fields[i]=="CATEGORIES") m_sbuf.append("<i>");
 				m_sbuf.append(value);
 				if(m_fields[i]=="latestStatus") m_sbuf.append("</font>");
+				if(m_fields[i]=="CATEGORIES") m_sbuf.append("</i>");
 				someInfo = true;
 			}
 			m_sbuf.append("</td></tr>");
