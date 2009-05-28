@@ -7,14 +7,13 @@ public class TagParser{
 
 	private String regex = null;
 	private String source = null;
-	private String key = null;
 	private Pattern pattern = null; 
 	private Matcher matcher = null;
 
 	public TagParser(String source, String key){
 		this.source = source;
-		this.key = key;
-		this.regex = "(?i)\\W"+key+"\\W";
+		String special="ÂÀÁÄÃâãàáäÊÈÉËêèéëÎÍÌÏîíìïÔÕÒÓÖôõòóöÛÙÚÜûúùüÇçıÿİñÑ"; 		
+		this.regex = "(?i)[^\\w"+special+"]"+key+"[^\\w"+special+"]";
 		this.pattern = Pattern.compile(regex); 
 		this.matcher = pattern.matcher(source);
 	}
@@ -34,10 +33,10 @@ public class TagParser{
 	}
 
 	public static void main(String[] args) {
-		TagParser TagParser = new TagParser("lero lero Cu lero lero cU. lero", "cu");
+		TagParser tagParser = new TagParser("lero CUâ lero cu lero lero cu. lero", "cu");
 
-		System.out.println(TagParser.hasTag());
+		System.out.println(tagParser.hasTag());
 
-		System.out.println(TagParser.getFormatedText("<b>", "</b>"));		
+		System.out.println(tagParser.getFormatedText("<b>", "</b>"));		
 	}
 } 

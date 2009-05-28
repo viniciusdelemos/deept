@@ -25,6 +25,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
@@ -46,6 +47,8 @@ import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
 import prefuse.data.Table;
 import prefuse.data.expression.AndPredicate;
+import prefuse.data.expression.Predicate;
+import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.data.query.RangeQueryBinding;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.render.LabelRenderer;
@@ -65,6 +68,7 @@ import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.TwitterResponse;
+import controller.Category;
 import controller.CategoryManager;
 
 public class TimelinePanel extends JPanel {
@@ -75,6 +79,9 @@ public class TimelinePanel extends JPanel {
     private JFastLabel labelTotalStatuses = new JFastLabel(visibleStatuses+" updates");
     private JFastLabel labelDetails;
     private boolean categoriesOn, isStatusOrTweet;
+    private AndPredicate statusesFilter;
+    private RangeQueryBinding  hourQuery, dayQuery;
+    private SearchQueryBinding textSearchQuery, screenNameSearchQuery;
     
     private Visualization m_vis;
     private Display display;
@@ -99,12 +106,12 @@ public class TimelinePanel extends JPanel {
         if(isGroup)
         	((LabelRenderer)timelineRenderFactory.getDefaultRenderer()).getImageFactory().preloadImages(m_vis.items(Group.STATUSES.toString()),StatusesDataTable.ColNames.IMAGE_URL.toString());
         
-        SearchQueryBinding screenNameSearchQuery = new SearchQueryBinding(vt, ColNames.SCREEN_NAME.toString());
-        SearchQueryBinding textSearchQuery = new SearchQueryBinding(vt, ColNames.STATUS.toString());
+        screenNameSearchQuery = new SearchQueryBinding(vt, ColNames.SCREEN_NAME.toString());
+        textSearchQuery = new SearchQueryBinding(vt, ColNames.STATUS.toString());
         
         AxisLayout xAxis = new AxisLayout(Group.STATUSES.toString(), 
 				StatusesDataTable.ColNames.DAY.toString(), Constants.X_AXIS);        
-        RangeQueryBinding  dayQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.DAY.toString());
+        dayQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.DAY.toString());
         xAxis.setRangeModel(dayQuery.getModel());      
         AxisLabelLayout xlabels = new AxisLabelLayout(Group.X_AXIS.toString(), xAxis, m_xlabB, 15);
         //xlabels.setSpacing(5);
@@ -112,23 +119,18 @@ public class TimelinePanel extends JPanel {
                 
         AxisLayout yAxis = new AxisLayout(Group.STATUSES.toString(), 
 				StatusesDataTable.ColNames.HOUR.toString(),	Constants.Y_AXIS);
-        RangeQueryBinding  hourQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.HOUR.toString());
+        hourQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.HOUR.toString());
         yAxis.setRangeModel(hourQuery.getModel());      
         AxisLabelLayout ylabels = new AxisLabelLayout(Group.Y_AXIS.toString(), yAxis, m_ylabB);
         
         xAxis.setLayoutBounds(m_dataB);
         yAxis.setLayoutBounds(m_dataB);
         
-        AndPredicate filter = new AndPredicate(screenNameSearchQuery.getPredicate());
-        filter.add(textSearchQuery.getPredicate());
-        filter.add(hourQuery.getPredicate());
-        filter.add(dayQuery.getPredicate());
+        statusesFilter = new AndPredicate(screenNameSearchQuery.getPredicate());
+        statusesFilter.add(textSearchQuery.getPredicate());
+        statusesFilter.add(hourQuery.getPredicate());
+        statusesFilter.add(dayQuery.getPredicate()); 
         
-//        int[] palette = new int[] {
-//            ColorLib.rgb(150,150,255), ColorLib.rgb(255,150,150),
-//            ColorLib.rgb(0,255,0)
-//            //CRIAR ARRAY DE CORES REFERENTES AS CATEGORIAS
-//        };
         DataColorAction shapeColor = new DataColorAction(Group.STATUSES.toString(), 
 				StatusesDataTable.ColNames.HOUR.toString(),
 				Constants.NOMINAL, VisualItem.STROKECOLOR,
@@ -152,7 +154,7 @@ public class TimelinePanel extends JPanel {
         vis.putAction("draw", draw);
 
         ActionList update = new ActionList();
-        update.add(new VisibilityFilter(Group.STATUSES.toString(), filter));
+        update.add(new VisibilityFilter(Group.STATUSES.toString(), statusesFilter));
         update.add(cntr);
         update.add(xAxis);
         update.add(yAxis);
@@ -166,7 +168,7 @@ public class TimelinePanel extends JPanel {
                 vis.run("update");
             }
         };
-        filter.addExpressionListener(lstnr);
+        statusesFilter.addExpressionListener(lstnr);
                 
         display = new Display(vis);
         display.setItemSorter(new ItemSorter() {
@@ -286,12 +288,35 @@ public class TimelinePanel extends JPanel {
         		//TODO abrir janela de config de categorias
         	}});
         
+        final CategoryManager cManager = CategoryManager.getInstance();
+        final JComboBox categoriesComboBox = new JComboBox();
+        categoriesComboBox.setMaximumRowCount(4);
+        categoriesComboBox.addItem("Mostrar Todas");
+        categoriesComboBox.setVisible(false);  
+        
+        categoriesComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {		
+				for(int i=statusesFilter.size()-1; i>=0; i--) {
+					Predicate p = statusesFilter.get(i);
+					if(p.toString().contains("CATEGORIES")) {						
+						statusesFilter.remove(p);
+						break;
+					}
+				}
+				String query;
+				if(categoriesComboBox.getSelectedIndex()==0)
+					query = "CATEGORIES != '"+categoriesComboBox.getSelectedItem().toString()+"'";
+				else
+					query = "CATEGORIES = '"+categoriesComboBox.getSelectedItem().toString()+"'";				
+				statusesFilter.add(ExpressionParser.predicate(query));		
+			}});
+        
         JButton buttonCategorize = new JButton("Categorizar Atualizações");        
         buttonCategorize.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent arg0) {			
-        		categoriesOn = true;
-        		CategoryManager cManager = CategoryManager.getInstance();
+        		categoriesOn = true;        		
         		System.out.println("Setando Categorias");
         		
         		TwitterResponse tr;
@@ -312,7 +337,10 @@ public class TimelinePanel extends JPanel {
         		}
         		System.out.println("Terminei de setar Categorias!");
         		
-				//TODO: exibir combobox com categorias + cor
+        		for(Category c : cManager.getCategories()) {
+                	categoriesComboBox.addItem(c.getName());
+                }				
+        		categoriesComboBox.setVisible(true);
 				displayLayout();
         	}});
         
@@ -327,7 +355,9 @@ public class TimelinePanel extends JPanel {
         if(isStatusOrTweet) {
         	radioBox.add(buttonCategoryManager);
         	radioBox.add(buttonCategorize);
-        }
+        }                
+        radioBox.add(Box.createHorizontalStrut(15));
+        radioBox.add(categoriesComboBox);
         radioBox.add(Box.createHorizontalGlue()); 
         
         JRangeSlider verticalSlider = hourQuery.createVerticalRangeSlider();
@@ -525,4 +555,3 @@ public class TimelinePanel extends JPanel {
     	}
     }
 }
-
