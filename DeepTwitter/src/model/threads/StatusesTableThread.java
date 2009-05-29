@@ -1,5 +1,6 @@
 package model.threads;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
@@ -124,25 +126,12 @@ public class StatusesTableThread {
 		gbc.gridx = 0;
 		gbc.insets = new Insets(0,3,0,1);
 		
-		JLabel interactiveImageAux;
-		ImageIcon userPicture = null;		
-		
-		long start = System.currentTimeMillis();
-		userPicture = new ImageIcon(profileImageURL);	
-		long stop = System.currentTimeMillis(); // stop timing
-        System.out.println("TimeMillis: " + (stop - start)); // print execution time
-        
-		if(userPicture.getIconHeight()>48 || userPicture.getIconWidth()>48) {
-			Image image = userPicture.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
-			interactiveImageAux = new JLabel(new ImageIcon(image));
-		}
-		else
-			interactiveImageAux = new JLabel(userPicture);
-
-		final JLabel interactiveImage = interactiveImageAux;
-		//com senderId apenas, retornaria sempre o ultimo user
 		final int senderIdAux = senderId;
-
+		
+		final JLabel interactiveImage = new JLabel();
+		interactiveImage.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+		interactiveImage.setPreferredSize(new Dimension(48,48));
+		
 		interactiveImage.addMouseListener(new MouseAdapter(){
 			public void mouseEntered(java.awt.event.MouseEvent arg0) {
 				interactiveImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -151,8 +140,9 @@ public class StatusesTableThread {
 				controller.searchAndAddUserToNetwork(senderIdAux);
 			}
 		});
-
 		updatePanel.add(interactiveImage,gbc);
+		
+		new LoadUserImage(profileImageURL,interactiveImage);
 
 		gbc.weightx = 1;
 		gbc.gridx = 1;
@@ -685,6 +675,28 @@ public class StatusesTableThread {
 					break;
 				}
 			}
+		}
+	}
+	
+	class LoadUserImage extends Thread {
+		private URL url;
+		private JLabel interactiveImage;
+		
+		public LoadUserImage(URL url, JLabel interactiveImage) {
+			this.url = url;
+			this.interactiveImage = interactiveImage;
+			start();
+		}
+		
+		public void run() {
+			ImageIcon userPicture = new ImageIcon(url);
+			
+			if(userPicture.getIconHeight()>48 || userPicture.getIconWidth()>48) {
+				Image image = userPicture.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
+				interactiveImage.setIcon(new ImageIcon(image));
+			}
+			else			
+				interactiveImage.setIcon(userPicture);
 		}
 	}
 }
