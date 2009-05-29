@@ -197,14 +197,15 @@ public class CategoryManager {
 	}
 	
 	public void categorize(long responseId, String text, VisualItem item) {
+		text+=" ";
 		for(Category c : getCategories()) {
 			for(CategoryWord word : c.getWords())
 				if(!word.hasRelatedResponse(responseId)) {
 					tagParser = new TagParser(text,word.getName());
 					if(tagParser.hasTag()) {
 						System.out.println(text);
-							System.out.println("palavra: "+word.getName());
-						
+						System.out.println("palavra: "+word.getName());
+
 						word.addRelatedResponse(responseId);	
 						formatItem(item,c);
 						//System.out.println("response "+responseId+" categorizada em "+c.getName()+" pela palavra "+word.getName()+" e cor "+c.getColor());
@@ -224,7 +225,7 @@ public class CategoryManager {
 	public void formatItem(VisualItem item, Category c) {
 		String categories = item.getString(StatusesDataTable.ColNames.CATEGORIES.toString());
 		
-		if(categories!=null) {
+		if(categories!=null && !categories.contains(c.getName()+",")) {
 			categories = categories + ", " + c.getName();
 			item.setFillColor(Color.black.getRGB());
 			item.setString(StatusesDataTable.ColNames.CATEGORIES.toString(), categories);
