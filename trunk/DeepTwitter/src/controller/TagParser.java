@@ -14,6 +14,7 @@ public class TagParser{
 		this.source = source;
 		String special="ÂÀÁÄÃâãàáäÊÈÉËêèéëÎÍÌÏîíìïÔÕÒÓÖôõòóöÛÙÚÜûúùüÇçıÿİñÑ"; 		
 		this.regex = "(?i)[^\\w"+special+"]"+key+"[^\\w"+special+"]";
+		//this.regex = "(?i)[^\\w"+special+"]*"+key+"[^\\w"+special+"]*";
 		this.pattern = Pattern.compile(regex); 
 		this.matcher = pattern.matcher(source);
 	}
