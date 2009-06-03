@@ -455,7 +455,7 @@ public class StatusTab {
 			else if(cmd.equals("buttonTimeline")) {
 				String userId = idArray.get(currentTable);
 				StatusesTableThread table = tablesMap.get(userId);
-				new GUITimeline(table.getStatusesList(),table.isGroup());
+				new GUITimeline(table.getStatusesList(),table.isGroup(),txtCurrentUser.getText());
 			}
 			else if(cmd.equals("buttonSearchUpdates")) {
 				setPanelContent(new StatusesTableThread(StatusesType.SEARCH,txtCurrentUser.getText()));

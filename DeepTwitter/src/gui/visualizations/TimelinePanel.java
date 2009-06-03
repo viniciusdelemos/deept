@@ -73,10 +73,10 @@ import controller.CategoryManager;
 
 public class TimelinePanel extends JPanel {
        
-    private String panelTitle = "Timeline";
+    private String panelTitle = "Atualizações de ";
     private String statusesCountText;
     private int visibleStatuses;
-    private JFastLabel labelTotalStatuses = new JFastLabel(visibleStatuses+" updates");
+    private JFastLabel labelTotalStatuses = new JFastLabel("Exibindo "+visibleStatuses+" updates");
     private JFastLabel labelDetails;
     private boolean categoriesOn, isStatusOrTweet;
     private AndPredicate statusesFilter;
@@ -93,8 +93,9 @@ public class TimelinePanel extends JPanel {
 		STATUSES, X_AXIS, Y_AXIS
 	}
     
-    public TimelinePanel(final List<TwitterResponse> statusesList, boolean isGroup) {
+    public TimelinePanel(final List<TwitterResponse> statusesList, boolean isGroup, String userName) {
         super(new BorderLayout());
+        panelTitle += userName;
         final Visualization vis = new Visualization();
         m_vis = vis;
         
@@ -190,10 +191,10 @@ public class TimelinePanel extends JPanel {
         displayLayout();
         
         labelDetails = new JFastLabel(panelTitle);
-        labelDetails.setPreferredSize(new Dimension(75,20));
+        labelDetails.setPreferredSize(new Dimension(300,20));
         labelDetails.setVerticalAlignment(SwingConstants.BOTTOM);
         
-        labelTotalStatuses.setPreferredSize(new Dimension(500,20));
+        labelTotalStatuses.setPreferredSize(new Dimension(100,20));
         labelTotalStatuses.setHorizontalAlignment(SwingConstants.RIGHT);
         labelTotalStatuses.setVerticalAlignment(SwingConstants.BOTTOM);
                 
@@ -419,6 +420,9 @@ public class TimelinePanel extends JPanel {
 					profileImageURL = s.getUser().getProfileImageURL().toString();
 					date = s.getCreatedAt();		
 					isStatusOrTweet = true;
+					System.out.println("timezone: "+s.getUser().getTimeZone());
+					System.out.println("offset: "+s.getUser().getUtcOffset());
+					System.out.println("location: "+s.getUser().getLocation()+"\n");
 				}
 				else if (response instanceof DirectMessage) {
 					DirectMessage s = (DirectMessage) response;
@@ -548,9 +552,9 @@ public class TimelinePanel extends JPanel {
     		}
     		visibleStatuses = cont;
     		if(visibleStatuses == 1)
-    			statusesCountText = visibleStatuses + " update";
+    			statusesCountText = "Exibindo " + visibleStatuses + " update";
     		else
-    			statusesCountText = visibleStatuses + " updates";
+    			statusesCountText = "Exibindo " + visibleStatuses + " updates";
     		labelTotalStatuses.setText(statusesCountText);
     	}
     }
