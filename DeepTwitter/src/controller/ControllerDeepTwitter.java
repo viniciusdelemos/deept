@@ -498,5 +498,9 @@ public class ControllerDeepTwitter {
 				} 
 			}
 		}
+	}	
+	
+	public java.util.List<User> mostActiveUsersForAll(){
+		return gManager.getSocialNetwork().mostActiveUserForAllNetwork();
 	}
 }

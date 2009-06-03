@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -60,6 +61,7 @@ import prefuse.visual.expression.InGroupPredicate;
 import profusians.controls.GenericToolTipControl;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
+import controller.MostActiveUsersController;
 import controller.StatusTab;
 import examples.categorias.CategoryController;
 
@@ -90,9 +92,13 @@ public class GraphicManager extends Display {
 	private GroupManager groupManager;
 	private LabelRenderer nodeRenderer;
 	
+	private MostActiveUsersController mostActiveUsersController;
+	
     public GraphicManager()
     {    	
-    	super(new Visualization());    	
+    	super(new Visualization());
+    	
+    	mostActiveUsersController = new MostActiveUsersController();
     	
     	controller = ControllerDeepTwitter.getInstance();
     	isTwitterUser = controller.isTwitterUser();    	
@@ -549,6 +555,7 @@ public class GraphicManager extends Display {
     		JMenuItem block = new JMenuItem("Bloquear"); 
     		JMenuItem followers = new JMenuItem("Ver Seguidores");
     		JMenuItem removeFromGroup = new JMenuItem("Remover do Grupo");
+    		JMenuItem teste = new JMenuItem("Teste");
     		 
     		Integer loggedUserId = Integer.parseInt(controller.getLoggedUserId());
     		Node mainUserNode = getNodeByTwitterId(loggedUserId);
@@ -558,6 +565,7 @@ public class GraphicManager extends Display {
     		popupMenu.add(friends); //é necessário?
     		popupMenu.add(followers);
     		popupMenu.add(favorites);
+    		popupMenu.add(teste);
     		
     		if(!item.get("idTwitter").equals(loggedUserId)) { 
     			popupMenu.addSeparator();
@@ -664,6 +672,13 @@ public class GraphicManager extends Display {
     			public void actionPerformed(ActionEvent e) {
     				groupManager.removeFromGroup((NodeItem)clickedItem);				
     			}});
+    		teste.addActionListener(new ActionListener(){
+    			public void actionPerformed(ActionEvent e) {
+    				java.util.List<User> mostActiveUsers =
+    					controller.mostActiveUsersForAll();
+    				mostActiveUsersController.setUsers(mostActiveUsers);
+    			}
+    		});
     		//create popupMenu for 'background'
     		//JPopupMenu backgroundMenu = new JPopupMenu(); 
     		// ....
@@ -676,11 +691,13 @@ public class GraphicManager extends Display {
 			JMenuItem timeline = new JMenuItem("Ver Timeline");
 			JMenuItem removeGroup = new JMenuItem("Deletar Grupo");
 			//JMenuItem categoriesGroup = new JMenuItem("Categorias do Grupo");
+			JMenuItem mostActiveUsers = new JMenuItem("Usuários Mais Ativos");
 			
 			popupMenu.add(updates);
 			popupMenu.add(timeline);
 			popupMenu.add(removeGroup);
 			//popupMenu.add(categoriesGroup);
+			popupMenu.add(mostActiveUsers);
 			
 			updates.addActionListener(new ActionListener(){
 				@Override
@@ -709,6 +726,32 @@ public class GraphicManager extends Display {
 				public void actionPerformed(ActionEvent arg0) {
 					groupManager.removeGroup(item);
 				}});
+			mostActiveUsers.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					java.util.List<User> users = new java.util.ArrayList<User>();
+					java.util.List<Integer> idsUsers = new java.util.ArrayList<Integer>();
+					
+					AggregateItem ai = item;
+					Iterator<NodeItem> iterator = ai.items();
+
+					while(iterator.hasNext()){
+						NodeItem nodeItem = iterator.next();
+						int idTwitter = nodeItem.getInt("idTwitter");
+						if(idsUsers.contains(idTwitter) == false)
+							idsUsers.add(idTwitter);
+					}
+					
+					for(int i : idsUsers){
+						users.add(socialNetwork.getUser(i));
+					}
+					
+					if(users.size()<3)
+						controller.showMessageDialog("Para a visualização dos Usuários Mais Ativos " +
+								"é necessários no mínimo dois usuários!", MessageType.WARNING);
+					else
+						mostActiveUsersController.setUsers(users);
+				}
+			});
 //			categoriesGroup.addActionListener(new ActionListener(){
 //				@Override
 //				public void actionPerformed(ActionEvent arg0){
