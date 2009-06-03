@@ -1,9 +1,12 @@
 TODO:
 
+- utilizar s.getUser().getUtcOffset() para poder exibir as atualizacoes na hora local da pessoa 
 - categorias: inserir combobox com cores das categorias
 - categorias: criar visualizacao de gerenciador de categorias
 - permitir ver o timeline sem precisar mostrar as atualizacoes no painel (pcausa da OutOfMemoryException);
-- criar visualização de membros + ativos (vamos mesmo fazer esta?);
+- revisar codigo da visualização de membros + ativos;
+- consertar remocao de grupos;
+- consertar cor de usuarios ligados por arestas invisiveis;
 - consertar aba de favoritos (está repetindo informacoes);
 - inserir no painel de atualizacoes a data e o link para ver na web;
 - possibilitar definir o inReplyTo nos statuses;
@@ -17,7 +20,6 @@ TODO:
 - implementar menu bloquear usuario (mostrando um X no nodo);
 - fazer algo com trends (#) - aba ou tag cloud;
 - consertar ação de esconder amigos do nodo clicado;
-- consertar cor de usuarios ligados por arestas invisiveis;
 - adicionar filtro de nome na rede;
 - parece que public timeline nao esta mais na pagina do twitter;
 - implementar notificação quando novas atualizações/msgs chegarem;
