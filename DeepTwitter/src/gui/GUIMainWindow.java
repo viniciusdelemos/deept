@@ -28,22 +28,8 @@ public class GUIMainWindow extends javax.swing.JFrame {
         labelStatusBar = new javax.swing.JLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        buttonUpdate = new javax.swing.JButton();
-        buttonNewGroup = new javax.swing.JButton();
-        buttonAddUser = new javax.swing.JButton();
-        buttonClearSelection = new javax.swing.JButton();
-        checkBoxHighQuality = new javax.swing.JCheckBox();
-        labelFilter = new javax.swing.JLabel();
-        buttonHideSelection = new javax.swing.JButton();
-        buttonRemoveSelection = new javax.swing.JButton();
-        buttonShowAll = new javax.swing.JButton();
-        checkBoxCurvedEdges = new javax.swing.JCheckBox();
-        labelAPILimit = new javax.swing.JLabel();
-        checkBoxToolTipControl = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
-        buttonAddUpdate = new javax.swing.JButton();
         buttonNewDirectMessage = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         buttonPreviousUser = new javax.swing.JButton();
@@ -55,10 +41,23 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JToolBar.Separator();
         buttonCloseUpdates = new javax.swing.JButton();
         buttonTurnOnOff = new javax.swing.JToggleButton();
-        buttonSettings = new javax.swing.JButton();
         jSeparator5 = new javax.swing.JToolBar.Separator();
         buttonTimeline = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
+        jToolBar2 = new javax.swing.JToolBar();
+        buttonUpdate = new javax.swing.JButton();
+        buttonAddUser = new javax.swing.JButton();
+        buttonNewGroup = new javax.swing.JButton();
+        buttonHideSelection = new javax.swing.JButton();
+        buttonRemoveSelection = new javax.swing.JButton();
+        buttonSettings = new javax.swing.JButton();
+        buttonShowAll = new javax.swing.JButton();
+        buttonClearSelection = new javax.swing.JButton();
+        checkBoxHighQuality = new javax.swing.JCheckBox();
+        checkBoxCurvedEdges = new javax.swing.JCheckBox();
+        checkBoxToolTipControl = new javax.swing.JCheckBox();
+        labelFilter = new javax.swing.JLabel();
+        labelAPILimit = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuLoadNetwork = new javax.swing.JMenuItem();
@@ -87,127 +86,10 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jSplitPane1.setOneTouchExpandable(true);
         jSplitPane1.setPreferredSize(new java.awt.Dimension(1000, 600));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-
-        buttonUpdate.setText("Novo Update");
-        buttonUpdate.setActionCommand("buttonNewUpdate");
-        buttonUpdate.setName("buttonNewUpdate"); // NOI18N
-
-        buttonNewGroup.setText("Novo grupo");
-        buttonNewGroup.setActionCommand("buttonNewGroup");
-        buttonNewGroup.setName("buttonNewGroup"); // NOI18N
-
-        buttonAddUser.setText("Adicionar usuário");
-        buttonAddUser.setActionCommand("buttonAddUser");
-        buttonAddUser.setName("buttonAddUser"); // NOI18N
-
-        buttonClearSelection.setText("Limpar seleção");
-        buttonClearSelection.setActionCommand("buttonClearSelection");
-        buttonClearSelection.setFocusable(false);
-        buttonClearSelection.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonClearSelection.setName("buttonClearSelection"); // NOI18N
-        buttonClearSelection.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-
-        checkBoxHighQuality.setBackground(new java.awt.Color(255, 255, 255));
-        checkBoxHighQuality.setSelected(true);
-        checkBoxHighQuality.setText("alta qualidade");
-        checkBoxHighQuality.setActionCommand("checkBoxHighQuality");
-        checkBoxHighQuality.setName("checkBoxHighQuality"); // NOI18N
-
-        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        labelFilter.setText("Filtro:");
-
-        buttonHideSelection.setText("Esconder seleção");
-        buttonHideSelection.setActionCommand("buttonHideSelection");
-        buttonHideSelection.setName("buttonHideSelection"); // NOI18N
-
-        buttonRemoveSelection.setText("Remover seleção");
-        buttonRemoveSelection.setActionCommand("buttonRemoveSelection");
-        buttonRemoveSelection.setName("buttonRemoveSelection"); // NOI18N
-
-        buttonShowAll.setText("Exibir todos");
-        buttonShowAll.setActionCommand("buttonShowAll");
-        buttonShowAll.setName("buttonShowAll"); // NOI18N
-
-        checkBoxCurvedEdges.setBackground(new java.awt.Color(255, 255, 255));
-        checkBoxCurvedEdges.setText("arestas curvas");
-        checkBoxCurvedEdges.setActionCommand("checkBoxCurvedEdges");
-        checkBoxCurvedEdges.setName("checkBoxCurvedEdges"); // NOI18N
-
-        labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        labelAPILimit.setText("Requisições API:");
-
-        checkBoxToolTipControl.setBackground(new java.awt.Color(255, 255, 255));
-        checkBoxToolTipControl.setText("infos de usuário");
-        checkBoxToolTipControl.setActionCommand("checkBoxToolTipControl");
-        checkBoxToolTipControl.setName("checkBoxToolTipControl"); // NOI18N
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(checkBoxToolTipControl)
-                    .addComponent(labelAPILimit)
-                    .addComponent(labelFilter)
-                    .addComponent(checkBoxCurvedEdges)
-                    .addComponent(checkBoxHighQuality)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(buttonShowAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonRemoveSelection, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonHideSelection, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonAddUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonUpdate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                        .addComponent(buttonNewGroup, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                        .addComponent(buttonClearSelection, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(57, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(buttonUpdate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonAddUser)
-                .addGap(18, 18, 18)
-                .addComponent(buttonNewGroup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonHideSelection)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonRemoveSelection)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonShowAll)
-                .addGap(7, 7, 7)
-                .addComponent(buttonClearSelection)
-                .addGap(18, 18, 18)
-                .addComponent(checkBoxHighQuality)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(checkBoxCurvedEdges)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(checkBoxToolTipControl)
-                .addGap(7, 7, 7)
-                .addComponent(labelFilter)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(labelAPILimit)
-                .addContainerGap(172, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Interações", jPanel1);
-
         jPanel2.setLayout(new java.awt.BorderLayout());
 
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
-
-        buttonAddUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("../new.png"))); // NOI18N
-        buttonAddUpdate.setToolTipText("Novo update");
-        buttonAddUpdate.setActionCommand("buttonNewUpdate");
-        buttonAddUpdate.setFocusable(false);
-        buttonAddUpdate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonAddUpdate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(buttonAddUpdate);
 
         buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_add.png"))); // NOI18N
         buttonNewDirectMessage.setToolTipText("Nova mensagem direta");
@@ -295,18 +177,10 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonTurnOnOff.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_off.png"))); // NOI18N
         buttonTurnOnOff.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonTurnOnOff);
-
-        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../config.png"))); // NOI18N
-        buttonSettings.setToolTipText("Configurações");
-        buttonSettings.setActionCommand("buttonSettings");
-        buttonSettings.setFocusable(false);
-        buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(buttonSettings);
         jToolBar1.add(jSeparator5);
 
         buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
-        buttonTimeline.setToolTipText("Ver timeline de atualizações");
+        buttonTimeline.setToolTipText("Configurações");
         buttonTimeline.setActionCommand("buttonTimeline");
         buttonTimeline.setFocusable(false);
         buttonTimeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -322,6 +196,84 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jSplitPane1.setLeftComponent(jTabbedPane1);
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
+
+        jToolBar2.setFloatable(false);
+        jToolBar2.setRollover(true);
+
+        buttonUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("../comment_add.png"))); // NOI18N
+        buttonUpdate.setToolTipText("Novo update");
+        buttonUpdate.setActionCommand("buttonNewUpdate");
+        buttonUpdate.setName("buttonNewUpdate"); // NOI18N
+        jToolBar2.add(buttonUpdate);
+
+        buttonAddUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../user_search.png"))); // NOI18N
+        buttonAddUser.setToolTipText("Buscar usuário");
+        buttonAddUser.setActionCommand("buttonAddUser");
+        buttonAddUser.setName("buttonAddUser"); // NOI18N
+        jToolBar2.add(buttonAddUser);
+
+        buttonNewGroup.setIcon(new javax.swing.ImageIcon(getClass().getResource("../users_add.png"))); // NOI18N
+        buttonNewGroup.setToolTipText("Novo grupo");
+        buttonNewGroup.setActionCommand("buttonNewGroup");
+        buttonNewGroup.setName("buttonNewGroup"); // NOI18N
+        jToolBar2.add(buttonNewGroup);
+
+        buttonHideSelection.setText("Esconder seleção");
+        buttonHideSelection.setActionCommand("buttonHideSelection");
+        buttonHideSelection.setName("buttonHideSelection"); // NOI18N
+        jToolBar2.add(buttonHideSelection);
+
+        buttonRemoveSelection.setText("Remover seleção");
+        buttonRemoveSelection.setActionCommand("buttonRemoveSelection");
+        buttonRemoveSelection.setName("buttonRemoveSelection"); // NOI18N
+        jToolBar2.add(buttonRemoveSelection);
+
+        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../config.png"))); // NOI18N
+        buttonSettings.setToolTipText("Configurações");
+        buttonSettings.setActionCommand("buttonSettings");
+        buttonSettings.setFocusable(false);
+        buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar2.add(buttonSettings);
+
+        buttonShowAll.setText("Exibir todos");
+        buttonShowAll.setActionCommand("buttonShowAll");
+        buttonShowAll.setName("buttonShowAll"); // NOI18N
+        jToolBar2.add(buttonShowAll);
+
+        buttonClearSelection.setText("Limpar seleção");
+        buttonClearSelection.setActionCommand("buttonClearSelection");
+        buttonClearSelection.setFocusable(false);
+        buttonClearSelection.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonClearSelection.setName("buttonClearSelection"); // NOI18N
+        buttonClearSelection.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar2.add(buttonClearSelection);
+
+        checkBoxHighQuality.setSelected(true);
+        checkBoxHighQuality.setText("alta qualidade");
+        checkBoxHighQuality.setActionCommand("checkBoxHighQuality");
+        checkBoxHighQuality.setName("checkBoxHighQuality"); // NOI18N
+        jToolBar2.add(checkBoxHighQuality);
+
+        checkBoxCurvedEdges.setText("arestas curvas");
+        checkBoxCurvedEdges.setActionCommand("checkBoxCurvedEdges");
+        checkBoxCurvedEdges.setName("checkBoxCurvedEdges"); // NOI18N
+        jToolBar2.add(checkBoxCurvedEdges);
+
+        checkBoxToolTipControl.setText("infos de usuário");
+        checkBoxToolTipControl.setActionCommand("checkBoxToolTipControl");
+        checkBoxToolTipControl.setName("checkBoxToolTipControl"); // NOI18N
+        jToolBar2.add(checkBoxToolTipControl);
+
+        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        labelFilter.setText("Filtro:");
+        jToolBar2.add(labelFilter);
+
+        labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelAPILimit.setText("Requisições API:");
+        jToolBar2.add(labelAPILimit);
+
+        getContentPane().add(jToolBar2, java.awt.BorderLayout.PAGE_START);
 
         jMenu1.setText("Arquivo");
         jMenu1.setName("menuSaveNetworkAs"); // NOI18N
@@ -405,7 +357,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonNextUser.addActionListener(listener);
         buttonTurnOnOff.addActionListener(listener);
         buttonSettings.addActionListener(listener);
-        buttonAddUpdate.addActionListener(listener);
         buttonTimeline.addActionListener(listener);
 
         checkBoxHighQuality.addActionListener(listener);
@@ -420,7 +371,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     public boolean isCurvedEdges() {
         return checkBoxCurvedEdges.isSelected();
     }
-    
+
     public boolean isToolTipControlOn() {
         return checkBoxToolTipControl.isSelected();
     }
@@ -466,7 +417,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify
-    private javax.swing.JButton buttonAddUpdate;
     private javax.swing.JButton buttonAddUser;
     private javax.swing.JButton buttonClearSelection;
     private javax.swing.JButton buttonCloseUpdates;
@@ -491,7 +441,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
@@ -501,6 +450,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar jToolBar2;
     private javax.swing.JLabel labelAPILimit;
     private javax.swing.JLabel labelFilter;
     private javax.swing.JLabel labelStatusBar;

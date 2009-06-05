@@ -32,11 +32,9 @@ public class StatusTab {
     private javax.swing.JToggleButton buttonOutbox;
     private javax.swing.JButton buttonSearchUpdates;
     private javax.swing.JButton buttonNewDirectMessage;
-    private javax.swing.JButton buttonSettings;
     private javax.swing.JButton buttonNextUser;
     private javax.swing.JButton buttonPreviousUser;
     private javax.swing.JButton buttonCloseUpdates;
-    private javax.swing.JButton buttonAddUpdate;
     private javax.swing.JButton buttonTimeline;
     private javax.swing.JTextField txtCurrentUser;
 	private Map<String,StatusesTableThread> tablesMap;
@@ -133,14 +131,6 @@ public class StatusTab {
 	private void addToolBar(JPanel panel, StatusesType typeOfTab) {
 		jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
-
-        buttonAddUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("../new.png"))); // NOI18N
-        buttonAddUpdate.setToolTipText("Novo update");
-        buttonAddUpdate.setActionCommand("buttonNewUpdate");
-        buttonAddUpdate.setFocusable(false);
-        buttonAddUpdate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonAddUpdate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(buttonAddUpdate);
         
         buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_add.png"))); // NOI18N
         buttonNewDirectMessage.setToolTipText("Nova mensagem direta");
@@ -149,9 +139,7 @@ public class StatusTab {
         buttonNewDirectMessage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonNewDirectMessage.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonNewDirectMessage);
-        
-        jToolBar1.add(jSeparator2);
-
+                
         buttonPreviousUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../backward.png"))); // NOI18N
         buttonPreviousUser.setToolTipText("Usuário anterior");
         buttonPreviousUser.setActionCommand("buttonPreviousUser");
@@ -250,14 +238,6 @@ public class StatusTab {
         buttonTurnOnOff.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_off.png"))); // NOI18N
         buttonTurnOnOff.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonTurnOnOff);
-
-        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../config.png"))); // NOI18N
-        buttonSettings.setToolTipText("Configurações");
-        buttonSettings.setActionCommand("buttonSettings");
-        buttonSettings.setFocusable(false);
-        buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(buttonSettings);
         
         jToolBar1.add(jSeparator5);
 
@@ -274,10 +254,7 @@ public class StatusTab {
 		panel.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
 	}
 	
-	private void reconfigToolBarBasedOnTabType() {
-		if(!controller.isTwitterUser())
-			buttonAddUpdate.setEnabled(false);
-		
+	private void reconfigToolBarBasedOnTabType() {		
 		switch(this.type) {
 		case REPLIES:
 		case PUBLIC_TIMELINE:
@@ -294,7 +271,6 @@ public class StatusTab {
 			buttonNewDirectMessage.setVisible(false);
 			break;
 		case DIRECT_MESSAGES:
-			buttonAddUpdate.setVisible(false);
 			buttonSearchUpdates.setVisible(false);
 			txtCurrentUser.setVisible(false);
 			buttonPreviousUser.setVisible(false);
@@ -302,7 +278,6 @@ public class StatusTab {
 			buttonCloseUpdates.setVisible(false);		
 			break;
 		case SEARCH:
-			buttonAddUpdate.setVisible(false);
 			buttonInbox.setVisible(false);
 			buttonOutbox.setVisible(false);
 			buttonNewDirectMessage.setVisible(false);	
@@ -320,12 +295,10 @@ public class StatusTab {
 		jSeparator4 = new Separator();
 		jSeparator5 = new Separator();
 		buttonTurnOnOff = new JToggleButton();
-		buttonSettings = new JButton();
 		buttonTimeline = new JButton();
 	    buttonNextUser = new JButton();
 	    buttonPreviousUser = new JButton();
 	    buttonCloseUpdates = new JButton();
-	    buttonAddUpdate = new JButton();
 	    txtCurrentUser = new javax.swing.JTextField();
 	    buttonSearchUpdates = new javax.swing.JButton();
         buttonInbox = new javax.swing.JToggleButton();
@@ -337,8 +310,6 @@ public class StatusTab {
         buttonPreviousUser.addActionListener(tabListener);
         buttonNextUser.addActionListener(tabListener);
         buttonTurnOnOff.addActionListener(tabListener);
-        buttonSettings.addActionListener(tabListener);
-        buttonAddUpdate.addActionListener(tabListener);
         buttonTimeline.addActionListener(tabListener);
         buttonSearchUpdates.addActionListener(tabListener);
         buttonInbox.addActionListener(tabListener);
@@ -447,11 +418,7 @@ public class StatusTab {
 				if(buttonTurnOnOff.isSelected()) tablesMap.get(id).resumeThread();				
 				else
 					tablesMap.get(id).pauseThread();
-			}
-			else if(cmd.equals("buttonSettings")) {
-				//TODO
-				System.out.println("Settings");
-			}
+			}			
 			else if(cmd.equals("buttonTimeline")) {
 				String userId = idArray.get(currentTable);
 				StatusesTableThread table = tablesMap.get(userId);

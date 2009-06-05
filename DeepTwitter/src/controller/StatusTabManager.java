@@ -25,8 +25,8 @@ public class StatusTabManager {
 	}
 	
 	public StatusTab getTab(int index) {
-		try{//-1 pois a primeira tab é a do menu e nao esta no arraylist
-			return tabArray.get(index-1);			
+		try{
+			return tabArray.get(index);			
 		}
 		catch(Exception e) {
 			e.printStackTrace();
