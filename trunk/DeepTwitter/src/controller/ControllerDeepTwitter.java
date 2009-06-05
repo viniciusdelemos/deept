@@ -201,21 +201,21 @@ public class ControllerDeepTwitter {
 					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
 					windowTabs = mainWindow.getTabs();
 					
-					windowTabs.remove(1);
+					windowTabs.remove(0);
 					
 					tabManager = new StatusTabManager();
 					tabManager.setTabbedPane(windowTabs);
-					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //1
-					tabManager.addTab(StatusesType.REPLIES,"@"+user.getScreenName()); //2
-					tabManager.addTab(StatusesType.FAVORITES,"Favoritos"); //3
-					tabManager.addTab(StatusesType.DIRECT_MESSAGES,"Mensagens"); //4
-					tabManager.addTab(StatusesType.SEARCH, "Busca"); //5
-					tabManager.addTab(StatusesType.PUBLIC_TIMELINE, "Public Timeline"); //6		
+					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //0
+					tabManager.addTab(StatusesType.REPLIES,"@"+user.getScreenName()); //1
+					tabManager.addTab(StatusesType.FAVORITES,"Favoritos"); //2
+					tabManager.addTab(StatusesType.DIRECT_MESSAGES,"Mensagens"); //3
+					tabManager.addTab(StatusesType.SEARCH, "Busca"); //4
+					tabManager.addTab(StatusesType.PUBLIC_TIMELINE, "Public Timeline"); //5		
 					
 					if(!isTwitterUser) {
-						tabManager.setEnabledAt(2, false); //replies
-						//tabManager.setEnabledAt(3, false); //favoritos
-						tabManager.setEnabledAt(4, false); //mensagens
+						tabManager.setEnabledAt(1, false); //replies
+						//tabManager.setEnabledAt(2, false); //favoritos
+						tabManager.setEnabledAt(3, false); //mensagens
 					}
 					
 					windowTabs.addChangeListener(new ChangeListener(){
@@ -223,12 +223,7 @@ public class ControllerDeepTwitter {
 						public void stateChanged(ChangeEvent e) {
 							StatusesTableThread table = null;
 							int tabIndex = windowTabs.getSelectedIndex();							
-							//index 0 != Tab, é a tab de menu
-							if(tabIndex == 0) {
-								jSplitPane.setDividerLocation(250);
-								return;
-							}
-							
+							System.out.println("index: "+tabIndex);														
 							StatusTab selectedTab = tabManager.getTab(tabIndex);	
 							
 							switch(selectedTab.getType()) {							
@@ -473,6 +468,10 @@ public class ControllerDeepTwitter {
 			}
 			else if(cmd.equals("checkBoxToolTipControl")) {
 				gManager.setToolTipControlOn(mainWindow.isToolTipControlOn());
+			}
+			else if(cmd.equals("buttonSettings")) {
+				//TODO
+				System.out.println("Settings");
 			}
 		}
 	}

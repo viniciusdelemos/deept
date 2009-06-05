@@ -612,7 +612,7 @@ public class GraphicManager extends Display {
 						tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES));
 					else
 						tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES,clickedItem.getString("idTwitter")));
-					controller.selectTab(1);
+					controller.selectTab(0);
 				}    			
     		});
     		timeline.addActionListener(new ActionListener(){
@@ -634,7 +634,7 @@ public class GraphicManager extends Display {
 						tab.setPanelContent(new StatusesTableThread(StatusesType.FAVORITES));
 					else
 						tab.setPanelContent(new StatusesTableThread(StatusesType.FAVORITES,clickedItem.getString("idTwitter")));
-					controller.selectTab(3);
+					controller.selectTab(2);
     			}
     		});
     		follow.addActionListener(new ActionListener(){				
@@ -702,7 +702,7 @@ public class GraphicManager extends Display {
 			updates.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					controller.selectTab(1);
+					controller.selectTab(0);
 					String groupName = "Grupo "+(item.getInt("id")+1);
 					int aggSize = item.getAggregateSize();
 					String[] ids = new String[aggSize];

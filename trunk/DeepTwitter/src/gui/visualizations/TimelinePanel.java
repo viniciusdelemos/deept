@@ -422,7 +422,8 @@ public class TimelinePanel extends JPanel {
 					isStatusOrTweet = true;
 					System.out.println("timezone: "+s.getUser().getTimeZone());
 					System.out.println("offset: "+s.getUser().getUtcOffset());
-					System.out.println("location: "+s.getUser().getLocation()+"\n");
+					System.out.println("hora aqui: "+date.toString());
+					System.out.println("hora GMT: "+date.toGMTString()+"\n");
 				}
 				else if (response instanceof DirectMessage) {
 					DirectMessage s = (DirectMessage) response;
