@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 import prefuse.Display;
 import prefuse.controls.ControlAdapter;
 import prefuse.data.tuple.TupleSet;
+import prefuse.util.FontLib;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
 import prefuse.visual.EdgeItem;
@@ -31,7 +32,6 @@ public class AggregateDragControl extends ControlAdapter {
 	protected Point2D down = new Point2D.Double();
 	protected Point2D temp = new Point2D.Double();
 	protected boolean dragged;
-	private TupleSet selectedNodes;
 
 	/**
 	 * Creates a new drag control that issues repaint requests as an item
@@ -93,31 +93,13 @@ public class AggregateDragControl extends ControlAdapter {
 
 		if(item instanceof NodeItem) {
 			NodeItem selectedItem = (NodeItem)item;
-			selectedNodes = gManager.getTupleSet(GraphicManager.SELECTED_NODES);        	
-			getColorsBack(selectedItem);
+			gManager.getColorsBack(selectedItem);
 
 			Iterator<NodeItem> i = selectedItem.neighbors();
 			while(i.hasNext()) {
 				NodeItem neighbor = i.next();        		
-				getColorsBack(neighbor);
+				gManager.getColorsBack(neighbor);
 			}
-		}
-	}
-	
-	private void getColorsBack(NodeItem node) {
-		if(selectedNodes.containsTuple(node)) {
-			node.setStroke(new BasicStroke(2f));
-			node.setFillColor(gManager.getSelectedItemColor());
-			node.setStrokeColor(gManager.getNodeStrokeColor());
-		}
-		else if(node.getInt("id")==0) {
-			node.setStroke(new BasicStroke(2));
-			node.setStrokeColor(gManager.getNodeStrokeColor());
-			node.setFillColor(gManager.getMainUserColor());
-		}
-		else {
-			node.setFillColor(ChartColor.TRANSLUCENT);
-			node.setStrokeColor(ChartColor.TRANSLUCENT);
 		}
 	}
 

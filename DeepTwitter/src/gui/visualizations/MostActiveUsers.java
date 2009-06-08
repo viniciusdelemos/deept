@@ -17,23 +17,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
-
-import model.AggregateLayout;
-import model.WeightedForceDirectedLayout;
 
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
-import prefuse.action.assignment.ColorAction;
-import prefuse.action.layout.RandomLayout;
+import prefuse.action.assignment.DataSizeAction;
 import prefuse.action.layout.graph.ForceDirectedLayout;
-import prefuse.activity.Activity;
-import prefuse.activity.ActivityAdapter;
-import prefuse.activity.ActivityListener;
 import prefuse.controls.ControlAdapter;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -41,7 +33,6 @@ import prefuse.data.Schema;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.LabelRenderer;
-import prefuse.util.ColorLib;
 import prefuse.util.PrefuseLib;
 import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceItem;
@@ -84,7 +75,6 @@ public class MostActiveUsers extends Display{
 		nodeRenderer.setHorizontalPadding(0);
 		nodeRenderer.setVerticalPadding(0);
 		nodeRenderer.setMaxImageDimensions(100, 100);
-
 		m_vis.setRendererFactory(new DefaultRendererFactory(nodeRenderer));
 
 //		ActionList update = new ActionList();
