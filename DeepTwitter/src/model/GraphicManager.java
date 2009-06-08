@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import model.threads.AddFollowersThread;
@@ -28,6 +29,7 @@ import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
+import prefuse.action.filter.VisibilityFilter;
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.PanControl;
@@ -40,6 +42,8 @@ import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
+import prefuse.data.expression.AndPredicate;
+import prefuse.data.query.SearchQueryBinding;
 import prefuse.data.tuple.DefaultTupleSet;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
@@ -48,6 +52,7 @@ import prefuse.render.LabelRenderer;
 import prefuse.render.PolygonRenderer;
 import prefuse.render.Renderer;
 import prefuse.util.ColorLib;
+import prefuse.util.UpdateListener;
 import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
 import prefuse.util.force.NBodyForce;
@@ -59,12 +64,12 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
+import profusians.controls.CenterOnClickControl;
 import profusians.controls.GenericToolTipControl;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
 import controller.MostActiveUsersController;
 import controller.StatusTab;
-import examples.categorias.CategoryController;
 import gui.visualizations.CategoryEdit;
 
 @SuppressWarnings("serial")
@@ -72,7 +77,7 @@ public class GraphicManager extends Display {
 	public final static String GRAPH = "graph";
 	public final static String NODES = "graph.nodes";
 	public final static String GROUPS = "groups";
-	public final static  String EDGES = "graph.edges";		
+	public final static String EDGES = "graph.edges";		
 	public final static String SELECTED_NODES = "selected";
 	
 	private int edgeColor, textColor, mainUserColor, friendsColor, followersColor,
@@ -86,6 +91,7 @@ public class GraphicManager extends Display {
     private SocialNetwork socialNetwork; 
     private VisualItem selectionBox;	
 	private PanControl panControl;
+	CenterOnClickControl centerUserControl;
 	private GenericToolTipControl toolTipControl;
 	private EdgeRenderer edgeRenderer;
 	private TupleSet selectedNodes;
@@ -229,7 +235,7 @@ public class GraphicManager extends Display {
     	layout.add(new AggregateLayout(GROUPS));
     	m_vis.putAction("layout", layout);    	
 
-    	setSize(800,600);
+    	setSize(700,600);
     	pan(super.getWidth()/2,super.getHeight()/2);    	
     	
     	setHighQuality(isHighQuality);   	
@@ -272,8 +278,26 @@ public class GraphicManager extends Display {
     	
         panControl = new PanControl();
         panControl.setEnabled(true);
+        centerUserControl = new CenterOnClickControl(1000);
+        centerUserControl.setEnabled(false);
         
-    	//addControlListener(new DragControl());
+        JToolBar mainToolBar = controller.getMainToolBar();
+		SearchQueryBinding nameQuery = new SearchQueryBinding(getTupleSet(NODES),"name");
+		
+		ActionList update = new ActionList();
+        update.add(new VisibilityFilter(NODES, nameQuery.getPredicate()));
+        update.add(new RepaintAction());
+        m_vis.putAction("update", update);
+        UpdateListener lstnr = new UpdateListener() {
+            public void update(Object src) {
+                m_vis.run("update");
+            }
+        };
+        nameQuery.getPredicate().addExpressionListener(lstnr);
+        addComponentListener(lstnr);
+        mainToolBar.add(nameQuery.createSearchPanel());
+        
+		//addControlListener(new VisibilityFilter(nameQuery.getPredicate()));
     	addControlListener(new AggregateDragControl(this));
     	addControlListener(new ZoomControl());        	      	
     	addControlListener(panControl);    	
@@ -281,8 +305,7 @@ public class GraphicManager extends Display {
     	addControlListener(new ZoomToFitControl());
     	addControlListener(new WheelZoomControl());
     	addControlListener(new ListenerAdapter(this));
-    	//addPaintListener(new ZoneBorderDrawing(zoneManager));
-    	//addControlListener(new CenterOnClickControl(1000));
+    	addControlListener(centerUserControl);
     	
     	String descriptions[] = { "Nome:", "Último Status: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Statuses:" };
     	String data[] = { "name", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount" };
@@ -290,7 +313,6 @@ public class GraphicManager extends Display {
     	toolTipControl = new GenericToolTipControl(descriptions,data,200);
     	
     	addControlListener(toolTipControl);
-    	toolTipControl.setEnabled(false);
 
     	//executar ações associadas ao layout    	
     	m_vis.run("layout");    	
@@ -480,6 +502,10 @@ public class GraphicManager extends Display {
 		panControl.setEnabled(b);		
 	}
 	
+	public void setCenterUserControlOn(boolean b) {
+		centerUserControl.setEnabled(b);		
+	}
+	
 	public void setToolTipControlOn(boolean b) {
 		toolTipControl.setEnabled(b);		
 	}
@@ -490,7 +516,7 @@ public class GraphicManager extends Display {
 	}
 	
 	public TupleSet getTupleSet(String name) {
-		return m_vis.getFocusGroup(name);
+		return m_vis.getGroup(name);
 	}
 	
 	public void setChildrenVisible(NodeItem source, boolean visible)

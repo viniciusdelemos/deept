@@ -16,6 +16,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -31,6 +32,8 @@ import prefuse.data.Node;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
+import prefuse.data.query.SearchQueryBinding;
+import prefuse.data.search.SearchTupleSet;
 import twitter4j.RateLimitStatus;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -191,12 +194,13 @@ public class ControllerDeepTwitter {
 				if(logInOK)
 				{
 					loggedUserId = String.valueOf(user.getId());
-					loginWindow.dispose();
-					gManager = new GraphicManager();	
-					
-					mainWindowListener = new MainWindowListener();
+					loginWindow.dispose();					
+										
 					mainWindow = new GUIMainWindow("DeepTwitter");
+					mainWindowListener = new MainWindowListener();
 					mainWindow.addMainWindowListener(mainWindowListener);
+					
+					gManager = new GraphicManager();	
 										
 					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
 					windowTabs = mainWindow.getTabs();
@@ -221,15 +225,14 @@ public class ControllerDeepTwitter {
 					windowTabs.addChangeListener(new ChangeListener(){
 						@Override
 						public void stateChanged(ChangeEvent e) {
+							jSplitPane.setDividerLocation(431);
 							StatusesTableThread table = null;
 							int tabIndex = windowTabs.getSelectedIndex();							
-							System.out.println("index: "+tabIndex);														
 							StatusTab selectedTab = tabManager.getTab(tabIndex);	
+							if(selectedTab.isActive()) return;
 							
 							switch(selectedTab.getType()) {							
-							case UPDATES:
-								jSplitPane.setDividerLocation(431);
-								if(selectedTab.isActive()) return;								
+							case UPDATES:																
 								if(isTwitterUser)
 									table = new StatusesTableThread(StatusesType.UPDATES);
 								else
@@ -237,31 +240,19 @@ public class ControllerDeepTwitter {
 								break;
 								
 							case REPLIES:
-								jSplitPane.setDividerLocation(431);
-								if(selectedTab.isActive()) return;
 								table = new StatusesTableThread(StatusesType.REPLIES);
 								break;
 								
 							case FAVORITES:
-								jSplitPane.setDividerLocation(431);
-								if(selectedTab.isActive()) return;
 								table = new StatusesTableThread(StatusesType.FAVORITES);
 								break;
 								
 							case DIRECT_MESSAGES:
-								jSplitPane.setDividerLocation(431);
-								if(selectedTab.isActive()) return;
 								table = new StatusesTableThread(StatusesType.DIRECT_MESSAGES_RECEIVED);
 								break;
 							case SEARCH:
-								jSplitPane.setDividerLocation(431);
-								return;
-//								if(selectedTab.isActive()) return;
-//								table = new StatusesTableThread(StatusesType.SEARCH);								
-								
+								return;							
 							case PUBLIC_TIMELINE:
-								jSplitPane.setDividerLocation(431);
-								if(selectedTab.isActive()) return;
 								table = new StatusesTableThread(StatusesType.PUBLIC_TIMELINE);
 								break;								
 							}		
@@ -284,7 +275,8 @@ public class ControllerDeepTwitter {
 						}
 					});
 					
-					jSplitPane.setRightComponent((Display)gManager);		
+					jSplitPane.setRightComponent((Display)gManager);	
+					jSplitPane.setDividerLocation(431);
 					
 					SwingUtilities.updateComponentTreeUI(mainWindow);
 					mainWindow.setLocationRelativeTo(null);
@@ -292,7 +284,12 @@ public class ControllerDeepTwitter {
 					
 					gManager.addNode(user);
 					
-					updateRateLimit = new UpdateRateLimitThread(rateLimitSleepTime);					
+					if(isTwitterUser)
+						tabManager.getTab(0).setPanelContent(new StatusesTableThread(StatusesType.UPDATES));
+					else
+						tabManager.getTab(0).setPanelContent(new StatusesTableThread(StatusesType.UPDATES,getLoggedUserId()));
+					
+					updateRateLimit = new UpdateRateLimitThread(rateLimitSleepTime);				
 				}	
 			} catch (TwitterException ex) {
 				if(ex.getStatusCode()==400)
@@ -343,6 +340,10 @@ public class ControllerDeepTwitter {
 	
 	public StatusTabManager getStatusTabManager() {
 		return tabManager;
+	}
+	
+	public JToolBar getMainToolBar() {
+		return mainWindow.getMainToolBar();
 	}
 	
 	public void setRateLimitSleepTime(long time) {
@@ -457,8 +458,10 @@ public class ControllerDeepTwitter {
 				gManager.clearSelection();				
 			}
 			else if(cmd.equals("checkBoxHighQuality")) {						
-				//gManager.setHighQuality(mainWindow.isHighQuality());
-				if(mainWindow.isHighQuality())
+				gManager.setHighQuality(mainWindow.isHighQuality());				
+			}
+			else if(cmd.equals("buttonPlayPauseVisualization")) {
+				if(mainWindow.isVisualizationRunning())
 					gManager.getVisualization().run("layout");
 				else
 					gManager.getVisualization().cancel("layout");
@@ -466,8 +469,11 @@ public class ControllerDeepTwitter {
 			else if(cmd.equals("checkBoxCurvedEdges")) {
 				gManager.setEdgeType(mainWindow.isCurvedEdges());
 			}
-			else if(cmd.equals("checkBoxToolTipControl")) {
+			else if(cmd.equals("buttonToolTipControl")) {
 				gManager.setToolTipControlOn(mainWindow.isToolTipControlOn());
+			}
+			else if(cmd.equals("buttonCenterUser")) {
+				gManager.setCenterUserControlOn(mainWindow.isCenterUserOn());
 			}
 			else if(cmd.equals("buttonSettings")) {
 				//TODO
