@@ -2,10 +2,13 @@ package prefuse.action.filter;
 
 import java.util.Iterator;
 
+import com.sun.org.apache.xpath.internal.Expression;
+
 import prefuse.Visualization;
 import prefuse.action.GroupAction;
 import prefuse.data.expression.OrPredicate;
 import prefuse.data.expression.Predicate;
+import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.util.PrefuseLib;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.VisiblePredicate;
