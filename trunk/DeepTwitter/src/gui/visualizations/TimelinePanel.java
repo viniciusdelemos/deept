@@ -286,7 +286,7 @@ public class TimelinePanel extends JPanel {
         buttonCategoryManager.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent arg0) {				
-        		//TODO abrir janela de config de categorias
+        		CategoryEdit.openFrame();
         	}});
         
         final CategoryManager cManager = CategoryManager.getInstance();
