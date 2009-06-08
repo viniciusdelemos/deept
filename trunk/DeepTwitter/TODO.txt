@@ -20,7 +20,6 @@ TODO:
 - implementar menu bloquear usuario (mostrando um X no nodo);
 - fazer algo com trends (#) - aba ou tag cloud;
 - consertar ação de esconder amigos do nodo clicado;
-- adicionar filtro de nome na rede;
 - parece que public timeline nao esta mais na pagina do twitter;
 - implementar notificação quando novas atualizações/msgs chegarem;
 - mostrar mensagens de erro e notificações na toolbar principal;

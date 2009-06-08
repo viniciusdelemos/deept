@@ -3,6 +3,7 @@ package prefuse.data.query;
 import javax.swing.JComponent;
 
 import prefuse.data.expression.Predicate;
+import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.data.tuple.TupleSet;
 
 /**
@@ -53,7 +54,7 @@ public abstract class DynamicQueryBinding {
      * @return the dynamic query {@link prefuse.data.expression.Predicate}
      */
     public Predicate getPredicate() {
-        return m_query;
+    	return m_query;
     }
     
     /**

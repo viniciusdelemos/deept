@@ -2,8 +2,15 @@ package model;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -17,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.text.StyleConstants.FontConstants;
 
 import model.threads.AddFollowersThread;
 import model.threads.AddFriendsThread;
@@ -29,6 +37,7 @@ import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
+import prefuse.action.assignment.DataSizeAction;
 import prefuse.action.filter.VisibilityFilter;
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.controls.ControlAdapter;
@@ -43,7 +52,12 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
 import prefuse.data.expression.AndPredicate;
+import prefuse.data.expression.Expression;
+import prefuse.data.expression.Predicate;
+import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.data.query.SearchQueryBinding;
+import prefuse.data.search.PrefixSearchTupleSet;
+import prefuse.data.search.SearchTupleSet;
 import prefuse.data.tuple.DefaultTupleSet;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
@@ -52,11 +66,13 @@ import prefuse.render.LabelRenderer;
 import prefuse.render.PolygonRenderer;
 import prefuse.render.Renderer;
 import prefuse.util.ColorLib;
+import prefuse.util.FontLib;
 import prefuse.util.UpdateListener;
 import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
 import prefuse.util.force.NBodyForce;
 import prefuse.util.force.SpringForce;
+import prefuse.util.ui.JSearchPanel;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
 import prefuse.visual.EdgeItem;
@@ -80,7 +96,7 @@ public class GraphicManager extends Display {
 	public final static String EDGES = "graph.edges";		
 	public final static String SELECTED_NODES = "selected";
 	
-	private int edgeColor, textColor, mainUserColor, friendsColor, followersColor,
+	private int edgeColor, textColor, mainUserColor, searchResultColor, friendsColor, followersColor,
 	friendsAndFollowersColor, selectedItemColor, edgeType, nodeStrokeColor;	
 	private final static String SELECTION_BOX = "selectionbox";
     private Graph g;
@@ -99,6 +115,7 @@ public class GraphicManager extends Display {
 	private float weight_value;
 	private GroupManager groupManager;
 	private LabelRenderer nodeRenderer;
+	private SearchTupleSet searchResultTuples;
 	
 	private MostActiveUsersController mostActiveUsersController;
 	
@@ -152,7 +169,7 @@ public class GraphicManager extends Display {
     	nodeRenderer.setVerticalAlignment(Constants.BOTTOM);       
     	nodeRenderer.setHorizontalPadding(0);
     	nodeRenderer.setVerticalPadding(0);        	
-    	nodeRenderer.setMaxImageDimensions(100,100);
+    	nodeRenderer.setMaxImageDimensions(48,48);
     	nodeRenderer.setRoundedCorner(8,8);
 
     	edgeType = Constants.EDGE_TYPE_LINE;
@@ -180,6 +197,7 @@ public class GraphicManager extends Display {
     	edgeColor = ChartColor.GRAY.getRGB();    	
     	textColor = ChartColor.BLACK.getRGB();
     	//highlightTextColor = ColorLib.color(ChartColor.blue);
+    	searchResultColor = ColorLib.color(ChartColor.LIGHT_BLUE.brighter());
     	mainUserColor = ChartColor.ORANGE.getRGB();    	
     	selectedItemColor = ChartColor.LIGHT_YELLOW.getRGB();
     	followersColor = ChartColor.LIGHT_RED.getRGB();
@@ -189,7 +207,7 @@ public class GraphicManager extends Display {
     	
     	ColorAction nodeText = new ColorAction(NODES, VisualItem.TEXTCOLOR);
     	nodeText.setDefaultColor(textColor);
-    	//nodeText.add(VisualItem.HIGHLIGHT, highlightTextColor);    	
+    	//nodeText.add(VisualItem.HIGHLIGHT, highlightTextColor);   
 
     	ColorAction edgeStroke = new ColorAction(EDGES, VisualItem.STROKECOLOR);
     	edgeStroke.setDefaultColor(edgeColor); 
@@ -202,14 +220,14 @@ public class GraphicManager extends Display {
     	ColorAction groupStroke = new ColorAction(GROUPS, VisualItem.STROKECOLOR);
         groupStroke.setDefaultColor(ColorLib.gray(200));
         groupStroke.add("_hover", ColorLib.color(ChartColor.red));
-    	
+        
     	int[] palette = new int[] {
                 ColorLib.rgba(255,200,200,150),
                 ColorLib.rgba(200,255,200,150),
                 ColorLib.rgba(200,200,255,150)
             };
             ColorAction groups = new DataColorAction(GROUPS, "id",
-                    Constants.NOMINAL, VisualItem.FILLCOLOR, palette);
+                    Constants.ORDINAL, VisualItem.FILLCOLOR, palette);
 
     	//color actions
     	ActionList draw = new ActionList();        
@@ -217,7 +235,7 @@ public class GraphicManager extends Display {
     	//draw.add(nodeStroke);
     	draw.add(edgeStroke);   
     	draw.add(edgeArrow);
-    	draw.add(groupStroke);
+    	draw.add(groupStroke);    	
     	draw.add(groups);
     	
     	//ForceSimulator fsim = fdl.getForceSimulator();
@@ -231,7 +249,7 @@ public class GraphicManager extends Display {
     	ActionList layout = new ActionList(ActionList.INFINITY); 
     	layout.add(fdl);
     	layout.add(draw);    	
-    	layout.add(new RepaintAction());
+    	layout.add(new RepaintAction());    	
     	layout.add(new AggregateLayout(GROUPS));
     	m_vis.putAction("layout", layout);    	
 
@@ -281,24 +299,7 @@ public class GraphicManager extends Display {
         centerUserControl = new CenterOnClickControl(1000);
         centerUserControl.setEnabled(false);
         
-        JToolBar mainToolBar = controller.getMainToolBar();
-		SearchQueryBinding nameQuery = new SearchQueryBinding(getTupleSet(NODES),"name");
-		
-		ActionList update = new ActionList();
-        update.add(new VisibilityFilter(NODES, nameQuery.getPredicate()));
-        update.add(new RepaintAction());
-        m_vis.putAction("update", update);
-        UpdateListener lstnr = new UpdateListener() {
-            public void update(Object src) {
-                m_vis.run("update");
-            }
-        };
-        nameQuery.getPredicate().addExpressionListener(lstnr);
-        addComponentListener(lstnr);
-        mainToolBar.add(nameQuery.createSearchPanel());
-        
-		//addControlListener(new VisibilityFilter(nameQuery.getPredicate()));
-    	addControlListener(new AggregateDragControl(this));
+		addControlListener(new AggregateDragControl(this));
     	addControlListener(new ZoomControl());        	      	
     	addControlListener(panControl);    	
     	//addControlListener(new NeighborHighlightControl()); 
@@ -310,12 +311,43 @@ public class GraphicManager extends Display {
     	String descriptions[] = { "Nome:", "Último Status: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Statuses:" };
     	String data[] = { "name", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount" };
 
-    	toolTipControl = new GenericToolTipControl(descriptions,data,200);
-    	
+    	toolTipControl = new GenericToolTipControl(descriptions,data,200);    	
     	addControlListener(toolTipControl);
-
+    	
+    	searchResultTuples = new PrefixSearchTupleSet();
+    	m_vis.addFocusGroup(Visualization.SEARCH_ITEMS, searchResultTuples);
+    	
+    	searchResultTuples.addTupleSetListener(new TupleSetListener(){
+			@Override
+			public void tupleSetChanged(TupleSet tset, Tuple[] added,
+					Tuple[] removed) {
+				for(Tuple r : removed) {
+					NodeItem n = (NodeItem)m_vis.getVisualItem(NODES, r);
+					getColorsBack(n);
+				}
+				for(Tuple a : added) {
+					VisualItem n = m_vis.getVisualItem(NODES, a);
+					n.setFillColor(searchResultColor);
+					n.setStroke(new BasicStroke(2f));
+					n.setStrokeColor(ChartColor.BLACK.getRGB());
+				}
+			}    		
+    	});
+    	
+    	JToolBar mainToolBar = controller.getMainToolBar();
+    	SearchQueryBinding nameQuery = new SearchQueryBinding((Table) m_vis
+    			.getGroup(NODES), "name", (SearchTupleSet) m_vis
+    			.getGroup(Visualization.SEARCH_ITEMS));    	
+    	JSearchPanel searchPanel = nameQuery.createSearchPanel();
+    	//searchPanel.setShowResultCount(true);
+    	searchPanel.setMaximumSize(new Dimension(200, 20));
+    	searchPanel.setFont(FontLib.getFont("Tahoma", Font.BOLD, 11));
+    	searchPanel.setLabelText("Busca rápida:");
+    	searchPanel.setBackground(mainToolBar.getBackground());
+    	mainToolBar.add(searchPanel);
+    	
     	//executar ações associadas ao layout    	
-    	m_vis.run("layout");    	
+    	m_vis.run("layout");    
     }        
 	
     public Node addNode(User u) {    	  	
@@ -340,6 +372,7 @@ public class GraphicManager extends Display {
 			newNode.set("isShowingFriends", false);
 			newNode.set("isShowingFollowers", false);
 			newNode.set("groupId", -1);
+			
 			nodesMap.put(u.getId(), newNode);			
 			if (numUsers == 0) {
 				//nodeRenderer.getImageFactory().preloadImages(m_vis.items(NODES),"image");
@@ -348,6 +381,9 @@ public class GraphicManager extends Display {
 				mainUser.setStrokeColor(nodeStrokeColor);
 				mainUser.setFillColor(mainUserColor);
 			}
+			searchResultTuples.index(m_vis.getVisualItem(GRAPH, newNode), "name");
+			searchResultTuples.index(m_vis.getVisualItem(GRAPH, newNode), "location");
+			searchResultTuples.index(m_vis.getVisualItem(GRAPH, newNode), "description");
 			numUsers++;			
 			return newNode;
 		}
@@ -542,6 +578,28 @@ public class GraphicManager extends Display {
 		catch(Exception e) {
 			System.out.println("$$$ Exception! $$$");
 			e.printStackTrace();
+		}
+	}
+	
+	public void getColorsBack(NodeItem node) {
+		if(selectedNodes.containsTuple(node)) {
+			node.setStroke(new BasicStroke(2f));
+			node.setFillColor(getSelectedItemColor());
+			node.setStrokeColor(getNodeStrokeColor());
+		}
+		else if(searchResultTuples.containsTuple(node)) {
+			node.setFillColor(searchResultColor);
+			node.setStroke(new BasicStroke(2f));
+			node.setStrokeColor(ChartColor.BLACK.getRGB());
+		}
+		else if(node.getInt("id")==0) {
+			node.setStroke(new BasicStroke(2));
+			node.setStrokeColor(getNodeStrokeColor());
+			node.setFillColor(getMainUserColor());
+		}
+		else {
+			node.setFillColor(ChartColor.TRANSLUCENT);
+			node.setStrokeColor(ChartColor.TRANSLUCENT);
 		}
 	}
 	
@@ -1003,6 +1061,14 @@ public class GraphicManager extends Display {
 
 	public void setSelectedItemColor(int selectedItemColor) {
 		this.selectedItemColor = selectedItemColor;
+	}
+	
+	public int getSearchResultColor() {
+		return searchResultColor;
+	}
+
+	public void setSearchResultColor(int searchResultColor) {
+		this.searchResultColor = searchResultColor;
 	}
 
 	public int getNodeStrokeColor() {
