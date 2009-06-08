@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -64,6 +65,7 @@ import controller.ControllerDeepTwitter;
 import controller.MostActiveUsersController;
 import controller.StatusTab;
 import examples.categorias.CategoryController;
+import gui.visualizations.CategoryEdit;
 
 @SuppressWarnings("serial")
 public class GraphicManager extends Display { 
@@ -556,6 +558,7 @@ public class GraphicManager extends Display {
     		JMenuItem followers = new JMenuItem("Ver Seguidores");
     		JMenuItem removeFromGroup = new JMenuItem("Remover do Grupo");
     		JMenuItem teste = new JMenuItem("Teste");
+    		JMenuItem categorias = new JMenuItem("Categorias");
     		 
     		Integer loggedUserId = Integer.parseInt(controller.getLoggedUserId());
     		Node mainUserNode = getNodeByTwitterId(loggedUserId);
@@ -566,6 +569,7 @@ public class GraphicManager extends Display {
     		popupMenu.add(followers);
     		popupMenu.add(favorites);
     		popupMenu.add(teste);
+    		popupMenu.add(categorias);
     		
     		if(!item.get("idTwitter").equals(loggedUserId)) { 
     			popupMenu.addSeparator();
@@ -677,6 +681,11 @@ public class GraphicManager extends Display {
     				java.util.List<User> mostActiveUsers =
     					controller.mostActiveUsersForAll();
     				mostActiveUsersController.setUsers(mostActiveUsers);
+    			}
+    		});
+    		categorias.addActionListener(new ActionListener(){
+    			public void actionPerformed(ActionEvent e) {
+    				CategoryEdit.openFrame();
     			}
     		});
     		//create popupMenu for 'background'
