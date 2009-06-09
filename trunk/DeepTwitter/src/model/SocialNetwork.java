@@ -52,11 +52,8 @@ public class SocialNetwork {
 		return usersMap.size();
 	}
 	
-	public void createUsersGroup()
-	{
-		//UsersGroup ug = new UsersGroup(groupId);
-		//listUsersGroup.add(ug);
-		//groupId++;
+	public User[] getUsers() {
+		return usersMap.values().toArray(new User[0]);
 	}
 	
 	/**
