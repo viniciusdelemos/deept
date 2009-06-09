@@ -14,14 +14,22 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.text.StyleConstants.FontConstants;
@@ -86,6 +94,8 @@ import twitter4j.User;
 import controller.ControllerDeepTwitter;
 import controller.MostActiveUsersController;
 import controller.StatusTab;
+import gui.GUIMostActiveUsers;
+import gui.visualizations.ActiveUsers2;
 import gui.visualizations.CategoryEdit;
 
 @SuppressWarnings("serial")
@@ -166,8 +176,8 @@ public class GraphicManager extends Display {
     	m_vis.setInteractive(EDGES, null, false);
 
     	nodeRenderer = new LabelRenderer("name", "image");
-    	nodeRenderer.setVerticalAlignment(Constants.BOTTOM);       
-    	nodeRenderer.setHorizontalPadding(0);
+    	nodeRenderer.setVerticalAlignment(Constants.CENTER);       
+    	nodeRenderer.setHorizontalPadding(1);
     	nodeRenderer.setVerticalPadding(0);        	
     	nodeRenderer.setMaxImageDimensions(48,48);
     	nodeRenderer.setRoundedCorner(8,8);
@@ -762,9 +772,45 @@ public class GraphicManager extends Display {
     			}});
     		teste.addActionListener(new ActionListener(){
     			public void actionPerformed(ActionEvent e) {
-    				java.util.List<User> mostActiveUsers =
-    					controller.mostActiveUsersForAll();
-    				mostActiveUsersController.setUsers(mostActiveUsers);
+//    				java.util.List<User> mostActiveUsers =
+//    					controller.mostActiveUsersForAll();
+//    				mostActiveUsersController.setUsers(mostActiveUsers);'
+    				
+    				GUIMostActiveUsers mostActiveUsersWindow = new GUIMostActiveUsers();
+    				JSplitPane splitPane = mostActiveUsersWindow.getSplitPane();
+    				final ActiveUsers2 activeUsers = new ActiveUsers2(socialNetwork.getUsers());
+    				splitPane.setTopComponent(activeUsers);
+    				splitPane.setDividerLocation(600);
+    				
+    				JPanel menuPanel = mostActiveUsersWindow.getMenuPanel();
+    				JButton tweets = new JButton(new ImageIcon("tweets.png"));
+    				menuPanel.add(new JLabel("teste"));
+    				menuPanel.add(tweets);
+    				tweets.addActionListener(new ActionListener(){
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							Random r = new Random();
+							int i = r.nextInt(4);
+							if(i==0) {
+								System.out.println("followers");
+								activeUsers.setSizeActionDataField("followersCount");
+							}
+							else if(i==1) {
+								System.out.println("friends");
+								activeUsers.setSizeActionDataField("friendsCount");
+							}
+							else if(i==2) {
+								System.out.println("tweets");
+								activeUsers.setSizeActionDataField("statusesCount");
+							}
+							else {
+								System.out.println("favorites");
+								activeUsers.setSizeActionDataField("favoritesCount");
+							}
+						}
+    				});
+    				
+    				mostActiveUsersWindow.setVisible(true);
     			}
     		});
     		categorias.addActionListener(new ActionListener(){

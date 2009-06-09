@@ -75,7 +75,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("DeepTwitter"); // NOI18N
 
-        labelStatusBar.setFont(new java.awt.Font("Tahoma", 0, 12));
+        labelStatusBar.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         labelStatusBar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labelStatusBar.setText(" ");
         labelStatusBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -83,6 +83,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         getContentPane().add(labelStatusBar, java.awt.BorderLayout.SOUTH);
 
         jSplitPane1.setDividerLocation(250);
+        jSplitPane1.setDividerSize(6);
         jSplitPane1.setContinuousLayout(true);
         jSplitPane1.setOneTouchExpandable(true);
         jSplitPane1.setPreferredSize(new java.awt.Dimension(1100, 600));
@@ -278,7 +279,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         checkBoxCurvedEdges.setName("checkBoxCurvedEdges"); // NOI18N
         mainToolBar.add(checkBoxCurvedEdges);
 
-        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14));
         labelFilter.setText("Filtro:");
         mainToolBar.add(labelFilter);
 
@@ -286,7 +287,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         labelAPILimit.setText("Requisições API:");
         mainToolBar.add(labelAPILimit);
 
-        getContentPane().add(mainToolBar, java.awt.BorderLayout.PAGE_START);
+        getContentPane().add(mainToolBar, java.awt.BorderLayout.NORTH);
 
         jMenu1.setText("Arquivo");
         jMenu1.setName("menuSaveNetworkAs"); // NOI18N

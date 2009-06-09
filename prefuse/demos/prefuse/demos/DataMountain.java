@@ -82,6 +82,7 @@ public class DataMountain extends Display {
         final ForceDirectedLayout fl = new DataMountainForceLayout(false);
         ActivityListener fReset = new ActivityAdapter() {
             public void activityCancelled(Activity a) {
+            	System.out.println("canceled");
                 fl.reset(); 
              } 
         };

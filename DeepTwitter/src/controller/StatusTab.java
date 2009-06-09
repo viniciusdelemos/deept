@@ -1,6 +1,6 @@
 package controller;
 
-import gui.visualizations.GUITimeline;
+import gui.GUITimeline;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

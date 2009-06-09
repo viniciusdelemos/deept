@@ -1,4 +1,6 @@
-package gui.visualizations;
+package gui;
+
+import gui.visualizations.TimelinePanel;
 
 import java.util.List;
 
