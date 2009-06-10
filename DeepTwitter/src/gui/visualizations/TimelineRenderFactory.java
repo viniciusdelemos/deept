@@ -14,7 +14,7 @@ public final class TimelineRenderFactory extends DefaultRendererFactory {
 	public TimelineRenderFactory(boolean isGroup) {
 		super();		
 		labelRenderer = new LabelRenderer(null,StatusesDataTable.ColNames.IMAGE_URL.toString());		
-		((LabelRenderer)labelRenderer).setMaxImageDimensions(50,50);
+		((LabelRenderer)labelRenderer).setMaxImageDimensions(35,35);
 		shapeRenderer = new ShapeRenderer(13);
 		
 		Renderer axisX = new RotateLabelAxisRenderer(Constants.CENTER, Constants.FAR_BOTTOM);

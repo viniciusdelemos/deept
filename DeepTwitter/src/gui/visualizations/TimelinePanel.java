@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -131,7 +132,8 @@ public class TimelinePanel extends JPanel {
         statusesFilter = new AndPredicate(screenNameSearchQuery.getPredicate());
         statusesFilter.add(textSearchQuery.getPredicate());
         statusesFilter.add(hourQuery.getPredicate());
-        statusesFilter.add(dayQuery.getPredicate()); 
+        statusesFilter.add(dayQuery.getPredicate());
+        statusesFilter.add(ExpressionParser.predicate("ID!=NULL"));
         
         DataColorAction shapeColor = new DataColorAction(Group.STATUSES.toString(), 
 				StatusesDataTable.ColNames.HOUR.toString(),
@@ -408,8 +410,10 @@ public class TimelinePanel extends JPanel {
     
     public StatusesDataTable getStatusesDataTable(List<TwitterResponse> statusesList) {
 		StatusesDataTable tbl = new StatusesDataTable();
-		tbl.addRows(statusesList.size());
-		int index = 0;
+		tbl.addRows(statusesList.size()+1);
+		int index = 0;		
+		CustomDateDay dayAux = null;
+		CustomDateHours hourAux = null;
 		
 		for (TwitterResponse response : statusesList) {
 			try{				
@@ -469,13 +473,24 @@ public class TimelinePanel extends JPanel {
 
 				tbl.set(index, StatusesDataTable.ColNames.DAY.toString(), day);
 				tbl.set(index, StatusesDataTable.ColNames.FULL_DATE.toString(), day+" "+formatedDate);
-				
+				if(index==0) {
+					dayAux = day;
+					dayAux.setDate(dayAux.getDate()+1);
+					hourAux = formatedDate;
+					hourAux.setHours(hourAux.getHours()+1);
+				}
 				index++;		
 			}
 			catch(Exception e) {
 				System.out.println("*****Exception******\n");
 				e.printStackTrace();
-			}			
+			}				
+			
+			//inserindo linha vazia
+			tbl.set(index, StatusesDataTable.ColNames.ID.toString(), null);
+			tbl.set(index, StatusesDataTable.ColNames.HOUR.toString(), hourAux);
+			tbl.set(index, StatusesDataTable.ColNames.DAY.toString(), dayAux);
+			tbl.set(index, StatusesDataTable.ColNames.FULL_DATE.toString(), dayAux+" "+hourAux);
 		}
 		return tbl;
 	}

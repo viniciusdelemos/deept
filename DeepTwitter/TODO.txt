@@ -1,28 +1,26 @@
 TODO:
 
-- utilizar s.getUser().getUtcOffset() para poder exibir as atualizacoes na hora local da pessoa
-- categorias: consertar categorias que estao repetindo!! 
+- * utilizar s.getUser().getUtcOffset() para poder exibir as atualizacoes na hora local da pessoa
 - categorias: inserir combobox com cores das categorias
-- categorias: criar visualizacao de gerenciador de categorias
 - permitir ver o timeline sem precisar mostrar as atualizacoes no painel (pcausa da OutOfMemoryException);
-- revisar codigo da visualização de membros + ativos;
-- consertar remocao de grupos;
-- consertar cor de usuarios ligados por arestas invisiveis;
-- consertar aba de favoritos (está repetindo informacoes);
+- * consertar visualizacao de categorias do vinicius
+- * consertar remocao de grupos;
+- * consertar cor de usuarios ligados por arestas invisiveis;
+- * consertar aba de favoritos (está repetindo informacoes);
 - inserir no painel de atualizacoes a data e o link para ver na web;
 - possibilitar definir o inReplyTo nos statuses;
 - permitir varias buscas;
 - classe Tweet: fazer imagem do usuario mostrar ele na rede;
 - para painel de um unico usuario, nao mostrar a foto varias vezes;
 
-- criar menu configurações;
+- * criar menu configurações e salvar xml;
 - fazer requisicoes com threads para nao trancar visualizacao;
-- implementar menu bloquear usuario (mostrando um X no nodo);
+- * implementar menu bloquear usuario (mostrando um X no nodo);
 - fazer algo com trends (#) - aba ou tag cloud;
-- consertar ação de esconder amigos do nodo clicado;
+- * consertar ação de esconder amigos do nodo clicado;
 - parece que public timeline nao esta mais na pagina do twitter;
 - implementar notificação quando novas atualizações/msgs chegarem;
-- mostrar mensagens de erro e notificações na toolbar principal;
+- * mostrar mensagens de erro e notificações na toolbar principal;
 - permitir esconder/deletar nodos e inserir botao para ver todos;
 - escolher forças de atração/repulsão melhores;
 - setar tooltips do login;
@@ -31,7 +29,3 @@ vis categorias
 - arrumar bug de alterar texto igual ao a um que jah exista
 - arrumar evento do enter
 - tenta fazer poder editar quando der 2 cliques na categoria ou palavra (tem exemplos disto no listener da graphicmanager)
-
-vis usuarios mais ativos
-- As mensagens estão aparecendo rápido demaiss!
-- Seria bem legal se a cada mensagem que aparecesse, o usuário correspondente fosse marcado, tipo selecionasse ele com um fundo amarelo e depois desselecionasse ;)
