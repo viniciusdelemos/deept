@@ -74,7 +74,6 @@ import profusians.controls.CenterOnClickControl;
 import profusians.controls.GenericToolTipControl;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
-import controller.StatusTab;
 
 
 @SuppressWarnings("serial")

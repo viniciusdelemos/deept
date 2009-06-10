@@ -5,8 +5,8 @@ import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
 import gui.GUIMostActiveUsers;
 import gui.GUINewUpdate;
-import gui.visualizations.ActiveUsers2;
-import gui.visualizations.ActiveUsers2.ShowingBy;
+import gui.visualizations.MostActiveUsersView;
+import gui.visualizations.MostActiveUsersView.ShowingBy;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -30,6 +30,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import model.GraphicManager;
 import model.MessageType;
+import model.StatusTab;
 import model.StatusesType;
 import model.threads.StatusesTableThread;
 import prefuse.Display;
@@ -54,7 +55,7 @@ public class ControllerDeepTwitter {
 	private GUIMostActiveUsers guiMostActive;
 	private Twitter twitter;
 	private GraphicManager gManager;
-	private ActiveUsers2 activeUsersDisplay;
+	private MostActiveUsersView activeUsersDisplay;
 	private boolean isTwitterUser;
 	private String loggedUserId;
 	private JTabbedPane windowTabs;
@@ -377,7 +378,7 @@ public class ControllerDeepTwitter {
 				}			
 			}			
 		});
-		activeUsersDisplay = new ActiveUsers2(userArray,guiMostActive.getEditor());
+		activeUsersDisplay = new MostActiveUsersView(userArray,guiMostActive.getEditor());
 		JSplitPane splitPane = guiMostActive.getSplitPane();
 		splitPane.setTopComponent(activeUsersDisplay);		
 		guiMostActive.setVisible(true);

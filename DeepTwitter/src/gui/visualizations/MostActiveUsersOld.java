@@ -43,7 +43,7 @@ import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import twitter4j.User;
 
-public class MostActiveUsers extends Display{
+public class MostActiveUsersOld extends Display{
 	
 	public final static String GRAPH = "data";
 
@@ -57,7 +57,7 @@ public class MostActiveUsers extends Display{
 	private JPanel panelGlobal;
 	private JFrame frame;
 
-	public MostActiveUsers() {
+	public MostActiveUsersOld() {
 		super(new Visualization());
 
 		g = new Graph(true);

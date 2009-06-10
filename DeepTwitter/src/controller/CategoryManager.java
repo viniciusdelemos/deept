@@ -17,6 +17,7 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 import model.ChartColor;
+import model.TagParser;
 
 import org.jdom.Attribute;
 import org.jdom.Document;

@@ -38,14 +38,11 @@ public class SocialNetwork {
 //	}
 	
 			
-	public void addUser(User u)
-	{
-		//UserDeepT userDeepT = new UserDeepT(u);
+	public void addUser(User u) {
 		usersMap.put(u.getId(), u);
 	}
 	
-	public int getNumUsers()
-	{
+	public int getNumUsers() {
 		return usersMap.size();
 	}
 	
