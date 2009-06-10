@@ -1,5 +1,6 @@
 package gui.visualizations;
 
+import gui.GUICategoryEdit;
 import gui.visualizations.StatusesDataTable.ColNames;
 
 import java.awt.BasicStroke;
@@ -285,8 +286,8 @@ public class TimelinePanel extends JPanel {
         JButton buttonCategoryManager = new JButton("Gerenciar Categorias");        
         buttonCategoryManager.addActionListener(new ActionListener(){
         	@Override
-        	public void actionPerformed(ActionEvent arg0) {				
-        		CategoryEdit.openFrame();
+        	public void actionPerformed(ActionEvent arg0) {
+        		GUICategoryEdit.openFrame();
         	}});
         
         final CategoryManager cManager = CategoryManager.getInstance();

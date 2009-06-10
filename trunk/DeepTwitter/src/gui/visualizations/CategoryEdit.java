@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -47,12 +48,15 @@ import prefuse.action.filter.FisheyeTreeFilter;
 import prefuse.action.layout.CollapsedSubtreeLayout;
 import prefuse.action.layout.graph.NodeLinkTreeLayout;
 import prefuse.activity.SlowInSlowOutPacer;
+import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.FocusControl;
 import prefuse.controls.PanControl;
 import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
+import prefuse.data.Edge;
+import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Tree;
 import prefuse.data.Tuple;
@@ -65,8 +69,10 @@ import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.FontLib;
+import prefuse.util.PrefuseLib;
 import prefuse.util.ui.JFastLabel;
 import prefuse.util.ui.JSearchPanel;
+import prefuse.visual.AggregateItem;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
@@ -75,16 +81,17 @@ import controller.Category;
 import controller.CategoryManager;
 import controller.CategoryWord;
 
-public class CategoryEdit extends Display {
 
-	private final String tree = "tree";
+public class CategoryEdit extends Display{
+
+	private final static String tree = "tree";
 	private final static String treeNodes = "tree.nodes";
 	private final String treeEdges = "tree.edges";
 
 	private LabelRenderer m_nodeRenderer;
 	private EdgeRenderer m_edgeRenderer;
 
-	private static String m_label = "label";
+	private static String c_label = "label";
 	private int m_orientation = Constants.ORIENT_LEFT_RIGHT;
 
 	private static Tree t;
@@ -94,23 +101,42 @@ public class CategoryEdit extends Display {
 	private final int m_Category = 1;
 	private final int m_Word = 2;
 
+	// Se as categorias foram editadas para dar mensagem para o usuario
+	private boolean edited = false;
+
 	private static NodeLinkTreeLayout treeLayout;
 
 	// TODO
-	// porcaria muda de lugar no primeiro clique
+	// visualizacao muda de lugar no primeiro clique
 	// ao apertar enter, nada acontece
 
-	private CategoryEdit() {
+	public String c_label() {
+		return c_label;
+	}
+
+	public boolean isEdited() {
+		return edited;
+	}
+
+	public void setEdited(boolean b) {
+		edited = b;
+	}
+
+	public Tree getTree() {
+		return t;
+	}
+
+	public CategoryEdit() {
 		super(new Visualization());
 
 		t = new Tree();
 
-		t.addColumn(m_label, String.class);
+		t.addColumn(c_label, String.class);
 		t.addColumn("type", int.class);
 		// 0 Category, 1 Categories, 2 Words of category
 
 		Node root = t.addRoot();
-		root.set(m_label, "Categorias");
+		root.set(c_label, "Categorias");
 		root.set("type", m_Categories);
 
 		// abre categorias do CategoryManager
@@ -118,7 +144,7 @@ public class CategoryEdit extends Display {
 
 		m_vis.add(tree, t);
 
-		m_nodeRenderer = new LabelRenderer(m_label);
+		m_nodeRenderer = new LabelRenderer(c_label);
 		m_nodeRenderer.setRenderType(AbstractShapeRenderer.RENDER_TYPE_FILL);
 		m_nodeRenderer.setHorizontalAlignment(Constants.LEFT);
 		m_nodeRenderer.setRoundedCorner(8, 8);
@@ -155,7 +181,7 @@ public class CategoryEdit extends Display {
 		m_vis.putAction("animatePaint", animatePaint);
 
 		// create the tree layout action
-		treeLayout = new NodeLinkTreeLayout(tree, m_orientation, 50, 0, 8);
+		treeLayout = new NodeLinkTreeLayout(tree, m_orientation, 50, 1, 8);
 		treeLayout.setLayoutAnchor(new Point2D.Double(150, 300));
 		m_vis.putAction("treeLayout", treeLayout);
 
@@ -225,7 +251,7 @@ public class CategoryEdit extends Display {
 		setOrientation(m_orientation);
 		m_vis.run("filter");
 
-		TupleSet search = new PrefixSearchTupleSet();
+		search = new PrefixSearchTupleSet();
 		m_vis.addFocusGroup(Visualization.SEARCH_ITEMS, search);
 		search.addTupleSetListener(new TupleSetListener() {
 			public void tupleSetChanged(TupleSet t, Tuple[] add, Tuple[] rem) {
@@ -237,6 +263,8 @@ public class CategoryEdit extends Display {
 
 	}
 
+	private TupleSet search;
+
 	private void openCategories() {
 
 		List<Category> categories = cManager.getCategories();
@@ -245,7 +273,7 @@ public class CategoryEdit extends Display {
 
 			Node category = t.addNode();
 
-			category.set(m_label, c.getName());
+			category.set(c_label, c.getName());
 			category.set("type", m_Category);
 
 			t.addChildEdge(t.getRoot(), category);
@@ -260,31 +288,6 @@ public class CategoryEdit extends Display {
 		}
 	}
 
-	private static void saveCategories(){
-		
-		cManager.removeAllCategoriesAndWords();
-
-		Iterator c = t.getRoot().children();
-		while(c.hasNext()){
-			Node category = (Node)c.next();
-			
-			List<String> words = new ArrayList<String>();
-			
-			Iterator w = category.children();
-			while(w.hasNext()){
-				Node word = (Node)w.next();
-				
-				words.add(word.getString(m_label));
-			}
-			
-			cManager.addCategory(category.getString(m_label), words);
-		}
-		
-		//Salva categorias em arquivo xml
-		cManager.saveCategories();
-		
-	}
-	
 	// ------------------------------------------------------------------------
 
 	public void setOrientation(int orientation) {
@@ -335,158 +338,6 @@ public class CategoryEdit extends Display {
 	}
 
 	// ------------------------------------------------------------------------
-	private static JFrame frame = null;
-	
-
-	
-	public static JFrame openFrame() {
-		if (frame == null) {
-
-			Color BACKGROUND = Color.WHITE;
-			Color FOREGROUND = Color.BLACK;
-			CategoryEdit categoryEdit = new CategoryEdit();
-			categoryEdit.setBackground(BACKGROUND);
-			categoryEdit.setForeground(FOREGROUND);
-
-			// create a search panel for the tree map
-			JSearchPanel search = new JSearchPanel(categoryEdit
-					.getVisualization(), treeNodes, Visualization.SEARCH_ITEMS,
-					m_label, true, true);
-			search.setShowResultCount(true);
-			search.setBorder(BorderFactory.createEmptyBorder(5, 5, 4, 0));
-			search.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 11));
-			search.setBackground(BACKGROUND);
-			search.setForeground(FOREGROUND);
-
-			final JFastLabel title = new JFastLabel("                 ");
-			title.setPreferredSize(new Dimension(350, 20));
-			title.setVerticalAlignment(SwingConstants.BOTTOM);
-			title.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
-			title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
-			title.setBackground(BACKGROUND);
-			title.setForeground(FOREGROUND);
-
-			categoryEdit.addControlListener(new ControlAdapter() {
-				public void itemEntered(VisualItem item, MouseEvent e) {
-					if (item.canGetString(m_label))
-						title.setText(item.getString(m_label));
-				}
-
-				public void itemExited(VisualItem item, MouseEvent e) {
-					title.setText(null);
-				}
-			});
-
-			Box box = new Box(BoxLayout.X_AXIS);
-			box.add(Box.createHorizontalStrut(10));
-			box.add(title);
-			box.add(Box.createHorizontalGlue());
-			box.add(search);
-			box.add(Box.createHorizontalStrut(3));
-			box.setBackground(BACKGROUND);
-
-			JButton save = new JButton("Salvar");
-			JButton cancel = new JButton("Cancelar");
-			save.setBackground(BACKGROUND);
-			save.setForeground(FOREGROUND);
-			cancel.setBackground(BACKGROUND);
-			cancel.setForeground(FOREGROUND);
-			
-			save.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					saveCategories();
-				}
-			});
-
-			cancel.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					frame.dispose();
-					frame = null;
-				}
-			});
-
-			JPanel panelButtons = new JPanel(new GridLayout(1, 2));
-			panelButtons.add(save);
-			panelButtons.add(cancel);
-			panelButtons.setBackground(BACKGROUND);
-			panelButtons.setForeground(FOREGROUND);
-
-			JPanel panel2 = new JPanel(new BorderLayout());
-			panel2.add(box, BorderLayout.CENTER);
-			panel2.add(panelButtons, BorderLayout.EAST);
-			panel2.setBackground(BACKGROUND);
-			panel2.setForeground(FOREGROUND);
-
-			JPanel panel = new JPanel(new BorderLayout());
-			panel.setBackground(BACKGROUND);
-			panel.setForeground(FOREGROUND);
-			panel.add(categoryEdit, BorderLayout.CENTER);
-			panel.add(panel2, BorderLayout.SOUTH);
-			panel.setBackground(BACKGROUND);
-			panel.setForeground(FOREGROUND);
-
-			frame = new JFrame("DeepTwitter - Gerenciar Categorias");
-			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			frame.setContentPane(panel);
-			frame.pack();
-
-			frame.addWindowListener(new WindowListener() {
-
-				@Override
-				public void windowActivated(WindowEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void windowClosed(WindowEvent e) {
-
-				}
-
-				@Override
-				public void windowClosing(WindowEvent e) {
-					frame.dispose();
-					frame = null;
-
-				}
-
-				@Override
-				public void windowDeactivated(WindowEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void windowDeiconified(WindowEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void windowIconified(WindowEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void windowOpened(WindowEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-
-			});
-
-		}
-		treeLayout.setLayoutAnchor(new Point2D.Double(150, 300));
-		frame.setVisible(true);
-		frame.setLocationRelativeTo(null);
-		treeLayout.setLayoutAnchor(new Point2D.Double(-200, -25));
-		
-
-		return frame;
-	}
 
 	// ------------------------------------------------------------------------
 
@@ -565,49 +416,72 @@ public class CategoryEdit extends Display {
 
 	} // end of inner class TreeMapColorAction
 
-	private class PopupMenuController extends ControlAdapter implements
+	public static class PopupMenuController extends ControlAdapter implements
 			ActionListener {
 
-		private Visualization vis;
+		private Graph g;
 		private Display d;
+		private Visualization vis;
 		private VisualItem clickedItem;
 
 		private JPopupMenu nodePopupMenu;
+		private JPopupMenu popupMenu;
+
+		private Point2D mousePosition = new Point2D.Double();
+		private VisualItem nodeVisualDummy;
+		public Node nodeSourceDummy;
+		public Edge edgeDummy;
+		private boolean creatingEdge = false;
 		private boolean editing;
 
-		private final String l_editLabel = "editLabel";
-		private final String l_delete = "delete";
-		private final String l_addCategory = "addCategory";
-		private final String l_addWord = "addWord";
-
-		private JMenuItem delete;
-		private JMenuItem edit;
-		private JMenuItem addCategory;
-		private JMenuItem addWord;
-
-		private String defaultTextNewCategory = "Nova Categoria";
-		private String defaultTextNewWord = "Nova Palavra";
-
 		public PopupMenuController(Visualization vis) {
-			this.d = vis.getDisplay(0);
 			this.vis = vis;
+			this.g = (Graph) vis.getSourceData(tree);
+			this.d = vis.getDisplay(0);
 
+			//createDummy();
+
+			// create popupMenu for nodes
 			nodePopupMenu = new JPopupMenu();
 
-			delete = new JMenuItem("Excluir");
-			edit = new JMenuItem("Editar nome");
-			addCategory = new JMenuItem("Adicionar categoria");
-			addWord = new JMenuItem("Adicionar palavra");
+			JMenuItem delete = new JMenuItem("delete", 'd');
+			JMenuItem editText = new JMenuItem("edit Name", 'a');
+			JMenuItem addEdge = new JMenuItem("add Edge", 'e');
+			JMenuItem addNode = new JMenuItem("add Node", 'n');
 
-			delete.setActionCommand(l_delete);
-			edit.setActionCommand(l_editLabel);
-			addCategory.setActionCommand(l_addCategory);
-			addWord.setActionCommand(l_addWord);
+			delete.setActionCommand("node_delete");
+			editText.setActionCommand("node_editText");
+			addEdge.setActionCommand("node_addEdge");
+			addNode.setActionCommand("node_addNode");
 
-			edit.addActionListener(this);
-			addCategory.addActionListener(this);
-			addWord.addActionListener(this);
+			//nodePopupMenu.addSeparator();
+			//nodePopupMenu.add(delete);
+			//nodePopupMenu.addSeparator();
+			nodePopupMenu.add(editText);
+			//nodePopupMenu.addSeparator();
+			//nodePopupMenu.add(addEdge);
+			//nodePopupMenu.add(addNode);
+
+			delete.setMnemonic(KeyEvent.VK_D);
+			editText.setMnemonic(KeyEvent.VK_A);
+			addEdge.setMnemonic(KeyEvent.VK_E);
+			addNode.setMnemonic(KeyEvent.VK_N);
+
 			delete.addActionListener(this);
+			editText.addActionListener(this);
+			addEdge.addActionListener(this);
+			addNode.addActionListener(this);
+
+			/*
+			// create popupMenu for 'background'
+			popupMenu = new JPopupMenu();
+			addNode = new JMenuItem("add Node", 'n');
+			addNode.setActionCommand("addNode");
+			popupMenu.addSeparator();
+			popupMenu.add(addNode);
+			addNode.setMnemonic(KeyEvent.VK_N);
+			addNode.addActionListener(this);
+			*/
 
 		}
 
@@ -619,32 +493,20 @@ public class CategoryEdit extends Display {
 		public void itemClicked(VisualItem item, MouseEvent e) {
 			if (SwingUtilities.isRightMouseButton(e)) {
 				clickedItem = item;
+				// on rightclick, stop the edge creation
+//				if (creatingEdge) {
+//					stopEdgeCreation();
+//					return;
+//				}
+
 				if (item instanceof NodeItem) {
-					
-					Visualization vis = item.getVisualization();
-	                TupleSet ts = vis.getFocusGroup(Visualization.FOCUS_ITEMS);
-	                ts.setTuple(item);
-	                vis.run("filter");
-
-					nodePopupMenu.removeAll();
-
-					int type = item.getInt("type");
-
-					if (type == m_Categories) {
-						nodePopupMenu.add(addCategory);
-					} else if (type == m_Category) {
-						nodePopupMenu.add(edit);
-						nodePopupMenu.add(delete);
-						nodePopupMenu.add(addWord);
-					} else if (type == m_Word) {
-						nodePopupMenu.add(edit);
-						nodePopupMenu.add(delete);
-					}
 					nodePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}
-			}else if (SwingUtilities.isLeftMouseButton(e)) {
-				if(editing)
-					stopEditing();
+			} else if (SwingUtilities.isLeftMouseButton(e)) {
+//				if (creatingEdge) {
+//					g.addEdge(edgeDummy.getSourceNode(), (Node) item
+//							.getSourceTuple());
+//				}
 			}
 		}
 
@@ -652,21 +514,22 @@ public class CategoryEdit extends Display {
 		public void mouseClicked(MouseEvent e) {
 			if (editing) {
 				stopEditing();
-				vis.run("filter");
 			}
 			if (SwingUtilities.isRightMouseButton(e)) {
 				clickedItem = null;
+//				if (creatingEdge)
+//					stopEdgeCreation();
+//				popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
 			// called, when keyReleased events on displays textEditor are fired
-			System.out.println(e.getKeyChar() + " " + e.getKeyCode() + " "
-					+ editing + " keyCodeEnter: "+KeyEvent.VK_ENTER);
 			if (e.getKeyCode() == KeyEvent.VK_ENTER && editing) {
 				stopEditing();
 			}
+			System.out.println("FOI");
 		}
 
 		@Override
@@ -678,131 +541,163 @@ public class CategoryEdit extends Display {
 		 * called on popupMenu Action
 		 */
 		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().equals(l_editLabel)) {
-				startEditing(clickedItem);
-			} else if (e.getActionCommand().equals(l_addCategory)) {
-				addCategory();
-			} else if (e.getActionCommand().equals(l_addWord)) {
-				addWord();
-			} else if (e.getActionCommand().equals(l_delete)) {
-				delete();
+			if (e.getActionCommand().startsWith("node")) {
+				if (e.getActionCommand().endsWith("delete")) {
+					//g.removeNode((Node) clickedItem.getSourceTuple());
+				} else if (e.getActionCommand().endsWith("editText")) {
+					startEditing(clickedItem);
+				} else if (e.getActionCommand().endsWith("addEdge")) {
+					//creatingEdge = true;
+					//createTemporaryEdgeFromSourceToDummy(clickedItem);
+				} else if (e.getActionCommand().endsWith("addNode")) {
+					//addNewNode(clickedItem);
+				}
+			} else {
+				if (e.getActionCommand().equals("addNode")) {
+//					int node = (int) (Math.random() * (g.getNodeCount() - 1));
+//					Node source = g.getNode(node); // random source
+//					addNewNode(source);
+				} else {
+
+				}
 			}
 		}
 
 		// ---------------------------------------------
 		// --- helper methods
 		// ---------------------------------------------
-		private void delete() {
-
-			if (clickedItem != null) {
-				Node n = (Node) m_vis.getSourceTuple(clickedItem);
-				
-				TupleSet ts = vis.getFocusGroup(Visualization.SEARCH_ITEMS);
-
-				if (n.getInt("type") == m_Category) {
-					// Primeiro remove palavras do nodo
-					Iterator i = t.children(n);
-					while (i.hasNext()) {
-						Node word = (Node) i.next();
-//		                ts.removeTuple(word);
-						t.removeNode(word);
-					}
-
-					// Depois remove categoria
-//					ts.removeTuple(n);
-					t.removeNode(n);
-				} else if (n.getInt("type") == m_Word) {
-//					ts.removeTuple(n);
-					t.removeNode(n);
-				}
-			}
-			
-			m_vis.run("filter");
-
-		}
-		
-		//TODO
-		//se usuario nao salvar, e tentar fechar, avisar ele
-		//se usuario salvar, colocar mensagem de que foi salvo
-
-		private void addWord() {
-
-			if (clickedItem != null) {
-				Node n = (Node) m_vis.getSourceTuple(clickedItem);
-
-				Iterator i = t.children(n);
-				while (i.hasNext()) {
-					Node word = (Node) i.next();
-					if (word.getString(m_label).toLowerCase().equals(
-							defaultTextNewWord.toLowerCase())) {
-						JOptionPane.showMessageDialog(null,
-								"Primeiro edite a palavra com label "
-										+ defaultTextNewWord + " da Categoria "
-										+ n.getString(m_label), "Atenção",
-								JOptionPane.WARNING_MESSAGE);
-						// TODO colocar como modal do frame
-						return;
-					}
-				}
-
-				Node newWord = t.addNode();
-				newWord.set(m_label, defaultTextNewWord);
-				newWord.set("type", m_Word);
-
-				t.addChildEdge(n, newWord);
-				
-				//Adicionando no grupo para search
-//				TupleSet ts = vis.getFocusGroup(Visualization.SEARCH_ITEMS);
-//				ts.addTuple(newWord);
-				
-				m_vis.run("filter");
-
-			}
-
-		}
-
-		private void addCategory() {
-
-			Iterator i = t.children(t.getRoot());
-			while (i.hasNext()) {
-				Node ch = (Node) i.next();
-
-				if (ch.getString(m_label).toLowerCase().equals(
-						defaultTextNewCategory.toLowerCase())) {
-					JOptionPane.showMessageDialog(null,
-							"Primeiro edite a categoria com label "
-									+ defaultTextNewCategory, "Atenção",
-							JOptionPane.WARNING_MESSAGE);
-					// TODO colocar como modal do frame
-					return;
-				}
-			}
-
-			Node n = t.addNode();
-			n.set(m_label, defaultTextNewCategory);
-			n.set("type", m_Category);
-
-			t.addChildEdge(t.getRoot(), n);
-
-			//Adicionando no grupo para search
-//			TupleSet ts = vis.getFocusGroup(Visualization.SEARCH_ITEMS);
-//			VisualItem visualItem = getVisualization().getVisualItem(tree, n);
-//			ts.addTuple(visualItem);
-			
-			m_vis.run("filter");
-
-		}
 
 		private void startEditing(VisualItem item) {
-			m_vis.run("filter");
 			editing = true;
-			d.editText(item, m_label);
+			d.editText(item, c_label);
 		}
 
 		private void stopEditing() {
 			editing = false;
 			d.stopEditing();
-			m_vis.run("filter");
+		}
+
+//		private void addNewNode(VisualItem source) {
+//			addNewNode((Node) source.getSourceTuple());
+//		}
+//
+//		private void addNewNode(Node source) {
+//			Node n = g.addNode(); // create a new node
+//			n.set(VisualItem.LABEL, "Node " + n.getRow()); // assign a new name
+//			g.addEdge(source, n); // add an edge from source to the new node
+//		}
+
+		// ---------------------------------------------
+		// --- methods for edgeCreation
+		// ---------------------------------------------
+
+//		private void stopEdgeCreation() {
+//			creatingEdge = false;
+//			removeEdgeDummy();
+//		}
+//
+//		/**
+//		 * Removes all dummies, the node and the two edges. Additionally sets
+//		 * the variables who stored a reference to these dummies to null.
+//		 */
+//		public void removeAllDummies() {
+//			if (nodeSourceDummy != null)
+//				g.removeNode(nodeSourceDummy);
+//			edgeDummy = null;
+//			nodeSourceDummy = null;
+//			nodeVisualDummy = null;
+//		}
+//
+//		/**
+//		 * Removes all edge dummies, if the references stored to these dummies
+//		 * are not null. Additionally sets the references to these dummies to
+//		 * null.
+//		 */
+//		private void removeEdgeDummy() {
+//			if (edgeDummy != null) {
+//				g.removeEdge(edgeDummy);
+//				edgeDummy = null;
+//			}
+//		}
+//
+//		public VisualItem createDummy() {
+//			// create the dummy node for the creatingEdge mode
+//			nodeSourceDummy = g.addNode();
+//			nodeSourceDummy.set(VisualItem.LABEL, "");
+//
+//			nodeVisualDummy = vis.getVisualItem(treeNodes, nodeSourceDummy);
+//			nodeVisualDummy.setSize(0.0);
+//			nodeVisualDummy.setVisible(false);
+//
+//			/*
+//			 * initially set the dummy's location. upon mouseMove events, we
+//			 * will do that there. otherwise, the dummy would appear on top left
+//			 * position until the mouse moves
+//			 */
+//			double x = d.getBounds().getCenterX();
+//			double y = d.getBounds().getCenterY();
+//			mousePosition.setLocation(x, y);
+//			nodeVisualDummy.setX(mousePosition.getX());
+//			nodeVisualDummy.setY(mousePosition.getY());
+//			return nodeVisualDummy;
+//		}
+//
+//		public void removeNodeDummy() {
+//			g.removeNode(nodeSourceDummy);
+//			nodeSourceDummy = null;
+//			nodeVisualDummy = null;
+//		}
+//
+//		public void createTemporaryEdgeFromSourceToDummy(Node source) {
+//			if (edgeDummy == null) {
+//				edgeDummy = g.addEdge(source, nodeSourceDummy);
+//			}
+//		}
+//
+//		public void createTemporaryEdgeFromDummyToTarget(Node target) {
+//			if (edgeDummy == null) {
+//				edgeDummy = g.addEdge((Node) nodeVisualDummy.getSourceTuple(),
+//						target);
+//			}
+//		}
+//
+//		/**
+//		 * @param source
+//		 *            the item to use as source for the dummy edge
+//		 */
+//		public void createTemporaryEdgeFromSourceToDummy(VisualItem source) {
+//			createTemporaryEdgeFromSourceToDummy((Node) source.getSourceTuple());
+//		}
+//
+//		/**
+//		 * @param target
+//		 *            the item to use as target for the dummy edge
+//		 */
+//		public void createTemporaryEdgeFromDummyToTarget(VisualItem target) {
+//			createTemporaryEdgeFromDummyToTarget((Node) target.getSourceTuple());
+//		}
+//
+//		@Override
+//		public void mouseMoved(MouseEvent e) {
+//			// necessary, if you have no dummy and this ControlAdapter is
+//			// running
+//			if (nodeVisualDummy == null)
+//				return;
+//			// update the coordinates of the dummy-node to the mouselocation so
+//			// the tempEdge is drawn to the mouselocation too
+//			d.getAbsoluteCoordinate(e.getPoint(), mousePosition);
+//			nodeVisualDummy.setX(mousePosition.getX());
+//			nodeVisualDummy.setY(mousePosition.getY());
+//		}
+
+		/**
+		 * only necessary if edge-creation is used together with aggregates and
+		 * the edge should move on when mousepointer moves within an aggregate
+		 */
+		@Override
+		public void itemMoved(VisualItem item, MouseEvent e) {
+			if (item instanceof AggregateItem)
+				mouseMoved(e);
 		}
 
 	} // end of inner class PopupMenuController
