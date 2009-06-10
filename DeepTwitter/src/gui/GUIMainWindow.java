@@ -75,6 +75,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("DeepTwitter"); // NOI18N
 
+        labelStatusBar.setBackground(new java.awt.Color(240, 240, 240));
         labelStatusBar.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         labelStatusBar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labelStatusBar.setText(" ");
@@ -82,17 +83,22 @@ public class GUIMainWindow extends javax.swing.JFrame {
         labelStatusBar.setName("labelStatusBar"); // NOI18N
         getContentPane().add(labelStatusBar, java.awt.BorderLayout.SOUTH);
 
+        jSplitPane1.setBackground(new java.awt.Color(240, 240, 240));
         jSplitPane1.setDividerLocation(250);
         jSplitPane1.setDividerSize(6);
         jSplitPane1.setContinuousLayout(true);
         jSplitPane1.setOneTouchExpandable(true);
         jSplitPane1.setPreferredSize(new java.awt.Dimension(1100, 600));
 
+        jTabbedPane1.setBackground(new java.awt.Color(240, 240, 240));
+
         jPanel2.setLayout(new java.awt.BorderLayout());
 
+        jToolBar1.setBackground(new java.awt.Color(240, 240, 240));
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
+        buttonNewDirectMessage.setBackground(new java.awt.Color(240, 240, 240));
         buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_add.png"))); // NOI18N
         buttonNewDirectMessage.setToolTipText("Nova mensagem direta");
         buttonNewDirectMessage.setActionCommand("buttonNewDirectMessage");
@@ -102,6 +108,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jToolBar1.add(buttonNewDirectMessage);
         jToolBar1.add(jSeparator2);
 
+        buttonPreviousUser.setBackground(new java.awt.Color(240, 240, 240));
         buttonPreviousUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../backward.png"))); // NOI18N
         buttonPreviousUser.setToolTipText("Usuário anterior");
         buttonPreviousUser.setActionCommand("buttonPreviousUser");
@@ -116,7 +123,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
 
         txtCurrentUser.setBackground(new java.awt.Color(240, 240, 240));
         txtCurrentUser.setEditable(false);
-        txtCurrentUser.setFont(new java.awt.Font("Tahoma", 1, 12));
+        txtCurrentUser.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         txtCurrentUser.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtCurrentUser.setText("username");
         txtCurrentUser.setAutoscrolls(false);
@@ -127,6 +134,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         txtCurrentUser.setPreferredSize(new java.awt.Dimension(60, 14));
         jToolBar1.add(txtCurrentUser);
 
+        buttonNextUser.setBackground(new java.awt.Color(240, 240, 240));
         buttonNextUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../forward.png"))); // NOI18N
         buttonNextUser.setToolTipText("Próximo usuário");
         buttonNextUser.setActionCommand("buttonNextUser");
@@ -136,6 +144,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonNextUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonNextUser);
 
+        buttonSearchUpdates.setBackground(new java.awt.Color(240, 240, 240));
         buttonSearchUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../search.png"))); // NOI18N
         buttonSearchUpdates.setToolTipText("Buscar");
         buttonSearchUpdates.setActionCommand("buttonSearchUpdates");
@@ -144,6 +153,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonSearchUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonSearchUpdates);
 
+        buttonInbox.setBackground(new java.awt.Color(240, 240, 240));
         buttonInbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_inbox.png"))); // NOI18N
         buttonInbox.setSelected(true);
         buttonInbox.setToolTipText("Caixa de Entrada");
@@ -153,6 +163,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonInbox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonInbox);
 
+        buttonOutbox.setBackground(new java.awt.Color(240, 240, 240));
         buttonOutbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_outbox.png"))); // NOI18N
         buttonOutbox.setToolTipText("Caixa de Saída");
         buttonOutbox.setActionCommand("buttonOutbox");
@@ -162,6 +173,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jToolBar1.add(buttonOutbox);
         jToolBar1.add(jSeparator4);
 
+        buttonCloseUpdates.setBackground(new java.awt.Color(240, 240, 240));
         buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../remove.png"))); // NOI18N
         buttonCloseUpdates.setToolTipText("Fechar este usuário");
         buttonCloseUpdates.setActionCommand("buttonCloseUpdates");
@@ -170,6 +182,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCloseUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonCloseUpdates);
 
+        buttonTurnOnOff.setBackground(new java.awt.Color(240, 240, 240));
         buttonTurnOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_on.png"))); // NOI18N
         buttonTurnOnOff.setSelected(true);
         buttonTurnOnOff.setToolTipText("Ligar/desligar atualizar automaticamente");
@@ -181,6 +194,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jToolBar1.add(buttonTurnOnOff);
         jToolBar1.add(jSeparator5);
 
+        buttonTimeline.setBackground(new java.awt.Color(240, 240, 240));
         buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
         buttonTimeline.setToolTipText("Configurações");
         buttonTimeline.setActionCommand("buttonTimeline");
@@ -191,6 +205,8 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonTimeline.getAccessibleContext().setAccessibleDescription("Visualização do Timeline de Atualizações");
 
         jPanel2.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
+
+        jScrollPane6.setBackground(new java.awt.Color(240, 240, 240));
         jPanel2.add(jScrollPane6, java.awt.BorderLayout.CENTER);
 
         jTabbedPane1.addTab("Atualizações", jPanel2);
@@ -199,27 +215,32 @@ public class GUIMainWindow extends javax.swing.JFrame {
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
+        mainToolBar.setBackground(new java.awt.Color(240, 240, 240));
         mainToolBar.setFloatable(false);
         mainToolBar.setRollover(true);
 
+        buttonUpdate.setBackground(new java.awt.Color(240, 240, 240));
         buttonUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("../comment_add.png"))); // NOI18N
         buttonUpdate.setToolTipText("Novo update");
         buttonUpdate.setActionCommand("buttonNewUpdate");
         buttonUpdate.setName("buttonNewUpdate"); // NOI18N
         mainToolBar.add(buttonUpdate);
 
+        buttonAddUser.setBackground(new java.awt.Color(240, 240, 240));
         buttonAddUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../user_search.png"))); // NOI18N
         buttonAddUser.setToolTipText("Buscar usuário");
         buttonAddUser.setActionCommand("buttonAddUser");
         buttonAddUser.setName("buttonAddUser"); // NOI18N
         mainToolBar.add(buttonAddUser);
 
+        buttonNewGroup.setBackground(new java.awt.Color(240, 240, 240));
         buttonNewGroup.setIcon(new javax.swing.ImageIcon(getClass().getResource("../users_add.png"))); // NOI18N
         buttonNewGroup.setToolTipText("Novo grupo");
         buttonNewGroup.setActionCommand("buttonNewGroup");
         buttonNewGroup.setName("buttonNewGroup"); // NOI18N
         mainToolBar.add(buttonNewGroup);
 
+        buttonSettings.setBackground(new java.awt.Color(240, 240, 240));
         buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../config.png"))); // NOI18N
         buttonSettings.setToolTipText("Configurações");
         buttonSettings.setActionCommand("buttonSettings");
@@ -228,6 +249,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonSettings);
 
+        buttonToolTipControl.setBackground(new java.awt.Color(240, 240, 240));
         buttonToolTipControl.setIcon(new javax.swing.ImageIcon(getClass().getResource("../user_info.png"))); // NOI18N
         buttonToolTipControl.setSelected(true);
         buttonToolTipControl.setToolTipText("Exibir infos do usuário");
@@ -237,6 +259,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonToolTipControl.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonToolTipControl);
 
+        buttonPlayPauseVisualization.setBackground(new java.awt.Color(240, 240, 240));
         buttonPlayPauseVisualization.setIcon(new javax.swing.ImageIcon(getClass().getResource("../play.png"))); // NOI18N
         buttonPlayPauseVisualization.setSelected(true);
         buttonPlayPauseVisualization.setToolTipText("Play/Pause animar rede");
@@ -247,6 +270,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonPlayPauseVisualization.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonPlayPauseVisualization);
 
+        buttonCenterUser.setBackground(new java.awt.Color(240, 240, 240));
         buttonCenterUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../target.png"))); // NOI18N
         buttonCenterUser.setToolTipText("Centralizar usuário clicado");
         buttonCenterUser.setActionCommand("buttonCenterUser");
@@ -255,11 +279,13 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCenterUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonCenterUser);
 
+        buttonShowAll.setBackground(new java.awt.Color(240, 240, 240));
         buttonShowAll.setText("Exibir todos");
         buttonShowAll.setActionCommand("buttonShowAll");
         buttonShowAll.setName("buttonShowAll"); // NOI18N
         mainToolBar.add(buttonShowAll);
 
+        buttonClearSelection.setBackground(new java.awt.Color(240, 240, 240));
         buttonClearSelection.setText("Limpar seleção");
         buttonClearSelection.setActionCommand("buttonClearSelection");
         buttonClearSelection.setFocusable(false);
@@ -268,21 +294,25 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonClearSelection.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonClearSelection);
 
+        checkBoxHighQuality.setBackground(new java.awt.Color(240, 240, 240));
         checkBoxHighQuality.setSelected(true);
         checkBoxHighQuality.setText("alta qualidade");
         checkBoxHighQuality.setActionCommand("checkBoxHighQuality");
         checkBoxHighQuality.setName("checkBoxHighQuality"); // NOI18N
         mainToolBar.add(checkBoxHighQuality);
 
+        checkBoxCurvedEdges.setBackground(new java.awt.Color(240, 240, 240));
         checkBoxCurvedEdges.setText("arestas curvas");
         checkBoxCurvedEdges.setActionCommand("checkBoxCurvedEdges");
         checkBoxCurvedEdges.setName("checkBoxCurvedEdges"); // NOI18N
         mainToolBar.add(checkBoxCurvedEdges);
 
+        labelFilter.setBackground(new java.awt.Color(240, 240, 240));
         labelFilter.setFont(new java.awt.Font("Tahoma", 0, 14));
         labelFilter.setText("Filtro:");
         mainToolBar.add(labelFilter);
 
+        labelAPILimit.setBackground(new java.awt.Color(240, 240, 240));
         labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12));
         labelAPILimit.setText("Requisições API:");
         mainToolBar.add(labelAPILimit);

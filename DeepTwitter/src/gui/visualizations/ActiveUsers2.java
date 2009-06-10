@@ -1,8 +1,10 @@
 package gui.visualizations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JEditorPane;
 
 import prefuse.Constants;
 import prefuse.Display;
@@ -10,11 +12,13 @@ import prefuse.Visualization;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.DataSizeAction;
+import prefuse.action.filter.VisibilityFilter;
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.DragControl;
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.LabelRenderer;
 import prefuse.util.force.DragForce;
@@ -24,7 +28,7 @@ import prefuse.util.force.SpringForce;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import profusians.controls.GenericToolTipControl;
-import twitter4j.User;
+import controller.ControllerDeepTwitter;
 
 public class ActiveUsers2 extends Display{
 	public final static String GRAPH = "graph";
@@ -33,22 +37,44 @@ public class ActiveUsers2 extends Display{
 	private Graph g;
 	private LabelRenderer nodeRenderer;
 	private GenericToolTipControl toolTipControl;
+	private Node[] nodesArray;
+	private List<Node> orderedByFollowersList, orderedByFriendsList,
+	orderedByTweetsList, orderedByFavoritesList;
+	private ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
+	private ShowingBy type;
+	private int maxUsers;
 	
-	public ActiveUsers2(User[] usersList) {
+	public enum ShowingBy{
+    	followersCount,
+    	friendsCount,
+    	favoritesCount,
+    	statusesCount,
+    	nothing
+    }
+	
+	public ActiveUsers2(Node[] nodesArray, JEditorPane editor) {
 		super(new Visualization());
-
+		this.nodesArray = nodesArray;
+		orderedByFollowersList = new ArrayList<Node>(nodesArray.length);
+		orderedByFriendsList = new ArrayList<Node>(nodesArray.length);
+		orderedByTweetsList = new ArrayList<Node>(nodesArray.length);
+		orderedByFavoritesList = new ArrayList<Node>(nodesArray.length);
+		type = ShowingBy.nothing;
+		maxUsers = nodesArray.length;
+		
 		g = new Graph();
 		g.addColumn("screenName", String.class);
 		g.addColumn("name", String.class);
     	g.addColumn("image", String.class);
     	g.addColumn("location", String.class);
     	g.addColumn("description", String.class);
-    	g.addColumn("protected", Boolean.class);
+    	g.addColumn("protected", boolean.class);
     	g.addColumn("friendsCount", int.class);
     	g.addColumn("followersCount", int.class);
     	g.addColumn("statusesCount", int.class);
     	g.addColumn("favoritesCount", int.class);    	
     	g.addColumn("latestStatus", String.class);
+    	g.addColumn("isShown", boolean.class);
 
 		// add visual data groups
 		VisualGraph vg = m_vis.addGraph(GRAPH, g);
@@ -61,19 +87,15 @@ public class ActiveUsers2 extends Display{
     	nodeRenderer.setRoundedCorner(8,8);
 		m_vis.setRendererFactory(new DefaultRendererFactory(nodeRenderer));
 		
-		sizeAction = new DataSizeAction(NODES,"followersCount");//,usersList.length);
+		sizeAction = new DataSizeAction(NODES,"followersCount");//,Constants.QUANTILE_SCALE);
 		sizeAction.setMaximumSize(10.0);
 		sizeAction.setMinimumSize(0.5);
 		sizeAction.setEnabled(false);
 		
 		ActionList update = new ActionList();		
         update.add(sizeAction);
-//        update.add(new ColorAction("data", VisualItem.STROKECOLOR) {
-//            public int getColor(VisualItem item) {
-//                return ColorLib.rgb((item.isHover() ? 255 : 0), 0, 0);
-//            }
-//        });
         update.add(new RepaintAction());
+        update.add(new VisibilityFilter(NODES,ExpressionParser.predicate("isShown==TRUE")));
         m_vis.putAction("update", update);
 		
 		ActionList layout = new ActionList(ActionList.INFINITY); 
@@ -82,26 +104,30 @@ public class ActiveUsers2 extends Display{
 		layout.add(fdl);    	
     	m_vis.putAction("layout", layout);    
     	
-    	for(User u : usersList) {
-			addNode(u);
+    	for(Node n : nodesArray) {
+    		addOrRefreshNode(n);
 		}
     	
-    	String descriptions[] = { "Nome:", "Último Status: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Statuses:" };
-    	String data[] = { "name", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount" };
+    	String descriptions[] = { "Nome:", "Último Status: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Tweets:", "Favoritos:" };
+    	String data[] = { "name", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount", "favoritesCount" };
 
     	toolTipControl = new GenericToolTipControl(descriptions,data,200);    	
     	addControlListener(toolTipControl);
     	addControlListener(new ListenerAdapter(this));   	    	
     	addControlListener(new DragControl(false,true));
-    	//nodeRenderer.getImageFactory().preloadImages(m_vis.items(),"image");
+    	
+    	new UpdateStatusEditor(editor).start();
     	
     	setHighQuality(true);
+    	setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
     	m_vis.run("layout");   	
 	}
 	
-	public void setSizeActionDataField(String field) {
+	public void setSizeActionDataField(ShowingBy type) {
 		sizeAction.setEnabled(true);
-		sizeAction.setDataField(field);
+		sizeAction.setDataField(type.toString());
+		this.type = type;
+		setMaxUsers(maxUsers);
 	}
 	
 	public ForceSimulator getForceSimulator() {		
@@ -127,22 +153,25 @@ public class ActiveUsers2 extends Display{
 //        fsim.addForce(new DragForce());
     }
 	
-	public void addNode(User u) {
+	public void addOrRefreshNode(Node n) {
 		synchronized (m_vis) {
-			Node newNode = g.addNode();
-			newNode.set("screenName", u.getScreenName());
-			newNode.set("name", u.getName());
-			newNode.set("image", u.getProfileImageURL().toString());
-			newNode.set("protected",u.isProtected());
-			newNode.set("latestStatus",u.getStatusText());			
-			newNode.set("location", u.getLocation());
-			newNode.set("description", u.getDescription());
-			newNode.set("friendsCount", u.getFriendsCount());
-			newNode.set("followersCount", u.getFollowersCount());
-			newNode.set("statusesCount", u.getStatusesCount());
-			newNode.set("favoritesCount", u.getFavouritesCount());
+			Node newNode = g.addNode();			
+			newNode.set("screenName", n.getString("screenName"));
+			newNode.set("name", n.getString("name"));
+			newNode.set("image", n.getString("image"));
+			newNode.set("protected",n.getBoolean("protected"));
+			newNode.set("latestStatus",n.getString("latestStatus"));			
+			newNode.set("location", n.getString("location"));
+			newNode.set("description", n.getString("description"));
+			newNode.set("friendsCount", n.getInt("friendsCount"));
+			newNode.set("followersCount", n.getInt("followersCount"));
+			newNode.set("statusesCount", n.getInt("statusesCount"));
+			newNode.set("favoritesCount", n.getInt("favoritesCount"));
+			newNode.set("isShown", true);
 			
-			VisualItem vi = m_vis.getVisualItem(NODES, newNode);
+			orderLists(newNode);
+			
+			VisualItem vi = controller.getNodeItem(newNode); //m_vis.getVisualItem(NODES, newNode);
 			int distMin = 30;
 
 			double x = distMin
@@ -159,9 +188,76 @@ public class ActiveUsers2 extends Display{
 		}
 	}
 	
+	public void setMaxUsers(int max) {
+		maxUsers = max;
+		List<Node> currentTypeList;
+		if(type==ShowingBy.friendsCount)
+			currentTypeList = orderedByFriendsList;
+		else if(type==ShowingBy.followersCount)
+			currentTypeList = orderedByFollowersList;
+		else if(type==ShowingBy.statusesCount)
+			currentTypeList = orderedByTweetsList;
+		else
+			currentTypeList = orderedByFavoritesList;
+		
+		for(int i=0; i<currentTypeList.size(); i++) {
+			Node n = currentTypeList.get(i);
+			if(i>=max)
+				n.setBoolean("isShown",false);
+			else
+				n.setBoolean("isShown",true);
+		}
+	}
+	
+	public void orderLists(Node n) {		
+		orderList(orderedByTweetsList, "statusesCount", n);
+		orderList(orderedByFollowersList, "followersCount", n);
+		orderList(orderedByFriendsList, "friendsCount", n);
+		orderList(orderedByFavoritesList, "favoritesCount", n);
+	}
+	
+	public void orderList(List<Node> list, String field, Node n) {
+		if(list.size()==0)
+			list.add(n);
+		else
+			for(int i=0; i<list.size(); i++) {
+				if(n.getInt(field)>list.get(i).getInt(field)) {				
+					list.add(i, n);
+					return;
+				}				
+			}
+		list.add(n);
+	}
+	
 	private	class ListenerAdapter extends ControlAdapter{
 		public ListenerAdapter(ActiveUsers2 display) {
-			//inserir item clicked - mostrar nodo na rede
+			//TODO inserir item clicked - mostrar nodo na rede
+		}	
+	}
+	
+	private class UpdateStatusEditor extends Thread {
+		private JEditorPane editor;
+		
+		public UpdateStatusEditor(JEditorPane editor) {
+			this.editor = editor;
+		}
+		
+		public void run() {
+			try {
+				while(true) {
+					for(Node n : nodesArray) {
+						System.out.println(n);
+						if(n.getBoolean("isShown")) {
+							//NAO EH DO N, EH DO NEWNODE
+							editor.setText(n.getString("lastStatus"));
+							this.sleep(5000);
+						}
+					}
+				}
+			}
+			catch(InterruptedException e) {
+				
+			}
 		}
 	}
 }

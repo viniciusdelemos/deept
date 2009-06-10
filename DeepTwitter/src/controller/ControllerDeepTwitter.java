@@ -3,15 +3,21 @@ package controller;
 import gui.GUIAddUser;
 import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
+import gui.GUIMostActiveUsers;
 import gui.GUINewUpdate;
+import gui.visualizations.ActiveUsers2;
+import gui.visualizations.ActiveUsers2.ShowingBy;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
@@ -34,6 +40,7 @@ import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.data.search.SearchTupleSet;
+import prefuse.visual.VisualItem;
 import twitter4j.RateLimitStatus;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -44,8 +51,10 @@ public class ControllerDeepTwitter {
 	private GUIMainWindow mainWindow;
 	private GUIAddUser guiAddUser;
 	private GUINewUpdate guiNewUpdate;
+	private GUIMostActiveUsers guiMostActive;
 	private Twitter twitter;
 	private GraphicManager gManager;
+	private ActiveUsers2 activeUsersDisplay;
 	private boolean isTwitterUser;
 	private String loggedUserId;
 	private JTabbedPane windowTabs;
@@ -100,6 +109,10 @@ public class ControllerDeepTwitter {
 	
 	public Node getNode(int id) {
 		return gManager.getNodeByTwitterId(id);
+	}
+	
+	public VisualItem getNodeItem(Node node) {
+		return gManager.getNodeItem(node);
 	}
 	
 	public void searchAndAddUserToNetwork(User u) {
@@ -338,6 +351,39 @@ public class ControllerDeepTwitter {
 		guiNewUpdate.setLocationRelativeTo(mainWindow);
 	}
 	
+	public void openGUIMostActiveUsersWindow(Node[] userArray) {
+		guiMostActive = new GUIMostActiveUsers("Usuários mais ativos");
+		if(userArray == null)
+			userArray = gManager.getNodes();//gManager.getSocialNetwork().getUsers();
+		
+		guiMostActive.addListener(mainWindowListener);
+		guiMostActive.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(java.awt.event.WindowEvent arg0) {
+				guiMostActive = null;
+				//TODO matar a thread
+			}
+		});
+		final JComboBox maxUsersComboBox = guiMostActive.getComboBoxMaxUsers();
+		for(int i=userArray.length; i>=1; i--) {
+			maxUsersComboBox.addItem(i);
+		}
+		maxUsersComboBox.setSelectedIndex(0);
+		maxUsersComboBox.addItemListener(new ItemListener(){
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				if(arg0.getItem()==maxUsersComboBox.getSelectedItem()) {
+					activeUsersDisplay.setMaxUsers(Integer.parseInt(arg0.getItem().toString()));
+				}			
+			}			
+		});
+		activeUsersDisplay = new ActiveUsers2(userArray,guiMostActive.getEditor());
+		JSplitPane splitPane = guiMostActive.getSplitPane();
+		splitPane.setTopComponent(activeUsersDisplay);		
+		guiMostActive.setVisible(true);
+		splitPane.setDividerLocation(510);
+	}
+	
 	public StatusTabManager getStatusTabManager() {
 		return tabManager;
 	}
@@ -479,6 +525,18 @@ public class ControllerDeepTwitter {
 				//TODO
 				System.out.println("Settings");
 			}
+			else if(cmd.equals("orderByFriends")) {
+				activeUsersDisplay.setSizeActionDataField(ShowingBy.friendsCount);
+			}
+			else if(cmd.equals("orderByFollowers")) {
+				activeUsersDisplay.setSizeActionDataField(ShowingBy.followersCount);
+			}
+			else if(cmd.equals("orderByTweets")) {
+				activeUsersDisplay.setSizeActionDataField(ShowingBy.statusesCount);
+			}
+			else if(cmd.equals("orderByFavorites")) {
+				activeUsersDisplay.setSizeActionDataField(ShowingBy.favoritesCount);
+			}
 		}
 	}
 	
@@ -504,8 +562,4 @@ public class ControllerDeepTwitter {
 			}
 		}
 	}	
-	
-	public java.util.List<User> mostActiveUsersForAll(){
-		return gManager.getSocialNetwork().mostActiveUserForAllNetwork();
-	}
 }

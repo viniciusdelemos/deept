@@ -76,7 +76,7 @@ public class TimelinePanel extends JPanel {
     private String panelTitle = "Atualizações de ";
     private String statusesCountText;
     private int visibleStatuses;
-    private JFastLabel labelTotalStatuses = new JFastLabel("Exibindo "+visibleStatuses+" updates");
+    private JFastLabel labelTotalStatuses = new JFastLabel("Exibindo "+visibleStatuses+" tweets");
     private JFastLabel labelDetails;
     private boolean categoriesOn, isStatusOrTweet;
     private AndPredicate statusesFilter;
@@ -313,7 +313,7 @@ public class TimelinePanel extends JPanel {
 				statusesFilter.add(ExpressionParser.predicate(query));		
 			}});
         
-        JButton buttonCategorize = new JButton("Categorizar Atualizações");        
+        JButton buttonCategorize = new JButton("Categorizar Tweets");        
         buttonCategorize.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent arg0) {			
@@ -333,6 +333,9 @@ public class TimelinePanel extends JPanel {
         			VisualItem item = null;
     				while(it.hasNext()) { //deve retornar apenas 1!
     					item = it.next();
+    					item.set(StatusesDataTable.ColNames.CATEGORIES.toString(), null);
+    					item.setFillColor(ChartColor.white.getRGB());
+    					item.setStrokeColor(ChartColor.DARK_BLUE.getRGB());
     				}        			
         			cManager.categorizeResponse(tr,item);
         		}
@@ -450,6 +453,7 @@ public class TimelinePanel extends JPanel {
 				tbl.set(index, StatusesDataTable.ColNames.STATUS.toString(), text);
 				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);
 				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);
+				tbl.set(index, StatusesDataTable.ColNames.CATEGORIES.toString(), null);
 				
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");		
 				String formatedTime = formatter.format(date);
@@ -553,9 +557,9 @@ public class TimelinePanel extends JPanel {
     		}
     		visibleStatuses = cont;
     		if(visibleStatuses == 1)
-    			statusesCountText = "Exibindo " + visibleStatuses + " update";
+    			statusesCountText = "Exibindo " + visibleStatuses + " tweet";
     		else
-    			statusesCountText = "Exibindo " + visibleStatuses + " updates";
+    			statusesCountText = "Exibindo " + visibleStatuses + " tweets";
     		labelTotalStatuses.setText(statusesCountText);
     	}
     }

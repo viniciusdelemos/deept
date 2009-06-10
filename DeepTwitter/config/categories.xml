@@ -5,4 +5,4 @@
 	
 	
 	
-<Category name="ingles"><Word>is</Word><Word>am</Word></Category><Category name="teste"><Word>nerd</Word><Word>jogos</Word><Word>casa</Word><Word>apple</Word><Word>apartamento</Word></Category></Categories>
+<Category name="ingles" /><Category name="sentimento"><Word>bom-humor</Word><Word>love</Word><Word>amo</Word><Word>odeio</Word></Category><Category name="teste"><Word>nerd</Word><Word>jogos</Word><Word>casa</Word><Word>apple</Word><Word>apartamento</Word></Category></Categories>

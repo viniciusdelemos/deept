@@ -131,7 +131,10 @@ public class StatusTab {
 	private void addToolBar(JPanel panel, StatusesType typeOfTab) {
 		jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
+        jToolBar1.setBackground(new java.awt.Color(240, 240, 240));
+        jScrollPane6.setBackground(new java.awt.Color(240, 240, 240));
         
+        buttonNewDirectMessage.setBackground(new java.awt.Color(240, 240, 240));
         buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_add.png"))); // NOI18N
         buttonNewDirectMessage.setToolTipText("Nova mensagem direta");
         buttonNewDirectMessage.setActionCommand("buttonNewDirectMessage");
@@ -139,7 +142,10 @@ public class StatusTab {
         buttonNewDirectMessage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonNewDirectMessage.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonNewDirectMessage);
+        if(typeOfTab == StatusesType.DIRECT_MESSAGES)
+        	jToolBar1.add(jSeparator2);
                 
+        buttonPreviousUser.setBackground(new java.awt.Color(240, 240, 240));
         buttonPreviousUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../backward.png"))); // NOI18N
         buttonPreviousUser.setToolTipText("Usuário anterior");
         buttonPreviousUser.setActionCommand("buttonPreviousUser");
@@ -153,6 +159,7 @@ public class StatusTab {
         jToolBar1.add(buttonPreviousUser);
 
         if(type == StatusesType.SEARCH) {
+        	txtCurrentUser.setBackground(new java.awt.Color(240, 240, 240));
         	txtCurrentUser.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
             txtCurrentUser.setHorizontalAlignment(javax.swing.JTextField.LEFT);
             txtCurrentUser.setText("busca");
@@ -184,6 +191,7 @@ public class StatusTab {
         }
         jToolBar1.add(txtCurrentUser);
         
+        buttonNextUser.setBackground(new java.awt.Color(240, 240, 240));
         buttonNextUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../forward.png"))); // NOI18N
         buttonNextUser.setToolTipText("Próximo usuário");
         buttonNextUser.setActionCommand("buttonNextUser");
@@ -192,7 +200,8 @@ public class StatusTab {
         buttonNextUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonNextUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonNextUser);
-        
+
+        buttonSearchUpdates.setBackground(new java.awt.Color(240, 240, 240));
         buttonSearchUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../search.png"))); // NOI18N
         buttonSearchUpdates.setToolTipText("Buscar");
         buttonSearchUpdates.setActionCommand("buttonSearchUpdates");
@@ -201,6 +210,7 @@ public class StatusTab {
         buttonSearchUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonSearchUpdates);
 
+        buttonInbox.setBackground(new java.awt.Color(240, 240, 240));
         buttonInbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_inbox.png"))); // NOI18N
         buttonInbox.setSelected(true);
         buttonInbox.setToolTipText("Caixa de Entrada");
@@ -210,6 +220,7 @@ public class StatusTab {
         buttonInbox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonInbox);
 
+        buttonOutbox.setBackground(new java.awt.Color(240, 240, 240));
         buttonOutbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_outbox.png"))); // NOI18N
         buttonOutbox.setToolTipText("Caixa de Saída");
         buttonOutbox.setActionCommand("buttonOutbox");
@@ -217,18 +228,18 @@ public class StatusTab {
         buttonOutbox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonOutbox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonOutbox);
-        
         jToolBar1.add(jSeparator4);
 
+        buttonCloseUpdates.setBackground(new java.awt.Color(240, 240, 240));
         buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../remove.png"))); // NOI18N
         buttonCloseUpdates.setToolTipText("Fechar este usuário");
         buttonCloseUpdates.setActionCommand("buttonCloseUpdates");
-        buttonCloseUpdates.setEnabled(true);
         buttonCloseUpdates.setFocusable(false);
         buttonCloseUpdates.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonCloseUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonCloseUpdates);
-        
+
+        buttonTurnOnOff.setBackground(new java.awt.Color(240, 240, 240));
         buttonTurnOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_on.png"))); // NOI18N
         buttonTurnOnOff.setSelected(true);
         buttonTurnOnOff.setToolTipText("Ligar/desligar atualizar automaticamente");
@@ -238,16 +249,17 @@ public class StatusTab {
         buttonTurnOnOff.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_off.png"))); // NOI18N
         buttonTurnOnOff.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonTurnOnOff);
-        
         jToolBar1.add(jSeparator5);
 
+        buttonTimeline.setBackground(new java.awt.Color(240, 240, 240));
         buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
-        buttonTimeline.setToolTipText("Ver timeline de atualizações");
+        buttonTimeline.setToolTipText("Configurações");
         buttonTimeline.setActionCommand("buttonTimeline");
         buttonTimeline.setFocusable(false);
         buttonTimeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonTimeline.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonTimeline);
+        buttonTimeline.getAccessibleContext().setAccessibleDescription("Visualização do Timeline de Atualizações");
         
         reconfigToolBarBasedOnTabType();
         
