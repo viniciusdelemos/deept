@@ -1,10 +1,16 @@
 package gui.visualizations;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
+
+import model.ChartColor;
 
 import prefuse.Constants;
 import prefuse.Display;
@@ -21,6 +27,7 @@ import prefuse.data.Node;
 import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.LabelRenderer;
+import prefuse.util.PrefuseLib;
 import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
 import prefuse.util.force.NBodyForce;
@@ -30,7 +37,7 @@ import prefuse.visual.VisualItem;
 import profusians.controls.GenericToolTipControl;
 import controller.ControllerDeepTwitter;
 
-public class ActiveUsers2 extends Display{
+public class MostActiveUsersView extends Display{
 	public final static String GRAPH = "graph";
 	public final static String NODES = "graph.nodes";
 	private DataSizeAction sizeAction;
@@ -52,7 +59,7 @@ public class ActiveUsers2 extends Display{
     	nothing
     }
 	
-	public ActiveUsers2(Node[] nodesArray, JEditorPane editor) {
+	public MostActiveUsersView(Node[] nodesArray, JEditorPane editor) {
 		super(new Visualization());
 		this.nodesArray = nodesArray;
 		orderedByFollowersList = new ArrayList<Node>(nodesArray.length);
@@ -81,8 +88,8 @@ public class ActiveUsers2 extends Display{
 		
 		nodeRenderer = new LabelRenderer(null, "image");
     	nodeRenderer.setVerticalAlignment(Constants.CENTER);       
-    	nodeRenderer.setHorizontalPadding(0);
-    	nodeRenderer.setVerticalPadding(0);        	
+    	nodeRenderer.setHorizontalPadding(2);
+    	nodeRenderer.setVerticalPadding(2);        	
     	nodeRenderer.setMaxImageDimensions(48,48);
     	nodeRenderer.setRoundedCorner(8,8);
 		m_vis.setRendererFactory(new DefaultRendererFactory(nodeRenderer));
@@ -132,7 +139,7 @@ public class ActiveUsers2 extends Display{
 	
 	public ForceSimulator getForceSimulator() {		
 		
-		ForceSimulator	forceSimulator = new ForceSimulator();
+		ForceSimulator forceSimulator = new ForceSimulator();
 
     	float gravConstant = -0.4f;
     	float minDistance = -0.01f;
@@ -142,11 +149,12 @@ public class ActiveUsers2 extends Display{
     	float springCoeff = 1e-5f;
     	float defaultLength = 0f;    	
     	
-    	forceSimulator.addForce(new NBodyForce(gravConstant, minDistance, theta));
-    	forceSimulator.addForce(new DragForce());
-    	forceSimulator.addForce(new SpringForce(springCoeff, defaultLength));
+    	forceSimulator.addForce(new NBodyForce(-5f, NBodyForce.DEFAULT_MIN_DISTANCE, theta));
+    	forceSimulator.addForce(new DragForce(DragForce.DEFAULT_DRAG_COEFF));
+    	forceSimulator.addForce(new SpringForce(SpringForce.DEFAULT_SPRING_COEFF, SpringForce.DEFAULT_SPRING_LENGTH));
 		
 		return forceSimulator;
+				
 		
 //        fsim.addForce(new NBodyForce(-0.4f, 25f, NBodyForce.DEFAULT_THETA));
 //        fsim.addForce(new SpringForce(1e-5f,0f));
@@ -171,20 +179,11 @@ public class ActiveUsers2 extends Display{
 			
 			orderLists(newNode);
 			
-			VisualItem vi = controller.getNodeItem(newNode); //m_vis.getVisualItem(NODES, newNode);
-			int distMin = 30;
-
-			double x = distMin
-					+ (Math.random() * (this.size().width - (distMin * 2)));
-			double y = distMin
-					+ (Math.random() * (this.size().height - (distMin * 2)));
-
-			vi.setStartX(0);
-			vi.setStartY(0);
-			vi.setX(x);
-			vi.setY(y);
-			vi.setEndX(x);
-			vi.setEndY(y);
+			VisualItem vi = controller.getNodeItem(newNode);			
+			double x = Math.random() * this.getSize().width;
+			double y = Math.random() * this.getSize().height;
+			PrefuseLib.setX(vi, null, x);
+			PrefuseLib.setY(vi, null, y);
 		}
 	}
 	
@@ -230,7 +229,7 @@ public class ActiveUsers2 extends Display{
 	}
 	
 	private	class ListenerAdapter extends ControlAdapter{
-		public ListenerAdapter(ActiveUsers2 display) {
+		public ListenerAdapter(MostActiveUsersView display) {
 			//TODO inserir item clicked - mostrar nodo na rede
 		}	
 	}
@@ -245,13 +244,15 @@ public class ActiveUsers2 extends Display{
 		public void run() {
 			try {
 				while(true) {
-					for(Node n : nodesArray) {
-						System.out.println(n);
-						if(n.getBoolean("isShown")) {
-							//NAO EH DO N, EH DO NEWNODE
-							editor.setText(n.getString("lastStatus"));
-							this.sleep(5000);
-						}
+					Iterator<VisualItem> iterator = m_vis.visibleItems(NODES);
+					while(iterator.hasNext()) {
+						VisualItem n = iterator.next();
+						n.setStroke(new BasicStroke(4f));
+						n.setStrokeColor(ChartColor.LIGHT_BLUE.getRGB());
+						editor.setText("<html><font size=\"4\" face=\"Arial\"><b><font color=\"Navy\">"+n.getString("screenName")+"</font></b>: "+n.getString("latestStatus")+"</font></html>");
+						//editor.setText(n.getString("latestStatus"));
+						this.sleep(7000);
+						n.setStrokeColor(Color.TRANSLUCENT);
 					}
 				}
 			}

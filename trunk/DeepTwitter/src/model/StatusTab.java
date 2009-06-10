@@ -1,4 +1,4 @@
-package controller;
+package model;
 
 import gui.GUITimeline;
 
@@ -17,6 +17,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JToolBar.Separator;
+
+import controller.ControllerDeepTwitter;
 
 import model.StatusesType;
 import model.threads.StatusesTableThread;

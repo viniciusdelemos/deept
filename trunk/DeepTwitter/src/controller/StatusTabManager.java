@@ -1,9 +1,10 @@
 package controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.JTabbedPane;
+
+import model.StatusTab;
 import model.StatusesType;
 
 public class StatusTabManager {
