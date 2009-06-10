@@ -44,7 +44,7 @@ import java.util.List;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @see <a href="http://apiwiki.twitter.com/REST+API+Documentation#Basicuserinformationelement">REST API Documentation - Basic user information element</a>
  */
-public class User extends TwitterResponse implements java.io.Serializable, Comparable<User>{
+public class User extends TwitterResponse implements java.io.Serializable{
 
     static final String[] POSSIBLE_ROOT_NAMES = new String[]{"user", "sender", "recipient"};
     private Twitter twitter;
@@ -504,32 +504,5 @@ public class User extends TwitterResponse implements java.io.Serializable, Compa
                 ", statusFavorited=" + statusFavorited +
                 ", statusInReplyToScreenName='" + statusInReplyToScreenName + '\'' +
                 '}';
-    }
-    
-    public enum TypeComparable{
-    	followers,
-    	friends,
-    	favourites,
-    	tweets,
-    	nothing
-    }
-    
-    private TypeComparable typeComparable = TypeComparable.nothing;
-    
-    public void setTypeComparable(TypeComparable typeComparable){
-    	this.typeComparable = typeComparable;
-    }
-
-	@Override
-	public int compareTo(User u) {
-		if(typeComparable == TypeComparable.followers)
-			return Integer.valueOf(followersCount).compareTo(Integer.valueOf(u.getFollowersCount()));
-		else if(typeComparable == TypeComparable.friends)
-			return Integer.valueOf(friendsCount).compareTo(Integer.valueOf(u.getFriendsCount()));
-		else if(typeComparable == TypeComparable.favourites)
-			return Integer.valueOf(favouritesCount).compareTo(Integer.valueOf(u.getFavouritesCount()));
-		else if(typeComparable == TypeComparable.tweets)
-			return Integer.valueOf(statusesCount).compareTo(Integer.valueOf(u.getStatusesCount()));
-		return 0;
-	}
+    }   
 }

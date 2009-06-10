@@ -339,9 +339,8 @@ public class CategoryManager {
 				if (!word.hasRelatedResponse(responseId)) {
 					tagParser = new TagParser(text, word.getName());
 					if (tagParser.hasTag()) {
-						System.out.println(text);
-						System.out.println("palavra: " + word.getName());
-
+						//System.out.println(text);
+						//System.out.println("palavra: " + word.getName());
 						word.addRelatedResponse(responseId);
 						formatItem(item, c);
 						// System.out.println("response "+responseId+" categorizada em "+c.getName()+" pela palavra "+word.getName()+" e cor "+c.getColor());
@@ -361,7 +360,13 @@ public class CategoryManager {
 		String categories = item
 				.getString(StatusesDataTable.ColNames.CATEGORIES.toString());
 
-		if (categories != null && !categories.contains(c.getName() + ",")) {
+		if (categories != null){
+			String[] aux = categories.split(",");
+			for(String s : aux) {				 
+				if(s.trim().equals(c.getName())) {
+					return;
+				}
+			}
 			categories = categories + ", " + c.getName();
 			item.setFillColor(Color.black.getRGB());
 			item.setString(StatusesDataTable.ColNames.CATEGORIES.toString(),

@@ -1,38 +1,24 @@
 package model;
 
+import gui.visualizations.CategoryEdit;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.text.StyleConstants.FontConstants;
 
 import model.threads.AddFollowersThread;
 import model.threads.AddFriendsThread;
@@ -45,8 +31,6 @@ import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
-import prefuse.action.assignment.DataSizeAction;
-import prefuse.action.filter.VisibilityFilter;
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.PanControl;
@@ -59,10 +43,6 @@ import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
-import prefuse.data.expression.AndPredicate;
-import prefuse.data.expression.Expression;
-import prefuse.data.expression.Predicate;
-import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.data.search.PrefixSearchTupleSet;
 import prefuse.data.search.SearchTupleSet;
@@ -75,7 +55,6 @@ import prefuse.render.PolygonRenderer;
 import prefuse.render.Renderer;
 import prefuse.util.ColorLib;
 import prefuse.util.FontLib;
-import prefuse.util.UpdateListener;
 import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
 import prefuse.util.force.NBodyForce;
@@ -92,11 +71,7 @@ import profusians.controls.CenterOnClickControl;
 import profusians.controls.GenericToolTipControl;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
-import controller.MostActiveUsersController;
 import controller.StatusTab;
-import gui.GUIMostActiveUsers;
-import gui.visualizations.ActiveUsers2;
-import gui.visualizations.CategoryEdit;
 
 @SuppressWarnings("serial")
 public class GraphicManager extends Display { 
@@ -127,13 +102,9 @@ public class GraphicManager extends Display {
 	private LabelRenderer nodeRenderer;
 	private SearchTupleSet searchResultTuples;
 	
-	private MostActiveUsersController mostActiveUsersController;
-	
     public GraphicManager()
     {    	
-    	super(new Visualization());
-    	
-    	mostActiveUsersController = new MostActiveUsersController();
+    	super(new Visualization());   	
     	
     	controller = ControllerDeepTwitter.getInstance();
     	isTwitterUser = controller.isTwitterUser();    	
@@ -149,17 +120,17 @@ public class GraphicManager extends Display {
     	g = new Graph(true);
     	g.addColumn("id", int.class);
     	g.addColumn("idTwitter",int.class);
-    	//g.addColumn("screenName", String.class);
+    	g.addColumn("screenName", String.class);
     	g.addColumn("name", String.class);
     	g.addColumn("image", String.class);
     	
     	g.addColumn("location", String.class);
     	g.addColumn("description", String.class);
-    	g.addColumn("protected", Boolean.class);
+    	g.addColumn("protected", boolean.class);
     	g.addColumn("friendsCount", int.class);
     	g.addColumn("followersCount", int.class);
     	g.addColumn("statusesCount", int.class);
-//    	getFavouritesCount()
+    	g.addColumn("favoritesCount", int.class);
 //    	getProfileBackgroundImageUrl()
 //    	getProfileBackgroundColor()
 //    	getProfileTextColor()
@@ -200,7 +171,7 @@ public class GraphicManager extends Display {
     	drf.add("ingroup('groups')", polyR);
     	
     	groupManager = new GroupManager(this);
- 
+
     	m_vis.setRendererFactory(drf);
     	   	
     	//definindo cores padrao
@@ -366,7 +337,7 @@ public class GraphicManager extends Display {
 			Node newNode = g.addNode();
 			newNode.set("id", numUsers);
 			newNode.set("idTwitter", u.getId());
-			//newNode.set("screenName", u.getScreenName());
+			newNode.set("screenName", u.getScreenName());
 			newNode.set("name", u.getName());
 			newNode.set("image", u.getProfileImageURL().toString());
 			newNode.set("latestStatus",u.getStatusText());
@@ -377,6 +348,8 @@ public class GraphicManager extends Display {
 			newNode.set("friendsCount", u.getFriendsCount());
 			newNode.set("followersCount", u.getFollowersCount());
 			newNode.set("statusesCount", u.getStatusesCount());
+			newNode.set("favoritesCount", u.getFavouritesCount());
+			
 			
 			newNode.set("isOpen", false);
 			newNode.set("isShowingFriends", false);
@@ -473,6 +446,17 @@ public class GraphicManager extends Display {
 	
 	public Node getNodeByTwitterId(int id) {
 		return nodesMap.get(id);			
+	}
+	
+	public Node[] getNodes() {		
+		Node[] nodeArray = new Node[g.getNodeCount()];
+		for(int i=0; i<g.getNodeCount(); i++)
+			nodeArray[i] = g.getNode(i);
+		return nodeArray;
+	}
+	
+	public VisualItem getNodeItem(Node node) {
+		return m_vis.getVisualItem(NODES, node);
 	}
 	
 //	public String getUserNameByScreenName(String screenName){
@@ -776,41 +760,7 @@ public class GraphicManager extends Display {
 //    					controller.mostActiveUsersForAll();
 //    				mostActiveUsersController.setUsers(mostActiveUsers);'
     				
-    				GUIMostActiveUsers mostActiveUsersWindow = new GUIMostActiveUsers();
-    				JSplitPane splitPane = mostActiveUsersWindow.getSplitPane();
-    				final ActiveUsers2 activeUsers = new ActiveUsers2(socialNetwork.getUsers());
-    				splitPane.setTopComponent(activeUsers);
-    				splitPane.setDividerLocation(600);
-    				
-    				JPanel menuPanel = mostActiveUsersWindow.getMenuPanel();
-    				JButton tweets = new JButton(new ImageIcon("tweets.png"));
-    				menuPanel.add(new JLabel("teste"));
-    				menuPanel.add(tweets);
-    				tweets.addActionListener(new ActionListener(){
-						@Override
-						public void actionPerformed(ActionEvent arg0) {
-							Random r = new Random();
-							int i = r.nextInt(4);
-							if(i==0) {
-								System.out.println("followers");
-								activeUsers.setSizeActionDataField("followersCount");
-							}
-							else if(i==1) {
-								System.out.println("friends");
-								activeUsers.setSizeActionDataField("friendsCount");
-							}
-							else if(i==2) {
-								System.out.println("tweets");
-								activeUsers.setSizeActionDataField("statusesCount");
-							}
-							else {
-								System.out.println("favorites");
-								activeUsers.setSizeActionDataField("favoritesCount");
-							}
-						}
-    				});
-    				
-    				mostActiveUsersWindow.setVisible(true);
+    				controller.openGUIMostActiveUsersWindow(null);    
     			}
     		});
     		categorias.addActionListener(new ActionListener(){
@@ -867,28 +817,7 @@ public class GraphicManager extends Display {
 				}});
 			mostActiveUsers.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
-					java.util.List<User> users = new java.util.ArrayList<User>();
-					java.util.List<Integer> idsUsers = new java.util.ArrayList<Integer>();
-					
-					AggregateItem ai = item;
-					Iterator<NodeItem> iterator = ai.items();
-
-					while(iterator.hasNext()){
-						NodeItem nodeItem = iterator.next();
-						int idTwitter = nodeItem.getInt("idTwitter");
-						if(idsUsers.contains(idTwitter) == false)
-							idsUsers.add(idTwitter);
-					}
-					
-					for(int i : idsUsers){
-						users.add(socialNetwork.getUser(i));
-					}
-					
-					if(users.size()<3)
-						controller.showMessageDialog("Para a visualização dos Usuários Mais Ativos " +
-								"é necessários no mínimo dois usuários!", MessageType.WARNING);
-					else
-						mostActiveUsersController.setUsers(users);
+					//TODO
 				}
 			});
 //			categoriesGroup.addActionListener(new ActionListener(){
