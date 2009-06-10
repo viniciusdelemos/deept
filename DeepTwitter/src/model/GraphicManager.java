@@ -1,6 +1,6 @@
 package model;
 
-import gui.visualizations.CategoryEdit;
+import gui.GUICategoryEdit;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
@@ -48,6 +50,7 @@ import prefuse.data.search.PrefixSearchTupleSet;
 import prefuse.data.search.SearchTupleSet;
 import prefuse.data.tuple.DefaultTupleSet;
 import prefuse.data.tuple.TupleSet;
+import prefuse.demos.TreeView;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
@@ -72,6 +75,7 @@ import profusians.controls.GenericToolTipControl;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
 import controller.StatusTab;
+
 
 @SuppressWarnings("serial")
 public class GraphicManager extends Display { 
@@ -637,6 +641,7 @@ public class GraphicManager extends Display {
     		JMenuItem removeFromGroup = new JMenuItem("Remover do Grupo");
     		JMenuItem teste = new JMenuItem("Teste");
     		JMenuItem categorias = new JMenuItem("Categorias");
+    		JMenuItem treeView = new JMenuItem("TreeView");
     		 
     		Integer loggedUserId = Integer.parseInt(controller.getLoggedUserId());
     		Node mainUserNode = getNodeByTwitterId(loggedUserId);
@@ -648,6 +653,7 @@ public class GraphicManager extends Display {
     		popupMenu.add(favorites);
     		popupMenu.add(teste);
     		popupMenu.add(categorias);
+    		popupMenu.add(treeView);
     		
     		if(!item.get("idTwitter").equals(loggedUserId)) { 
     			popupMenu.addSeparator();
@@ -765,7 +771,26 @@ public class GraphicManager extends Display {
     		});
     		categorias.addActionListener(new ActionListener(){
     			public void actionPerformed(ActionEvent e) {
-    				CategoryEdit.openFrame();
+    				GUICategoryEdit.openFrame();
+    			}
+    		});
+    		treeView.addActionListener(new ActionListener(){
+    			public void actionPerformed(ActionEvent e) {
+    				
+    					TreeView tree = null;
+    				
+    			        String infile = "/chi-ontology.xml.gz";
+    			        String label = "name";
+    			        
+    			        JComponent treeview = tree.demo(infile, label);
+    			        
+    			        JFrame frame = new JFrame("p r e f u s e  |  t r e e v i e w");
+    			        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    			        frame.setContentPane(treeview);
+    			        frame.pack();
+    			        frame.setVisible(true);
+    			    
+    				
     			}
     		});
     		//create popupMenu for 'background'

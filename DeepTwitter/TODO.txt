@@ -26,3 +26,12 @@ TODO:
 - permitir esconder/deletar nodos e inserir botao para ver todos;
 - escolher forças de atração/repulsão melhores;
 - setar tooltips do login;
+
+vis categorias
+- arrumar bug de alterar texto igual ao a um que jah exista
+- arrumar evento do enter
+- tenta fazer poder editar quando der 2 cliques na categoria ou palavra (tem exemplos disto no listener da graphicmanager)
+
+vis usuarios mais ativos
+- As mensagens estão aparecendo rápido demaiss!
+- Seria bem legal se a cada mensagem que aparecesse, o usuário correspondente fosse marcado, tipo selecionasse ele com um fundo amarelo e depois desselecionasse ;)
