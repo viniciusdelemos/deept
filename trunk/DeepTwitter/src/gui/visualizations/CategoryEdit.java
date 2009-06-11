@@ -81,8 +81,7 @@ import controller.Category;
 import controller.CategoryManager;
 import controller.CategoryWord;
 
-
-public class CategoryEdit extends Display{
+public class CategoryEdit extends Display {
 
 	private final static String tree = "tree";
 	private final static String treeNodes = "tree.nodes";
@@ -125,8 +124,8 @@ public class CategoryEdit extends Display{
 	public Tree getTree() {
 		return t;
 	}
-	
-	public NodeLinkTreeLayout getTreeLayout(){
+
+	public NodeLinkTreeLayout getTreeLayout() {
 		return treeLayout;
 	}
 
@@ -420,72 +419,49 @@ public class CategoryEdit extends Display{
 
 	} // end of inner class TreeMapColorAction
 
-	public static class PopupMenuController extends ControlAdapter implements
+	private class PopupMenuController extends ControlAdapter implements
 			ActionListener {
 
-		private Graph g;
-		private Display d;
 		private Visualization vis;
+		private Display d;
 		private VisualItem clickedItem;
 
 		private JPopupMenu nodePopupMenu;
-		private JPopupMenu popupMenu;
-
-		private Point2D mousePosition = new Point2D.Double();
-		private VisualItem nodeVisualDummy;
-		public Node nodeSourceDummy;
-		public Edge edgeDummy;
-		private boolean creatingEdge = false;
 		private boolean editing;
 
+		private final String l_editLabel = "editLabel";
+		private final String l_delete = "delete";
+		private final String l_addCategory = "addCategory";
+		private final String l_addWord = "addWord";
+
+		private JMenuItem delete;
+		private JMenuItem edit;
+		private JMenuItem addCategory;
+		private JMenuItem addWord;
+
+		private String defaultTextNewCategory = "Nova Categoria";
+		private String defaultTextNewWord = "Nova Palavra";
+
 		public PopupMenuController(Visualization vis) {
-			this.vis = vis;
-			this.g = (Graph) vis.getSourceData(tree);
 			this.d = vis.getDisplay(0);
+			this.vis = vis;
 
-			//createDummy();
-
-			// create popupMenu for nodes
 			nodePopupMenu = new JPopupMenu();
 
-			JMenuItem delete = new JMenuItem("delete", 'd');
-			JMenuItem editText = new JMenuItem("edit Name", 'a');
-			JMenuItem addEdge = new JMenuItem("add Edge", 'e');
-			JMenuItem addNode = new JMenuItem("add Node", 'n');
+			delete = new JMenuItem("Excluir");
+			edit = new JMenuItem("Editar nome");
+			addCategory = new JMenuItem("Adicionar categoria");
+			addWord = new JMenuItem("Adicionar palavra");
 
-			delete.setActionCommand("node_delete");
-			editText.setActionCommand("node_editText");
-			addEdge.setActionCommand("node_addEdge");
-			addNode.setActionCommand("node_addNode");
+			delete.setActionCommand(l_delete);
+			edit.setActionCommand(l_editLabel);
+			addCategory.setActionCommand(l_addCategory);
+			addWord.setActionCommand(l_addWord);
 
-			//nodePopupMenu.addSeparator();
-			//nodePopupMenu.add(delete);
-			//nodePopupMenu.addSeparator();
-			nodePopupMenu.add(editText);
-			//nodePopupMenu.addSeparator();
-			//nodePopupMenu.add(addEdge);
-			//nodePopupMenu.add(addNode);
-
-			delete.setMnemonic(KeyEvent.VK_D);
-			editText.setMnemonic(KeyEvent.VK_A);
-			addEdge.setMnemonic(KeyEvent.VK_E);
-			addNode.setMnemonic(KeyEvent.VK_N);
-
+			edit.addActionListener(this);
+			addCategory.addActionListener(this);
+			addWord.addActionListener(this);
 			delete.addActionListener(this);
-			editText.addActionListener(this);
-			addEdge.addActionListener(this);
-			addNode.addActionListener(this);
-
-			/*
-			// create popupMenu for 'background'
-			popupMenu = new JPopupMenu();
-			addNode = new JMenuItem("add Node", 'n');
-			addNode.setActionCommand("addNode");
-			popupMenu.addSeparator();
-			popupMenu.add(addNode);
-			addNode.setMnemonic(KeyEvent.VK_N);
-			addNode.addActionListener(this);
-			*/
 
 		}
 
@@ -497,20 +473,32 @@ public class CategoryEdit extends Display{
 		public void itemClicked(VisualItem item, MouseEvent e) {
 			if (SwingUtilities.isRightMouseButton(e)) {
 				clickedItem = item;
-				// on rightclick, stop the edge creation
-//				if (creatingEdge) {
-//					stopEdgeCreation();
-//					return;
-//				}
-
 				if (item instanceof NodeItem) {
+
+					Visualization vis = item.getVisualization();
+					TupleSet ts = vis.getFocusGroup(Visualization.FOCUS_ITEMS);
+					ts.setTuple(item);
+					vis.run("filter");
+
+					nodePopupMenu.removeAll();
+
+					int type = item.getInt("type");
+
+					if (type == m_Categories) {
+						nodePopupMenu.add(addCategory);
+					} else if (type == m_Category) {
+						nodePopupMenu.add(edit);
+						nodePopupMenu.add(delete);
+						nodePopupMenu.add(addWord);
+					} else if (type == m_Word) {
+						nodePopupMenu.add(edit);
+						nodePopupMenu.add(delete);
+					}
 					nodePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			} else if (SwingUtilities.isLeftMouseButton(e)) {
-//				if (creatingEdge) {
-//					g.addEdge(edgeDummy.getSourceNode(), (Node) item
-//							.getSourceTuple());
-//				}
+				if (editing)
+					stopEditing();
 			}
 		}
 
@@ -518,190 +506,162 @@ public class CategoryEdit extends Display{
 		public void mouseClicked(MouseEvent e) {
 			if (editing) {
 				stopEditing();
+				vis.run("filter");
 			}
 			if (SwingUtilities.isRightMouseButton(e)) {
 				clickedItem = null;
-//				if (creatingEdge)
-//					stopEdgeCreation();
-//				popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
 			// called, when keyReleased events on displays textEditor are fired
+			System.out.println(e.getKeyChar() + " " + e.getKeyCode() + " "
+					+ editing + " keyCodeEnter: " + KeyEvent.VK_ENTER);
 			if (e.getKeyCode() == KeyEvent.VK_ENTER && editing) {
 				stopEditing();
 			}
-			System.out.println("FOI");
 		}
 
 		@Override
 		public void itemKeyReleased(VisualItem item, KeyEvent e) {
 			keyReleased(e);
+			System.out.println("FOi");
 		}
 
 		/**
 		 * called on popupMenu Action
 		 */
 		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().startsWith("node")) {
-				if (e.getActionCommand().endsWith("delete")) {
-					//g.removeNode((Node) clickedItem.getSourceTuple());
-				} else if (e.getActionCommand().endsWith("editText")) {
-					startEditing(clickedItem);
-				} else if (e.getActionCommand().endsWith("addEdge")) {
-					//creatingEdge = true;
-					//createTemporaryEdgeFromSourceToDummy(clickedItem);
-				} else if (e.getActionCommand().endsWith("addNode")) {
-					//addNewNode(clickedItem);
-				}
-			} else {
-				if (e.getActionCommand().equals("addNode")) {
-//					int node = (int) (Math.random() * (g.getNodeCount() - 1));
-//					Node source = g.getNode(node); // random source
-//					addNewNode(source);
-				} else {
-
-				}
+			if (e.getActionCommand().equals(l_editLabel)) {
+				startEditing(clickedItem);
+			} else if (e.getActionCommand().equals(l_addCategory)) {
+				addCategory();
+			} else if (e.getActionCommand().equals(l_addWord)) {
+				addWord();
+			} else if (e.getActionCommand().equals(l_delete)) {
+				delete();
 			}
 		}
 
 		// ---------------------------------------------
 		// --- helper methods
 		// ---------------------------------------------
+		private void delete() {
+
+			if (clickedItem != null) {
+				Node n = (Node) m_vis.getSourceTuple(clickedItem);
+
+				if (n.getInt("type") == m_Category) {
+					// Primeiro remove palavras do nodo
+					// Iterator i = t.children(n);
+					// while (i.hasNext()) {
+					// Node word = (Node) i.next();
+					// t.removeNode(word);
+					// }
+
+					// Depois remove categoria
+					t.removeNode(n);
+				} else if (n.getInt("type") == m_Word) {
+					t.removeNode(n);
+				}
+			}
+
+			m_vis.run("filter");
+			editedTrue("delete");
+
+		}
+
+		// TODO
+		// se usuario nao salvar, e tentar fechar, avisar ele
+		// se usuario salvar, colocar mensagem de que foi salvo
+
+		private void addWord() {
+
+			if (clickedItem != null) {
+				Node n = (Node) m_vis.getSourceTuple(clickedItem);
+
+				Iterator i = t.children(n);
+				while (i.hasNext()) {
+					Node word = (Node) i.next();
+					if (word.getString(c_label).toLowerCase().equals(
+							defaultTextNewWord.toLowerCase())) {
+						JOptionPane.showMessageDialog(null,
+								"Primeiro edite a palavra com label "
+										+ defaultTextNewWord + " da Categoria "
+										+ n.getString(c_label), "Atenção",
+								JOptionPane.WARNING_MESSAGE);
+						// TODO colocar como modal do frame
+						return;
+					}
+				}
+
+				Node newWord = t.addNode();
+				newWord.set(c_label, defaultTextNewWord);
+				newWord.set("type", m_Word);
+
+				t.addChildEdge(n, newWord);
+
+				// Adicionando no grupo para search
+				// TupleSet ts = vis.getFocusGroup(Visualization.SEARCH_ITEMS);
+				// ts.addTuple(newWord);
+
+			}
+			m_vis.run("filter");
+			editedTrue("addWord");
+		}
+
+		private void addCategory() {
+
+			Iterator i = t.children(t.getRoot());
+			while (i.hasNext()) {
+				Node ch = (Node) i.next();
+
+				if (ch.getString(c_label).toLowerCase().equals(
+						defaultTextNewCategory.toLowerCase())) {
+					JOptionPane.showMessageDialog(null,
+							"Primeiro edite a categoria com label "
+									+ defaultTextNewCategory, "Atenção",
+							JOptionPane.WARNING_MESSAGE);
+					// TODO colocar como modal do frame
+					return;
+				}
+			}
+
+			Node n = t.addNode();
+			n.set(c_label, defaultTextNewCategory);
+			n.set("type", m_Category);
+
+			t.addChildEdge(t.getRoot(), n);
+
+			// Adicionando no grupo para search
+			// TupleSet ts = vis.getFocusGroup(Visualization.SEARCH_ITEMS);
+			// VisualItem visualItem = getVisualization().getVisualItem(tree,
+			// n);
+			// ts.addTuple(visualItem);
+
+			m_vis.run("filter");
+			editedTrue("addCategory");
+
+		}
 
 		private void startEditing(VisualItem item) {
+			m_vis.run("filter");
 			editing = true;
 			d.editText(item, c_label);
+			editedTrue("startEditing: " + item);
 		}
 
 		private void stopEditing() {
 			editing = false;
 			d.stopEditing();
+			m_vis.run("filter");
+			editedTrue("stopEditing");
 		}
 
-//		private void addNewNode(VisualItem source) {
-//			addNewNode((Node) source.getSourceTuple());
-//		}
-//
-//		private void addNewNode(Node source) {
-//			Node n = g.addNode(); // create a new node
-//			n.set(VisualItem.LABEL, "Node " + n.getRow()); // assign a new name
-//			g.addEdge(source, n); // add an edge from source to the new node
-//		}
-
-		// ---------------------------------------------
-		// --- methods for edgeCreation
-		// ---------------------------------------------
-
-//		private void stopEdgeCreation() {
-//			creatingEdge = false;
-//			removeEdgeDummy();
-//		}
-//
-//		/**
-//		 * Removes all dummies, the node and the two edges. Additionally sets
-//		 * the variables who stored a reference to these dummies to null.
-//		 */
-//		public void removeAllDummies() {
-//			if (nodeSourceDummy != null)
-//				g.removeNode(nodeSourceDummy);
-//			edgeDummy = null;
-//			nodeSourceDummy = null;
-//			nodeVisualDummy = null;
-//		}
-//
-//		/**
-//		 * Removes all edge dummies, if the references stored to these dummies
-//		 * are not null. Additionally sets the references to these dummies to
-//		 * null.
-//		 */
-//		private void removeEdgeDummy() {
-//			if (edgeDummy != null) {
-//				g.removeEdge(edgeDummy);
-//				edgeDummy = null;
-//			}
-//		}
-//
-//		public VisualItem createDummy() {
-//			// create the dummy node for the creatingEdge mode
-//			nodeSourceDummy = g.addNode();
-//			nodeSourceDummy.set(VisualItem.LABEL, "");
-//
-//			nodeVisualDummy = vis.getVisualItem(treeNodes, nodeSourceDummy);
-//			nodeVisualDummy.setSize(0.0);
-//			nodeVisualDummy.setVisible(false);
-//
-//			/*
-//			 * initially set the dummy's location. upon mouseMove events, we
-//			 * will do that there. otherwise, the dummy would appear on top left
-//			 * position until the mouse moves
-//			 */
-//			double x = d.getBounds().getCenterX();
-//			double y = d.getBounds().getCenterY();
-//			mousePosition.setLocation(x, y);
-//			nodeVisualDummy.setX(mousePosition.getX());
-//			nodeVisualDummy.setY(mousePosition.getY());
-//			return nodeVisualDummy;
-//		}
-//
-//		public void removeNodeDummy() {
-//			g.removeNode(nodeSourceDummy);
-//			nodeSourceDummy = null;
-//			nodeVisualDummy = null;
-//		}
-//
-//		public void createTemporaryEdgeFromSourceToDummy(Node source) {
-//			if (edgeDummy == null) {
-//				edgeDummy = g.addEdge(source, nodeSourceDummy);
-//			}
-//		}
-//
-//		public void createTemporaryEdgeFromDummyToTarget(Node target) {
-//			if (edgeDummy == null) {
-//				edgeDummy = g.addEdge((Node) nodeVisualDummy.getSourceTuple(),
-//						target);
-//			}
-//		}
-//
-//		/**
-//		 * @param source
-//		 *            the item to use as source for the dummy edge
-//		 */
-//		public void createTemporaryEdgeFromSourceToDummy(VisualItem source) {
-//			createTemporaryEdgeFromSourceToDummy((Node) source.getSourceTuple());
-//		}
-//
-//		/**
-//		 * @param target
-//		 *            the item to use as target for the dummy edge
-//		 */
-//		public void createTemporaryEdgeFromDummyToTarget(VisualItem target) {
-//			createTemporaryEdgeFromDummyToTarget((Node) target.getSourceTuple());
-//		}
-//
-//		@Override
-//		public void mouseMoved(MouseEvent e) {
-//			// necessary, if you have no dummy and this ControlAdapter is
-//			// running
-//			if (nodeVisualDummy == null)
-//				return;
-//			// update the coordinates of the dummy-node to the mouselocation so
-//			// the tempEdge is drawn to the mouselocation too
-//			d.getAbsoluteCoordinate(e.getPoint(), mousePosition);
-//			nodeVisualDummy.setX(mousePosition.getX());
-//			nodeVisualDummy.setY(mousePosition.getY());
-//		}
-
-		/**
-		 * only necessary if edge-creation is used together with aggregates and
-		 * the edge should move on when mousepointer moves within an aggregate
-		 */
-		@Override
-		public void itemMoved(VisualItem item, MouseEvent e) {
-			if (item instanceof AggregateItem)
-				mouseMoved(e);
+		private void editedTrue(String from) {
+			edited = true;
+			// System.out.println("Edited from: "+from);
 		}
 
 	} // end of inner class PopupMenuController
