@@ -195,9 +195,11 @@ public class GUICategoryEdit {
 		} else {
 			System.out.println("Não instanciou nova tela");
 		}
+		categoryEdit.getTreeLayout().setLayoutAnchor(new Point2D.Double(300, 300));
 		// treeLayout.setLayoutAnchor(new Point2D.Double(150, 300));
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
+		categoryEdit.getTreeLayout().setLayoutAnchor(new Point2D.Double(-200, -25));
 		// treeLayout.setLayoutAnchor(new Point2D.Double(-200, -25));
 
 	}
