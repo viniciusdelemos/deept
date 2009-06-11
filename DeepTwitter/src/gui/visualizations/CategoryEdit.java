@@ -94,7 +94,7 @@ public class CategoryEdit extends Display{
 	private static String c_label = "label";
 	private int m_orientation = Constants.ORIENT_LEFT_RIGHT;
 
-	private static Tree t;
+	private Tree t;
 	private static CategoryManager cManager = CategoryManager.getInstance();
 
 	private final int m_Categories = 0;
@@ -104,7 +104,7 @@ public class CategoryEdit extends Display{
 	// Se as categorias foram editadas para dar mensagem para o usuario
 	private boolean edited = false;
 
-	private static NodeLinkTreeLayout treeLayout;
+	private NodeLinkTreeLayout treeLayout;
 
 	// TODO
 	// visualizacao muda de lugar no primeiro clique
@@ -124,6 +124,10 @@ public class CategoryEdit extends Display{
 
 	public Tree getTree() {
 		return t;
+	}
+	
+	public NodeLinkTreeLayout getTreeLayout(){
+		return treeLayout;
 	}
 
 	public CategoryEdit() {
