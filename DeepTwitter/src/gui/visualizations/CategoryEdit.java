@@ -1,34 +1,18 @@
 package gui.visualizations;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import prefuse.Constants;
@@ -48,15 +32,12 @@ import prefuse.action.filter.FisheyeTreeFilter;
 import prefuse.action.layout.CollapsedSubtreeLayout;
 import prefuse.action.layout.graph.NodeLinkTreeLayout;
 import prefuse.activity.SlowInSlowOutPacer;
-import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.FocusControl;
 import prefuse.controls.PanControl;
 import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
-import prefuse.data.Edge;
-import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Tree;
 import prefuse.data.Tuple;
@@ -69,10 +50,6 @@ import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.FontLib;
-import prefuse.util.PrefuseLib;
-import prefuse.util.ui.JFastLabel;
-import prefuse.util.ui.JSearchPanel;
-import prefuse.visual.AggregateItem;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
@@ -90,44 +67,24 @@ public class CategoryEdit extends Display {
 	private LabelRenderer m_nodeRenderer;
 	private EdgeRenderer m_edgeRenderer;
 
-	private static String c_label = "label";
+	
 	private int m_orientation = Constants.ORIENT_LEFT_RIGHT;
 
 	private Tree t;
 	private static CategoryManager cManager = CategoryManager.getInstance();
 
-	private final int m_Categories = 0;
-	private final int m_Category = 1;
-	private final int m_Word = 2;
+	private final int t_Categories = 0;
+	private final int t_Category = 1;
+	private final int t_Word = 2;
+	
+	private static String c_label = "label";
+	private static String c_type = "type";
 
 	// Se as categorias foram editadas para dar mensagem para o usuario
 	private boolean edited = false;
 
 	private NodeLinkTreeLayout treeLayout;
 
-	// TODO
-	// visualizacao muda de lugar no primeiro clique
-	// ao apertar enter, nada acontece
-
-	public String c_label() {
-		return c_label;
-	}
-
-	public boolean isEdited() {
-		return edited;
-	}
-
-	public void setEdited(boolean b) {
-		edited = b;
-	}
-
-	public Tree getTree() {
-		return t;
-	}
-
-	public NodeLinkTreeLayout getTreeLayout() {
-		return treeLayout;
-	}
 
 	public CategoryEdit() {
 		super(new Visualization());
@@ -135,12 +92,12 @@ public class CategoryEdit extends Display {
 		t = new Tree();
 
 		t.addColumn(c_label, String.class);
-		t.addColumn("type", int.class);
+		t.addColumn(c_type, int.class);
 		// 0 Category, 1 Categories, 2 Words of category
 
 		Node root = t.addRoot();
 		root.set(c_label, "Categorias");
-		root.set("type", m_Categories);
+		root.set(c_type, t_Categories);
 
 		// abre categorias do CategoryManager
 		this.openCategories();
@@ -238,6 +195,7 @@ public class CategoryEdit extends Display {
 		addControlListener(new PanControl());
 		addControlListener(new FocusControl(1, "filter"));
 		addControlListener(popup);
+		getTextEditor().addKeyListener(popup);
 
 		registerKeyboardAction(new OrientAction(Constants.ORIENT_LEFT_RIGHT),
 				"left-to-right", KeyStroke.getKeyStroke("ctrl 1"), WHEN_FOCUSED);
@@ -254,7 +212,7 @@ public class CategoryEdit extends Display {
 		setOrientation(m_orientation);
 		m_vis.run("filter");
 
-		search = new PrefixSearchTupleSet();
+		TupleSet search = new PrefixSearchTupleSet();
 		m_vis.addFocusGroup(Visualization.SEARCH_ITEMS, search);
 		search.addTupleSetListener(new TupleSetListener() {
 			public void tupleSetChanged(TupleSet t, Tuple[] add, Tuple[] rem) {
@@ -265,8 +223,26 @@ public class CategoryEdit extends Display {
 		});
 
 	}
+	
+	public String c_label() {
+		return c_label;
+	}
 
-	private TupleSet search;
+	public boolean isEdited() {
+		return edited;
+	}
+
+	public void setEdited(boolean b) {
+		edited = b;
+	}
+
+	public Tree getTree() {
+		return t;
+	}
+
+	public NodeLinkTreeLayout getTreeLayout() {
+		return treeLayout;
+	}
 
 	private void openCategories() {
 
@@ -277,7 +253,7 @@ public class CategoryEdit extends Display {
 			Node category = t.addNode();
 
 			category.set(c_label, c.getName());
-			category.set("type", m_Category);
+			category.set(c_type, t_Category);
 
 			t.addChildEdge(t.getRoot(), category);
 
@@ -285,7 +261,7 @@ public class CategoryEdit extends Display {
 
 				Node word = t.addChild(category);
 				word.set("label", w.getName());
-				word.set("type", m_Word);
+				word.set(c_type, t_Word);
 
 			}
 		}
@@ -399,7 +375,7 @@ public class CategoryEdit extends Display {
 			}
 		}
 	}
-
+	
 	public static class NodeColorAction extends ColorAction {
 
 		public NodeColorAction(String group) {
@@ -482,15 +458,15 @@ public class CategoryEdit extends Display {
 
 					nodePopupMenu.removeAll();
 
-					int type = item.getInt("type");
+					int type = item.getInt(c_type);
 
-					if (type == m_Categories) {
+					if (type == t_Categories) {
 						nodePopupMenu.add(addCategory);
-					} else if (type == m_Category) {
+					} else if (type == t_Category) {
 						nodePopupMenu.add(edit);
 						nodePopupMenu.add(delete);
 						nodePopupMenu.add(addWord);
-					} else if (type == m_Word) {
+					} else if (type == t_Word) {
 						nodePopupMenu.add(edit);
 						nodePopupMenu.add(delete);
 					}
@@ -516,8 +492,6 @@ public class CategoryEdit extends Display {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			// called, when keyReleased events on displays textEditor are fired
-			System.out.println(e.getKeyChar() + " " + e.getKeyCode() + " "
-					+ editing + " keyCodeEnter: " + KeyEvent.VK_ENTER);
 			if (e.getKeyCode() == KeyEvent.VK_ENTER && editing) {
 				stopEditing();
 			}
@@ -526,7 +500,6 @@ public class CategoryEdit extends Display {
 		@Override
 		public void itemKeyReleased(VisualItem item, KeyEvent e) {
 			keyReleased(e);
-			System.out.println("FOi");
 		}
 
 		/**
@@ -552,7 +525,7 @@ public class CategoryEdit extends Display {
 			if (clickedItem != null) {
 				Node n = (Node) m_vis.getSourceTuple(clickedItem);
 
-				if (n.getInt("type") == m_Category) {
+				if (n.getInt(c_type) == t_Category) {
 					// Primeiro remove palavras do nodo
 					// Iterator i = t.children(n);
 					// while (i.hasNext()) {
@@ -562,7 +535,7 @@ public class CategoryEdit extends Display {
 
 					// Depois remove categoria
 					t.removeNode(n);
-				} else if (n.getInt("type") == m_Word) {
+				} else if (n.getInt(c_type) == t_Word) {
 					t.removeNode(n);
 				}
 			}
@@ -598,7 +571,7 @@ public class CategoryEdit extends Display {
 
 				Node newWord = t.addNode();
 				newWord.set(c_label, defaultTextNewWord);
-				newWord.set("type", m_Word);
+				newWord.set(c_type, t_Word);
 
 				t.addChildEdge(n, newWord);
 
@@ -630,7 +603,7 @@ public class CategoryEdit extends Display {
 
 			Node n = t.addNode();
 			n.set(c_label, defaultTextNewCategory);
-			n.set("type", m_Category);
+			n.set(c_type, t_Category);
 
 			t.addChildEdge(t.getRoot(), n);
 
@@ -653,10 +626,20 @@ public class CategoryEdit extends Display {
 		}
 
 		private void stopEditing() {
+			System.out.println(clickedItem.getString(c_label) + "\t" + d.getTextEditor().getText());
 			editing = false;
 			d.stopEditing();
 			m_vis.run("filter");
 			editedTrue("stopEditing");
+		}
+		
+		private void isEquals(){
+			if(clickedItem.getInt(c_type) == t_Category){
+				
+			}
+			else if(clickedItem.getInt(c_type) == t_Word){
+				
+			}
 		}
 
 		private void editedTrue(String from) {
