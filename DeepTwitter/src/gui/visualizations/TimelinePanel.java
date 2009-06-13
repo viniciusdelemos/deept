@@ -95,6 +95,7 @@ public class TimelinePanel extends JPanel {
 		STATUSES, X_AXIS, Y_AXIS
 	}
     
+    
     public TimelinePanel(final List<TwitterResponse> statusesList, boolean isGroup, String userName) {
         super(new BorderLayout());
         panelTitle += userName;
@@ -300,7 +301,11 @@ public class TimelinePanel extends JPanel {
         
         categoriesComboBox.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {		
+			public void actionPerformed(ActionEvent e) {
+				
+				if(categoriesComboBox.getSelectedItem() == null)
+					return;
+				
 				for(int i=statusesFilter.size()-1; i>=0; i--) {
 					Predicate p = statusesFilter.get(i);
 					if(p.toString().contains("CATEGORIES")) {						
@@ -316,39 +321,72 @@ public class TimelinePanel extends JPanel {
 				statusesFilter.add(ExpressionParser.predicate(query));		
 			}});
         
-        JButton buttonCategorize = new JButton("Categorizar Tweets");        
+        final JButton buttonCategorize = new JButton("Categorizar Tweets");        
         buttonCategorize.addActionListener(new ActionListener(){
         	@Override
-        	public void actionPerformed(ActionEvent arg0) {			
-        		categoriesOn = true;        		
-        		System.out.println("Setando Categorias");
+        	public void actionPerformed(ActionEvent arg0) {
         		
-        		TwitterResponse tr;
-        		long responseId = -1;
-        		for(int i=0; i<statusesList.size(); i++) {        			
-        			tr = statusesList.get(i);
-        			//substituir estes ifs com instance of atraves da classe ResponseDeepT :)
-        			if(tr instanceof Status) responseId = ((Status)tr).getId();
-        			else if(tr instanceof Tweet) responseId = ((Tweet)tr).getId();
+        		//Classe para colocar em thread a acao de categorizar tweets
+        		//e desabilitar o botao
+        		class RunButtonCategorize extends Thread{
         			
-        			String expr = "ID='"+responseId+"'";
-        			Iterator<VisualItem> it = m_vis.items(Group.STATUSES.toString(),expr);
-        			VisualItem item = null;
-    				while(it.hasNext()) { //deve retornar apenas 1!
-    					item = it.next();
-    					item.set(StatusesDataTable.ColNames.CATEGORIES.toString(), null);
-    					item.setFillColor(ChartColor.white.getRGB());
-    					item.setStrokeColor(ChartColor.DARK_BLUE.getRGB());
-    				}        			
-        			cManager.categorizeResponse(tr,item);
+        			public void run(){
+                		buttonCategorize.setEnabled(false);
+                		buttonCategorize.setText("Categorizando Tweets");
+                		buttonCategorize.updateUI();
+                		updateUI();
+                		
+                		try{
+                			Thread.sleep(2000);
+                		} catch(InterruptedException e){
+                			
+                		}
+               		
+                		categoriesOn = true;        		
+                		System.out.println("Setando Categorias");
+                		
+                		TwitterResponse tr;
+                		long responseId = -1;
+                		for(int i=0; i<statusesList.size(); i++) {        			
+                			tr = statusesList.get(i);
+                			//substituir estes ifs com instance of atraves da classe ResponseDeepT :)
+                			if(tr instanceof Status) responseId = ((Status)tr).getId();
+                			else if(tr instanceof Tweet) responseId = ((Tweet)tr).getId();
+                			
+                			String expr = "ID='"+responseId+"'";
+                			Iterator<VisualItem> it = m_vis.items(Group.STATUSES.toString(),expr);
+                			VisualItem item = null;
+            				while(it.hasNext()) { //deve retornar apenas 1!
+            					item = it.next();
+            					item.set(StatusesDataTable.ColNames.CATEGORIES.toString(), null);
+            					item.setFillColor(ChartColor.white.getRGB());
+            					item.setStrokeColor(ChartColor.DARK_BLUE.getRGB());
+            				}        			
+                			cManager.categorizeResponse(tr,item);
+                		}
+                		System.out.println("Terminei de setar Categorias!");
+                		
+                		categoriesComboBox.removeAllItems();
+                		categoriesComboBox.addItem("Mostrar Todas");
+                		
+                		for(Category c : cManager.getCategories()) {
+                        	categoriesComboBox.addItem(c.getName());
+                        }
+                		
+                		System.out.println("Vai terminar");
+                		categoriesComboBox.setVisible(true);
+                		buttonCategorize.setEnabled(true);
+                		buttonCategorize.setText("Categorizar Tweets");
+                		updateUI();
+        				displayLayout();
+        			}
+        			
         		}
-        		System.out.println("Terminei de setar Categorias!");
         		
-        		for(Category c : cManager.getCategories()) {
-                	categoriesComboBox.addItem(c.getName());
-                }				
-        		categoriesComboBox.setVisible(true);
-				displayLayout();
+        		RunButtonCategorize runButtonCategorize = new RunButtonCategorize();
+        		runButtonCategorize.start();
+        		
+
         	}});
         
         Box radioBox = new Box(BoxLayout.X_AXIS);
