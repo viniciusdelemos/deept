@@ -25,7 +25,9 @@ TODO:
 - escolher forças de atração/repulsão melhores;
 - setar tooltips do login;
 
+- analisar: acredito que deu problema em uma das requisicoes StatusTable, e parou
+de fazer requisicoes, sendo assim, colocar try catch para cada uma das requisicoes (isoladamente)
+
 vis categorias
 - arrumar bug de alterar texto igual ao a um que jah exista
-- arrumar evento do enter
 - tenta fazer poder editar quando der 2 cliques na categoria ou palavra (tem exemplos disto no listener da graphicmanager)
