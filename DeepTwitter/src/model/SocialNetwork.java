@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import controller.GroupManager;
+
 import twitter4j.User;
 
 public class SocialNetwork {   

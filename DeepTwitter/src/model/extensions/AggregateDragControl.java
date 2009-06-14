@@ -1,5 +1,7 @@
 package model.extensions;
 
+import gui.visualizations.GraphicManager;
+
 import java.awt.BasicStroke;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -12,12 +14,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import model.GraphicManager;
-
 import prefuse.Display;
 import prefuse.controls.ControlAdapter;
-import prefuse.data.tuple.TupleSet;
-import prefuse.util.FontLib;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
 import prefuse.visual.EdgeItem;

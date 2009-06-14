@@ -1,8 +1,9 @@
 package model.threads;
 
+import gui.visualizations.GraphicManager;
+
 import java.util.List;
 
-import model.GraphicManager;
 import model.MessageType;
 import prefuse.data.Node;
 import prefuse.util.PrefuseLib;
