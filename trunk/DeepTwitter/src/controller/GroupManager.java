@@ -1,6 +1,10 @@
-package model;
+package controller;
+
+import gui.visualizations.GraphicManager;
 
 import java.util.Iterator;
+
+import model.MessageType;
 
 import controller.ControllerDeepTwitter;
 

@@ -1,13 +1,11 @@
 package model.threads;
 
-import model.GraphicManager;
+import gui.visualizations.GraphicManager;
 import model.MessageType;
-import controller.ControllerDeepTwitter;
 import prefuse.data.Node;
-import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import twitter4j.TwitterException;
-import twitter4j.User;
+import controller.ControllerDeepTwitter;
 
 
 public class FollowUserThread extends Thread {			

@@ -5,6 +5,7 @@ import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
 import gui.GUIMostActiveUsers;
 import gui.GUINewUpdate;
+import gui.visualizations.GraphicManager;
 import gui.visualizations.MostActiveUsersView;
 import gui.visualizations.MostActiveUsersView.ShowingBy;
 
@@ -28,7 +29,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import model.GraphicManager;
 import model.MessageType;
 import model.StatusTab;
 import model.StatusesType;
@@ -39,8 +39,6 @@ import prefuse.data.Node;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
-import prefuse.data.query.SearchQueryBinding;
-import prefuse.data.search.SearchTupleSet;
 import prefuse.visual.VisualItem;
 import twitter4j.RateLimitStatus;
 import twitter4j.Twitter;

@@ -1,4 +1,4 @@
-package model;
+package gui.visualizations;
 
 import gui.GUICategoryEdit;
 
@@ -22,6 +22,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import model.ChartColor;
+import model.SocialNetwork;
+import model.StatusTab;
+import model.StatusesType;
+import model.URLLinkAction;
 import model.extensions.AggregateDragControl;
 import model.extensions.AggregateLayout;
 import model.extensions.WeightedForceDirectedLayout;
@@ -77,6 +82,7 @@ import profusians.controls.CenterOnClickControl;
 import profusians.controls.GenericToolTipControl;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
+import controller.GroupManager;
 
 
 @SuppressWarnings("serial")
