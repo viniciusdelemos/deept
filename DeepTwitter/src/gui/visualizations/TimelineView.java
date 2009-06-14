@@ -1,7 +1,6 @@
 package gui.visualizations;
 
 import gui.GUICategoryEdit;
-import gui.visualizations.StatusesDataTable.ColNames;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -17,7 +16,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +30,13 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
+import model.Category;
 import model.ChartColor;
+import model.extensions.CustomDateDay;
+import model.extensions.CustomDateHours;
+import model.extensions.StatusesDataTable;
+import model.extensions.TimelineRenderFactory;
+import model.extensions.StatusesDataTable.ColNames;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -70,10 +74,9 @@ import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.TwitterResponse;
-import controller.Category;
 import controller.CategoryManager;
 
-public class TimelinePanel extends JPanel {
+public class TimelineView extends JPanel {
        
     private String panelTitle = "Atualizações de ";
     private String statusesCountText;
@@ -96,7 +99,7 @@ public class TimelinePanel extends JPanel {
 	}
     
     
-    public TimelinePanel(final List<TwitterResponse> statusesList, boolean isGroup, String userName) {
+    public TimelineView(final List<TwitterResponse> statusesList, boolean isGroup, String userName) {
         super(new BorderLayout());
         panelTitle += userName;
         final Visualization vis = new Visualization();
@@ -179,8 +182,12 @@ public class TimelinePanel extends JPanel {
         display.setItemSorter(new ItemSorter() {
             public int score(VisualItem item) {
                 int score = super.score(item);
-                if (item.isInGroup(Group.STATUSES.toString()))
-                    score += 300000000;//item.getLong(StatusesDataTable.ColNames.DATE_MILIS.toString());
+                if (item.isInGroup(Group.STATUSES.toString())) {
+                	if(item.getString(StatusesDataTable.ColNames.CATEGORIES.toString())!=null)
+                		score+=300000;
+                	else
+                		score += 200000;//item.getLong(StatusesDataTable.ColNames.ID.toString()); 
+                }
                 return score;
             }
         });
@@ -321,7 +328,7 @@ public class TimelinePanel extends JPanel {
 				statusesFilter.add(ExpressionParser.predicate(query));		
 			}});
         
-        final JButton buttonCategorize = new JButton("Categorizar Tweets");        
+        final JButton buttonCategorize = new JButton("Categorizar Tweets");
         buttonCategorize.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent arg0) {
@@ -329,22 +336,11 @@ public class TimelinePanel extends JPanel {
         		//Classe para colocar em thread a acao de categorizar tweets
         		//e desabilitar o botao
         		class RunButtonCategorize extends Thread{
-        			
         			public void run(){
                 		buttonCategorize.setEnabled(false);
-                		buttonCategorize.setText("Categorizando Tweets");
-                		buttonCategorize.updateUI();
-                		updateUI();
+                		buttonCategorize.setText("Categorizando...");
                 		
-                		try{
-                			Thread.sleep(2000);
-                		} catch(InterruptedException e){
-                			
-                		}
-               		
-                		categoriesOn = true;        		
-                		System.out.println("Setando Categorias");
-                		
+                		categoriesOn = true;                    		
                 		TwitterResponse tr;
                 		long responseId = -1;
                 		for(int i=0; i<statusesList.size(); i++) {        			
@@ -359,12 +355,11 @@ public class TimelinePanel extends JPanel {
             				while(it.hasNext()) { //deve retornar apenas 1!
             					item = it.next();
             					item.set(StatusesDataTable.ColNames.CATEGORIES.toString(), null);
-            					item.setFillColor(ChartColor.white.getRGB());
+            					item.setFillColor(ChartColor.TRANSLUCENT);
             					item.setStrokeColor(ChartColor.DARK_BLUE.getRGB());
             				}        			
                 			cManager.categorizeResponse(tr,item);
                 		}
-                		System.out.println("Terminei de setar Categorias!");
                 		
                 		categoriesComboBox.removeAllItems();
                 		categoriesComboBox.addItem("Mostrar Todas");
@@ -373,20 +368,14 @@ public class TimelinePanel extends JPanel {
                         	categoriesComboBox.addItem(c.getName());
                         }
                 		
-                		System.out.println("Vai terminar");
                 		categoriesComboBox.setVisible(true);
                 		buttonCategorize.setEnabled(true);
                 		buttonCategorize.setText("Categorizar Tweets");
-                		updateUI();
+                		//updateUI();
         				displayLayout();
         			}
-        			
-        		}
-        		
-        		RunButtonCategorize runButtonCategorize = new RunButtonCategorize();
-        		runButtonCategorize.start();
-        		
-
+        		}        		
+        		new RunButtonCategorize().start();
         	}});
         
         Box radioBox = new Box(BoxLayout.X_AXIS);
@@ -532,55 +521,6 @@ public class TimelinePanel extends JPanel {
 		}
 		return tbl;
 	}
-	
-//	private ObjectRangeModel yRangeModel(VisualTable vt) {
-//		Object[] array = DataLib.ordinalArray(vt.tuples(), StatusesDataTable.ColNames.HOUR.toString());
-//		ArrayList<TimelineDate> axisLabels = new ArrayList<TimelineDate>();
-//		
-////		TimelineDate first = (TimelineDate)array[0];
-////		TimelineDate last = (TimelineDate)array[array.length-1];
-////		
-////		for(int i = first.getHours(); i<=last.getHours(); i++) {
-////			TimelineDate newDate = (TimelineDate)first.clone();
-////			newDate.setHours(i);
-////			newDate.setMinutes(0);
-////			newDate.setSeconds(0);	
-////			axisLabels.add(newDate);
-////		}
-//		for(int i=0; i<array.length; i++) {
-//			TimelineDate statusDate = (TimelineDate)array[i];
-//			axisLabels.add(statusDate);
-//		}
-//		
-//		return  new ObjectRangeModel(axisLabels.toArray());
-//	}
-	
-//	private ObjectRangeModel xRangeModel(VisualTable vt) {
-//		List<Object> labels = new ArrayList<Object>();
-//
-//		Iterator<Tuple> it = vt.tuples();
-//		String latestDay = "";
-//		while (it.hasNext()) {
-//			Tuple item = it.next();
-//			String newDay = item.getString(StatusesDataTable.ColNames.DAY.toString());
-//			//System.out.println(newDay);
-//			if(!newDay.equals(latestDay)) {
-//				labels.add(newDay);
-//				latestDay = newDay;
-//			}			
-//		}				
-//
-//		// padding range with extra "blank" at head and tail
-//		Object[] a = new Object[labels.size()];//+2
-//		//a[0] = "";  
-//		//a[a.length-1] = "";
-//		for (int i = labels.size()-1; i >=0; i--) {//i = 1
-//			a[i] = labels.get(i);
-//		}
-//		
-//		// return range model
-//		return new ObjectRangeModel(a);  
-//	}
     
     public void displayLayout() {
     	Insets i = display.getInsets();

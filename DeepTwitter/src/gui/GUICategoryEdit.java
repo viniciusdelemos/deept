@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import gui.visualizations.CategoryEdit;
+import gui.visualizations.CategoriesEditorView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -37,7 +37,7 @@ import prefuse.visual.VisualItem;
 
 public class GUICategoryEdit {
 
-	private static CategoryEdit categoryEdit;
+	private static CategoriesEditorView categoryEdit;
 	private static JFrame frame;
 	private static CategoryManager cManager = CategoryManager.getInstance();
 
@@ -50,7 +50,7 @@ public class GUICategoryEdit {
 		if (frame == null) {
 			Color BACKGROUND = Color.WHITE;
 			Color FOREGROUND = Color.BLACK;
-			categoryEdit = new CategoryEdit();
+			categoryEdit = new CategoriesEditorView();
 			categoryEdit.setBackground(BACKGROUND);
 			categoryEdit.setForeground(FOREGROUND);
 

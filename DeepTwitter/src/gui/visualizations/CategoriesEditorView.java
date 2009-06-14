@@ -15,6 +15,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import model.Category;
+import model.CategoryWord;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -54,11 +56,9 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 import prefuse.visual.sort.TreeDepthItemSorter;
-import controller.Category;
 import controller.CategoryManager;
-import controller.CategoryWord;
 
-public class CategoryEdit extends Display {
+public class CategoriesEditorView extends Display {
 
 	private final static String tree = "tree";
 	private final static String treeNodes = "tree.nodes";
@@ -86,7 +86,7 @@ public class CategoryEdit extends Display {
 	private NodeLinkTreeLayout treeLayout;
 
 
-	public CategoryEdit() {
+	public CategoriesEditorView() {
 		super(new Visualization());
 
 		t = new Tree();

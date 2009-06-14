@@ -4,6 +4,7 @@ TODO:
 - categorias: inserir combobox com cores das categorias
 - permitir ver o timeline sem precisar mostrar as atualizacoes no painel (pcausa da OutOfMemoryException);
 - * consertar visualizacao de categorias do vinicius
+- * grupos: ao adicionar membro ao grupo, adicionar atualizacoes dele ao panel
 - * consertar remocao de grupos;
 - * consertar cor de usuarios ligados por arestas invisiveis;
 - * consertar aba de favoritos (está repetindo informacoes);

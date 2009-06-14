@@ -1,4 +1,4 @@
-package gui.visualizations;
+package model.extensions;
 
 import java.util.Date;
 

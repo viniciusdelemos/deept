@@ -1,4 +1,4 @@
-package model;
+package model.extensions;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;

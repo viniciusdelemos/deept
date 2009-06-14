@@ -1,5 +1,6 @@
-package gui.visualizations;
+package model.extensions;
 
+import gui.visualizations.TimelineView;
 import prefuse.Constants;
 import prefuse.render.AxisRenderer;
 import prefuse.render.DefaultRendererFactory;
@@ -25,8 +26,8 @@ public final class TimelineRenderFactory extends DefaultRendererFactory {
 		else
 			this.setDefaultRenderer(shapeRenderer);
 		
-        this.add(new InGroupPredicate(TimelinePanel.Group.X_AXIS.toString()), axisX);
-        this.add(new InGroupPredicate(TimelinePanel.Group.Y_AXIS.toString()), axisY);
+        this.add(new InGroupPredicate(TimelineView.Group.X_AXIS.toString()), axisX);
+        this.add(new InGroupPredicate(TimelineView.Group.Y_AXIS.toString()), axisY);
 	}
 	
 	public void switchRenderer() {

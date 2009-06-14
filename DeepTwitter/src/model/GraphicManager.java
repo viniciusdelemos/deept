@@ -22,6 +22,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import model.extensions.AggregateDragControl;
+import model.extensions.AggregateLayout;
+import model.extensions.WeightedForceDirectedLayout;
 import model.threads.AddFollowersThread;
 import model.threads.AddFriendsThread;
 import model.threads.FollowUserThread;

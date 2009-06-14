@@ -1,7 +1,5 @@
 package controller;
 
-import gui.visualizations.StatusesDataTable;
-
 import java.awt.Color;
 import java.awt.Paint;
 import java.io.File;
@@ -16,15 +14,17 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
+import model.Category;
+import model.CategoryWord;
 import model.ChartColor;
 import model.TagParser;
+import model.extensions.StatusesDataTable;
 
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import prefuse.visual.VisualItem;

@@ -1,4 +1,6 @@
-package gui.visualizations;
+package model.extensions;
+import model.extensions.CustomDateDay;
+import model.extensions.CustomDateHours;
 import prefuse.data.Table;
 
 public final class StatusesDataTable extends Table {
