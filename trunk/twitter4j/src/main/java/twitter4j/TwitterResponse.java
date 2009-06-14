@@ -149,7 +149,7 @@ public class TwitterResponse implements java.io.Serializable {
         String str2 = getTextContent(str, elem);
         if (null == str2 || "".equals(str2)) {
             return -1;
-        } else {
+        } else {        	
             return Integer.valueOf(str2);
         }
     }

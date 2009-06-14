@@ -522,7 +522,7 @@ public class StatusesTableThread {
 								else
 									aux = twitter.getUserTimeline(userId[0], updatesToGet, lastResponseId[0]);
 								//talvez seja melhor fazer userId, new Paging().count(updatesToGet).sinceId(lastStatusId)
-								//testar
+								//testary
 							}
 						}
 						else {

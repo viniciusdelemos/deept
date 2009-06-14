@@ -1,6 +1,6 @@
 package gui;
 
-import gui.visualizations.TimelinePanel;
+import gui.visualizations.TimelineView;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import twitter4j.TwitterResponse;
 public class GUITimeline extends JFrame{
 	public GUITimeline(List<TwitterResponse> statusesList, boolean isGroup, String name) {
 		super("Timeline");
-		setContentPane(new TimelinePanel(statusesList,isGroup,name));
+		setContentPane(new TimelineView(statusesList,isGroup,name));
         pack();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);

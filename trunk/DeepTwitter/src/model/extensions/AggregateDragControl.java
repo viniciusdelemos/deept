@@ -1,4 +1,4 @@
-package model;
+package model.extensions;
 
 import java.awt.BasicStroke;
 import java.awt.Cursor;
@@ -11,6 +11,8 @@ import java.util.Iterator;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+
+import model.GraphicManager;
 
 import prefuse.Display;
 import prefuse.controls.ControlAdapter;

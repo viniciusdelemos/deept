@@ -1,4 +1,4 @@
-package gui.visualizations;
+package model.extensions;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

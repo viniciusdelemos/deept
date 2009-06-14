@@ -1,4 +1,4 @@
-package model;
+package model.extensions;
 
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.util.force.ForceSimulator;
