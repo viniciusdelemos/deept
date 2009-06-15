@@ -1,6 +1,6 @@
 package gui.visualizations;
 
-import gui.GUICategoryEdit;
+import gui.GUICategoryEditor;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -58,7 +58,6 @@ import prefuse.data.search.PrefixSearchTupleSet;
 import prefuse.data.search.SearchTupleSet;
 import prefuse.data.tuple.DefaultTupleSet;
 import prefuse.data.tuple.TupleSet;
-import prefuse.demos.TreeView;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
@@ -86,7 +85,7 @@ import controller.GroupManager;
 
 
 @SuppressWarnings("serial")
-public class GraphicManager extends Display { 
+public class NetworkView extends Display { 
 	public final static String GRAPH = "graph";
 	public final static String NODES = "graph.nodes";
 	public final static String GROUPS = "groups";
@@ -114,7 +113,7 @@ public class GraphicManager extends Display {
 	private LabelRenderer nodeRenderer;
 	private SearchTupleSet searchResultTuples;
 	
-    public GraphicManager()
+    public NetworkView()
     {    	
     	super(new Visualization());   	
     	
@@ -610,7 +609,7 @@ public class GraphicManager extends Display {
 	}
 	
 	private	class ListenerAdapter extends ControlAdapter{
-		GraphicManager gManager;
+		NetworkView networkView;
 		VisualItem clickedItem;
 		JPopupMenu popupMenu;
 		//variáveis utilizadas para a manipulação da caixa de seleção
@@ -618,9 +617,9 @@ public class GraphicManager extends Display {
 	    Rectangle2D rect;
 	    boolean controlWasPressed;
 	    
-		public ListenerAdapter(GraphicManager gManager)
+		public ListenerAdapter(NetworkView networkView)
 		{
-			this.gManager = gManager;			
+			this.networkView = networkView;			
 			mousePositionBegin = new Point2D.Float();
 			mousePositionEnd = new Point2D.Float();
 		    rect = new Rectangle2D.Float();							
@@ -647,9 +646,6 @@ public class GraphicManager extends Display {
     		JMenuItem block = new JMenuItem("Bloquear"); 
     		JMenuItem followers = new JMenuItem("Ver Seguidores");
     		JMenuItem removeFromGroup = new JMenuItem("Remover do Grupo");
-    		JMenuItem teste = new JMenuItem("Teste");
-    		JMenuItem categorias = new JMenuItem("Categorias");
-    		JMenuItem treeView = new JMenuItem("TreeView");
     		 
     		Integer loggedUserId = Integer.parseInt(controller.getLoggedUserId());
     		Node mainUserNode = getNodeByTwitterId(loggedUserId);
@@ -659,9 +655,6 @@ public class GraphicManager extends Display {
     		popupMenu.add(friends); //é necessário?
     		popupMenu.add(followers);
     		popupMenu.add(favorites);
-    		popupMenu.add(teste);
-    		popupMenu.add(categorias);
-    		popupMenu.add(treeView);
     		
     		if(!item.get("idTwitter").equals(loggedUserId)) { 
     			popupMenu.addSeparator();
@@ -698,7 +691,7 @@ public class GraphicManager extends Display {
     		friends.addActionListener(new ActionListener() {				
     			@Override
 				public void actionPerformed(ActionEvent e) {    				
-					new AddFriendsThread(gManager, (NodeItem)clickedItem);					
+					new AddFriendsThread(networkView, (NodeItem)clickedItem);					
 				}});
     		updates.addActionListener(new ActionListener() {
 				@Override
@@ -719,7 +712,7 @@ public class GraphicManager extends Display {
     		followers.addActionListener(new ActionListener(){
     			@Override
     			public void actionPerformed(ActionEvent arg0) {
-    				new AddFollowersThread(gManager, (NodeItem)clickedItem);
+    				new AddFollowersThread(networkView, (NodeItem)clickedItem);
     			}
     		});
     		favorites.addActionListener(new ActionListener(){
@@ -736,12 +729,12 @@ public class GraphicManager extends Display {
     		follow.addActionListener(new ActionListener(){				
     			@Override
 				public void actionPerformed(ActionEvent e) {    				
-					new FollowUserThread(gManager, clickedItem, true);					
+					new FollowUserThread(networkView, clickedItem, true);					
 				}});
     		leave.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					new FollowUserThread(gManager, clickedItem, false);					
+					new FollowUserThread(networkView, clickedItem, false);					
 				}});
     		sendReply.addActionListener(new ActionListener(){
     			@Override
@@ -768,39 +761,7 @@ public class GraphicManager extends Display {
     			public void actionPerformed(ActionEvent e) {
     				groupManager.removeFromGroup((NodeItem)clickedItem);				
     			}});
-    		teste.addActionListener(new ActionListener(){
-    			public void actionPerformed(ActionEvent e) {
-//    				java.util.List<User> mostActiveUsers =
-//    					controller.mostActiveUsersForAll();
-//    				mostActiveUsersController.setUsers(mostActiveUsers);'
-    				
-    				controller.openGUIMostActiveUsersWindow(null);    
-    			}
-    		});
-    		categorias.addActionListener(new ActionListener(){
-    			public void actionPerformed(ActionEvent e) {
-    				GUICategoryEdit.openFrame();
-    			}
-    		});
-    		treeView.addActionListener(new ActionListener(){
-    			public void actionPerformed(ActionEvent e) {
-    				
-    					TreeView tree = null;
-    				
-    			        String infile = "/chi-ontology.xml.gz";
-    			        String label = "name";
-    			        
-    			        JComponent treeview = tree.demo(infile, label);
-    			        
-    			        JFrame frame = new JFrame("p r e f u s e  |  t r e e v i e w");
-    			        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    			        frame.setContentPane(treeview);
-    			        frame.pack();
-    			        frame.setVisible(true);
-    			    
-    				
-    			}
-    		});
+    		
     		//create popupMenu for 'background'
     		//JPopupMenu backgroundMenu = new JPopupMenu(); 
     		// ....
@@ -812,14 +773,12 @@ public class GraphicManager extends Display {
 			JMenuItem updates = new JMenuItem("Ver Tweets");
 			JMenuItem timeline = new JMenuItem("Ver Timeline");
 			JMenuItem removeGroup = new JMenuItem("Deletar Grupo");
-			//JMenuItem categoriesGroup = new JMenuItem("Categorias do Grupo");
-			JMenuItem mostActiveUsers = new JMenuItem("Usuários Mais Ativos");
+			JMenuItem mostPopularUsers = new JMenuItem("Usuários Mais Populares");
 			
 			popupMenu.add(updates);
 			popupMenu.add(timeline);
 			popupMenu.add(removeGroup);
-			//popupMenu.add(categoriesGroup);
-			popupMenu.add(mostActiveUsers);
+			popupMenu.add(mostPopularUsers);
 			
 			updates.addActionListener(new ActionListener(){
 				@Override
@@ -848,36 +807,20 @@ public class GraphicManager extends Display {
 				public void actionPerformed(ActionEvent arg0) {
 					groupManager.removeGroup(item);
 				}});
-			mostActiveUsers.addActionListener(new ActionListener(){
+			mostPopularUsers.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
-					//TODO
+					int groupId = item.getInt("id");
+					Node[] groupArray = new Node[item.getAggregateSize()];
+					Iterator<NodeItem> nodes = item.items();
+					int cont = 0;
+					while(nodes.hasNext()) {
+						NodeItem next = nodes.next();
+						groupArray[cont] = (Node)m_vis.getSourceTuple(next);
+						cont++;
+					}					
+					controller.openGUIMostPopularUsersWindow(groupArray);
 				}
 			});
-//			categoriesGroup.addActionListener(new ActionListener(){
-//				@Override
-//				public void actionPerformed(ActionEvent arg0){
-//					
-////					
-////					
-////					List<NodeItem> itens = new ArrayList<NodeItem>();
-////					
-////					AggregateItem ai = item;
-////					Iterator<NodeItem> iterator = ai.items();
-////
-////					while(iterator.hasNext()){
-////						NodeItem nodeItem = iterator.next();
-////						itens.add(nodeItem);
-////					}
-//					
-//					
-//					CategoryController categoryController = 
-//						new CategoryController(item);
-//					
-//					
-//				}
-//			}
-//			);
-			
 		}
 		
 		public void itemClicked(VisualItem item, MouseEvent e) {
@@ -908,7 +851,7 @@ public class GraphicManager extends Display {
 				if(item.getBoolean("isOpen") == false)
 				{										
 					if(item.getBoolean("isShowingFriends") == false) 
-						new AddFriendsThread(gManager, (NodeItem)item);
+						new AddFriendsThread(networkView, (NodeItem)item);
 					else
 						setChildrenVisible((NodeItem)item, true);	
 					item.setBoolean("isOpen", true);
@@ -938,7 +881,7 @@ public class GraphicManager extends Display {
 			//setando coordenada x e y em relação ao frame
 			mousePositionBegin.setLocation(e.getX(), e.getY());
 			//setando coordenada absoluta em relação ao Display
-			mousePositionBegin = gManager.getAbsoluteCoordinate(mousePositionBegin,null);
+			mousePositionBegin = networkView.getAbsoluteCoordinate(mousePositionBegin,null);
 			
 			selectionBox.setVisible(true);
 		}
@@ -950,7 +893,7 @@ public class GraphicManager extends Display {
 			
 			//atualizando coordenadas do mouse 
 			mousePositionEnd.setLocation(e.getX(), e.getY());
-			mousePositionEnd = gManager.getAbsoluteCoordinate(mousePositionEnd, null);
+			mousePositionEnd = networkView.getAbsoluteCoordinate(mousePositionEnd, null);
 			
 			int x1 = (int) mousePositionBegin.getX();
 			int y1 = (int) mousePositionBegin.getY();
@@ -998,7 +941,7 @@ public class GraphicManager extends Display {
 			}	
 			
 			selectionBox.setValidated(false);
-			gManager.repaint();
+			networkView.repaint();
 		}
 		
 		public void mouseReleased(MouseEvent e)
@@ -1010,7 +953,7 @@ public class GraphicManager extends Display {
 			controlWasPressed = false;
 			selectionBox.setVisible(false);
 						
-			gManager.getVisualization().repaint();
+			networkView.getVisualization().repaint();
 		}	
 	}
 	

@@ -1,6 +1,6 @@
 package model.threads;
 
-import gui.visualizations.GraphicManager;
+import gui.visualizations.NetworkView;
 import model.MessageType;
 import prefuse.data.Node;
 import prefuse.visual.VisualItem;
@@ -9,13 +9,13 @@ import controller.ControllerDeepTwitter;
 
 
 public class FollowUserThread extends Thread {			
-		GraphicManager gManager;
+		NetworkView networkView;
 		VisualItem targetItem;
 		boolean follow;
 		ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
 		
-	public FollowUserThread(GraphicManager gManager, VisualItem item, boolean follow) {
-		this.gManager = gManager;	
+	public FollowUserThread(NetworkView networkView, VisualItem item, boolean follow) {
+		this.networkView = networkView;	
 		targetItem = item;
 		this.follow = follow;
 		this.start();
@@ -24,7 +24,7 @@ public class FollowUserThread extends Thread {
 	public void run()
 	{		
 		try {
-			Node mainUserNode = gManager.getNodeById(0); //user principal			
+			Node mainUserNode = networkView.getNodeById(0); //user principal			
 			Node targetNode = (Node)targetItem.getSourceTuple();
 			String mainUserId = mainUserNode.getString("idTwitter");
 			String targetUserId = targetNode.getString("idTwitter");
@@ -38,14 +38,14 @@ public class FollowUserThread extends Thread {
 				}
 				controller.getTwitter().createFriendship(targetNode.getString("idTwitter"));
 				//controller.getTwitter().follow(userId);						
-				gManager.addEdge(mainUserNode, targetNode);
+				networkView.addEdge(mainUserNode, targetNode);
 				controller.setStatusBarMessage("Agora seguindo "+targetNode.getString("name"));
 			}
 			else { //leave
 				if(!existsFriendship) return;
 				controller.getTwitter().destroyFriendship(targetNode.getString("idTwitter"));
 				//controller.getTwitter().leave(userId);				
-				gManager.removeEdge(mainUserNode, targetNode);
+				networkView.removeEdge(mainUserNode, targetNode);
 				controller.setStatusBarMessage("Deixando de seguir "+targetNode.getString("name"));
 			}
 

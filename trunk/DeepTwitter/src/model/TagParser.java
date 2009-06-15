@@ -31,13 +31,5 @@ public class TagParser{
 		}
 		matcher.appendTail(sb);
 		return sb.toString();
-	}
-
-	public static void main(String[] args) {
-		TagParser tagParser = new TagParser("lero CUâ lero cu lero lero cu. lero", "cu");
-
-		System.out.println(tagParser.hasTag());
-
-		System.out.println(tagParser.getFormatedText("<b>", "</b>"));		
-	}
+	}	
 } 

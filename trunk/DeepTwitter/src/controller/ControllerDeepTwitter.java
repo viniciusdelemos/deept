@@ -1,13 +1,14 @@
 package controller;
 
 import gui.GUIAddUser;
+import gui.GUICategoryEditor;
 import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
-import gui.GUIMostActiveUsers;
+import gui.GUIMostPopularUsers;
 import gui.GUINewUpdate;
-import gui.visualizations.GraphicManager;
-import gui.visualizations.MostActiveUsersView;
-import gui.visualizations.MostActiveUsersView.ShowingBy;
+import gui.visualizations.MostPopularUsersView;
+import gui.visualizations.NetworkView;
+import gui.visualizations.MostPopularUsersView.ShowingBy;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -50,10 +51,10 @@ public class ControllerDeepTwitter {
 	private GUIMainWindow mainWindow;
 	private GUIAddUser guiAddUser;
 	private GUINewUpdate guiNewUpdate;
-	private GUIMostActiveUsers guiMostActive;
+	private GUIMostPopularUsers guiMostPopular;
 	private Twitter twitter;
-	private GraphicManager gManager;
-	private MostActiveUsersView activeUsersDisplay;
+	private NetworkView networkView;
+	private MostPopularUsersView activeUsersDisplay;
 	private boolean isTwitterUser;
 	private String loggedUserId;
 	private JTabbedPane windowTabs;
@@ -91,15 +92,9 @@ public class ControllerDeepTwitter {
 		return isTwitterUser;
 	}
 	
-//	public String getUserNameByScreenName(String screenName){
-//		
-//		return gManager.getUserNameByScreenName(screenName);
-//		
-//	}
-	
 	public String getUserName(String id) {
 		try{
-			return gManager.getUserName(Integer.parseInt(id));
+			return networkView.getUserName(Integer.parseInt(id));
 		}
 		catch(NumberFormatException e) {
 			return id;
@@ -107,20 +102,20 @@ public class ControllerDeepTwitter {
 	}
 	
 	public Node getNode(int id) {
-		return gManager.getNodeByTwitterId(id);
+		return networkView.getNodeByTwitterId(id);
 	}
 	
 	public VisualItem getNodeItem(Node node) {
-		return gManager.getNodeItem(node);
+		return networkView.getNodeItem(node);
 	}
 	
 	public void searchAndAddUserToNetwork(User u) {
-		gManager.searchAndAddUserToNetwork(u);
+		networkView.searchAndAddUserToNetwork(u);
 	}
 	
 	public void searchAndAddUserToNetwork(int id) {
 		try {
-			User u = gManager.getUser(id);
+			User u = networkView.getUser(id);
 			if(u == null) 
 				searchAndAddUserToNetwork(getTwitter().getUserDetail(String.valueOf(id)));			
 			else
@@ -212,7 +207,7 @@ public class ControllerDeepTwitter {
 					mainWindowListener = new MainWindowListener();
 					mainWindow.addMainWindowListener(mainWindowListener);
 					
-					gManager = new GraphicManager();	
+					networkView = new NetworkView();	
 										
 					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
 					windowTabs = mainWindow.getTabs();
@@ -287,14 +282,14 @@ public class ControllerDeepTwitter {
 						}
 					});
 					
-					jSplitPane.setRightComponent((Display)gManager);	
+					jSplitPane.setRightComponent((Display)networkView);	
 					jSplitPane.setDividerLocation(431);
 					
 					SwingUtilities.updateComponentTreeUI(mainWindow);
 					mainWindow.setLocationRelativeTo(null);
 					mainWindow.setVisible(true);					
 					
-					gManager.addNode(user);
+					networkView.addNode(user);
 					
 					if(isTwitterUser)
 						tabManager.getTab(0).setPanelContent(new StatusesTableThread(StatusesType.UPDATES));
@@ -350,20 +345,20 @@ public class ControllerDeepTwitter {
 		guiNewUpdate.setLocationRelativeTo(mainWindow);
 	}
 	
-	public void openGUIMostActiveUsersWindow(Node[] userArray) {
-		guiMostActive = new GUIMostActiveUsers("Usuários mais ativos");
+	public void openGUIMostPopularUsersWindow(Node[] userArray) {
+		guiMostPopular = new GUIMostPopularUsers("Usuários mais populares");
 		if(userArray == null)
-			userArray = gManager.getNodes();//gManager.getSocialNetwork().getUsers();
+			userArray = networkView.getNodes();
 		
-		guiMostActive.addListener(mainWindowListener);
-		guiMostActive.addWindowListener(new WindowAdapter() {
+		guiMostPopular.addListener(mainWindowListener);
+		guiMostPopular.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(java.awt.event.WindowEvent arg0) {
-				guiMostActive = null;
+				guiMostPopular = null;
 				//TODO matar a thread
 			}
 		});
-		final JComboBox maxUsersComboBox = guiMostActive.getComboBoxMaxUsers();
+		final JComboBox maxUsersComboBox = guiMostPopular.getComboBoxMaxUsers();
 		for(int i=userArray.length; i>=1; i--) {
 			maxUsersComboBox.addItem(i);
 		}
@@ -376,10 +371,10 @@ public class ControllerDeepTwitter {
 				}			
 			}			
 		});
-		activeUsersDisplay = new MostActiveUsersView(userArray,guiMostActive.getEditor());
-		JSplitPane splitPane = guiMostActive.getSplitPane();
+		activeUsersDisplay = new MostPopularUsersView(userArray,guiMostPopular.getEditor());
+		JSplitPane splitPane = guiMostPopular.getSplitPane();
 		splitPane.setTopComponent(activeUsersDisplay);		
-		guiMostActive.setVisible(true);
+		guiMostPopular.setVisible(true);
 		splitPane.setDividerLocation(510);
 	}
 	
@@ -413,7 +408,7 @@ public class ControllerDeepTwitter {
 						String fileName = chooser.getSelectedFile().getAbsolutePath();	
 						try {
 							Graph g = reader.readGraph(fileName);
-							gManager.setGraph(g);
+							networkView.setGraph(g);
 						} catch (DataIOException e1) {
 							showMessageDialog(e1.getMessage(),MessageType.ERROR);
 						}
@@ -425,7 +420,7 @@ public class ControllerDeepTwitter {
 					if(returnVal == JFileChooser.APPROVE_OPTION) {
 						String fileName = chooser.getSelectedFile().getAbsolutePath();
 						try {
-							writer.writeGraph(gManager.getGraph(), fileName);
+							writer.writeGraph(networkView.getGraph(), fileName);
 						} catch (DataIOException e1) {
 							showMessageDialog(e1.getMessage(),MessageType.ERROR);
 						}
@@ -462,7 +457,7 @@ public class ControllerDeepTwitter {
 				}					
 			}
 			else if(cmd.equals("buttonNewGroup")) {
-				gManager.getGroupManager().addGroup();
+				networkView.getGroupManager().addGroup();
 			}
 			else if(cmd.equals("buttonAddUser")) {
 				if(guiAddUser == null) {
@@ -487,7 +482,7 @@ public class ControllerDeepTwitter {
 						System.out.println("=> Requesting user to Twitter");
 						User u = twitter.getUserDetail(id);
 						System.out.println("=> Got user");
-						gManager.searchAndAddUserToNetwork(u);								
+						networkView.searchAndAddUserToNetwork(u);								
 						guiAddUser.dispose();
 					}
 					else showMessageDialog("Por favor, preencha o campo!",MessageType.WARNING);						
@@ -500,25 +495,25 @@ public class ControllerDeepTwitter {
 				}
 			}			
 			else if(cmd.equals("buttonClearSelection")) {
-				gManager.clearSelection();				
+				networkView.clearSelection();				
 			}
 			else if(cmd.equals("checkBoxHighQuality")) {						
-				gManager.setHighQuality(mainWindow.isHighQuality());				
+				networkView.setHighQuality(mainWindow.isHighQuality());				
 			}
 			else if(cmd.equals("buttonPlayPauseVisualization")) {
 				if(mainWindow.isVisualizationRunning())
-					gManager.getVisualization().run("layout");
+					networkView.getVisualization().run("layout");
 				else
-					gManager.getVisualization().cancel("layout");
+					networkView.getVisualization().cancel("layout");
 			}
 			else if(cmd.equals("checkBoxCurvedEdges")) {
-				gManager.setEdgeType(mainWindow.isCurvedEdges());
+				networkView.setEdgeType(mainWindow.isCurvedEdges());
 			}
 			else if(cmd.equals("buttonToolTipControl")) {
-				gManager.setToolTipControlOn(mainWindow.isToolTipControlOn());
+				networkView.setToolTipControlOn(mainWindow.isToolTipControlOn());
 			}
 			else if(cmd.equals("buttonCenterUser")) {
-				gManager.setCenterUserControlOn(mainWindow.isCenterUserOn());
+				networkView.setCenterUserControlOn(mainWindow.isCenterUserOn());
 			}
 			else if(cmd.equals("buttonSettings")) {
 				//TODO
@@ -535,6 +530,12 @@ public class ControllerDeepTwitter {
 			}
 			else if(cmd.equals("orderByFavorites")) {
 				activeUsersDisplay.setSizeActionDataField(ShowingBy.favoritesCount);
+			}
+			else if(cmd.equals("buttonMostActive")) {
+				openGUIMostPopularUsersWindow(null);
+			}
+			else if(cmd.equals("buttonCategoryEditor")) {
+				GUICategoryEditor.openFrame();
 			}
 		}
 	}

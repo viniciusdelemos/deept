@@ -1,6 +1,6 @@
 package gui.visualizations;
 
-import gui.GUICategoryEdit;
+import gui.GUICategoryEditor;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -297,7 +297,7 @@ public class TimelineView extends JPanel {
         buttonCategoryManager.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent arg0) {
-        		GUICategoryEdit.openFrame();
+        		GUICategoryEditor.openFrame();
         	}});
         
         final CategoryManager cManager = CategoryManager.getInstance();

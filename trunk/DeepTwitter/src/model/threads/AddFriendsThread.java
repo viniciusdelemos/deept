@@ -1,6 +1,6 @@
 package model.threads;
 
-import gui.visualizations.GraphicManager;
+import gui.visualizations.NetworkView;
 
 import java.util.List;
 
@@ -14,11 +14,11 @@ import controller.ControllerDeepTwitter;
 
 public class AddFriendsThread extends Thread {
 		VisualItem source;	
-		GraphicManager gManager;
+		NetworkView networkView;
 		ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
 		
-	public AddFriendsThread(GraphicManager gManager, VisualItem s) {
-		this.gManager = gManager;		
+	public AddFriendsThread(NetworkView networkView, VisualItem s) {
+		this.networkView = networkView;		
 		this.source = s;
 		this.start();
 	}
@@ -35,25 +35,25 @@ public class AddFriendsThread extends Thread {
 			
 			for(User user : friends)
 			{
-				User u = gManager.getUser(user.getId());					
+				User u = networkView.getUser(user.getId());					
 				
 				if(u == null)
 				{	
 					double x = source.getX();					
 					double y = source.getY();
 					
-					Node n = gManager.addNode(user);
-					VisualItem newNode = gManager.getVisualization().getVisualItem(gManager.NODES, n);
+					Node n = networkView.addNode(user);
+					VisualItem newNode = networkView.getVisualization().getVisualItem(networkView.NODES, n);
 					PrefuseLib.setX(newNode, null, x);
 					PrefuseLib.setY(newNode, null, y);
 					
 					//AO TER UM VISUALITEM, USAR VisualItem.getSourceTuple() para pegar instancia de Nodo ou Edge.					
-					gManager.addEdge((Node)source.getSourceTuple(), n); 		
+					networkView.addEdge((Node)source.getSourceTuple(), n); 		
 				}
 				else if(!isShowingFriends)
 				{
-					Node n = gManager.getNodeByTwitterId(u.getId());
-					gManager.addEdge((Node)source.getSourceTuple(), n);
+					Node n = networkView.getNodeByTwitterId(u.getId());
+					networkView.addEdge((Node)source.getSourceTuple(), n);
 					notAdded++;
 				}
 			}
@@ -64,7 +64,7 @@ public class AddFriendsThread extends Thread {
 			
 			source.setBoolean("isShowingFriends",true);
 			//node count: botar no log
-			System.out.println("Node Count: "+gManager.getGraph().getNodeCount());
+			System.out.println("Node Count: "+networkView.getGraph().getNodeCount());
 			
 		} catch (TwitterException e) {
 			controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
