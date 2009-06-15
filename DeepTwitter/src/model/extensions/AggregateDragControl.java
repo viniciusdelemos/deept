@@ -1,6 +1,6 @@
 package model.extensions;
 
-import gui.visualizations.GraphicManager;
+import gui.visualizations.NetworkView;
 
 import java.awt.BasicStroke;
 import java.awt.Cursor;
@@ -28,7 +28,7 @@ import prefuse.visual.VisualItem;
 public class AggregateDragControl extends ControlAdapter {
 
 	private VisualItem activeItem;
-	private GraphicManager gManager;
+	private NetworkView networkView;
 	protected Point2D down = new Point2D.Double();
 	protected Point2D temp = new Point2D.Double();
 	protected boolean dragged;
@@ -37,8 +37,8 @@ public class AggregateDragControl extends ControlAdapter {
 	 * Creates a new drag control that issues repaint requests as an item
 	 * is dragged.
 	 */
-	public AggregateDragControl(GraphicManager gManager) {
-		this.gManager = gManager;
+	public AggregateDragControl(NetworkView networkView) {
+		this.networkView = networkView;
 	}
 
 	/**
@@ -47,7 +47,9 @@ public class AggregateDragControl extends ControlAdapter {
 	public void itemEntered(VisualItem item, MouseEvent e) {
 		Display d = (Display)e.getSource();
 		if(!(item instanceof EdgeItem))
-			d.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));		
+			d.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		else
+			return;
 		activeItem = item;
 		//if ( !(item instanceof AggregateItem) )
 		setFixed(item, true);
@@ -55,26 +57,26 @@ public class AggregateDragControl extends ControlAdapter {
 		if(item instanceof NodeItem) {
 			NodeItem selectedItem = (NodeItem)item;
 			selectedItem.setStroke(new BasicStroke(1.5f));
-			selectedItem.setStrokeColor(gManager.getNodeStrokeColor());
-			selectedItem.setFillColor(gManager.getSelectedItemColor());
+			selectedItem.setStrokeColor(networkView.getNodeStrokeColor());
+			selectedItem.setFillColor(networkView.getSelectedItemColor());
 
 			Iterator<NodeItem> i = selectedItem.neighbors();
 			while(i.hasNext()) {
 				NodeItem neighbor = i.next();				
-				boolean iAmSource = gManager.getEdge(selectedItem.getInt("id"), neighbor.getInt("id")) != -1;
-				boolean iAmTarget = gManager.getEdge(neighbor.getInt("id"), selectedItem.getInt("id")) != -1;
+				boolean iAmSource = networkView.getEdge(selectedItem.getInt("id"), neighbor.getInt("id")) != -1;
+				boolean iAmTarget = networkView.getEdge(neighbor.getInt("id"), selectedItem.getInt("id")) != -1;
 				
 				neighbor.setStroke(new BasicStroke(1.5f));
-				neighbor.setStrokeColor(gManager.getNodeStrokeColor());
+				neighbor.setStrokeColor(networkView.getNodeStrokeColor());
 
 				if(iAmSource && iAmTarget) {
-					neighbor.setFillColor(gManager.getFriendsAndFollowersColor());
+					neighbor.setFillColor(networkView.getFriendsAndFollowersColor());
 				}
 				else if(iAmSource) {
-					neighbor.setFillColor(gManager.getFriendsColor());
+					neighbor.setFillColor(networkView.getFriendsColor());
 				}
 				else {
-					neighbor.setFillColor(gManager.getFollowersColor());
+					neighbor.setFillColor(networkView.getFollowersColor());
 				}
 			}
 		}
@@ -93,12 +95,12 @@ public class AggregateDragControl extends ControlAdapter {
 
 		if(item instanceof NodeItem) {
 			NodeItem selectedItem = (NodeItem)item;
-			gManager.getColorsBack(selectedItem);
+			networkView.getColorsBack(selectedItem);
 
 			Iterator<NodeItem> i = selectedItem.neighbors();
 			while(i.hasNext()) {
 				NodeItem neighbor = i.next();        		
-				gManager.getColorsBack(neighbor);
+				networkView.getColorsBack(neighbor);
 			}
 		}
 	}
@@ -120,7 +122,7 @@ public class AggregateDragControl extends ControlAdapter {
 	 */
 	public void itemReleased(VisualItem item, MouseEvent e) {
 		if (!SwingUtilities.isLeftMouseButton(e)) return;
-		AggregateTable at = gManager.getGroups();
+		AggregateTable at = networkView.getGroups();
 		if ( dragged ) {
 			activeItem = null;
 			if(item instanceof NodeItem)
@@ -133,7 +135,7 @@ public class AggregateDragControl extends ControlAdapter {
 						addToGroup.addActionListener(new ActionListener(){
 							@Override
 							public void actionPerformed(ActionEvent arg0) {
-								gManager.getGroupManager().addToGroup(ni,group);
+								networkView.getGroupManager().addToGroup(ni,group);
 							}});
 						menu.add(addToGroup);
 						menu.show(e.getComponent(), e.getX(), e.getY());

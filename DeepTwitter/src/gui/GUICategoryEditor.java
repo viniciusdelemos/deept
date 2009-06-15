@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import gui.visualizations.CategoriesEditorView;
+import gui.visualizations.CategoryEditorView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -35,13 +35,13 @@ import prefuse.util.FontLib;
 import prefuse.util.ui.JFastLabel;
 import prefuse.visual.VisualItem;
 
-public class GUICategoryEdit {
+public class GUICategoryEditor {
 
-	private static CategoriesEditorView categoryEdit;
+	private static CategoryEditorView categoryEditor;
 	private static JFrame frame;
 	private static CategoryManager cManager = CategoryManager.getInstance();
 
-	private GUICategoryEdit() {
+	private GUICategoryEditor() {
 
 	}
 
@@ -50,9 +50,9 @@ public class GUICategoryEdit {
 		if (frame == null) {
 			Color BACKGROUND = Color.WHITE;
 			Color FOREGROUND = Color.BLACK;
-			categoryEdit = new CategoriesEditorView();
-			categoryEdit.setBackground(BACKGROUND);
-			categoryEdit.setForeground(FOREGROUND);
+			categoryEditor = new CategoryEditorView();
+			categoryEditor.setBackground(BACKGROUND);
+			categoryEditor.setForeground(FOREGROUND);
 
 			// create a search panel for the tree map
 			/*
@@ -73,10 +73,10 @@ public class GUICategoryEdit {
 			title.setBackground(BACKGROUND);
 			title.setForeground(FOREGROUND);
 
-			categoryEdit.addControlListener(new ControlAdapter() {
+			categoryEditor.addControlListener(new ControlAdapter() {
 				public void itemEntered(VisualItem item, MouseEvent e) {
-					if (item.canGetString(categoryEdit.c_label()))
-						title.setText(item.getString(categoryEdit.c_label()));
+					if (item.canGetString(categoryEditor.c_label()))
+						title.setText(item.getString(categoryEditor.c_label()));
 				}
 
 				public void itemExited(VisualItem item, MouseEvent e) {
@@ -102,7 +102,7 @@ public class GUICategoryEdit {
 			save.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					categoryEdit.setEdited(false);
+					categoryEditor.setEdited(false);
 					// edited = false;
 					saveCategories();
 					JOptionPane.showMessageDialog(null,
@@ -134,7 +134,7 @@ public class GUICategoryEdit {
 			JPanel panel = new JPanel(new BorderLayout());
 			panel.setBackground(BACKGROUND);
 			panel.setForeground(FOREGROUND);
-			panel.add(categoryEdit, BorderLayout.CENTER);
+			panel.add(categoryEditor, BorderLayout.CENTER);
 			panel.add(panel2, BorderLayout.SOUTH);
 			panel.setBackground(BACKGROUND);
 			panel.setForeground(FOREGROUND);
@@ -195,18 +195,18 @@ public class GUICategoryEdit {
 		} else {
 			System.out.println("Não instanciou nova tela");
 		}
-		categoryEdit.getTreeLayout().setLayoutAnchor(new Point2D.Double(300, 300));
+		categoryEditor.getTreeLayout().setLayoutAnchor(new Point2D.Double(300, 300));
 		// treeLayout.setLayoutAnchor(new Point2D.Double(150, 300));
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
-		categoryEdit.getTreeLayout().setLayoutAnchor(new Point2D.Double(-200, -25));
+		categoryEditor.getTreeLayout().setLayoutAnchor(new Point2D.Double(-200, -25));
 		// treeLayout.setLayoutAnchor(new Point2D.Double(-200, -25));
 
 	}
 
 	private static void close() {
 
-		if (categoryEdit.isEdited() == true) {
+		if (categoryEditor.isEdited() == true) {
 			String message = "Você alterou as Categorias e não salvou. Você tem certeza que deseja sair?";
 
 			Object[] options = { "Sim", "Não" };
@@ -219,13 +219,13 @@ public class GUICategoryEdit {
 
 		}
 
-		categoryEdit.setEdited(false);
+		categoryEditor.setEdited(false);
 		// edited = false;
 		frame.setVisible(false);
-		categoryEdit.getVisualization().cancel("filter");
-		categoryEdit.reset();
-		categoryEdit.setVisualization(new Visualization());
-		categoryEdit = null;
+		categoryEditor.getVisualization().cancel("filter");
+		categoryEditor.reset();
+		categoryEditor.setVisualization(new Visualization());
+		categoryEditor = null;
 		frame.dispose();
 		frame = null;
 
@@ -235,7 +235,7 @@ public class GUICategoryEdit {
 
 		cManager.removeAllCategoriesAndWords();
 
-		Iterator c = categoryEdit.getTree().getRoot().children();
+		Iterator c = categoryEditor.getTree().getRoot().children();
 		while (c.hasNext()) {
 			Node category = (Node) c.next();
 
@@ -245,10 +245,10 @@ public class GUICategoryEdit {
 			while (w.hasNext()) {
 				Node word = (Node) w.next();
 
-				words.add(word.getString(categoryEdit.c_label()));
+				words.add(word.getString(categoryEditor.c_label()));
 			}
 
-			cManager.addCategory(category.getString(categoryEdit.c_label()),
+			cManager.addCategory(category.getString(categoryEditor.c_label()),
 					words);
 		}
 

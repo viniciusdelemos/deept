@@ -10,9 +10,9 @@ import javax.swing.JSplitPane;
  *
  * @author rotta
  */
-public class GUIMostActiveUsers extends javax.swing.JFrame {    
+public class GUIMostPopularUsers extends javax.swing.JFrame {
     /** Creates new form GUIMainWindow */
-    public GUIMostActiveUsers(String windowName) {
+    public GUIMostPopularUsers(String windowName) {
         super(windowName);
         initComponents();
     }
@@ -42,7 +42,7 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setName("Usuários mais ativos"); // NOI18N
+        setName("Usuários mais populares"); // NOI18N
 
         jSplitPane1.setDividerLocation(510);
         jSplitPane1.setDividerSize(6);
@@ -63,7 +63,7 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         jEditorPane1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(240, 240, 240), 0));
         jEditorPane1.setContentType("text/html");
         jEditorPane1.setEditable(false);
-        jEditorPane1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jEditorPane1.setFont(new java.awt.Font("Arial", 1, 14));
         jScrollPane1.setViewportView(jEditorPane1);
 
         buttonGroup1.add(orderByFriendsButton);
@@ -103,6 +103,7 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabel1.setText("Classificar por número de");
 
+        buttonPlayPauseTweetView.setBackground(new java.awt.Color(102, 204, 255));
         buttonPlayPauseTweetView.setIcon(new javax.swing.ImageIcon(getClass().getResource("../play.png"))); // NOI18N
         buttonPlayPauseTweetView.setSelected(true);
         buttonPlayPauseTweetView.setToolTipText("Executar/Parar exibição de tweets");
@@ -112,7 +113,8 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         buttonPlayPauseTweetView.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("../pause.png"))); // NOI18N
         buttonPlayPauseTweetView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
-        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../config.png"))); // NOI18N
+        buttonSettings.setBackground(new java.awt.Color(102, 204, 255));
+        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../configure.png"))); // NOI18N
         buttonSettings.setToolTipText("Configurações");
         buttonSettings.setActionCommand("buttonSettings");
         buttonSettings.setFocusable(false);

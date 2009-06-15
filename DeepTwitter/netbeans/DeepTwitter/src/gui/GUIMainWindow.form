@@ -109,9 +109,6 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="labelStatusBar">
       <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-        </Property>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="12" style="0"/>
         </Property>
@@ -132,9 +129,6 @@
     </Component>
     <Container class="javax.swing.JSplitPane" name="jSplitPane1">
       <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-        </Property>
         <Property name="dividerLocation" type="int" value="250"/>
         <Property name="dividerSize" type="int" value="6"/>
         <Property name="continuousLayout" type="boolean" value="true"/>
@@ -152,11 +146,6 @@
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
       <SubComponents>
         <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
-          </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
               <JSplitPaneConstraints position="left"/>
@@ -178,9 +167,6 @@
               <SubComponents>
                 <Container class="javax.swing.JToolBar" name="jToolBar1">
                   <Properties>
-                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                    </Property>
                     <Property name="floatable" type="boolean" value="false"/>
                     <Property name="rollover" type="boolean" value="true"/>
                   </Properties>
@@ -194,9 +180,6 @@
                   <SubComponents>
                     <Component class="javax.swing.JButton" name="buttonNewDirectMessage">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                        </Property>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/gui/mail_add.png"/>
                         </Property>
@@ -211,9 +194,6 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="buttonPreviousUser">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                        </Property>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/gui/backward.png"/>
                         </Property>
@@ -267,9 +247,6 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="buttonNextUser">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                        </Property>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/gui/forward.png"/>
                         </Property>
@@ -283,9 +260,6 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="buttonSearchUpdates">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                        </Property>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/gui/search.png"/>
                         </Property>
@@ -298,9 +272,6 @@
                     </Component>
                     <Component class="javax.swing.JToggleButton" name="buttonInbox">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                        </Property>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/gui/mail_inbox.png"/>
                         </Property>
@@ -314,9 +285,6 @@
                     </Component>
                     <Component class="javax.swing.JToggleButton" name="buttonOutbox">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                        </Property>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/gui/mail_outbox.png"/>
                         </Property>
@@ -331,9 +299,6 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="buttonCloseUpdates">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                        </Property>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/gui/remove.png"/>
                         </Property>
@@ -346,9 +311,6 @@
                     </Component>
                     <Component class="javax.swing.JToggleButton" name="buttonTurnOnOff">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                        </Property>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/gui/turn_on.png"/>
                         </Property>
@@ -367,9 +329,6 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="buttonTimeline">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                        </Property>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/gui/eye.png"/>
                         </Property>
@@ -386,11 +345,6 @@
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JScrollPane" name="jScrollPane6">
-                  <Properties>
-                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                    </Property>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                       <BorderConstraints direction="Center"/>
@@ -407,9 +361,6 @@
     </Container>
     <Container class="javax.swing.JToolBar" name="mainToolBar">
       <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="f0" green="f0" red="f0" type="rgb"/>
-        </Property>
         <Property name="floatable" type="boolean" value="false"/>
         <Property name="rollover" type="boolean" value="true"/>
       </Properties>
@@ -423,9 +374,6 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="buttonUpdate">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/gui/comment_add.png"/>
             </Property>
@@ -436,9 +384,6 @@
         </Component>
         <Component class="javax.swing.JButton" name="buttonAddUser">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/gui/user_search.png"/>
             </Property>
@@ -449,9 +394,6 @@
         </Component>
         <Component class="javax.swing.JButton" name="buttonNewGroup">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/gui/users_add.png"/>
             </Property>
@@ -462,9 +404,6 @@
         </Component>
         <Component class="javax.swing.JButton" name="buttonSettings">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/gui/config.png"/>
             </Property>
@@ -477,9 +416,6 @@
         </Component>
         <Component class="javax.swing.JToggleButton" name="buttonToolTipControl">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/gui/user_info.png"/>
             </Property>
@@ -493,9 +429,6 @@
         </Component>
         <Component class="javax.swing.JToggleButton" name="buttonPlayPauseVisualization">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/gui/play.png"/>
             </Property>
@@ -512,9 +445,6 @@
         </Component>
         <Component class="javax.swing.JToggleButton" name="buttonCenterUser">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/gui/target.png"/>
             </Property>
@@ -525,11 +455,28 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
         </Component>
+        <Component class="javax.swing.JButton" name="buttonMostActive">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Mais ativos"/>
+            <Property name="actionCommand" type="java.lang.String" value="buttonMostActive"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="name" type="java.lang.String" value="buttonShowAll" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="buttonCategoryEditor">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Categorias"/>
+            <Property name="actionCommand" type="java.lang.String" value="buttonCategoryEditor"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="name" type="java.lang.String" value="buttonShowAll" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
         <Component class="javax.swing.JButton" name="buttonShowAll">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Exibir todos"/>
             <Property name="actionCommand" type="java.lang.String" value="buttonShowAll"/>
             <Property name="name" type="java.lang.String" value="buttonShowAll" noResource="true"/>
@@ -537,9 +484,6 @@
         </Component>
         <Component class="javax.swing.JButton" name="buttonClearSelection">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Limpar sele&#xe7;&#xe3;o"/>
             <Property name="actionCommand" type="java.lang.String" value="buttonClearSelection"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -550,9 +494,6 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="checkBoxHighQuality">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="alta qualidade"/>
             <Property name="actionCommand" type="java.lang.String" value="checkBoxHighQuality"/>
@@ -561,30 +502,13 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="checkBoxCurvedEdges">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="arestas curvas"/>
             <Property name="actionCommand" type="java.lang.String" value="checkBoxCurvedEdges"/>
             <Property name="name" type="java.lang.String" value="checkBoxCurvedEdges" noResource="true"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="labelFilter">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Filtro:"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="labelAPILimit">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f0" green="f0" red="f0" type="rgb"/>
-            </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="0"/>
             </Property>

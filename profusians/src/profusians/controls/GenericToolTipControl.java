@@ -6,6 +6,7 @@ import javax.swing.ToolTipManager;
 
 import prefuse.Display;
 import prefuse.controls.ControlAdapter;
+import prefuse.visual.EdgeItem;
 import prefuse.visual.VisualItem;
 
 /**
@@ -75,7 +76,9 @@ public class GenericToolTipControl extends ControlAdapter {
     }
 
     public void itemEntered( VisualItem vi, MouseEvent e) {
-
+    
+    if(vi instanceof EdgeItem) return;	
+    	
 	String value;
 
 	ToolTipManager.sharedInstance().setDismissDelay(DISMISSDELAY);

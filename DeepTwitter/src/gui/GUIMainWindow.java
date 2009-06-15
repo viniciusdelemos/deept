@@ -53,6 +53,8 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonToolTipControl = new javax.swing.JToggleButton();
         buttonPlayPauseVisualization = new javax.swing.JToggleButton();
         buttonCenterUser = new javax.swing.JToggleButton();
+        buttonMostActive = new javax.swing.JButton();
+        buttonCategoryEditor = new javax.swing.JButton();
         buttonShowAll = new javax.swing.JButton();
         buttonClearSelection = new javax.swing.JButton();
         checkBoxHighQuality = new javax.swing.JCheckBox();
@@ -254,6 +256,22 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCenterUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonCenterUser);
 
+        buttonMostActive.setText("Mais ativos");
+        buttonMostActive.setActionCommand("buttonMostActive");
+        buttonMostActive.setFocusable(false);
+        buttonMostActive.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonMostActive.setName("buttonShowAll"); // NOI18N
+        buttonMostActive.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonMostActive);
+
+        buttonCategoryEditor.setText("Categorias");
+        buttonCategoryEditor.setActionCommand("buttonCategoryEditor");
+        buttonCategoryEditor.setFocusable(false);
+        buttonCategoryEditor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonCategoryEditor.setName("buttonShowAll"); // NOI18N
+        buttonCategoryEditor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonCategoryEditor);
+
         buttonShowAll.setText("Exibir todos");
         buttonShowAll.setActionCommand("buttonShowAll");
         buttonShowAll.setName("buttonShowAll"); // NOI18N
@@ -373,6 +391,8 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonToolTipControl.addActionListener(listener);
         buttonPlayPauseVisualization.addActionListener(listener);
         buttonCenterUser.addActionListener(listener);
+        buttonMostActive.addActionListener(listener);
+        buttonCategoryEditor.addActionListener(listener);
 	}
 
     public boolean isHighQuality() {
@@ -441,10 +461,12 @@ public class GUIMainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify
     private javax.swing.JButton buttonAddUser;
+    private javax.swing.JButton buttonCategoryEditor;
     private javax.swing.JToggleButton buttonCenterUser;
     private javax.swing.JButton buttonClearSelection;
     private javax.swing.JButton buttonCloseUpdates;
     private javax.swing.JToggleButton buttonInbox;
+    private javax.swing.JButton buttonMostActive;
     private javax.swing.JButton buttonNewDirectMessage;
     private javax.swing.JButton buttonNewGroup;
     private javax.swing.JButton buttonNextUser;

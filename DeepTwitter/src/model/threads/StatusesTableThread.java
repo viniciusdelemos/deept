@@ -113,7 +113,7 @@ public class StatusesTableThread {
 		return panel;
 	}
 
-	private JPanel getPanel() {
+	private JPanel getStatusesPanel() {
 		JPanel updatePanel = new JPanel(new GridBagLayout());        
 		gbc = new GridBagConstraints();
 
@@ -632,7 +632,7 @@ public class StatusesTableThread {
 							c.weightx = 0.5;
 							c.fill = GridBagConstraints.HORIZONTAL;
 							c.gridx = 0;
-							panel.add(getPanel(),c,0);			
+							panel.add(getStatusesPanel(),c,0);			
 							rows++;
 							allStatusesList.add(0,statusesList.get(i));								
 						}

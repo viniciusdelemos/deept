@@ -58,7 +58,7 @@ import prefuse.visual.expression.InGroupPredicate;
 import prefuse.visual.sort.TreeDepthItemSorter;
 import controller.CategoryManager;
 
-public class CategoriesEditorView extends Display {
+public class CategoryEditorView extends Display {
 
 	private final static String tree = "tree";
 	private final static String treeNodes = "tree.nodes";
@@ -86,7 +86,7 @@ public class CategoriesEditorView extends Display {
 	private NodeLinkTreeLayout treeLayout;
 
 
-	public CategoriesEditorView() {
+	public CategoryEditorView() {
 		super(new Visualization());
 
 		t = new Tree();

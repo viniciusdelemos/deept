@@ -37,7 +37,7 @@ import prefuse.visual.VisualItem;
 import profusians.controls.GenericToolTipControl;
 import controller.ControllerDeepTwitter;
 
-public class MostActiveUsersView extends Display{
+public class MostPopularUsersView extends Display{
 	public final static String GRAPH = "graph";
 	public final static String NODES = "graph.nodes";
 	private DataSizeAction sizeAction;
@@ -59,7 +59,7 @@ public class MostActiveUsersView extends Display{
     	nothing
     }
 	
-	public MostActiveUsersView(Node[] nodesArray, JEditorPane editor) {
+	public MostPopularUsersView(Node[] nodesArray, JEditorPane editor) {
 		super(new Visualization());
 		this.nodesArray = nodesArray;
 		orderedByFollowersList = new ArrayList<Node>(nodesArray.length);
@@ -229,7 +229,7 @@ public class MostActiveUsersView extends Display{
 	}
 	
 	private	class ListenerAdapter extends ControlAdapter{
-		public ListenerAdapter(MostActiveUsersView display) {
+		public ListenerAdapter(MostPopularUsersView display) {
 			//TODO inserir item clicked - mostrar nodo na rede
 		}	
 	}

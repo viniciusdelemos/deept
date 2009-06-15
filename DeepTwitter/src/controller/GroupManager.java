@@ -1,6 +1,6 @@
 package controller;
 
-import gui.visualizations.GraphicManager;
+import gui.visualizations.NetworkView;
 
 import java.util.Iterator;
 
@@ -20,20 +20,20 @@ import prefuse.visual.VisualItem;
 public class GroupManager {
 	private int id;
 	private AggregateTable groupTable;
-	private GraphicManager gManager;
+	private NetworkView networkView;
 	private ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
 	private TupleSet selectedNodes;
 	
-	public GroupManager(GraphicManager gManager) {
-		this.gManager = gManager;		
-		groupTable = gManager.getVisualization().addAggregates(GraphicManager.GROUPS);
+	public GroupManager(NetworkView networkView) {
+		this.networkView = networkView;		
+		groupTable = networkView.getVisualization().addAggregates(NetworkView.GROUPS);
     	groupTable.addColumn(VisualItem.POLYGON, float[].class);
     	groupTable.addColumn("id", int.class);
 	}
 	
 	public void addGroup()
 	{
-		selectedNodes = gManager.getTupleSet(GraphicManager.SELECTED_NODES);
+		selectedNodes = networkView.getTupleSet(NetworkView.SELECTED_NODES);
 		if(selectedNodes.getTupleCount()<2) {
     		controller.showMessageDialog("Você deve selecionar dois ou mais usuários para criar um grupo.",MessageType.INFORMATION);
     		return;
@@ -45,7 +45,7 @@ public class GroupManager {
     	while(selected.hasNext())
     		addToGroup(selected.next(), group);    		
     	
-    	gManager.clearSelection();
+    	networkView.clearSelection();
     	id++;
 	}
     
@@ -61,13 +61,13 @@ public class GroupManager {
 			NodeItem target = edge.getTargetItem();
 			if(source == n) {
 				if(!group.containsItem(target))
-					edge.set("weight", gManager.getWeightValue());    				
+					edge.set("weight", networkView.getWeightValue());    				
 				else
 					edge.set("weight", 0f);
 			}
 			if(target == n) {
 				if(!group.containsItem(source))
-					edge.set("weight", gManager.getWeightValue());
+					edge.set("weight", networkView.getWeightValue());
 				else
 					edge.set("weight", 0f);
 			}			
@@ -76,7 +76,7 @@ public class GroupManager {
 		Iterator<NodeItem> nodes = group.items();
 		while(nodes.hasNext()) {
 			NodeItem next = nodes.next();
-			Edge e = gManager.addEdge((Node)next.getSourceTuple(), (Node)n.getSourceTuple());			
+			Edge e = networkView.addEdge((Node)next.getSourceTuple(), (Node)n.getSourceTuple());			
 			//setando -1 para indicar que é aresta falsa (invisível)
 			e.setFloat("weight", -1f);
 		}
@@ -97,10 +97,10 @@ public class GroupManager {
     	while(i.hasNext()) {
     		try{
     			EdgeItem edge = i.next();
-    			if(edge.getFloat("weight")==gManager.getWeightValue()) 
+    			if(edge.getFloat("weight")==networkView.getWeightValue()) 
     				edge.setFloat("weight", 0f);
     			else if(edge.getFloat("weight")==-1.0f) 
-    				gManager.removeEdge((Edge)edge.getSourceTuple());
+    				networkView.removeEdge((Edge)edge.getSourceTuple());
     		}
     		catch(IllegalArgumentException e) {
     			aindaTem = true;

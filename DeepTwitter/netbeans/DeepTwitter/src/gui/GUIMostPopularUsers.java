@@ -10,9 +10,9 @@ import javax.swing.JSplitPane;
  *
  * @author rotta
  */
-public class GUIMostActiveUsers extends javax.swing.JFrame {    
+public class GUIMostPopularUsers extends javax.swing.JFrame {
     /** Creates new form GUIMainWindow */
-    public GUIMostActiveUsers(String windowName) {
+    public GUIMostPopularUsers(String windowName) {
         super(windowName);
         initComponents();
     }
@@ -42,9 +42,8 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setName("Usuários mais ativos"); // NOI18N
+        setName("Usuários mais populares"); // NOI18N
 
-        jSplitPane1.setBackground(new java.awt.Color(240, 240, 240));
         jSplitPane1.setDividerLocation(510);
         jSplitPane1.setDividerSize(6);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -64,12 +63,11 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         jEditorPane1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(240, 240, 240), 0));
         jEditorPane1.setContentType("text/html");
         jEditorPane1.setEditable(false);
-        jEditorPane1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jEditorPane1.setText("<html>\r\n  <head>\r\n\r\n  </head>\r\n  <body>\r\n    <p style=\"margin-top: 0\">\r\n      \r\n    </p>\r\n  </body>\r\n</html>\r\n");
+        jEditorPane1.setFont(new java.awt.Font("Arial", 1, 14));
         jScrollPane1.setViewportView(jEditorPane1);
 
         buttonGroup1.add(orderByFriendsButton);
-        orderByFriendsButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        orderByFriendsButton.setFont(new java.awt.Font("Tahoma", 1, 12));
         orderByFriendsButton.setText("Amigos");
         orderByFriendsButton.setActionCommand("orderByFriends");
         orderByFriendsButton.setBorder(null);
@@ -78,14 +76,14 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         orderByFriendsButton.setPreferredSize(new java.awt.Dimension(101, 23));
 
         buttonGroup1.add(orderByFavoritesButton);
-        orderByFavoritesButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        orderByFavoritesButton.setFont(new java.awt.Font("Tahoma", 1, 12));
         orderByFavoritesButton.setText("Favoritos");
         orderByFavoritesButton.setActionCommand("orderByFavorites");
         orderByFavoritesButton.setBorder(null);
         orderByFavoritesButton.setPreferredSize(new java.awt.Dimension(101, 23));
 
         buttonGroup1.add(orderByTweetsButton);
-        orderByTweetsButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        orderByTweetsButton.setFont(new java.awt.Font("Tahoma", 1, 12));
         orderByTweetsButton.setText("Tweets");
         orderByTweetsButton.setActionCommand("orderByTweets");
         orderByTweetsButton.setBorder(null);
@@ -94,7 +92,7 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         orderByTweetsButton.setPreferredSize(new java.awt.Dimension(101, 23));
 
         buttonGroup1.add(orderByFollowersButton);
-        orderByFollowersButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        orderByFollowersButton.setFont(new java.awt.Font("Tahoma", 1, 12));
         orderByFollowersButton.setText("Seguidores");
         orderByFollowersButton.setActionCommand("orderByFollowers");
         orderByFollowersButton.setBorder(null);
@@ -102,10 +100,10 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         orderByFollowersButton.setMinimumSize(new java.awt.Dimension(57, 15));
         orderByFollowersButton.setPreferredSize(new java.awt.Dimension(101, 23));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabel1.setText("Classificar por número de");
 
-        buttonPlayPauseTweetView.setBackground(new java.awt.Color(240, 240, 240));
+        buttonPlayPauseTweetView.setBackground(new java.awt.Color(102, 204, 255));
         buttonPlayPauseTweetView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/play.png"))); // NOI18N
         buttonPlayPauseTweetView.setSelected(true);
         buttonPlayPauseTweetView.setToolTipText("Executar/Parar exibição de tweets");
@@ -115,15 +113,15 @@ public class GUIMostActiveUsers extends javax.swing.JFrame {
         buttonPlayPauseTweetView.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/pause.png"))); // NOI18N
         buttonPlayPauseTweetView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
-        buttonSettings.setBackground(new java.awt.Color(240, 240, 240));
-        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/config.png"))); // NOI18N
+        buttonSettings.setBackground(new java.awt.Color(102, 204, 255));
+        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/configure.png"))); // NOI18N
         buttonSettings.setToolTipText("Configurações");
         buttonSettings.setActionCommand("buttonSettings");
         buttonSettings.setFocusable(false);
         buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabel2.setText("Exibir");
 
         javax.swing.GroupLayout menuPanelLayout = new javax.swing.GroupLayout(menuPanel);
