@@ -25,6 +25,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import prefuse.visual.VisualItem;
@@ -198,6 +199,9 @@ public class CategoryManager {
 		SAXBuilder builder = new SAXBuilder(); // Build a document ...
 		Document doc = null; // ... from a file
 		XMLOutputter output = new XMLOutputter(); // And output the document ...
+		Format format = Format.getPrettyFormat();  
+		format.setEncoding("ISO-8859-1");
+		output.setFormat(format);
 
 		try {
 			doc = builder.build("config/categories.xml");
