@@ -1,8 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <Categories>
-	
-	
-	
-	
-	
-<Category name="ingles" /><Category name="sentimento"><Word>bom-humor</Word><Word>love</Word><Word>amo</Word><Word>odeio</Word></Category><Category name="teste"><Word>nerd</Word><Word>jogos</Word><Word>casa</Word><Word>apartamento</Word></Category></Categories>
+  <Category name="tecnologia">
+    <Word>notebook</Word>
+    <Word>lcd</Word>
+    <Word>windows</Word>
+    <Word>mac</Word>
+    <Word>iphone</Word>
+    <Word>linux</Word>
+    <Word>blog</Word>
+  </Category>
+  <Category name="música">
+    <Word>música</Word>
+    <Word>mtv</Word>
+    <Word>lady gaga</Word>
+  </Category>
+  <Category name="twitter">
+    <Word>twitter</Word>
+    <Word>tweetdeck</Word>
+    <Word>tweet</Word>
+  </Category>
+  <Category name="ingles">
+    <Word>love</Word>
+    <Word>photos</Word>
+    <Word>music</Word>
+    <Word>interview</Word>
+    <Word>bored</Word>
+  </Category>
+  <Category name="conhecimento" />
+  <Category name="sentimento">
+    <Word>love</Word>
+    <Word>bom-humor</Word>
+    <Word>amo</Word>
+    <Word>odeio</Word>
+  </Category>
+  <Category name="política">
+    <Word>bush</Word>
+    <Word>#iranelection</Word>
+    <Word>obama</Word>
+  </Category>
+  <Category name="cinema">
+    <Word>transformers</Word>
+  </Category>
+  <Category name="diversão">
+    <Word>jogo</Word>
+    <Word>show</Word>
+    <Word>férias</Word>
+    <Word>hotel</Word>
+  </Category>
+</Categories>
+
