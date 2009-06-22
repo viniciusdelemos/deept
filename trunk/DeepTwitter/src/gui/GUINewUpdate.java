@@ -59,6 +59,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
 
         buttonOK.setText("Atualizar");
         buttonOK.setActionCommand("buttonUpdate");
+        buttonOK.setEnabled(false);
         buttonOK.setName("buttonUpdate"); // NOI18N
         buttonOK.setNextFocusableComponent(updateArea);
 
@@ -108,9 +109,9 @@ public class GUINewUpdate extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 253, Short.MAX_VALUE)
                         .addComponent(labelMaxChars))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(buttonCancel)
+                        .addComponent(buttonOK)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonOK)))
+                        .addComponent(buttonCancel)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -137,7 +138,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
     }                                            
 
     private void updateAreaKeyPressed(java.awt.event.KeyEvent evt) {                                      
-        if(evt.getKeyCode()==9) { //TAB
+        if(evt.getKeyCode()==9) {
             buttonCancel.requestFocusInWindow();
             return;
         }
@@ -145,7 +146,7 @@ public class GUINewUpdate extends javax.swing.JFrame {
 }                                     
 
     private void updateAreaKeyReleased(java.awt.event.KeyEvent evt) {                                       
-        if(evt.getKeyCode()==9) { //TAB
+        if(evt.getKeyCode()==9) {
             buttonCancel.requestFocusInWindow();
             return;
         }
@@ -153,12 +154,12 @@ public class GUINewUpdate extends javax.swing.JFrame {
 }                                      
 
     public void verifyConditions() {
-    	int textSize = updateArea.getText().length();
+        int textSize = updateArea.getText().length();
         //System.out.println("size: "+textSize);
         int remaining = 140-textSize;
         labelMaxChars.setText(String.valueOf(remaining));
 
-        if(remaining<0 || remaining==140) {
+        if(remaining<0) {
             buttonOK.setEnabled(false);
         }
         else if(remaining<10) {
@@ -168,6 +169,9 @@ public class GUINewUpdate extends javax.swing.JFrame {
         else if(remaining<20) {
             labelMaxChars.setForeground(Color.RED.darker().darker());
             buttonOK.setEnabled(true);
+        }
+        else if(remaining==140) {
+        	buttonOK.setEnabled(false);
         }
         else {
             labelMaxChars.setForeground(new Color(153,153,153));

@@ -126,7 +126,7 @@ public class MostPopularUsersView extends Display{
     	new UpdateStatusEditor(editor).start();
     	
     	setHighQuality(true);
-    	setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
+    	//setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
     	m_vis.run("layout");   	
 	}
 	

@@ -2,21 +2,27 @@ package model;
 
 import gui.GUITimeline;
 
+import java.awt.Component;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
+import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JToolBar.Separator;
+import javax.swing.SpringLayout.Constraints;
 
 import controller.ControllerDeepTwitter;
 
@@ -55,7 +61,7 @@ public class StatusTab {
 		currentTable = 0;
 		if(type == StatusesType.UPDATES || type == StatusesType.FAVORITES) 		
 			hasMultiplePanels = true;		
-		tablesMap = new HashMap<String,StatusesTableThread>();
+		tablesMap = new HashMap<String,StatusesTableThread>();		
 	}
 	
 	private JPanel createAndGetPanel(StatusesType type) {
@@ -95,6 +101,7 @@ public class StatusTab {
 			if(selectedTable.getType()!=StatusesType.DIRECT_MESSAGES_RECEIVED &&
 					selectedTable.getType()!=StatusesType.DIRECT_MESSAGES_SENT)
 				reconfigButtons();
+			setCurrentUserName(controller.getUserName(userId));
 			jScrollPane6.revalidate();
 		}
 		reconfigOnOffButton();		
@@ -107,7 +114,7 @@ public class StatusTab {
 		reconfigOnOffButton();
 		if(selectedTable.getType()!=StatusesType.DIRECT_MESSAGES_RECEIVED &&
 				selectedTable.getType()!=StatusesType.DIRECT_MESSAGES_SENT)
-			setCurrentUserName(controller.getUserName(userId));		
+			setCurrentUserName(controller.getUserName(userId));	
 	}
 	
 	public void setCurrentUserName(String name) {
@@ -255,7 +262,7 @@ public class StatusTab {
 
         buttonTimeline.setBackground(new java.awt.Color(240, 240, 240));
         buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
-        buttonTimeline.setToolTipText("Configurações");
+        buttonTimeline.setToolTipText("Visualização do timeline de atualizações");
         buttonTimeline.setActionCommand("buttonTimeline");
         buttonTimeline.setFocusable(false);
         buttonTimeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -264,7 +271,7 @@ public class StatusTab {
         buttonTimeline.getAccessibleContext().setAccessibleDescription("Visualização do Timeline de Atualizações");
         
         reconfigToolBarBasedOnTabType();
-        
+        jToolBar1.add(Box.createHorizontalStrut(80));
 		panel.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
 	}
 	

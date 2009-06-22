@@ -4,6 +4,7 @@ import gui.GUIAddUser;
 import gui.GUICategoryEditor;
 import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
+import gui.GUIMostPopularChoice;
 import gui.GUIMostPopularUsers;
 import gui.GUINewUpdate;
 import gui.visualizations.MostPopularUsersView;
@@ -18,6 +19,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -40,6 +42,8 @@ import prefuse.data.Node;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphMLWriter;
+import prefuse.data.tuple.TupleSet;
+import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import twitter4j.RateLimitStatus;
 import twitter4j.Twitter;
@@ -52,6 +56,7 @@ public class ControllerDeepTwitter {
 	private GUIAddUser guiAddUser;
 	private GUINewUpdate guiNewUpdate;
 	private GUIMostPopularUsers guiMostPopular;
+	private GUIMostPopularChoice choiceFrame;
 	private Twitter twitter;
 	private NetworkView networkView;
 	private MostPopularUsersView activeUsersDisplay;
@@ -431,15 +436,15 @@ public class ControllerDeepTwitter {
 				//TODO
 				System.out.println("Save Network As...");
 			}
-			else if(cmd.equals("menuLogout")) {
+			else if(cmd.equals("buttonLogout")) {
 				mainWindow.dispose();
 				mainWindow = null;
 				loginWindow.setVisible(true);
 			}
-			else if(cmd.equals("menuCheckBoxStatusBar")) {
+			else if(cmd.equals("buttonShowStatusBar")) {
 				mainWindow.setStatusBarVisible(mainWindow.isStatusBarVisible());
 			}
-			else if(cmd.equals("menuHelp")) {
+			else if(cmd.equals("buttonHelp")) {
 				//TODO
 				System.out.println("Open Help");
 			}
@@ -497,7 +502,7 @@ public class ControllerDeepTwitter {
 			else if(cmd.equals("buttonClearSelection")) {
 				networkView.clearSelection();				
 			}
-			else if(cmd.equals("checkBoxHighQuality")) {						
+			else if(cmd.equals("buttonHighQuality")) {						
 				networkView.setHighQuality(mainWindow.isHighQuality());				
 			}
 			else if(cmd.equals("buttonPlayPauseVisualization")) {
@@ -506,7 +511,7 @@ public class ControllerDeepTwitter {
 				else
 					networkView.getVisualization().cancel("layout");
 			}
-			else if(cmd.equals("checkBoxCurvedEdges")) {
+			else if(cmd.equals("buttonCurvedEdges")) {
 				networkView.setEdgeType(mainWindow.isCurvedEdges());
 			}
 			else if(cmd.equals("buttonToolTipControl")) {
@@ -532,7 +537,31 @@ public class ControllerDeepTwitter {
 				activeUsersDisplay.setSizeActionDataField(ShowingBy.favoritesCount);
 			}
 			else if(cmd.equals("buttonMostActive")) {
-				openGUIMostPopularUsersWindow(null);
+				if(networkView.getTupleSet(NetworkView.SELECTED_NODES).getTupleCount()>0) {
+					choiceFrame = new GUIMostPopularChoice();
+					choiceFrame.setLocationRelativeTo(mainWindow);
+					choiceFrame.addMainWindowListener(mainWindowListener);
+					choiceFrame.setVisible(true);
+				}
+				else
+					openGUIMostPopularUsersWindow(null);
+			}
+			else if(cmd.equals("buttonOKMostPopularUsersChoice")) {
+				if(choiceFrame.forSelectedUsersOnly()) {
+					TupleSet tuples = networkView.getTupleSet(NetworkView.SELECTED_NODES);
+					Node[] groupArray = new Node[tuples.getTupleCount()];
+					Iterator<NodeItem> nodes = tuples.tuples();
+					int cont = 0;
+					while(nodes.hasNext()) {
+						NodeItem next = nodes.next();
+						groupArray[cont] = next;
+						cont++;
+					}
+					choiceFrame.dispose();
+					openGUIMostPopularUsersWindow(groupArray);					
+				}
+				else
+					openGUIMostPopularUsersWindow(null);
 			}
 			else if(cmd.equals("buttonCategoryEditor")) {
 				GUICategoryEditor.openFrame();

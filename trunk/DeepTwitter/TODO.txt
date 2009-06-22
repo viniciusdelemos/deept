@@ -12,19 +12,14 @@ TODO:
 - possibilitar definir o inReplyTo nos statuses;
 - permitir varias buscas;
 - classe Tweet: fazer imagem do usuario mostrar ele na rede;
-- para painel de um unico usuario, nao mostrar a foto varias vezes;
 
 - * criar menu configurações e salvar xml;
 - fazer requisicoes com threads para nao trancar visualizacao;
-- * implementar menu bloquear usuario (mostrando um X no nodo);
 - fazer algo com trends (#) - aba ou tag cloud;
-- * consertar ação de esconder amigos do nodo clicado;
 - parece que public timeline nao esta mais na pagina do twitter;
 - implementar notificação quando novas atualizações/msgs chegarem;
 - * mostrar mensagens de erro e notificações na toolbar principal;
-- permitir esconder/deletar nodos e inserir botao para ver todos;
 - escolher forças de atração/repulsão melhores;
-- setar tooltips do login;
 
 - analisar: acredito que deu problema em uma das requisicoes StatusTable, e parou
 de fazer requisicoes, sendo assim, colocar try catch para cada uma das requisicoes (isoladamente)

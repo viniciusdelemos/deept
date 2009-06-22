@@ -24,6 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -95,7 +96,7 @@ public class TimelineView extends JPanel {
     private Rectangle2D m_ylabB = new Rectangle2D.Double();
     
     public enum Group {
-		STATUSES, X_AXIS, Y_AXIS
+		TWEETS, X_AXIS, Y_AXIS
 	}
     
     
@@ -106,17 +107,17 @@ public class TimelineView extends JPanel {
         m_vis = vis;
         
         Table sdt = getStatusesDataTable(statusesList);		
-		VisualTable vt = vis.addTable(Group.STATUSES.toString(),sdt);	        		       
+		VisualTable vt = vis.addTable(Group.TWEETS.toString(),sdt);	        		       
         
 		final TimelineRenderFactory timelineRenderFactory = new TimelineRenderFactory(isGroup);		
         vis.setRendererFactory(timelineRenderFactory);
         if(isGroup)
-        	((LabelRenderer)timelineRenderFactory.getDefaultRenderer()).getImageFactory().preloadImages(m_vis.items(Group.STATUSES.toString()),StatusesDataTable.ColNames.IMAGE_URL.toString());
+        	((LabelRenderer)timelineRenderFactory.getDefaultRenderer()).getImageFactory().preloadImages(m_vis.items(Group.TWEETS.toString()),StatusesDataTable.ColNames.IMAGE_URL.toString());
         
         screenNameSearchQuery = new SearchQueryBinding(vt, ColNames.SCREEN_NAME.toString());
-        textSearchQuery = new SearchQueryBinding(vt, ColNames.STATUS.toString());
+        textSearchQuery = new SearchQueryBinding(vt, ColNames.TWEET.toString());
         
-        AxisLayout xAxis = new AxisLayout(Group.STATUSES.toString(), 
+        AxisLayout xAxis = new AxisLayout(Group.TWEETS.toString(), 
 				StatusesDataTable.ColNames.DAY.toString(), Constants.X_AXIS);        
         dayQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.DAY.toString());
         xAxis.setRangeModel(dayQuery.getModel());      
@@ -124,7 +125,7 @@ public class TimelineView extends JPanel {
         //xlabels.setSpacing(5);
         vis.putAction("xlabels", xlabels);
                 
-        AxisLayout yAxis = new AxisLayout(Group.STATUSES.toString(), 
+        AxisLayout yAxis = new AxisLayout(Group.TWEETS.toString(), 
 				StatusesDataTable.ColNames.HOUR.toString(),	Constants.Y_AXIS);
         hourQuery = new RangeQueryBinding(vt,StatusesDataTable.ColNames.HOUR.toString());
         yAxis.setRangeModel(hourQuery.getModel());      
@@ -139,16 +140,16 @@ public class TimelineView extends JPanel {
         statusesFilter.add(dayQuery.getPredicate());
         statusesFilter.add(ExpressionParser.predicate("ID!=NULL"));
         
-        DataColorAction shapeColor = new DataColorAction(Group.STATUSES.toString(), 
+        DataColorAction shapeColor = new DataColorAction(Group.TWEETS.toString(), 
 				StatusesDataTable.ColNames.HOUR.toString(),
 				Constants.NOMINAL, VisualItem.STROKECOLOR,
 				new int[] {ChartColor.DARK_BLUE.getRGB()});
                 
-        DataShapeAction shape = new DataShapeAction(Group.STATUSES.toString(),
+        DataShapeAction shape = new DataShapeAction(Group.TWEETS.toString(),
 				StatusesDataTable.ColNames.HOUR.toString(),
 				new int[] {Constants.SHAPE_ELLIPSE});
         
-        Counter cntr = new Counter(Group.STATUSES.toString());
+        Counter cntr = new Counter(Group.TWEETS.toString());
         
         ActionList draw = new ActionList();
         draw.add(cntr);
@@ -157,12 +158,12 @@ public class TimelineView extends JPanel {
         draw.add(xAxis);
         draw.add(yAxis);
         draw.add(ylabels);
-        draw.add(new ColorAction(Group.STATUSES.toString(), VisualItem.FILLCOLOR, 0));
+        draw.add(new ColorAction(Group.TWEETS.toString(), VisualItem.FILLCOLOR, 0));
         draw.add(new RepaintAction());
         vis.putAction("draw", draw);
 
         ActionList update = new ActionList();
-        update.add(new VisibilityFilter(Group.STATUSES.toString(), statusesFilter));
+        update.add(new VisibilityFilter(Group.TWEETS.toString(), statusesFilter));
         update.add(cntr);
         update.add(xAxis);
         update.add(yAxis);
@@ -182,7 +183,7 @@ public class TimelineView extends JPanel {
         display.setItemSorter(new ItemSorter() {
             public int score(VisualItem item) {
                 int score = super.score(item);
-                if (item.isInGroup(Group.STATUSES.toString())) {
+                if (item.isInGroup(Group.TWEETS.toString())) {
                 	if(item.getString(StatusesDataTable.ColNames.CATEGORIES.toString())!=null)
                 		score+=300000;
                 	else
@@ -210,7 +211,7 @@ public class TimelineView extends JPanel {
         labelTotalStatuses.setVerticalAlignment(SwingConstants.BOTTOM);
                 
         String descriptions[] = { "Usuário:", "Status:", "Categorias:","Data:" };
-        String data[] = { StatusesDataTable.ColNames.SCREEN_NAME.toString(), StatusesDataTable.ColNames.STATUS.toString(),
+        String data[] = { StatusesDataTable.ColNames.SCREEN_NAME.toString(), StatusesDataTable.ColNames.TWEET.toString(),
         		StatusesDataTable.ColNames.CATEGORIES.toString(),
         		StatusesDataTable.ColNames.FULL_DATE.toString()};
 
@@ -221,9 +222,9 @@ public class TimelineView extends JPanel {
         //ToolTipControl ttc = new ToolTipControl("label");
         Control hoverc = new ControlAdapter() {
             public void itemEntered(VisualItem item, MouseEvent evt) {
-                if ( item.isInGroup(Group.STATUSES.toString()) ) {
+                if ( item.isInGroup(Group.TWEETS.toString()) ) {
                 	labelTotalStatuses.setText(item.getString(StatusesDataTable.ColNames.SCREEN_NAME.toString()));
-                	if(!categoriesOn)
+                	if(item.getString(StatusesDataTable.ColNames.CATEGORIES.toString())==null)
                 		item.setFillColor(item.getStrokeColor());
                 	item.setStrokeColor(ColorLib.rgb(0,0,0));
                 	item.setStroke(new BasicStroke(1.5f));
@@ -232,9 +233,9 @@ public class TimelineView extends JPanel {
                 }
             }
             public void itemExited(VisualItem item, MouseEvent evt) {
-                if ( item.isInGroup(Group.STATUSES.toString()) ) {
+                if ( item.isInGroup(Group.TWEETS.toString()) ) {
                   labelTotalStatuses.setText(statusesCountText);
-                  if(!categoriesOn)
+                  if(item.getString(StatusesDataTable.ColNames.CATEGORIES.toString())==null)
                 	  item.setFillColor(item.getEndFillColor());
                   item.setStrokeColor(item.getEndStrokeColor());
                   item.setStroke(new BasicStroke(1f));
@@ -288,12 +289,14 @@ public class TimelineView extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {				
 				if(timelineRenderFactory.getDefaultRenderer() instanceof ShapeRenderer) {					
 					timelineRenderFactory.switchRenderer();					
-					((LabelRenderer)timelineRenderFactory.getDefaultRenderer()).getImageFactory().preloadImages(m_vis.items(Group.STATUSES.toString()),StatusesDataTable.ColNames.IMAGE_URL.toString());
+					((LabelRenderer)timelineRenderFactory.getDefaultRenderer()).getImageFactory().preloadImages(m_vis.items(Group.TWEETS.toString()),StatusesDataTable.ColNames.IMAGE_URL.toString());
 					displayLayout();
 				}
 			}}); 
         
-        JButton buttonCategoryManager = new JButton("Gerenciar Categorias");        
+        JButton buttonCategoryManager = new JButton();
+        buttonCategoryManager.setToolTipText("Gerenciador de Categorias");
+        buttonCategoryManager.setIcon(new ImageIcon(getClass().getResource("../../archive.png")));        
         buttonCategoryManager.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent arg0) {
@@ -328,7 +331,9 @@ public class TimelineView extends JPanel {
 				statusesFilter.add(ExpressionParser.predicate(query));		
 			}});
         
-        final JButton buttonCategorize = new JButton("Categorizar Tweets");
+        final JButton buttonCategorize = new JButton();
+        buttonCategorize.setToolTipText("Categorizar tweets");
+        buttonCategorize.setIcon(new ImageIcon(getClass().getResource("../../tag.png")));
         buttonCategorize.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent arg0) {
@@ -350,7 +355,7 @@ public class TimelineView extends JPanel {
                 			else if(tr instanceof Tweet) responseId = ((Tweet)tr).getId();
                 			
                 			String expr = "ID='"+responseId+"'";
-                			Iterator<VisualItem> it = m_vis.items(Group.STATUSES.toString(),expr);
+                			Iterator<VisualItem> it = m_vis.items(Group.TWEETS.toString(),expr);
                 			VisualItem item = null;
             				while(it.hasNext()) { //deve retornar apenas 1!
             					item = it.next();
@@ -370,29 +375,28 @@ public class TimelineView extends JPanel {
                 		
                 		categoriesComboBox.setVisible(true);
                 		buttonCategorize.setEnabled(true);
-                		buttonCategorize.setText("Categorizar Tweets");
-                		//updateUI();
+                		buttonCategorize.setText("");
         				displayLayout();
         			}
         		}        		
         		new RunButtonCategorize().start();
         	}});
         
-        Box radioBox = new Box(BoxLayout.X_AXIS);
-        radioBox.add(Box.createHorizontalStrut(5));
-        radioBox.add(screenNameSearcher);
-        radioBox.add(textSearcher);
-        radioBox.add(Box.createHorizontalStrut(15));
-        radioBox.add(buttonShapes);
-        radioBox.add(buttonPhotos);
-        radioBox.add(Box.createHorizontalStrut(15));
+        Box componentsBox = new Box(BoxLayout.X_AXIS);
+        componentsBox.add(Box.createHorizontalStrut(5));
+        componentsBox.add(screenNameSearcher);
+        componentsBox.add(textSearcher);
+        componentsBox.add(Box.createHorizontalStrut(15));
+        componentsBox.add(buttonShapes);
+        componentsBox.add(buttonPhotos);
+        componentsBox.add(Box.createHorizontalStrut(15));
         if(isStatusOrTweet) {
-        	radioBox.add(buttonCategoryManager);
-        	radioBox.add(buttonCategorize);
+        	componentsBox.add(buttonCategoryManager);
+        	componentsBox.add(buttonCategorize);
         }                
-        radioBox.add(Box.createHorizontalStrut(15));
-        radioBox.add(categoriesComboBox);
-        radioBox.add(Box.createHorizontalGlue()); 
+        componentsBox.add(Box.createHorizontalStrut(15));
+        componentsBox.add(categoriesComboBox);
+        componentsBox.add(Box.createHorizontalGlue()); 
         
         JRangeSlider verticalSlider = hourQuery.createVerticalRangeSlider();
         verticalSlider.setThumbColor(ChartColor.LIGHT_GRAY);
@@ -426,13 +430,13 @@ public class TimelineView extends JPanel {
         add(infoBox, BorderLayout.NORTH);
         add(southPanel, BorderLayout.CENTER);
         add(rightBox, BorderLayout.EAST);
-        add(radioBox, BorderLayout.SOUTH);
+        add(componentsBox, BorderLayout.SOUTH);
         UILib.setColor(this, ColorLib.getColor(255,255,255), Color.DARK_GRAY);
         verticalSlider.setForeground(ChartColor.VERY_LIGHT_BLUE);
         horizontalSlider.setForeground(ChartColor.VERY_LIGHT_BLUE);
-        UILib.setFont(radioBox, FontLib.getFont("Tahoma", 12));
+        UILib.setFont(componentsBox, FontLib.getFont("Tahoma", 12));
         labelDetails.setFont(FontLib.getFont("Tahoma", 18));
-        labelTotalStatuses.setFont(FontLib.getFont("Tahoma", 16));
+        labelTotalStatuses.setFont(FontLib.getFont("Tahoma", 16));        
     }
     
     public StatusesDataTable getStatusesDataTable(List<TwitterResponse> statusesList) {
@@ -482,7 +486,7 @@ public class TimelineView extends JPanel {
 					throw new IllegalArgumentException("Objeto inválido dentro da lista");
 				
 				tbl.set(index, StatusesDataTable.ColNames.ID.toString(), String.valueOf(id));
-				tbl.set(index, StatusesDataTable.ColNames.STATUS.toString(), text);
+				tbl.set(index, StatusesDataTable.ColNames.TWEET.toString(), text);
 				tbl.set(index, StatusesDataTable.ColNames.SCREEN_NAME.toString(), screenName);
 				tbl.set(index, StatusesDataTable.ColNames.IMAGE_URL.toString(), profileImageURL);
 				tbl.set(index, StatusesDataTable.ColNames.CATEGORIES.toString(), null);

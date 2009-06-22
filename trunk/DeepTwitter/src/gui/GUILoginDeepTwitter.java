@@ -34,10 +34,6 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
         jRadioButton2 = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         panelTip = new javax.swing.JTextPane();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("DeepTwitter - Login");
@@ -75,7 +71,7 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
         });
 
         buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setFont(new java.awt.Font("Tahoma", 0, 12));
+        jRadioButton2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jRadioButton2.setText("Encontrar outro usuário");
         jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -84,26 +80,12 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
         });
 
         panelTip.setBackground(java.awt.SystemColor.control);
+        panelTip.setBorder(null);
         panelTip.setEditable(false);
-        panelTip.setText("Tooltip 1");
+        panelTip.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        panelTip.setText("Informe seu nome de usuário e senha do Twitter.");
+        panelTip.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jScrollPane1.setViewportView(panelTip);
-
-        jMenu1.setText("Arquivo");
-
-        jMenuItem1.setText("Sair");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem1);
-
-        jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Ajuda");
-        jMenuBar1.add(jMenu2);
-
-        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -154,29 +136,25 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(OkButton))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        panelTip.setText("Tooltip 2!!!");
+        panelTip.setText("Informe o nome de usuário do Twitter da pessoa que está procurando.");
         labelPassword.setVisible(false);
         txtPassword.setVisible(false);
         isTwitterUser = false;
     }                                             
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        panelTip.setText("Tooltip 1");
+        panelTip.setText("Informe seu nome de usuário e senha do Twitter.");
         labelPassword.setVisible(true);
         txtPassword.setVisible(true);
         isTwitterUser = true;
     }                                             
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {
-        System.exit(0);
-    }
 
     public void addLoginListener(ActionListener loginListener) {
 		OkButton.addActionListener(loginListener);
@@ -202,10 +180,6 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
     private javax.swing.JButton OkButton;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;

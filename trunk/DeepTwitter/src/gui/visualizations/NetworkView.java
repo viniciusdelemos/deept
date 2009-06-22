@@ -6,6 +6,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -32,6 +33,7 @@ import model.extensions.AggregateLayout;
 import model.extensions.WeightedForceDirectedLayout;
 import model.threads.AddFollowersThread;
 import model.threads.AddFriendsThread;
+import model.threads.BlockUserThread;
 import model.threads.FollowUserThread;
 import model.threads.StatusesTableThread;
 import prefuse.Constants;
@@ -53,6 +55,7 @@ import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
+import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.data.search.PrefixSearchTupleSet;
 import prefuse.data.search.SearchTupleSet;
@@ -63,6 +66,7 @@ import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.render.PolygonRenderer;
 import prefuse.render.Renderer;
+import prefuse.render.ShapeRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.FontLib;
 import prefuse.util.force.DragForce;
@@ -79,6 +83,7 @@ import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 import profusians.controls.CenterOnClickControl;
 import profusians.controls.GenericToolTipControl;
+import twitter4j.TwitterException;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
 import controller.GroupManager;
@@ -121,9 +126,13 @@ public class NetworkView extends Display {
     	isTwitterUser = controller.isTwitterUser();    	
     	
     	nodesMap = new HashMap<Integer, Node>();
+    	
     	socialNetwork = new SocialNetwork();
-    	//modo qualidade - setar para falso para melhor desempenho
-    	isHighQuality = true;
+    	try {
+			socialNetwork.addBlockedUsers(controller.getTwitter().getBlockingUsersIDs().getIDs());
+		} catch (TwitterException e) {}
+    	
+		isHighQuality = true;
     	numUsers = 0;
     	groupId = 0;
     	weight_value = 370f;
@@ -300,8 +309,8 @@ public class NetworkView extends Display {
     	addControlListener(new ListenerAdapter(this));
     	addControlListener(centerUserControl);
     	
-    	String descriptions[] = { "Nome:", "Último Status: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Statuses:" };
-    	String data[] = { "name", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount" };
+    	String descriptions[] = { "Username:", "Último Tweet: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Tweets:" };
+    	String data[] = { "screenName", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount" };
 
     	toolTipControl = new GenericToolTipControl(descriptions,data,200);    	
     	addControlListener(toolTipControl);
@@ -334,7 +343,8 @@ public class NetworkView extends Display {
     	//searchPanel.setShowResultCount(true);
     	searchPanel.setMaximumSize(new Dimension(200, 20));
     	searchPanel.setFont(FontLib.getFont("Tahoma", Font.BOLD, 11));
-    	searchPanel.setLabelText("Busca rápida:");
+    	searchPanel.setLabelText(" Buscar por:");
+    	searchPanel.setShowBorder(false);
     	searchPanel.setBackground(mainToolBar.getBackground());
     	mainToolBar.add(searchPanel);
     	
@@ -359,8 +369,7 @@ public class NetworkView extends Display {
 			newNode.set("friendsCount", u.getFriendsCount());
 			newNode.set("followersCount", u.getFollowersCount());
 			newNode.set("statusesCount", u.getStatusesCount());
-			newNode.set("favoritesCount", u.getFavouritesCount());
-			
+			newNode.set("favoritesCount", u.getFavouritesCount());			
 			
 			newNode.set("isOpen", false);
 			newNode.set("isShowingFriends", false);
@@ -376,11 +385,19 @@ public class NetworkView extends Display {
 				mainUser.setFillColor(mainUserColor);
 			}
 			searchResultTuples.index(m_vis.getVisualItem(GRAPH, newNode), "name");
+			searchResultTuples.index(m_vis.getVisualItem(GRAPH, newNode), "screenName");
 			searchResultTuples.index(m_vis.getVisualItem(GRAPH, newNode), "location");
 			searchResultTuples.index(m_vis.getVisualItem(GRAPH, newNode), "description");
 			numUsers++;			
 			return newNode;
 		}
+    }
+    
+    public void removeNode(VisualItem item) {
+    	synchronized(m_vis) {
+    		socialNetwork.removeUser(item.getInt("idTwitter"));
+    		g.removeNode((Node)item.getSourceTuple());
+    	}
     }
     
     public LabelRenderer getRenderer() {
@@ -389,7 +406,7 @@ public class NetworkView extends Display {
     
     public void searchAndAddUserToNetwork(User u) {    	
     	//verifica se está na SocialNetwork
-    	User exists = getUser(u.getId());    	
+    	User exists = getUser(u.getId()); 
     	VisualItem selectedNode;
     	
     	if(exists==null) {
@@ -470,21 +487,11 @@ public class NetworkView extends Display {
 		return m_vis.getVisualItem(NODES, node);
 	}
 	
-//	public String getUserNameByScreenName(String screenName){
-//		return socialNetwork.getUserNameByScreenName(screenName);
-//	}
-	
 	public String getUserName(int id) {
 		Node n = nodesMap.get(id);
 		return n.getString("name");
 	}
-	
-//	public Node getMainUser() {
-//		int id = Integer.parseInt(controller.getLoggedUserId());
-//		Node n = getNodeByTwitterId(id);
-//		return (Node)getVisualization().getVisualItem(NODES, n);
-//	}
-		
+			
 	public User getUser(int idTwitter) {
 		return socialNetwork.getUser(idTwitter);
 	}
@@ -562,27 +569,39 @@ public class NetworkView extends Display {
 	
 	public void setChildrenVisible(NodeItem source, boolean visible)
 	{
-		try{
-			Iterator<EdgeItem> outEdges = source.outEdges();
-			Iterator<EdgeItem> inEdges = source.inEdges();
-			while(outEdges.hasNext()) {
-				EdgeItem nextEdge = outEdges.next();
-				NodeItem nextNode = nextEdge.getTargetItem();			
-				if(nextNode.getDegree()>1) continue;
-				nextEdge.setVisible(visible);
-				nextNode.setVisible(visible);
+		synchronized(m_vis) {
+			try{
+				Iterator<EdgeItem> outEdges = source.outEdges();			
+				while(outEdges.hasNext()) {
+					EdgeItem nextEdge = outEdges.next();
+					NodeItem nextNode = nextEdge.getTargetItem();			
+					if(nextNode.getDegree()>1) continue;				
+					nextNode.setVisible(visible);
+					nextEdge.setVisible(visible);
+				}
+				Iterator<EdgeItem> inEdges = source.inEdges();
+				while(inEdges.hasNext()) {
+					EdgeItem nextEdge = inEdges.next();
+					NodeItem nextNode = nextEdge.getSourceItem();					
+					if(nextNode.getDegree()>1) {						
+						if(nextNode.getDegree()==2) {
+							int edgeId = getEdge(source.getInt("id"), nextNode.getInt("id"));
+							if(edgeId == -1) 
+								continue;
+							else 
+								m_vis.getVisualItem(EDGES, getEdge(edgeId)).setVisible(visible);
+						}						
+						else
+							continue;				
+					}
+					nextNode.setVisible(visible);
+					nextEdge.setVisible(visible);
+				}
 			}
-			while(inEdges.hasNext()) {
-				EdgeItem nextEdge = outEdges.next();
-				NodeItem nextNode = nextEdge.getSourceItem();
-				if(nextNode.getDegree()>1) continue;
-				nextEdge.setVisible(visible);
-				nextNode.setVisible(visible);
+			catch(Exception e) {
+				System.out.println("$$$ Exception! $$$");
+				e.printStackTrace();
 			}
-		}
-		catch(Exception e) {
-			System.out.println("$$$ Exception! $$$");
-			e.printStackTrace();
 		}
 	}
 	
@@ -643,7 +662,7 @@ public class NetworkView extends Display {
     		JMenuItem sendReply = new JMenuItem("@"+clickedUserName);
     		JMenuItem sendMessage = new JMenuItem("Enviar mensagem");
     		JMenuItem openURL = new JMenuItem("Abrir URL");
-    		JMenuItem block = new JMenuItem("Bloquear"); 
+    		JMenuItem blockUnblock = new JMenuItem(); 
     		JMenuItem followers = new JMenuItem("Ver Seguidores");
     		JMenuItem removeFromGroup = new JMenuItem("Remover do Grupo");
     		 
@@ -670,8 +689,12 @@ public class NetworkView extends Display {
     			//verifica se estou sendo seguido
     			//edge = g.getEdge(clickedNode.getInt("id"),mainUserNode.getInt("id"), );
     			
-    			//TODO inserir algo para mostrar que bloqueou e remover amizade entre os 2!    			
-    			popupMenu.add(block);
+    			if(!socialNetwork.isUserBlocked(clickedItem.getInt("idTwitter")))
+    				blockUnblock.setText("Bloquear");
+    			else
+    				blockUnblock.setText("Desbloquer");
+    				
+    			popupMenu.add(blockUnblock);    			
     		}
     		if(item.getInt("groupId")>=0)
     			popupMenu.add(removeFromGroup);
@@ -682,7 +705,7 @@ public class NetworkView extends Display {
 				followers.setEnabled(false);
 				follow.setEnabled(false);
 				leave.setEnabled(false);
-				block.setEnabled(false);
+				blockUnblock.setEnabled(false);
 				sendReply.setEnabled(false);
 				sendMessage.setEnabled(false);
 			}   		
@@ -746,10 +769,10 @@ public class NetworkView extends Display {
 				public void actionPerformed(ActionEvent e) {
     				controller.openGUINewUpdateWindow(clickedUserName,StatusesType.DIRECT_MESSAGES);
     		}});
-    		block.addActionListener(new ActionListener(){
+    		blockUnblock.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("BLOCK USER");					
+					new BlockUserThread(NetworkView.this,clickedItem);
 				}});
     		openURL.addActionListener(new ActionListener(){
     			@Override
@@ -847,14 +870,14 @@ public class NetworkView extends Display {
 						selectedNodes.addTuple(clickedItem);					
 					return;
 				}
-								
 				if(item.getBoolean("isOpen") == false)
 				{										
 					if(item.getBoolean("isShowingFriends") == false) 
 						new AddFriendsThread(networkView, (NodeItem)item);
-					else
-						setChildrenVisible((NodeItem)item, true);	
-					item.setBoolean("isOpen", true);
+					else {
+						setChildrenVisible((NodeItem)item, true);
+						item.setBoolean("isOpen", true);
+					}
 				}
 				else
 				{							

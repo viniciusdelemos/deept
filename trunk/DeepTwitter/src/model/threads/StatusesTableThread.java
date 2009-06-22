@@ -50,6 +50,7 @@ public class StatusesTableThread {
 	private boolean isTwitterUser, isGroup;	
 	private long interval;
 	private JPanel panel;
+	private JLabel counterLabel;
 	private KeepTableUpdated keepTableUpdated;
 	private int updatesToGet;
 	private StatusesType statusesType;
@@ -98,10 +99,16 @@ public class StatusesTableThread {
 		lastResponseId = new long[]{-1};
 		date = null;
 		isGroup = false;
+		counterLabel = new JLabel();
+		counterLabel.setFont(new Font("Tahoma",1,11));
 	}
 
 	public StatusesType getType() {
 		return statusesType;
+	}
+	
+	public JLabel getCounterLabel() {
+		return counterLabel;
 	}
 
 	public JPanel getContent() {		
@@ -634,8 +641,9 @@ public class StatusesTableThread {
 							c.gridx = 0;
 							panel.add(getStatusesPanel(),c,0);			
 							rows++;
-							allStatusesList.add(0,statusesList.get(i));								
-						}
+							allStatusesList.add(0,statusesList.get(i));							
+						}						
+						counterLabel.setText(String.valueOf(rows) + " "+getType().toString().toLowerCase());
 						//empty = new JPanel();
 						//empty.add(new JLabel(""));
 						c.weightx = 0.5;
