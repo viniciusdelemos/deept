@@ -351,7 +351,7 @@ public class ControllerDeepTwitter {
 	}
 	
 	public void openGUIMostPopularUsersWindow(Node[] userArray) {
-		guiMostPopular = new GUIMostPopularUsers("Usuários mais populares");
+		guiMostPopular = new GUIMostPopularUsers("DeepTwitter - Usuários mais populares");
 		if(userArray == null)
 			userArray = networkView.getNodes();
 		

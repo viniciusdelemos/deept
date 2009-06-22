@@ -667,13 +667,12 @@ public class StatusesTableThread {
 						break;
 					}
 					else if(e.getStatusCode()==401) {
+						//TODO ao inves disto, mostrar no painel
 						controller.showMessageDialog("Você não está autorizado a ver os updates desta pessoa.",MessageType.ERROR);
 						break;
 					}
 					else if(e.getStatusCode()==-1) {
-						//TODO ignorar esta
-						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
-						break;
+						//controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
 					}
 					else
 						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);

@@ -223,7 +223,7 @@ public class TimelineView extends JPanel {
         Control hoverc = new ControlAdapter() {
             public void itemEntered(VisualItem item, MouseEvent evt) {
                 if ( item.isInGroup(Group.TWEETS.toString()) ) {
-                	labelTotalStatuses.setText(item.getString(StatusesDataTable.ColNames.SCREEN_NAME.toString()));
+                	labelTotalStatuses.setText(item.getString(StatusesDataTable.ColNames.FULL_DATE.toString()));
                 	if(item.getString(StatusesDataTable.ColNames.CATEGORIES.toString())==null)
                 		item.setFillColor(item.getStrokeColor());
                 	item.setStrokeColor(ColorLib.rgb(0,0,0));
@@ -369,7 +369,7 @@ public class TimelineView extends JPanel {
                 		categoriesComboBox.removeAllItems();
                 		categoriesComboBox.addItem("Mostrar Todas");
                 		
-                		for(Category c : cManager.getCategories()) {
+                		for(Category c : cManager.getUsedCategories()) {
                         	categoriesComboBox.addItem(c.getName());
                         }
                 		

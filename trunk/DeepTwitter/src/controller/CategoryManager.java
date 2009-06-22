@@ -39,12 +39,14 @@ public class CategoryManager {
 	private int relatedResponsesCount;
 	private Paint[] colorArray;
 	private int colorIndex;
+	private List<Category> usedCategories;
 
 	// TODO adicionar syncrhonized em todos metodos que manipulam categoriesMap
 
 	private CategoryManager() {
 		// construtor private previne chamadas nao autorizadas ao construtor.
 		categoriesMap = new HashMap<String, Category>();
+		usedCategories = new ArrayList<Category>();
 		relatedResponsesCount = 0;
 		colorArray = ChartColor.createDefaultPaintArray();
 		colorIndex = new Random().nextInt(colorArray.length);
@@ -130,6 +132,10 @@ public class CategoryManager {
 		}
 		return list;
 	}
+	
+	public List<Category> getUsedCategories() {
+		return usedCategories;
+	}
 
 	public void removeAllCategoriesAndWords() {
 		categoriesMap.clear();
@@ -195,7 +201,6 @@ public class CategoryManager {
 	 * Salva categorias em arquivo de configuracao
 	 */
 	public void saveCategories() {
-
 		SAXBuilder builder = new SAXBuilder(); // Build a document ...
 		Document doc = null; // ... from a file
 		XMLOutputter output = new XMLOutputter(); // And output the document ...
@@ -257,70 +262,6 @@ public class CategoryManager {
 
 	}
 
-	private void loadTestCategories() {
-		Category c = addCategory("Diversão");
-		c.addWord("festa");
-		c.addWord("festa");
-		c.addWord("amigos");
-		c.addWord("amigos");
-		c.addWord("rir");
-
-		c = addCategory("Geek");
-		c.addWord("windows");
-		c.addWord("linUx");
-		c.addWord("mAc");
-
-		c = addCategory("VaiSerRemovida");
-		c.addWord("lerolero");
-
-		c = addCategory("Sentimentos");
-		c.addWord("amor");
-		c.addWord("óDio");
-		c.addWord("alegria");
-		c.addWord("trIsteza");
-
-		addWord("Diversão", "sair");
-		ArrayList<String> testList = new ArrayList<String>();
-		testList.add("amo");
-		testList.add("alegria"); // ja tem
-		testList.add("odeio");
-		addWords("Sentimentos", testList);
-
-		c = addCategory("Inglês");
-		c.addWord("I");
-		c.addWord("are");
-		c.addWord("is");
-		c.addWord("hi");
-		c.addWord("am");
-		c.addWord("i am");
-		c.addWord("my");
-
-		c = addCategory("Futebol");
-		c.addWord("gerAl");
-		c.addWord("grêmiO");
-		c.addWord("SOCcer");
-
-		c = addCategory("Risada");
-		c.addWord("rá");
-
-		c = addCategory("VitorFasano");
-		c.addWord("VF");
-
-		c = addCategory("Teste");
-		c.addWord("mp");
-		c.addWord("Dem");
-		c.addWord("nios");
-
-		c = addCategory("Gay");
-		c.addWord("VF");
-		c.addWord("gay");
-
-		c = removeCategory("VaiSerRemovida");
-
-		// System.out.println(c);
-		// System.out.println(this.toString());
-	}
-
 	public void categorizeResponse(TwitterResponse response, VisualItem item) {
 		if (response instanceof Status) {
 			Status status = (Status) response;
@@ -330,7 +271,7 @@ public class CategoryManager {
 		} else if (response instanceof Tweet) {
 			Tweet t = (Tweet) response;
 			String text = t.getText();
-			long responseId = t.getId();
+			long responseId = Long.parseLong(String.valueOf(t.getId()));			
 			categorize(responseId, text, item);
 		} else
 			throw new IllegalArgumentException(
@@ -338,17 +279,14 @@ public class CategoryManager {
 	}
 
 	public void categorize(long responseId, String text, VisualItem item) {
-		text += " ";
+		text = " " + text + " ";
 		for (Category c : getCategories()) {
 			for (CategoryWord word : c.getWords())
 				if (!word.hasRelatedResponse(responseId)) {
 					tagParser = new TagParser(text, word.getName());
 					if (tagParser.hasTag()) {
-						//System.out.println(text);
-						//System.out.println("palavra: " + word.getName());
 						word.addRelatedResponse(responseId);
-						formatItem(item, c);
-						// System.out.println("response "+responseId+" categorizada em "+c.getName()+" pela palavra "+word.getName()+" e cor "+c.getColor());
+						formatItem(item, c);						
 						relatedResponsesCount++;
 					}
 				} else {
@@ -362,6 +300,10 @@ public class CategoryManager {
 	}
 
 	public void formatItem(VisualItem item, Category c) {
+		if(!usedCategories.contains(c))
+			usedCategories.add(c);
+		item.setString(StatusesDataTable.ColNames.TWEET.toString(),
+				getFormatedText("<b><font color=\"blue\">", "</font></b>"));
 		String categories = item
 				.getString(StatusesDataTable.ColNames.CATEGORIES.toString());
 
@@ -384,9 +326,7 @@ public class CategoryManager {
 	}
 
 	public String getFormatedText(String startTag, String endTag) {
-		if (tagParser != null)
-			return tagParser.getFormatedText(startTag, endTag);
-		return null;
+		return (tagParser!=null ? tagParser.getFormatedText(startTag, endTag) : null); 
 	}
 
 	public void clearRelatedResponses() {

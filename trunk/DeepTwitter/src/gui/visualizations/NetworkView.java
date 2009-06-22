@@ -16,10 +16,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
@@ -342,11 +344,12 @@ public class NetworkView extends Display {
     	JSearchPanel searchPanel = nameQuery.createSearchPanel();
     	//searchPanel.setShowResultCount(true);
     	searchPanel.setMaximumSize(new Dimension(200, 20));
-    	searchPanel.setFont(FontLib.getFont("Tahoma", Font.BOLD, 11));
-    	searchPanel.setLabelText(" Buscar por:");
+    	searchPanel.setFont(FontLib.getFont("Tahoma", Font.BOLD, 12));
+    	searchPanel.setLabelText("Buscar por:");
     	searchPanel.setShowBorder(false);
     	searchPanel.setBackground(mainToolBar.getBackground());
-    	mainToolBar.add(searchPanel);
+    	mainToolBar.add(searchPanel,mainToolBar.getComponentCount()-4);
+    	mainToolBar.add(Box.createHorizontalGlue(),mainToolBar.getComponentCount()-4);
     	
     	//executar ações associadas ao layout    	
     	m_vis.run("layout");    
@@ -655,7 +658,7 @@ public class NetworkView extends Display {
 			
 			JMenuItem friends = new JMenuItem("Ver Amigos");
 			JMenuItem updates = new JMenuItem("Ver Tweets");
-			JMenuItem timeline = new JMenuItem("Ver Timeline");
+			//JMenuItem timeline = new JMenuItem("Ver Timeline");
 			JMenuItem favorites = new JMenuItem("Ver Favoritos");			
     		JMenuItem follow = new JMenuItem("Seguir");//("Follow",'f') para adicionar atalho
     		JMenuItem leave = new JMenuItem("Deixar");
@@ -670,7 +673,7 @@ public class NetworkView extends Display {
     		Node mainUserNode = getNodeByTwitterId(loggedUserId);
 			
 			popupMenu.add(updates);
-			popupMenu.add(timeline);
+			//popupMenu.add(timeline);
     		popupMenu.add(friends); //é necessário?
     		popupMenu.add(followers);
     		popupMenu.add(favorites);
@@ -727,11 +730,11 @@ public class NetworkView extends Display {
 					controller.selectTab(0);
 				}    			
     		});
-    		timeline.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub					
-				}});
+//    		timeline.addActionListener(new ActionListener(){
+//				@Override
+//				public void actionPerformed(ActionEvent e) {
+//					// TODO Auto-generated method stub					
+//				}});
     		followers.addActionListener(new ActionListener(){
     			@Override
     			public void actionPerformed(ActionEvent arg0) {
@@ -794,12 +797,12 @@ public class NetworkView extends Display {
 		public void createGroupMenu(final AggregateItem item) {
 			popupMenu = new JPopupMenu();
 			JMenuItem updates = new JMenuItem("Ver Tweets");
-			JMenuItem timeline = new JMenuItem("Ver Timeline");
+			//JMenuItem timeline = new JMenuItem("Ver Timeline");
 			JMenuItem removeGroup = new JMenuItem("Deletar Grupo");
 			JMenuItem mostPopularUsers = new JMenuItem("Usuários Mais Populares");
 			
 			popupMenu.add(updates);
-			popupMenu.add(timeline);
+			//popupMenu.add(timeline);
 			popupMenu.add(removeGroup);
 			popupMenu.add(mostPopularUsers);
 			
@@ -820,11 +823,11 @@ public class NetworkView extends Display {
 					StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);					
 					tab.setPanelContent(new StatusesTableThread(ids,groupName));					
 				}});
-			timeline.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub					
-				}});
+//			timeline.addActionListener(new ActionListener(){
+//				@Override
+//				public void actionPerformed(ActionEvent e) {
+//					// TODO Auto-generated method stub					
+//				}});
 			removeGroup.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent arg0) {

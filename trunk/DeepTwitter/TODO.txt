@@ -2,8 +2,6 @@ TODO:
 
 - * utilizar s.getUser().getUtcOffset() para poder exibir as atualizacoes na hora local da pessoa
 - categorias: inserir combobox com cores das categorias
-- permitir ver o timeline sem precisar mostrar as atualizacoes no painel (pcausa da OutOfMemoryException);
-- * consertar visualizacao de categorias do vinicius
 - * grupos: ao adicionar membro ao grupo, adicionar atualizacoes dele ao panel
 - * consertar remocao de grupos;
 - * consertar cor de usuarios ligados por arestas invisiveis;
@@ -20,9 +18,6 @@ TODO:
 - implementar notificação quando novas atualizações/msgs chegarem;
 - * mostrar mensagens de erro e notificações na toolbar principal;
 - escolher forças de atração/repulsão melhores;
-
-- analisar: acredito que deu problema em uma das requisicoes StatusTable, e parou
-de fazer requisicoes, sendo assim, colocar try catch para cada uma das requisicoes (isoladamente)
 
 vis categorias
 - arrumar bug de alterar texto igual ao a um que jah exista

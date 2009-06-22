@@ -42,7 +42,7 @@ public class GUIMostPopularUsers extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setName("Usuários mais populares"); // NOI18N
+        setName("DeepTwitter - Usuários mais populares"); // NOI18N
 
         jSplitPane1.setDividerLocation(510);
         jSplitPane1.setDividerSize(6);

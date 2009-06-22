@@ -106,7 +106,7 @@ public class GUICategoryEditor {
 					// edited = false;
 					saveCategories();
 					JOptionPane.showMessageDialog(null,
-							"Categorias foram salvas.",
+							"As categorias foram salvas com sucesso.",
 							"Gerenciador de Categorias",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -141,7 +141,7 @@ public class GUICategoryEditor {
 			
 			
 
-			frame = new JFrame("DeepTwitter - Gerenciar Categorias");
+			frame = new JFrame("DeepTwitter - Gerenciador de Categorias");
 			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			frame.setContentPane(panel);
 			frame.pack();
@@ -207,7 +207,7 @@ public class GUICategoryEditor {
 	private static void close() {
 
 		if (categoryEditor.isEdited() == true) {
-			String message = "Você alterou as Categorias e não salvou. Você tem certeza que deseja sair?";
+			String message = "Você editou as categorias e não as salvou. Tem certeza que deseja sair?";
 
 			Object[] options = { "Sim", "Não" };
 			int r = JOptionPane.showOptionDialog(frame, message,
@@ -234,6 +234,7 @@ public class GUICategoryEditor {
 	private static void saveCategories() {
 
 		cManager.removeAllCategoriesAndWords();
+		cManager.getUsedCategories().clear();
 
 		Iterator c = categoryEditor.getTree().getRoot().children();
 		while (c.hasNext()) {
