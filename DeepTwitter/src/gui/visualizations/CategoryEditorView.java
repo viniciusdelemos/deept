@@ -463,9 +463,9 @@ public class CategoryEditorView extends Display {
 					if (type == t_Categories) {
 						nodePopupMenu.add(addCategory);
 					} else if (type == t_Category) {
-						nodePopupMenu.add(edit);
-						nodePopupMenu.add(delete);
+						nodePopupMenu.add(edit);						
 						nodePopupMenu.add(addWord);
+						nodePopupMenu.add(delete);
 					} else if (type == t_Word) {
 						nodePopupMenu.add(edit);
 						nodePopupMenu.add(delete);

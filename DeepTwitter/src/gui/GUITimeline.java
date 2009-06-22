@@ -11,7 +11,7 @@ import twitter4j.TwitterResponse;
 
 public class GUITimeline extends JFrame{
 	public GUITimeline(List<TwitterResponse> statusesList, boolean isGroup, String name) {
-		super("Timeline");
+		super("DeepTwitter - Timeline de Atualizações");
 		setContentPane(new TimelineView(statusesList,isGroup,name));
         pack();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

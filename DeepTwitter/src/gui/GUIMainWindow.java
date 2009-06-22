@@ -47,26 +47,32 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jScrollPane6 = new javax.swing.JScrollPane();
         mainToolBar = new javax.swing.JToolBar();
         buttonUpdate = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
         buttonAddUser = new javax.swing.JButton();
         buttonNewGroup = new javax.swing.JButton();
-        buttonSettings = new javax.swing.JButton();
+        buttonClearSelection = new javax.swing.JButton();
+        jSeparator6 = new javax.swing.JToolBar.Separator();
+        buttonCategoryEditor = new javax.swing.JButton();
+        buttonMostActive = new javax.swing.JButton();
+        jSeparator7 = new javax.swing.JToolBar.Separator();
         buttonToolTipControl = new javax.swing.JToggleButton();
-        buttonPlayPauseVisualization = new javax.swing.JToggleButton();
         buttonCenterUser = new javax.swing.JToggleButton();
         buttonHighQuality = new javax.swing.JToggleButton();
-        buttonClearSelection = new javax.swing.JButton();
-        buttonMostActive = new javax.swing.JButton();
-        buttonCategoryEditor = new javax.swing.JButton();
         buttonCurvedEdges = new javax.swing.JToggleButton();
+        jSeparator8 = new javax.swing.JToolBar.Separator();
         buttonShowStatusBar = new javax.swing.JToggleButton();
+        buttonPlayPauseVisualization = new javax.swing.JToggleButton();
+        buttonSettings = new javax.swing.JButton();
+        jSeparator9 = new javax.swing.JToolBar.Separator();
+        labelAPILimit = new javax.swing.JLabel();
+        jSeparator10 = new javax.swing.JToolBar.Separator();
         buttonHelp = new javax.swing.JButton();
         buttonLogout = new javax.swing.JButton();
-        labelAPILimit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("DeepTwitter"); // NOI18N
 
-        labelStatusBar.setFont(new java.awt.Font("Tahoma", 0, 12));
+        labelStatusBar.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         labelStatusBar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labelStatusBar.setText(" ");
         labelStatusBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -194,13 +200,14 @@ public class GUIMainWindow extends javax.swing.JFrame {
         mainToolBar.setRollover(true);
 
         buttonUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("../comment_add.png"))); // NOI18N
-        buttonUpdate.setToolTipText("Novo update");
+        buttonUpdate.setToolTipText("Novo tweet");
         buttonUpdate.setActionCommand("buttonNewUpdate");
         buttonUpdate.setName("buttonNewUpdate"); // NOI18N
         mainToolBar.add(buttonUpdate);
+        mainToolBar.add(jSeparator3);
 
         buttonAddUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../user_search.png"))); // NOI18N
-        buttonAddUser.setToolTipText("Buscar usuário");
+        buttonAddUser.setToolTipText("Procurar por usuário do Twitter");
         buttonAddUser.setActionCommand("buttonAddUser");
         buttonAddUser.setName("buttonAddUser"); // NOI18N
         mainToolBar.add(buttonAddUser);
@@ -211,22 +218,78 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonNewGroup.setName("buttonNewGroup"); // NOI18N
         mainToolBar.add(buttonNewGroup);
 
-        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../config.png"))); // NOI18N
-        buttonSettings.setToolTipText("Configurações");
-        buttonSettings.setActionCommand("buttonSettings");
-        buttonSettings.setFocusable(false);
-        buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonSettings);
+        buttonClearSelection.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eraser.png"))); // NOI18N
+        buttonClearSelection.setToolTipText("Limpar seleção");
+        buttonClearSelection.setActionCommand("buttonClearSelection");
+        buttonClearSelection.setFocusable(false);
+        buttonClearSelection.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonClearSelection.setName("buttonClearSelection"); // NOI18N
+        buttonClearSelection.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonClearSelection);
+        mainToolBar.add(jSeparator6);
+
+        buttonCategoryEditor.setIcon(new javax.swing.ImageIcon(getClass().getResource("../archive.png"))); // NOI18N
+        buttonCategoryEditor.setToolTipText("Gerenciador de Categorias");
+        buttonCategoryEditor.setActionCommand("buttonCategoryEditor");
+        buttonCategoryEditor.setFocusable(false);
+        buttonCategoryEditor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonCategoryEditor.setName("buttonShowAll"); // NOI18N
+        buttonCategoryEditor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonCategoryEditor);
+
+        buttonMostActive.setIcon(new javax.swing.ImageIcon(getClass().getResource("../popularuser.png"))); // NOI18N
+        buttonMostActive.setToolTipText("Visualização dos usuários mais populares");
+        buttonMostActive.setActionCommand("buttonMostActive");
+        buttonMostActive.setFocusable(false);
+        buttonMostActive.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonMostActive.setName("buttonShowAll"); // NOI18N
+        buttonMostActive.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonMostActive);
+        mainToolBar.add(jSeparator7);
 
         buttonToolTipControl.setIcon(new javax.swing.ImageIcon(getClass().getResource("../user_info.png"))); // NOI18N
         buttonToolTipControl.setSelected(true);
-        buttonToolTipControl.setToolTipText("Exibir infos do usuário");
+        buttonToolTipControl.setToolTipText("Exibir tooltip com informações do usuário");
         buttonToolTipControl.setActionCommand("buttonToolTipControl");
         buttonToolTipControl.setFocusable(false);
         buttonToolTipControl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonToolTipControl.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonToolTipControl);
+
+        buttonCenterUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../target.png"))); // NOI18N
+        buttonCenterUser.setToolTipText("Centralizar usuário ao clicar");
+        buttonCenterUser.setActionCommand("buttonCenterUser");
+        buttonCenterUser.setFocusable(false);
+        buttonCenterUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonCenterUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonCenterUser);
+
+        buttonHighQuality.setIcon(new javax.swing.ImageIcon(getClass().getResource("../Q.png"))); // NOI18N
+        buttonHighQuality.setSelected(true);
+        buttonHighQuality.setToolTipText("Exibir gráficos com alta qualidade");
+        buttonHighQuality.setActionCommand("buttonHighQuality");
+        buttonHighQuality.setFocusable(false);
+        buttonHighQuality.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonHighQuality.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonHighQuality);
+
+        buttonCurvedEdges.setIcon(new javax.swing.ImageIcon(getClass().getResource("../arrow.png"))); // NOI18N
+        buttonCurvedEdges.setToolTipText("Arestas curvas");
+        buttonCurvedEdges.setActionCommand("buttonCurvedEdges");
+        buttonCurvedEdges.setFocusable(false);
+        buttonCurvedEdges.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonCurvedEdges.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonCurvedEdges);
+        mainToolBar.add(jSeparator8);
+
+        buttonShowStatusBar.setIcon(new javax.swing.ImageIcon(getClass().getResource("../S.png"))); // NOI18N
+        buttonShowStatusBar.setSelected(true);
+        buttonShowStatusBar.setToolTipText("Exibir barra de status");
+        buttonShowStatusBar.setActionCommand("buttonShowStatusBar");
+        buttonShowStatusBar.setFocusable(false);
+        buttonShowStatusBar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonShowStatusBar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonShowStatusBar);
 
         buttonPlayPauseVisualization.setIcon(new javax.swing.ImageIcon(getClass().getResource("../play.png"))); // NOI18N
         buttonPlayPauseVisualization.setSelected(true);
@@ -238,66 +301,19 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonPlayPauseVisualization.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonPlayPauseVisualization);
 
-        buttonCenterUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../target.png"))); // NOI18N
-        buttonCenterUser.setToolTipText("Centralizar usuário clicado");
-        buttonCenterUser.setActionCommand("buttonCenterUser");
-        buttonCenterUser.setFocusable(false);
-        buttonCenterUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonCenterUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonCenterUser);
+        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../config.png"))); // NOI18N
+        buttonSettings.setToolTipText("Configurações");
+        buttonSettings.setActionCommand("buttonSettings");
+        buttonSettings.setFocusable(false);
+        buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonSettings);
+        mainToolBar.add(jSeparator9);
 
-        buttonHighQuality.setIcon(new javax.swing.ImageIcon(getClass().getResource("../Q.png"))); // NOI18N
-        buttonHighQuality.setSelected(true);
-        buttonHighQuality.setToolTipText("Alta qualidade");
-        buttonHighQuality.setActionCommand("buttonHighQuality");
-        buttonHighQuality.setFocusable(false);
-        buttonHighQuality.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonHighQuality.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonHighQuality);
-
-        buttonClearSelection.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eraser.png"))); // NOI18N
-        buttonClearSelection.setToolTipText("Limpar seleção");
-        buttonClearSelection.setActionCommand("buttonClearSelection");
-        buttonClearSelection.setFocusable(false);
-        buttonClearSelection.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonClearSelection.setName("buttonClearSelection"); // NOI18N
-        buttonClearSelection.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonClearSelection);
-
-        buttonMostActive.setIcon(new javax.swing.ImageIcon(getClass().getResource("../popularuser.png"))); // NOI18N
-        buttonMostActive.setToolTipText("Visualização dos usuários mais populares");
-        buttonMostActive.setActionCommand("buttonMostActive");
-        buttonMostActive.setFocusable(false);
-        buttonMostActive.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonMostActive.setName("buttonShowAll"); // NOI18N
-        buttonMostActive.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonMostActive);
-
-        buttonCategoryEditor.setIcon(new javax.swing.ImageIcon(getClass().getResource("../archive.png"))); // NOI18N
-        buttonCategoryEditor.setToolTipText("Gerenciador de Categorias");
-        buttonCategoryEditor.setActionCommand("buttonCategoryEditor");
-        buttonCategoryEditor.setFocusable(false);
-        buttonCategoryEditor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonCategoryEditor.setName("buttonShowAll"); // NOI18N
-        buttonCategoryEditor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonCategoryEditor);
-
-        buttonCurvedEdges.setIcon(new javax.swing.ImageIcon(getClass().getResource("../arrow.png"))); // NOI18N
-        buttonCurvedEdges.setToolTipText("Arestas curvas");
-        buttonCurvedEdges.setActionCommand("buttonCurvedEdges");
-        buttonCurvedEdges.setFocusable(false);
-        buttonCurvedEdges.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonCurvedEdges.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonCurvedEdges);
-
-        buttonShowStatusBar.setIcon(new javax.swing.ImageIcon(getClass().getResource("../S.png"))); // NOI18N
-        buttonShowStatusBar.setSelected(true);
-        buttonShowStatusBar.setToolTipText("Exibir barra de status");
-        buttonShowStatusBar.setActionCommand("buttonShowStatusBar");
-        buttonShowStatusBar.setFocusable(false);
-        buttonShowStatusBar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonShowStatusBar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonShowStatusBar);
+        labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelAPILimit.setText("API:");
+        mainToolBar.add(labelAPILimit);
+        mainToolBar.add(jSeparator10);
 
         buttonHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("../help.png"))); // NOI18N
         buttonHelp.setToolTipText("Manual do usuário");
@@ -316,10 +332,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonLogout.setName("buttonShowAll"); // NOI18N
         buttonLogout.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonLogout);
-
-        labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        labelAPILimit.setText("API:");
-        mainToolBar.add(labelAPILimit);
 
         getContentPane().add(mainToolBar, java.awt.BorderLayout.NORTH);
 
@@ -412,7 +424,8 @@ public class GUIMainWindow extends javax.swing.JFrame {
     }
 
     public void setRateLimitStatus(int left, int total, Date resetDate) {
-        labelAPILimit.setText("API: "+left+"/"+total+" Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
+        labelAPILimit.setText("API: "+left+"/"+total);
+        labelAPILimit.setToolTipText("Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
     }
 
     // Variables declaration - do not modify
@@ -442,9 +455,15 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonUpdate;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JToolBar.Separator jSeparator10;
     private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
+    private javax.swing.JToolBar.Separator jSeparator6;
+    private javax.swing.JToolBar.Separator jSeparator7;
+    private javax.swing.JToolBar.Separator jSeparator8;
+    private javax.swing.JToolBar.Separator jSeparator9;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
