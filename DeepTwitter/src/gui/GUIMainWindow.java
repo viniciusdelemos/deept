@@ -53,25 +53,15 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonToolTipControl = new javax.swing.JToggleButton();
         buttonPlayPauseVisualization = new javax.swing.JToggleButton();
         buttonCenterUser = new javax.swing.JToggleButton();
+        buttonHighQuality = new javax.swing.JToggleButton();
+        buttonClearSelection = new javax.swing.JButton();
         buttonMostActive = new javax.swing.JButton();
         buttonCategoryEditor = new javax.swing.JButton();
-        buttonShowAll = new javax.swing.JButton();
-        buttonClearSelection = new javax.swing.JButton();
-        checkBoxHighQuality = new javax.swing.JCheckBox();
-        checkBoxCurvedEdges = new javax.swing.JCheckBox();
+        buttonCurvedEdges = new javax.swing.JToggleButton();
+        buttonShowStatusBar = new javax.swing.JToggleButton();
+        buttonHelp = new javax.swing.JButton();
+        buttonLogout = new javax.swing.JButton();
         labelAPILimit = new javax.swing.JLabel();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        menuLoadNetwork = new javax.swing.JMenuItem();
-        menuSaveNetwork = new javax.swing.JMenuItem();
-        menuSaveNetworkAs = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
-        menuLogout = new javax.swing.JMenuItem();
-        menuExit = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        menuCheckBoxStatusBar = new javax.swing.JCheckBoxMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        menuHelp = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("DeepTwitter"); // NOI18N
@@ -183,7 +173,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jToolBar1.add(jSeparator5);
 
         buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
-        buttonTimeline.setToolTipText("Configurações");
+        buttonTimeline.setToolTipText("Visualização do timeline de atualizações");
         buttonTimeline.setActionCommand("buttonTimeline");
         buttonTimeline.setFocusable(false);
         buttonTimeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -256,28 +246,17 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCenterUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonCenterUser);
 
-        buttonMostActive.setText("Mais ativos");
-        buttonMostActive.setActionCommand("buttonMostActive");
-        buttonMostActive.setFocusable(false);
-        buttonMostActive.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonMostActive.setName("buttonShowAll"); // NOI18N
-        buttonMostActive.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonMostActive);
+        buttonHighQuality.setIcon(new javax.swing.ImageIcon(getClass().getResource("../Q.png"))); // NOI18N
+        buttonHighQuality.setSelected(true);
+        buttonHighQuality.setToolTipText("Alta qualidade");
+        buttonHighQuality.setActionCommand("buttonHighQuality");
+        buttonHighQuality.setFocusable(false);
+        buttonHighQuality.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonHighQuality.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonHighQuality);
 
-        buttonCategoryEditor.setText("Categorias");
-        buttonCategoryEditor.setActionCommand("buttonCategoryEditor");
-        buttonCategoryEditor.setFocusable(false);
-        buttonCategoryEditor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonCategoryEditor.setName("buttonShowAll"); // NOI18N
-        buttonCategoryEditor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(buttonCategoryEditor);
-
-        buttonShowAll.setText("Exibir todos");
-        buttonShowAll.setActionCommand("buttonShowAll");
-        buttonShowAll.setName("buttonShowAll"); // NOI18N
-        mainToolBar.add(buttonShowAll);
-
-        buttonClearSelection.setText("Limpar seleção");
+        buttonClearSelection.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eraser.png"))); // NOI18N
+        buttonClearSelection.setToolTipText("Limpar seleção");
         buttonClearSelection.setActionCommand("buttonClearSelection");
         buttonClearSelection.setFocusable(false);
         buttonClearSelection.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -285,95 +264,72 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonClearSelection.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonClearSelection);
 
-        checkBoxHighQuality.setSelected(true);
-        checkBoxHighQuality.setText("alta qualidade");
-        checkBoxHighQuality.setActionCommand("checkBoxHighQuality");
-        checkBoxHighQuality.setName("checkBoxHighQuality"); // NOI18N
-        mainToolBar.add(checkBoxHighQuality);
+        buttonMostActive.setIcon(new javax.swing.ImageIcon(getClass().getResource("../popularuser.png"))); // NOI18N
+        buttonMostActive.setToolTipText("Visualização dos usuários mais populares");
+        buttonMostActive.setActionCommand("buttonMostActive");
+        buttonMostActive.setFocusable(false);
+        buttonMostActive.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonMostActive.setName("buttonShowAll"); // NOI18N
+        buttonMostActive.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonMostActive);
 
-        checkBoxCurvedEdges.setText("arestas curvas");
-        checkBoxCurvedEdges.setActionCommand("checkBoxCurvedEdges");
-        checkBoxCurvedEdges.setName("checkBoxCurvedEdges"); // NOI18N
-        mainToolBar.add(checkBoxCurvedEdges);
+        buttonCategoryEditor.setIcon(new javax.swing.ImageIcon(getClass().getResource("../archive.png"))); // NOI18N
+        buttonCategoryEditor.setToolTipText("Gerenciador de Categorias");
+        buttonCategoryEditor.setActionCommand("buttonCategoryEditor");
+        buttonCategoryEditor.setFocusable(false);
+        buttonCategoryEditor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonCategoryEditor.setName("buttonShowAll"); // NOI18N
+        buttonCategoryEditor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonCategoryEditor);
 
-        labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12));
-        labelAPILimit.setText("Requisições API:");
+        buttonCurvedEdges.setIcon(new javax.swing.ImageIcon(getClass().getResource("../arrow.png"))); // NOI18N
+        buttonCurvedEdges.setToolTipText("Arestas curvas");
+        buttonCurvedEdges.setActionCommand("buttonCurvedEdges");
+        buttonCurvedEdges.setFocusable(false);
+        buttonCurvedEdges.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonCurvedEdges.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonCurvedEdges);
+
+        buttonShowStatusBar.setIcon(new javax.swing.ImageIcon(getClass().getResource("../S.png"))); // NOI18N
+        buttonShowStatusBar.setSelected(true);
+        buttonShowStatusBar.setToolTipText("Exibir barra de status");
+        buttonShowStatusBar.setActionCommand("buttonShowStatusBar");
+        buttonShowStatusBar.setFocusable(false);
+        buttonShowStatusBar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonShowStatusBar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonShowStatusBar);
+
+        buttonHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("../help.png"))); // NOI18N
+        buttonHelp.setToolTipText("Manual do usuário");
+        buttonHelp.setActionCommand("buttonHelp");
+        buttonHelp.setFocusable(false);
+        buttonHelp.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonHelp.setName("buttonShowAll"); // NOI18N
+        buttonHelp.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonHelp);
+
+        buttonLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("../logout.png"))); // NOI18N
+        buttonLogout.setToolTipText("Logout");
+        buttonLogout.setActionCommand("buttonLogout");
+        buttonLogout.setFocusable(false);
+        buttonLogout.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonLogout.setName("buttonShowAll"); // NOI18N
+        buttonLogout.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonLogout);
+
+        labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelAPILimit.setText("API:");
         mainToolBar.add(labelAPILimit);
 
         getContentPane().add(mainToolBar, java.awt.BorderLayout.NORTH);
 
-        jMenu1.setText("Arquivo");
-        jMenu1.setName("menuSaveNetworkAs"); // NOI18N
-
-        menuLoadNetwork.setText("Carregar Rede");
-        menuLoadNetwork.setActionCommand("menuLoadNetwork");
-        menuLoadNetwork.setName("menuLoadNetwork"); // NOI18N
-        jMenu1.add(menuLoadNetwork);
-
-        menuSaveNetwork.setText("Salvar Rede");
-        menuSaveNetwork.setActionCommand("menuSaveNetwork");
-        menuSaveNetwork.setName("menuSaveNetwork"); // NOI18N
-        jMenu1.add(menuSaveNetwork);
-
-        menuSaveNetworkAs.setText("Salvar Rede Como...");
-        menuSaveNetworkAs.setActionCommand("menuSaveNetworkAs");
-        menuSaveNetworkAs.setName("menuSaveNetworkAs"); // NOI18N
-        jMenu1.add(menuSaveNetworkAs);
-        jMenu1.add(jSeparator1);
-
-        menuLogout.setText("Logout");
-        menuLogout.setActionCommand("menuLogout");
-        menuLogout.setName("menuLogout"); // NOI18N
-        jMenu1.add(menuLogout);
-
-        menuExit.setText("Sair");
-        menuExit.setActionCommand("menuExit");
-        menuExit.setName("menuExit"); // NOI18N
-        menuExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuExitActionPerformed(evt);
-            }
-        });
-        jMenu1.add(menuExit);
-
-        jMenuBar1.add(jMenu1);
-
-        jMenu3.setText("Exibir");
-
-        menuCheckBoxStatusBar.setSelected(true);
-        menuCheckBoxStatusBar.setText("Barra de Status");
-        menuCheckBoxStatusBar.setActionCommand("menuCheckBoxStatusBar");
-        menuCheckBoxStatusBar.setName("menuCheckBoxStatusBar"); // NOI18N
-        jMenu3.add(menuCheckBoxStatusBar);
-
-        jMenuBar1.add(jMenu3);
-
-        jMenu2.setText("Ajuda");
-
-        menuHelp.setText("Tópicos de Ajuda");
-        menuHelp.setActionCommand("menuHelp");
-        menuHelp.setName("menuHelp"); // NOI18N
-        jMenu2.add(menuHelp);
-
-        jMenuBar1.add(jMenu2);
-
-        setJMenuBar(jMenuBar1);
-
         pack();
     }// </editor-fold>
 
-    private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        System.exit(0);
-}                                        
-
     public void addMainWindowListener(ActionListener listener) {
-		menuLoadNetwork.addActionListener(listener);
-        menuSaveNetwork.addActionListener(listener);
-        menuSaveNetworkAs.addActionListener(listener);
-        menuLogout.addActionListener(listener);
-        menuCheckBoxStatusBar.addActionListener(listener);
-        menuHelp.addActionListener(listener);
-
+		buttonLogout.addActionListener(listener);
+        buttonShowStatusBar.addActionListener(listener);
+        buttonHelp.addActionListener(listener);
         buttonAddUser.addActionListener(listener);
         buttonNewGroup.addActionListener(listener);
         buttonUpdate.addActionListener(listener);
@@ -386,8 +342,8 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonSettings.addActionListener(listener);
         buttonTimeline.addActionListener(listener);
 
-        checkBoxHighQuality.addActionListener(listener);
-        checkBoxCurvedEdges.addActionListener(listener);
+        buttonHighQuality.addActionListener(listener);
+        buttonCurvedEdges.addActionListener(listener);
         buttonToolTipControl.addActionListener(listener);
         buttonPlayPauseVisualization.addActionListener(listener);
         buttonCenterUser.addActionListener(listener);
@@ -396,11 +352,11 @@ public class GUIMainWindow extends javax.swing.JFrame {
 	}
 
     public boolean isHighQuality() {
-        return checkBoxHighQuality.isSelected(); 
+        return buttonHighQuality.isSelected();
     }
 
     public boolean isCurvedEdges() {
-        return checkBoxCurvedEdges.isSelected();
+        return buttonCurvedEdges.isSelected();
     }
 
     public boolean isToolTipControlOn() {
@@ -416,7 +372,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     }
 
     public boolean isStatusBarVisible() {
-        return menuCheckBoxStatusBar.isSelected();
+        return buttonShowStatusBar.isSelected();
     }
 
     public void setStatusBarMessage(String message) {
@@ -456,7 +412,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     }
 
     public void setRateLimitStatus(int left, int total, Date resetDate) {
-        labelAPILimit.setText("Requisições API: "+left+"/"+total+" Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
+        labelAPILimit.setText("API: "+left+"/"+total+" Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
     }
 
     // Variables declaration - do not modify
@@ -465,7 +421,11 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JToggleButton buttonCenterUser;
     private javax.swing.JButton buttonClearSelection;
     private javax.swing.JButton buttonCloseUpdates;
+    private javax.swing.JToggleButton buttonCurvedEdges;
+    private javax.swing.JButton buttonHelp;
+    private javax.swing.JToggleButton buttonHighQuality;
     private javax.swing.JToggleButton buttonInbox;
+    private javax.swing.JButton buttonLogout;
     private javax.swing.JButton buttonMostActive;
     private javax.swing.JButton buttonNewDirectMessage;
     private javax.swing.JButton buttonNewGroup;
@@ -475,20 +435,13 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonPreviousUser;
     private javax.swing.JButton buttonSearchUpdates;
     private javax.swing.JButton buttonSettings;
-    private javax.swing.JButton buttonShowAll;
+    private javax.swing.JToggleButton buttonShowStatusBar;
     private javax.swing.JButton buttonTimeline;
     private javax.swing.JToggleButton buttonToolTipControl;
     private javax.swing.JToggleButton buttonTurnOnOff;
     private javax.swing.JButton buttonUpdate;
-    private javax.swing.JCheckBox checkBoxCurvedEdges;
-    private javax.swing.JCheckBox checkBoxHighQuality;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
@@ -498,13 +451,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel labelAPILimit;
     private javax.swing.JLabel labelStatusBar;
     private javax.swing.JToolBar mainToolBar;
-    private javax.swing.JCheckBoxMenuItem menuCheckBoxStatusBar;
-    private javax.swing.JMenuItem menuExit;
-    private javax.swing.JMenuItem menuHelp;
-    private javax.swing.JMenuItem menuLoadNetwork;
-    private javax.swing.JMenuItem menuLogout;
-    private javax.swing.JMenuItem menuSaveNetwork;
-    private javax.swing.JMenuItem menuSaveNetworkAs;
     private javax.swing.JTextField txtCurrentUser;
     // End of variables declaration
 

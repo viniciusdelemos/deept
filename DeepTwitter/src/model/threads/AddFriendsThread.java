@@ -63,6 +63,7 @@ public class AddFriendsThread extends Thread {
 				controller.setStatusBarMessage("Adicionados "+notAdded+" amigos de "+source.getString("name") +" à rede. "+(friends.size()-notAdded)+" já existentes.");
 			
 			source.setBoolean("isShowingFriends",true);
+			source.setBoolean("isOpen", true);
 			//node count: botar no log
 			System.out.println("Node Count: "+networkView.getGraph().getNodeCount());
 			
