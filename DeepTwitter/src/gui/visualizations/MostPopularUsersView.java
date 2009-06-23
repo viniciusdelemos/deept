@@ -115,8 +115,8 @@ public class MostPopularUsersView extends Display{
     		addOrRefreshNode(n);
 		}
     	
-    	String descriptions[] = { "Nome:", "Último Status: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Tweets:", "Favoritos:" };
-    	String data[] = { "name", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount", "favoritesCount" };
+    	String descriptions[] = { "Nome:", "Username:", "Último Tweet: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Tweets:", "Favoritos:" };
+    	String data[] = { "name", "screenName", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount", "favoritesCount" };
 
     	toolTipControl = new GenericToolTipControl(descriptions,data,200);    	
     	addControlListener(toolTipControl);

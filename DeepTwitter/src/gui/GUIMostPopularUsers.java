@@ -38,11 +38,10 @@ public class GUIMostPopularUsers extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         comboBoxMaxUsers = new javax.swing.JComboBox();
         buttonPlayPauseTweetView = new javax.swing.JToggleButton();
-        buttonSettings = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setName("DeepTwitter - Usuários mais populares"); // NOI18N
+        setName("Usuários mais populares"); // NOI18N
 
         jSplitPane1.setDividerLocation(510);
         jSplitPane1.setDividerSize(6);
@@ -113,15 +112,7 @@ public class GUIMostPopularUsers extends javax.swing.JFrame {
         buttonPlayPauseTweetView.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("../pause.png"))); // NOI18N
         buttonPlayPauseTweetView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
-        buttonSettings.setBackground(new java.awt.Color(102, 204, 255));
-        buttonSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("../configure.png"))); // NOI18N
-        buttonSettings.setToolTipText("Configurações");
-        buttonSettings.setActionCommand("buttonSettings");
-        buttonSettings.setFocusable(false);
-        buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel2.setText("Exibir");
 
         javax.swing.GroupLayout menuPanelLayout = new javax.swing.GroupLayout(menuPanel);
@@ -131,18 +122,13 @@ public class GUIMostPopularUsers extends javax.swing.JFrame {
             .addGroup(menuPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(buttonSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonPlayPauseTweetView, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(menuPanelLayout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(comboBoxMaxUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(menuPanelLayout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(jLabel2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonPlayPauseTweetView, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
+                .addGroup(menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(comboBoxMaxUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(44, 44, 44)
                 .addGroup(menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuPanelLayout.createSequentialGroup()
                         .addGroup(menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -176,14 +162,12 @@ public class GUIMostPopularUsers extends javax.swing.JFrame {
                     .addGroup(menuPanelLayout.createSequentialGroup()
                         .addGap(11, 11, 11)
                         .addGroup(menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(menuPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(comboBoxMaxUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(menuPanelLayout.createSequentialGroup()
-                                .addComponent(buttonPlayPauseTweetView, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                                .addComponent(buttonSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(menuPanelLayout.createSequentialGroup()
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(comboBoxMaxUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(buttonPlayPauseTweetView, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE))))
                 .addGap(33, 33, 33))
         );
@@ -201,7 +185,6 @@ public class GUIMostPopularUsers extends javax.swing.JFrame {
         orderByFollowersButton.addActionListener(listener);
         orderByTweetsButton.addActionListener(listener);
         buttonPlayPauseTweetView.addActionListener(listener);
-        buttonSettings.addActionListener(listener);
 	}    
 
     public JSplitPane getSplitPane() {
@@ -219,7 +202,6 @@ public class GUIMostPopularUsers extends javax.swing.JFrame {
     // Variables declaration - do not modify
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JToggleButton buttonPlayPauseTweetView;
-    private javax.swing.JButton buttonSettings;
     private javax.swing.JComboBox comboBoxMaxUsers;
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;

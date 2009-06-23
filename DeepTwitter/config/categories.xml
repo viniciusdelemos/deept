@@ -7,18 +7,12 @@
   </Category>
   <Category name="tecnologia">
     <Word>notebook</Word>
-    <Word>ibm</Word>
     <Word>lcd</Word>
     <Word>mac</Word>
     <Word>windows</Word>
     <Word>blog</Word>
     <Word>linux</Word>
     <Word>iphone</Word>
-  </Category>
-  <Category name="twitter">
-    <Word>twitter</Word>
-    <Word>tweetdeck</Word>
-    <Word>tweet</Word>
   </Category>
   <Category name="ingles">
     <Word>music</Word>
@@ -43,8 +37,13 @@
     <Word>transformers</Word>
     <Word>harry potter</Word>
   </Category>
-  <Category name="faculdade">
+  <Category name="eventos">
     <Word>workshop</Word>
+    <Word>palestra</Word>
+    <Word>reunião</Word>
+  </Category>
+  <Category name="faculdade">
+    <Word>cnpq</Word>
     <Word>projeto</Word>
     <Word>planejamento</Word>
     <Word>ibm</Word>
@@ -55,6 +54,11 @@
     <Word>show</Word>
     <Word>hotel</Word>
     <Word>férias</Word>
+  </Category>
+  <Category name="Twitter">
+    <Word>twitter</Word>
+    <Word>tweetdeck</Word>
+    <Word>tweet</Word>
   </Category>
 </Categories>
 
