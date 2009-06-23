@@ -281,9 +281,9 @@ public class CategoryManager {
 	public void categorize(long responseId, String text, VisualItem item) {
 		text = " " + text + " ";
 		for (Category c : getCategories()) {
-			for (CategoryWord word : c.getWords())
-				if (!word.hasRelatedResponse(responseId)) {
-					tagParser = new TagParser(text, word.getName());
+			for (CategoryWord word : c.getWords()) {
+				tagParser = new TagParser(text, word.getName());
+				if (!word.hasRelatedResponse(responseId)) {					
 					if (tagParser.hasTag()) {
 						word.addRelatedResponse(responseId);
 						formatItem(item, c);						
@@ -292,6 +292,7 @@ public class CategoryManager {
 				} else {
 					formatItem(item, c);
 				}
+			}
 		}
 		if (relatedResponsesCount >= 1000) {
 			clearRelatedResponses();
