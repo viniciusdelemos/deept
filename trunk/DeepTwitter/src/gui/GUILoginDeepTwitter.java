@@ -143,7 +143,7 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        panelTip.setText("Informe o nome de usuário do Twitter da pessoa que está procurando.");
+        panelTip.setText("Informe o nome de um usuário do Twitter que deseje explorar.");
         labelPassword.setVisible(false);
         txtPassword.setVisible(false);
         isTwitterUser = false;
