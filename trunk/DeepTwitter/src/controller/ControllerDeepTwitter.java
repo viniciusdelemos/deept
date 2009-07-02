@@ -230,7 +230,7 @@ public class ControllerDeepTwitter {
 					
 					if(!isTwitterUser) {
 						tabManager.setEnabledAt(1, false); //replies
-						//tabManager.setEnabledAt(2, false); //favoritos
+						tabManager.setEnabledAt(2, false); //favoritos
 						tabManager.setEnabledAt(3, false); //mensagens
 					}
 					
