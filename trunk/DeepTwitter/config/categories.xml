@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <Categories>
+  <Category name="tecnologia">
+    <Word>notebook</Word>
+    <Word>lcd</Word>
+    <Word>windows</Word>
+    <Word>mac</Word>
+    <Word>iphone</Word>
+    <Word>linux</Word>
+    <Word>blog</Word>
+  </Category>
   <Category name="música">
     <Word>música</Word>
     <Word>mtv</Word>
     <Word>lady gaga</Word>
   </Category>
-  <Category name="tecnologia">
-    <Word>notebook</Word>
-    <Word>lcd</Word>
-    <Word>mac</Word>
-    <Word>windows</Word>
-    <Word>blog</Word>
-    <Word>linux</Word>
-    <Word>iphone</Word>
-  </Category>
   <Category name="ingles">
-    <Word>music</Word>
-    <Word>photos</Word>
     <Word>love</Word>
+    <Word>photos</Word>
+    <Word>music</Word>
     <Word>interview</Word>
     <Word>bored</Word>
     <Word>i am</Word>
+  </Category>
+  <Category name="sentimento">
+    <Word>love</Word>
+    <Word>bom-humor</Word>
+    <Word>amo</Word>
+    <Word>odeio</Word>
   </Category>
   <Category name="política">
     <Word>iran</Word>
     <Word>#iranelection</Word>
     <Word>obama</Word>
   </Category>
-  <Category name="sentimento">
-    <Word>bom-humor</Word>
-    <Word>love</Word>
-    <Word>amo</Word>
-    <Word>odeio</Word>
-  </Category>
-  <Category name="cinema">
-    <Word>transformers</Word>
-    <Word>harry potter</Word>
+  <Category name="Nova Categoriatyvyv">
+    <Word>nova palavra</Word>
   </Category>
   <Category name="eventos">
     <Word>workshop</Word>
@@ -48,17 +47,6 @@
     <Word>planejamento</Word>
     <Word>ibm</Word>
     <Word>reunião</Word>
-  </Category>
-  <Category name="diversão">
-    <Word>jogo</Word>
-    <Word>show</Word>
-    <Word>hotel</Word>
-    <Word>férias</Word>
-  </Category>
-  <Category name="Twitter">
-    <Word>twitter</Word>
-    <Word>tweetdeck</Word>
-    <Word>tweet</Word>
   </Category>
 </Categories>
 
