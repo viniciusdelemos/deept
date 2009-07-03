@@ -1,13 +1,9 @@
 package gui.visualizations;
 
-import gui.Config;
-import gui.GUICategoryEditor;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -18,11 +14,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Box;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
@@ -58,7 +51,6 @@ import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
-import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.data.search.PrefixSearchTupleSet;
 import prefuse.data.search.SearchTupleSet;
@@ -69,7 +61,6 @@ import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.render.PolygonRenderer;
 import prefuse.render.Renderer;
-import prefuse.render.ShapeRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.FontLib;
 import prefuse.util.force.DragForce;

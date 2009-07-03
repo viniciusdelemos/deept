@@ -20,11 +20,9 @@ import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -37,7 +35,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.jdom.Attribute;
+import model.ConfigurationType;
+import model.MessageType;
+import model.StatusTab;
+import model.StatusesType;
+import model.threads.StatusesTableThread;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -45,13 +48,6 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import model.Category;
-import model.CategoryWord;
-import model.ConfigurationType;
-import model.MessageType;
-import model.StatusTab;
-import model.StatusesType;
-import model.threads.StatusesTableThread;
 import prefuse.Display;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -238,7 +234,7 @@ public class ControllerDeepTwitter {
 					mainWindow.addMainWindowListener(mainWindowListener);
 					
 					networkView = new NetworkView();
-					openConfigurations();
+					loadSettings();
 										
 					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
 					windowTabs = mainWindow.getTabs();
@@ -471,8 +467,11 @@ public class ControllerDeepTwitter {
 				mainWindow.setStatusBarVisible(mainWindow.isStatusBarVisible());
 			}
 			else if(cmd.equals("buttonHelp")) {
-				//TODO
-				System.out.println("Open Help");
+				try {
+					Runtime.getRuntime().exec("rundll32 SHELL32.DLL,ShellExec_RunDLL files/Manal.pdf");
+				} catch (Exception e1) {
+					showMessageDialog(e1.getMessage(), MessageType.ERROR);
+				}				
 			}
 			else if(cmd.equals("buttonNewUpdate")) {					
 				openGUINewUpdateWindow();				
@@ -694,7 +693,7 @@ public class ControllerDeepTwitter {
 		}
 	}
 
-	public void saveConfigurations(){
+	public void saveSettings(){
 		
 		SAXBuilder builder = new SAXBuilder(); // Build a document ...
 		Document doc = null; // ... from a file
@@ -704,7 +703,7 @@ public class ControllerDeepTwitter {
 		output.setFormat(format);
 
 		try {
-			doc = builder.build("config/config.xml");
+			doc = builder.build("files/config.xml");
 		} catch (JDOMException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);
@@ -847,7 +846,7 @@ public class ControllerDeepTwitter {
 
 		FileWriter f = null;
 		try {
-			f = new FileWriter(new File("config/config.xml"));
+			f = new FileWriter(new File("files/config.xml"));
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);
@@ -865,9 +864,9 @@ public class ControllerDeepTwitter {
 		
 	}
 	
-	public void openConfigurations(){
+	public void loadSettings(){
 		
-		File file = new File("config/config.xml");
+		File file = new File("files/config.xml");
 
 		SAXBuilder sb = new SAXBuilder();
 
