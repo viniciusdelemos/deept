@@ -17,9 +17,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -32,6 +37,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+
+import model.Category;
+import model.CategoryWord;
+import model.ConfigurationType;
 import model.MessageType;
 import model.StatusTab;
 import model.StatusesType;
@@ -66,7 +82,16 @@ public class ControllerDeepTwitter {
 	private StatusTabManager tabManager;
 	private MainWindowListener mainWindowListener;
 	private UpdateRateLimitThread updateRateLimit;
-	private long rateLimitSleepTime = 60000; //padrao 1min
+	
+	//intervals
+	private long intervalRateLimitStatus = 60000; //padrao 1min
+	private long intervalUpdates = 60000;
+	private long intervalMentions = 60000;
+	private long intervalFavorites = 60000;
+	private long intervalDirectMessages = 60000;
+	private long intervalSearch = 60000;
+	private long intervalPublicTimeline = 60000;
+	
 	
 	private ControllerDeepTwitter(){
 		//construtor private previne chamadas nao autorizadas ao construtor.		
@@ -212,7 +237,8 @@ public class ControllerDeepTwitter {
 					mainWindowListener = new MainWindowListener();
 					mainWindow.addMainWindowListener(mainWindowListener);
 					
-					networkView = new NetworkView();	
+					networkView = new NetworkView();
+					openConfigurations();
 										
 					final JSplitPane jSplitPane = mainWindow.getSplitPane();					
 					windowTabs = mainWindow.getTabs();
@@ -301,7 +327,7 @@ public class ControllerDeepTwitter {
 					else
 						tabManager.getTab(0).setPanelContent(new StatusesTableThread(StatusesType.UPDATES,getLoggedUserId()));
 					
-					updateRateLimit = new UpdateRateLimitThread(rateLimitSleepTime);				
+					updateRateLimit = new UpdateRateLimitThread(intervalRateLimitStatus);				
 				}	
 			} catch (TwitterException ex) {
 				if(ex.getStatusCode()==400)
@@ -392,7 +418,7 @@ public class ControllerDeepTwitter {
 	}
 	
 	public void setRateLimitSleepTime(long time) {
-		rateLimitSleepTime = time;
+		intervalRateLimitStatus = time;
 	}
 	
 	class MainWindowListener implements ActionListener {		
@@ -590,5 +616,427 @@ public class ControllerDeepTwitter {
 				} 
 			}
 		}
-	}	
+	}
+	
+	public long getProperty(ConfigurationType configurationType) {
+		if(configurationType == ConfigurationType.intervalUpdates)
+			return intervalUpdates;
+		else if(configurationType == ConfigurationType.intervalMentions)
+			return intervalMentions;
+		else if(configurationType == ConfigurationType.intervalFavorites)
+			return intervalFavorites;
+		else if(configurationType == ConfigurationType.intervalDirectMessages)
+			return intervalDirectMessages;
+		else if(configurationType == ConfigurationType.intervalSearch)
+			return intervalSearch;
+		else if(configurationType == ConfigurationType.intervalPublicTimeline)
+			return intervalPublicTimeline;
+		else if(configurationType == ConfigurationType.intervalRateLimitStatus)
+			return intervalRateLimitStatus;
+		else if(configurationType == ConfigurationType.edgeColor)
+			return networkView.getEdgeColor();
+		else if(configurationType == ConfigurationType.textColor)
+			return networkView.getTextColor();
+		else if(configurationType == ConfigurationType.mainUserColor)
+			return networkView.getMainUserColor();
+		else if(configurationType == ConfigurationType.searchResultColor)
+			return networkView.getSearchResultColor();
+		else if(configurationType == ConfigurationType.friendsColor)
+			return networkView.getFriendsColor();
+		else if(configurationType == ConfigurationType.followersColor)
+			return networkView.getFollowersColor();
+		else if(configurationType == ConfigurationType.friendsAndFollowersColor)
+			return networkView.getFriendsAndFollowersColor();
+		else if(configurationType == ConfigurationType.selectedItemColor)
+			return networkView.getSelectedItemColor();
+		else if(configurationType == ConfigurationType.nodeStrokeColor)
+			return networkView.getNodeStrokeColor();
+		else if(configurationType == ConfigurationType.edgeType)
+			return networkView.getEdgeType();
+		else return -1;
+	}
+
+	public void setProperty(ConfigurationType configurationType, long value) {
+		if(configurationType == ConfigurationType.intervalUpdates)
+			intervalUpdates = value;
+		else if(configurationType == ConfigurationType.intervalMentions)
+			intervalMentions = value;
+		else if(configurationType == ConfigurationType.intervalFavorites)
+			intervalFavorites = value;
+		else if(configurationType == ConfigurationType.intervalDirectMessages)
+			intervalDirectMessages = value;
+		else if(configurationType == ConfigurationType.intervalSearch)
+			intervalSearch = value;
+		else if(configurationType == ConfigurationType.intervalPublicTimeline)
+			intervalPublicTimeline = value;
+		else if(configurationType == ConfigurationType.intervalRateLimitStatus)
+			intervalRateLimitStatus = value;
+		else if(configurationType == ConfigurationType.edgeColor)
+			networkView.setEdgeColor((int)value);
+		else if(configurationType == ConfigurationType.textColor)
+			networkView.setTextColor((int)value);
+		else if(configurationType == ConfigurationType.mainUserColor)
+			networkView.setMainUserColor((int)value);
+		else if(configurationType == ConfigurationType.searchResultColor)
+			networkView.setSearchResultColor((int)value);
+		else if(configurationType == ConfigurationType.friendsColor)
+			networkView.setFriendsColor((int)value);
+		else if(configurationType == ConfigurationType.followersColor)
+			networkView.setFollowersColor((int)value);
+		else if(configurationType == ConfigurationType.friendsAndFollowersColor)
+			networkView.setFriendsAndFollowersColor((int)value);
+		else if(configurationType == ConfigurationType.selectedItemColor)
+			networkView.setSelectedItemColor((int)value);
+		else if(configurationType == ConfigurationType.nodeStrokeColor)
+			networkView.setNodeStrokeColor((int)value);
+		else if(configurationType == ConfigurationType.edgeType){
+			networkView.setEdgeType((int)value);
+		}
+	}
+
+	public void saveConfigurations(){
+		
+		SAXBuilder builder = new SAXBuilder(); // Build a document ...
+		Document doc = null; // ... from a file
+		XMLOutputter output = new XMLOutputter(); // And output the document ...
+		Format format = Format.getPrettyFormat();  
+		format.setEncoding("ISO-8859-1");
+		output.setFormat(format);
+
+		try {
+			doc = builder.build("config/config.xml");
+		} catch (JDOMException ex) {
+			JOptionPane.showMessageDialog(null, ex, "Problemas",
+					JOptionPane.ERROR_MESSAGE);
+			// TODO adicionar modal sobre a tela
+			return;
+		} catch (IOException ex) {
+			JOptionPane
+					.showMessageDialog(
+							null,
+							"Não foi possível encontrar o arquivo de configuração do DeepTwitter para salvar suas alterações",
+							"Problemas com configuração",
+							JOptionPane.ERROR_MESSAGE);
+			// TODO adicionar modal sobre a tela
+			return;
+		}
+
+		// Root element
+		Element root = doc.getRootElement();
+
+		Element elem;
+		
+		//intervalUpdates
+		try{
+			elem = root.getChild("intervalUpdates");
+			elem.setText(String.valueOf(intervalUpdates));
+		}catch(Exception e){
+		}
+		
+		//intervalMentions
+		try{
+			elem = root.getChild("intervalMentions");
+			elem.setText(String.valueOf(intervalMentions));
+		}catch(Exception e){
+		}
+		
+		//intervalFavorites
+		try{
+			elem = root.getChild("intervalFavorites");
+			elem.setText(String.valueOf(intervalFavorites));
+		}catch(Exception e){
+		}
+		
+		//intervalDirectMessages
+		try{
+			elem = root.getChild("intervalDirectMessages");
+			elem.setText(String.valueOf(intervalDirectMessages));
+		}catch(Exception e){
+		}
+		
+		//intervalSearch
+		try{
+			elem = root.getChild("intervalSearch");
+			elem.setText(String.valueOf(intervalSearch));
+		}catch(Exception e){
+		}
+		
+		//intervalPublicTimeline
+		try{
+			elem = root.getChild("intervalPublicTimeline");
+			elem.setText(String.valueOf(intervalPublicTimeline));
+		}catch(Exception e){
+		}
+		
+		//intervalRateLimitStatus
+		try{
+			elem = root.getChild("intervalRateLimitStatus");
+			elem.setText(String.valueOf(intervalRateLimitStatus));
+		}catch(Exception e){
+		}
+		
+		//edgeColor
+		try{
+			elem = root.getChild("edgeColor");
+			elem.setText(String.valueOf(networkView.getEdgeColor()));
+		}catch(Exception e){
+		}
+		
+		//textColor
+		try{
+			elem = root.getChild("textColor");
+			elem.setText(String.valueOf(networkView.getTextColor()));
+		}catch(Exception e){
+		}
+		
+		//mainUserColor
+		try{
+			elem = root.getChild("mainUserColor");
+			elem.setText(String.valueOf(networkView.getMainUserColor()));
+		}catch(Exception e){
+		}
+		
+		//searchResultColor
+		try{
+			elem = root.getChild("searchResultColor");
+			elem.setText(String.valueOf(networkView.getSearchResultColor()));
+		}catch(Exception e){
+		}
+		
+		//friendsColor
+		try{
+			elem = root.getChild("friendsColor");
+			elem.setText(String.valueOf(networkView.getFriendsColor()));
+		}catch(Exception e){
+		}
+		
+		//followersColor
+		try{
+			elem = root.getChild("followersColor");
+			elem.setText(String.valueOf(networkView.getFollowersColor()));
+		}catch(Exception e){
+		}
+		
+		//friendsAndFollowersColor
+		try{
+			elem = root.getChild("friendsAndFollowersColor");
+			elem.setText(String.valueOf(networkView.getFriendsAndFollowersColor()));
+		}catch(Exception e){
+		}
+		
+		//selectedItemColor
+		try{
+			elem = root.getChild("selectedItemColor");
+			elem.setText(String.valueOf(networkView.getSelectedItemColor()));
+		}catch(Exception e){
+		}
+		
+		//nodeStrokeColor
+		try{
+			elem = root.getChild("nodeStrokeColor");
+			elem.setText(String.valueOf(networkView.getNodeStrokeColor()));
+		}catch(Exception e){
+		}
+		
+		//edgeType
+		try{
+			elem = root.getChild("edgeType");
+			elem.setText(String.valueOf(networkView.getEdgeType()));
+		}catch(Exception e){
+		}
+
+		FileWriter f = null;
+		try {
+			f = new FileWriter(new File("config/config.xml"));
+		} catch (IOException ex) {
+			JOptionPane.showMessageDialog(null, ex, "Problemas",
+					JOptionPane.ERROR_MESSAGE);
+			// TODO colocar frame, ver problemas
+		}
+		try {
+			output.output(doc, f);
+			f.close();
+		} catch (IOException ex) {
+			JOptionPane.showMessageDialog(null, ex, "Problemas",
+					JOptionPane.ERROR_MESSAGE);
+			// TODO colocar frame, ver problemas
+		}
+
+		
+	}
+	
+	public void openConfigurations(){
+		
+		File file = new File("config/config.xml");
+
+		SAXBuilder sb = new SAXBuilder();
+
+		Document d = null;
+
+		try {
+			d = sb.build(file);
+		} catch (JDOMException ex) {
+			JOptionPane.showMessageDialog(null, ex, "Problemas",
+					JOptionPane.ERROR_MESSAGE);
+			// TODO ver quais excecoes podem ocorrer aki
+		} catch (IOException ex) {
+			JOptionPane
+					.showMessageDialog(
+							null,
+							"Não foi possível encontrar o arquivo de configuração do DeepTwitter.",
+							"Problemas com configuração",
+							JOptionPane.ERROR_MESSAGE);
+			// TODO se nao tiver pasta, criar a pasta e arquivo, se nao tiver
+			// arquivo, criar apenas ele
+			// System.exit(0);
+		}
+
+		// Root element
+		Element root = d.getRootElement();
+		
+		Element elem;
+		
+		//intervalUpdates
+		try{
+			elem = root.getChild("intervalUpdates");
+			intervalUpdates = Long.parseLong(elem.getTextTrim());
+		}catch(Exception e){
+			intervalUpdates = 120000;
+		}
+		
+		//intervalMentions
+		try{
+			elem = root.getChild("intervalMentions");
+			intervalMentions = Long.parseLong(elem.getTextTrim());
+		}catch(Exception e){
+			intervalMentions = 120000;
+		}
+		
+		//intervalFavorites
+		try{
+			elem = root.getChild("intervalFavorites");
+			intervalFavorites = Long.parseLong(elem.getTextTrim());
+		}catch(Exception e){
+			intervalFavorites = 120000;
+		}
+		
+		//intervalDirectMessages
+		try{
+			elem = root.getChild("intervalDirectMessages");
+			intervalDirectMessages = Long.parseLong(elem.getTextTrim());
+		}catch(Exception e){
+			intervalDirectMessages = 120000;
+		}
+		
+		//intervalSearch
+		try{
+			elem = root.getChild("intervalSearch");
+			intervalSearch = Long.parseLong(elem.getTextTrim());
+		}catch(Exception e){
+			intervalSearch = 120000;
+		}
+		
+		//intervalPublicTimeline
+		try{
+			elem = root.getChild("intervalPublicTimeline");
+			intervalPublicTimeline = Long.parseLong(elem.getTextTrim());
+		}catch(Exception e){
+			intervalPublicTimeline = 120000;
+		}
+		
+		//intervalRateLimitStatus
+		try{
+			elem = root.getChild("intervalRateLimitStatus");
+			intervalRateLimitStatus = Long.parseLong(elem.getTextTrim());
+		}catch(Exception e){
+			intervalRateLimitStatus = 120000;
+		}
+		
+		//edgeColor
+		try{
+			elem = root.getChild("edgeColor");
+			networkView.setEdgeColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setEdgeColor(-8355712);
+		}
+		
+		//textColor
+		try{
+			elem = root.getChild("textColor");
+			networkView.setTextColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setTextColor(-16777216);
+		}
+		
+		//mainUserColor
+		try{
+			elem = root.getChild("mainUserColor");
+			networkView.setMainUserColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setMainUserColor(-14336);
+		}
+		
+		//searchResultColor
+		try{
+			elem = root.getChild("searchResultColor");
+			networkView.setSearchResultColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setSearchResultColor(-10789889);
+		}
+		
+		//friendsColor
+		try{
+			elem = root.getChild("friendsColor");
+			networkView.setFriendsColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setFriendsColor(-12517377);
+		}
+		
+		//followersColor
+		try{
+			elem = root.getChild("followersColor");
+			networkView.setFollowersColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setFollowersColor(-49088);
+		}
+		
+		//friendsAndFollowersColor
+		try{
+			elem = root.getChild("friendsAndFollowersColor");
+			networkView.setFriendsAndFollowersColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setFriendsAndFollowersColor(-12517568);
+		}
+		
+		//selectedItemColor
+		try{
+			elem = root.getChild("selectedItemColor");
+			networkView.setSelectedItemColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setSelectedItemColor(-192);
+		}
+		
+		//nodeStrokeColor
+		try{
+			elem = root.getChild("nodeStrokeColor");
+			networkView.setNodeStrokeColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setNodeStrokeColor(-16777216);
+		}
+		
+		//edgeType
+		try{
+			elem = root.getChild("edgeType");
+			int edgeType = Integer.parseInt(elem.getTextTrim());
+			
+			if(edgeType == 0)
+				networkView.setEdgeType(false);
+			else
+				networkView.setEdgeType(true);
+		}catch(Exception e){
+			networkView.setEdgeType(false);
+		}
+	}
+	
+	
 }

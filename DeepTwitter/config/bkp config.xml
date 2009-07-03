@@ -1,0 +1,19 @@
+<configuration>
+  <intervalUpdates>120000</intervalUpdates>
+  <intervalMentions>120000</intervalMentions>
+  <intervalFavorites>120000</intervalFavorites>
+  <intervalDirectMessages>120000</intervalDirectMessages>
+  <intervalSearch>120000</intervalSearch>
+  <intervalPublicTimeline>120000</intervalPublicTimeline>
+  <intervalRateLimitStatus>120000</intervalRateLimitStatus>
+  <edgeColor>-8355712</edgeColor>
+  <textColor>-16777216</textColor>
+  <mainUserColor>-14336</mainUserColor>
+  <searchResultColor>-10789889</searchResultColor>
+  <friendsColor>-12517377</friendsColor>
+  <followersColor>-49088</followersColor>
+  <friendsAndFollowersColor>-12517568</friendsAndFollowersColor>
+  <selectedItemColor>-192</selectedItemColor>
+  <nodeStrokeColor>-16777216</nodeStrokeColor>
+  <edgeType>0</edgeType>
+</configuration>
