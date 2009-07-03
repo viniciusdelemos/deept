@@ -1,5 +1,6 @@
 package gui.visualizations;
 
+import gui.Config;
 import gui.GUICategoryEditor;
 
 import java.awt.BasicStroke;
@@ -462,6 +463,16 @@ public class NetworkView extends Display {
     		edgeType = Constants.EDGE_TYPE_LINE;
     	edgeRenderer.setEdgeType(edgeType);
     }
+    
+    public void setEdgeType(int value) {
+    	if(value>=0 && value<=3)
+    		edgeType = value;
+    	edgeRenderer.setEdgeType(edgeType);
+    }
+    
+    public int getEdgeType() {
+    	return edgeType;
+    }
         
     public GroupManager getGroupManager() {
     	return groupManager;
@@ -677,7 +688,7 @@ public class NetworkView extends Display {
     		popupMenu.add(friends); //é necessário?
     		popupMenu.add(followers);
     		popupMenu.add(favorites);
-    		
+    		   		
     		if(!item.get("idTwitter").equals(loggedUserId)) { 
     			popupMenu.addSeparator();
     			popupMenu.add(sendReply);
