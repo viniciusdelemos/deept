@@ -1,11 +1,12 @@
 <configuration>
-  <intervalUpdates>120000</intervalUpdates>
-  <intervalMentions>120000</intervalMentions>
-  <intervalFavorites>120000</intervalFavorites>
-  <intervalDirectMessages>120000</intervalDirectMessages>
-  <intervalSearch>120000</intervalSearch>
-  <intervalPublicTimeline>120000</intervalPublicTimeline>
-  <intervalRateLimitStatus>120000</intervalRateLimitStatus>
+  <intervalUpdates>120</intervalUpdates>
+  <intervalMentions>120</intervalMentions>
+  <intervalFavorites>120</intervalFavorites>
+  <intervalDirectMessages>120</intervalDirectMessages>
+  <intervalSearch>120</intervalSearch>
+  <intervalPublicTimeline>120</intervalPublicTimeline>
+  <intervalRateLimitStatus>120</intervalRateLimitStatus>
+  <intervalMostPopularUsers>5</intervalMostPopularUsers>
   <edgeColor>-8355712</edgeColor>
   <textColor>-16777216</textColor>
   <mainUserColor>-14336</mainUserColor>
@@ -17,3 +18,5 @@
   <nodeStrokeColor>-16777216</nodeStrokeColor>
   <edgeType>0</edgeType>
 </configuration>
+
+
