@@ -252,7 +252,7 @@ public class ControllerDeepTwitter {
 					
 					if(!isTwitterUser) {
 						tabManager.setEnabledAt(1, false); //replies
-						tabManager.setEnabledAt(2, false); //favoritos
+						//tabManager.setEnabledAt(2, false); //favoritos
 						tabManager.setEnabledAt(3, false); //mensagens
 					}
 					
@@ -468,7 +468,8 @@ public class ControllerDeepTwitter {
 			}
 			else if(cmd.equals("buttonHelp")) {
 				try {
-					Runtime.getRuntime().exec("rundll32 SHELL32.DLL,ShellExec_RunDLL files/Manal.pdf");
+					File manual = new File("files/Manual.pdf");
+					Runtime.getRuntime().exec("cmd.exe /c \"" +manual.getAbsolutePath() +"\"");
 				} catch (Exception e1) {
 					showMessageDialog(e1.getMessage(), MessageType.ERROR);
 				}				
@@ -705,17 +706,11 @@ public class ControllerDeepTwitter {
 		try {
 			doc = builder.build("files/config.xml");
 		} catch (JDOMException ex) {
-			JOptionPane.showMessageDialog(null, ex, "Problemas",
-					JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO adicionar modal sobre a tela
 			return;
 		} catch (IOException ex) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Não foi possível encontrar o arquivo de configuração do DeepTwitter para salvar suas alterações",
-							"Problemas com configuração",
-							JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO adicionar modal sobre a tela
 			return;
 		}
@@ -848,16 +843,14 @@ public class ControllerDeepTwitter {
 		try {
 			f = new FileWriter(new File("files/config.xml"));
 		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(null, ex, "Problemas",
-					JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO colocar frame, ver problemas
 		}
 		try {
 			output.output(doc, f);
 			f.close();
 		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(null, ex, "Problemas",
-					JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO colocar frame, ver problemas
 		}
 
@@ -875,16 +868,10 @@ public class ControllerDeepTwitter {
 		try {
 			d = sb.build(file);
 		} catch (JDOMException ex) {
-			JOptionPane.showMessageDialog(null, ex, "Problemas",
-					JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO ver quais excecoes podem ocorrer aki
 		} catch (IOException ex) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Não foi possível encontrar o arquivo de configuração do DeepTwitter.",
-							"Problemas com configuração",
-							JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO se nao tiver pasta, criar a pasta e arquivo, se nao tiver
 			// arquivo, criar apenas ele
 			// System.exit(0);

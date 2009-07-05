@@ -495,7 +495,8 @@ public class StatusesTableThread {
 
 		public void run()
 		{	
-			System.out.println("STARTING " + statusesType + " para " + controller.getUserName(getUserId()));			
+			System.out.println("STARTING " + statusesType + " para " + controller.getUserName(getUserId()));
+			JPanel emptyPanel = null;
 			while(true) {
 				try {					
 					if (threadSuspended) {
@@ -631,8 +632,9 @@ public class StatusesTableThread {
 						//adicionar/remover do mapa e do painel!
 					}
 
-					if(!statusesList.isEmpty()) {										
-						//if(empty != null) panel.remove(empty);							
+					if(!statusesList.isEmpty()) {						
+						if(emptyPanel != null)
+							panel.remove(emptyPanel); 							
 						//de trás para frente, para adicionar as mais recentes em cima
 						for(int i=statusesList.size()-1; i>=0; i--) {
 							loadData(statusesList.get(i));								
@@ -643,17 +645,25 @@ public class StatusesTableThread {
 							rows++;
 							allStatusesList.add(0,statusesList.get(i));							
 						}						
-						counterLabel.setText(String.valueOf(rows) + " "+getType().toString().toLowerCase());
-						//empty = new JPanel();
-						//empty.add(new JLabel(""));
+						//counterLabel.setText(String.valueOf(rows) + " "+getType().toString().toLowerCase());						
 						c.weightx = 0.5;
 						c.weighty = 1;
 						c.fill = GridBagConstraints.HORIZONTAL;
 						c.gridx = 0;
-						c.anchor = GridBagConstraints.PAGE_END;
-						//panel.add(empty,c);						
+						c.anchor = GridBagConstraints.PAGE_END;	
 						panel.revalidate();
 					}
+					else {
+						if(allStatusesList.size()==0 && panel.getComponentCount() == 0) {
+							emptyPanel = new JPanel();
+							JLabel emptyLabel = new JLabel("Não há tweets para exibir.");
+							emptyLabel.setFont(new Font("Tahoma",1,12));
+							emptyPanel.add(emptyLabel);
+							panel.add(emptyPanel,c);
+							panel.revalidate();
+						}
+					}
+						
 					if(isGroup)
 						statusesList.clear();
 
@@ -663,12 +673,17 @@ public class StatusesTableThread {
 					System.out.println("Status code: "+e.getStatusCode());
 					e.printStackTrace();
 					if(e.getStatusCode()==400) {
-						controller.showMessageDialog("Você excedeu o limite de 100 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
+						controller.showMessageDialog("Você excedeu o limite de requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
 						break;
 					}
 					else if(e.getStatusCode()==401) {
-						//TODO ao inves disto, mostrar no painel
-						controller.showMessageDialog("Você não está autorizado a ver os updates desta pessoa.",MessageType.ERROR);
+						emptyPanel = new JPanel();
+						JLabel emptyLabel = new JLabel("Você não está autorizado a ver os tweets deste usuário.");
+						emptyLabel.setFont(new Font("Tahoma",1,12));
+						emptyLabel.setForeground(Color.RED);
+						emptyPanel.add(emptyLabel);
+						panel.add(emptyPanel,c);		
+						panel.revalidate();
 						break;
 					}
 					else if(e.getStatusCode()==-1) {

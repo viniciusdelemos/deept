@@ -102,7 +102,7 @@ public class NetworkView extends Display {
     private SocialNetwork socialNetwork; 
     private VisualItem selectionBox;	
 	private PanControl panControl;
-	CenterOnClickControl centerUserControl;
+	private CenterOnClickControl centerUserControl;
 	private GenericToolTipControl toolTipControl;
 	private EdgeRenderer edgeRenderer;
 	private TupleSet selectedNodes;
