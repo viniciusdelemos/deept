@@ -148,7 +148,7 @@ public class CategoryManager {
 	 */
 	private void loadCategories() {
 
-		File file = new File("config/categories.xml");
+		File file = new File("files/categories.xml");
 
 		SAXBuilder sb = new SAXBuilder();
 
@@ -209,7 +209,7 @@ public class CategoryManager {
 		output.setFormat(format);
 
 		try {
-			doc = builder.build("config/categories.xml");
+			doc = builder.build("files/categories.xml");
 		} catch (JDOMException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);

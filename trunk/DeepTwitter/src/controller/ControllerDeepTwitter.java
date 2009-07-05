@@ -80,13 +80,14 @@ public class ControllerDeepTwitter {
 	private UpdateRateLimitThread updateRateLimit;
 	
 	//intervals
-	private long intervalRateLimitStatus = 60000; //padrao 1min
-	private long intervalUpdates = 60000;
-	private long intervalMentions = 60000;
-	private long intervalFavorites = 60000;
-	private long intervalDirectMessages = 60000;
-	private long intervalSearch = 60000;
-	private long intervalPublicTimeline = 60000;
+	private int intervalRateLimitStatus = 60; //padrao 1min
+	private int intervalUpdates = 60;
+	private int intervalMentions = 60;
+	private int intervalFavorites = 60;
+	private int intervalDirectMessages = 60;
+	private int intervalSearch = 60;
+	private int intervalPublicTimeline = 60;
+	private int intervalMostActiveUsers = 5;
 	
 	
 	private ControllerDeepTwitter(){
@@ -414,7 +415,8 @@ public class ControllerDeepTwitter {
 	}
 	
 	public void setRateLimitSleepTime(long time) {
-		intervalRateLimitStatus = time;
+		intervalRateLimitStatus = (int)time;
+		//TODO trocar para int o recebimento
 	}
 	
 	class MainWindowListener implements ActionListener {		
@@ -656,7 +658,7 @@ public class ControllerDeepTwitter {
 		else return -1;
 	}
 
-	public void setProperty(ConfigurationType configurationType, long value) {
+	public void setProperty(ConfigurationType configurationType, int value) {
 		if(configurationType == ConfigurationType.intervalUpdates)
 			intervalUpdates = value;
 		else if(configurationType == ConfigurationType.intervalMentions)
@@ -672,25 +674,25 @@ public class ControllerDeepTwitter {
 		else if(configurationType == ConfigurationType.intervalRateLimitStatus)
 			intervalRateLimitStatus = value;
 		else if(configurationType == ConfigurationType.edgeColor)
-			networkView.setEdgeColor((int)value);
+			networkView.setEdgeColor(value);
 		else if(configurationType == ConfigurationType.textColor)
-			networkView.setTextColor((int)value);
+			networkView.setTextColor(value);
 		else if(configurationType == ConfigurationType.mainUserColor)
-			networkView.setMainUserColor((int)value);
+			networkView.setMainUserColor(value);
 		else if(configurationType == ConfigurationType.searchResultColor)
-			networkView.setSearchResultColor((int)value);
+			networkView.setSearchResultColor(value);
 		else if(configurationType == ConfigurationType.friendsColor)
-			networkView.setFriendsColor((int)value);
+			networkView.setFriendsColor(value);
 		else if(configurationType == ConfigurationType.followersColor)
-			networkView.setFollowersColor((int)value);
+			networkView.setFollowersColor(value);
 		else if(configurationType == ConfigurationType.friendsAndFollowersColor)
-			networkView.setFriendsAndFollowersColor((int)value);
+			networkView.setFriendsAndFollowersColor(value);
 		else if(configurationType == ConfigurationType.selectedItemColor)
-			networkView.setSelectedItemColor((int)value);
+			networkView.setSelectedItemColor(value);
 		else if(configurationType == ConfigurationType.nodeStrokeColor)
-			networkView.setNodeStrokeColor((int)value);
+			networkView.setNodeStrokeColor(value);
 		else if(configurationType == ConfigurationType.edgeType){
-			networkView.setEdgeType((int)value);
+			networkView.setEdgeType(value);
 		}
 	}
 
@@ -766,6 +768,13 @@ public class ControllerDeepTwitter {
 		try{
 			elem = root.getChild("intervalRateLimitStatus");
 			elem.setText(String.valueOf(intervalRateLimitStatus));
+		}catch(Exception e){
+		}
+		
+		//intervalMostActiveUsers
+		try{
+			elem = root.getChild("intervalMostActiveUsers");
+			elem.setText(String.valueOf(intervalMostActiveUsers));
 		}catch(Exception e){
 		}
 		
@@ -885,57 +894,65 @@ public class ControllerDeepTwitter {
 		//intervalUpdates
 		try{
 			elem = root.getChild("intervalUpdates");
-			intervalUpdates = Long.parseLong(elem.getTextTrim());
+			intervalUpdates = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalUpdates = 120000;
+			intervalUpdates = 120;
 		}
 		
 		//intervalMentions
 		try{
 			elem = root.getChild("intervalMentions");
-			intervalMentions = Long.parseLong(elem.getTextTrim());
+			intervalMentions = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalMentions = 120000;
+			intervalMentions = 120;
 		}
 		
 		//intervalFavorites
 		try{
 			elem = root.getChild("intervalFavorites");
-			intervalFavorites = Long.parseLong(elem.getTextTrim());
+			intervalFavorites = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalFavorites = 120000;
+			intervalFavorites = 120;
 		}
 		
 		//intervalDirectMessages
 		try{
 			elem = root.getChild("intervalDirectMessages");
-			intervalDirectMessages = Long.parseLong(elem.getTextTrim());
+			intervalDirectMessages = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalDirectMessages = 120000;
+			intervalDirectMessages = 120;
 		}
 		
 		//intervalSearch
 		try{
 			elem = root.getChild("intervalSearch");
-			intervalSearch = Long.parseLong(elem.getTextTrim());
+			intervalSearch = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalSearch = 120000;
+			intervalSearch = 120;
 		}
 		
 		//intervalPublicTimeline
 		try{
 			elem = root.getChild("intervalPublicTimeline");
-			intervalPublicTimeline = Long.parseLong(elem.getTextTrim());
+			intervalPublicTimeline = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalPublicTimeline = 120000;
+			intervalPublicTimeline = 120;
 		}
 		
 		//intervalRateLimitStatus
 		try{
 			elem = root.getChild("intervalRateLimitStatus");
-			intervalRateLimitStatus = Long.parseLong(elem.getTextTrim());
+			intervalRateLimitStatus = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalRateLimitStatus = 120000;
+			intervalRateLimitStatus = 120;
+		}
+		
+		//intervalMostActiveUsers
+		try{
+			elem = root.getChild("intervalMostActiveUsers");
+			intervalMostActiveUsers = Integer.parseInt(elem.getTextTrim());
+		}catch(Exception e){
+			intervalMostActiveUsers = 5;
 		}
 		
 		//edgeColor
