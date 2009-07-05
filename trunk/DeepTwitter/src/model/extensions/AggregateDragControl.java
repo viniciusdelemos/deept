@@ -44,7 +44,8 @@ public class AggregateDragControl extends ControlAdapter {
 	/**
 	 * @see prefuse.controls.Control#itemEntered(prefuse.visual.VisualItem, java.awt.event.MouseEvent)
 	 */
-	public void itemEntered(VisualItem item, MouseEvent e) {
+	public void itemEntered(VisualItem item, MouseEvent e) {		
+		if((item instanceof EdgeItem)) System.out.println(item);
 		Display d = (Display)e.getSource();
 		if(!(item instanceof EdgeItem))
 			d.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -63,21 +64,28 @@ public class AggregateDragControl extends ControlAdapter {
 			Iterator<NodeItem> i = selectedItem.neighbors();
 			while(i.hasNext()) {
 				NodeItem neighbor = i.next();				
-				boolean iAmSource = networkView.getEdge(selectedItem.getInt("id"), neighbor.getInt("id")) != -1;
-				boolean iAmTarget = networkView.getEdge(neighbor.getInt("id"), selectedItem.getInt("id")) != -1;
 				
-				neighbor.setStroke(new BasicStroke(1.5f));
-				neighbor.setStrokeColor(networkView.getNodeStrokeColor());
-
+				int hasEdge = networkView.getEdge(selectedItem.getInt("id"), neighbor.getInt("id"));				
+				boolean iAmSource = hasEdge != -1 &&
+					networkView.getEdge(hasEdge).getFloat("weight") != -1;
+				hasEdge = networkView.getEdge(neighbor.getInt("id"), selectedItem.getInt("id"));
+				boolean iAmTarget = hasEdge != -1 &&
+					networkView.getEdge(hasEdge).getFloat("weight") != -1;
+				
 				if(iAmSource && iAmTarget) {
 					neighbor.setFillColor(networkView.getFriendsAndFollowersColor());
 				}
 				else if(iAmSource) {
 					neighbor.setFillColor(networkView.getFriendsColor());
 				}
-				else {
+				else if(iAmTarget){
 					neighbor.setFillColor(networkView.getFollowersColor());
 				}
+				else
+					continue;
+				
+				neighbor.setStroke(new BasicStroke(1.5f));
+				neighbor.setStrokeColor(networkView.getNodeStrokeColor());
 			}
 		}
 	}
