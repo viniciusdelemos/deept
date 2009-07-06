@@ -447,6 +447,12 @@ public class NetworkView extends Display {
     	}
     }
     
+    public void removeEdge(int e) {
+    	synchronized(m_vis) {
+    		g.removeEdge(e);    
+    	}
+    }
+    
     public void setEdgeType(boolean isCurved) {
     	if(isCurved)
     		edgeType = Constants.EDGE_TYPE_CURVE;

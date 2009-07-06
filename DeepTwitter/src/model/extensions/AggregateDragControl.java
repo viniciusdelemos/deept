@@ -45,7 +45,6 @@ public class AggregateDragControl extends ControlAdapter {
 	 * @see prefuse.controls.Control#itemEntered(prefuse.visual.VisualItem, java.awt.event.MouseEvent)
 	 */
 	public void itemEntered(VisualItem item, MouseEvent e) {		
-		if((item instanceof EdgeItem)) System.out.println(item);
 		Display d = (Display)e.getSource();
 		if(!(item instanceof EdgeItem))
 			d.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
