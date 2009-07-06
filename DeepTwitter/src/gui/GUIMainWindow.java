@@ -2,8 +2,11 @@ package gui;
 
 import java.awt.event.ActionListener;
 import java.util.Date;
+
+import javax.swing.JButton;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 /**
@@ -426,6 +429,10 @@ public class GUIMainWindow extends javax.swing.JFrame {
     public void setRateLimitStatus(int left, int total, Date resetDate) {
         labelAPILimit.setText("API: "+left+"/"+total);
         labelAPILimit.setToolTipText("Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
+    }
+    
+    public JToggleButton getButtonCurvedEdges(){
+    	return buttonCurvedEdges;
     }
 
     // Variables declaration - do not modify

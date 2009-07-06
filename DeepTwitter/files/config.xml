@@ -1,22 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <configuration>
-  <intervalUpdates>120</intervalUpdates>
-  <intervalMentions>120</intervalMentions>
-  <intervalFavorites>120</intervalFavorites>
-  <intervalDirectMessages>120</intervalDirectMessages>
-  <intervalSearch>120</intervalSearch>
-  <intervalPublicTimeline>120</intervalPublicTimeline>
-  <intervalRateLimitStatus>120</intervalRateLimitStatus>
-  <intervalMostPopularUsers>5</intervalMostPopularUsers>
-  <edgeColor>-8355712</edgeColor>
-  <textColor>-16777216</textColor>
-  <mainUserColor>-14336</mainUserColor>
-  <searchResultColor>-10789889</searchResultColor>
-  <friendsColor>-12517377</friendsColor>
-  <followersColor>-49088</followersColor>
-  <friendsAndFollowersColor>-12517568</friendsAndFollowersColor>
-  <selectedItemColor>-192</selectedItemColor>
-  <nodeStrokeColor>-16777216</nodeStrokeColor>
-  <edgeType>0</edgeType>
+  <interval>
+    <updates>1</updates>
+    <mentions>1</mentions>
+    <favorites>1</favorites>
+    <directMessages>1</directMessages>
+    <search>1</search>
+    <publicTimeline>1</publicTimeline>
+    <mostPopularUsers>60</mostPopularUsers>
+  </interval>
+  <color>
+    <edge>-8355712</edge>
+    <text>-16777216</text>
+    <mainUser>-14336</mainUser>
+    <searchResult>-10789889</searchResult>
+    <friends>-12517377</friends>
+    <followers>-49088</followers>
+    <friendsAndFollowers>-12517568</friendsAndFollowers>
+    <selectedItem>-192</selectedItem>
+    <nodeStroke>-16777216</nodeStroke>
+  </color>
+  <edgeType>1</edgeType>
+  <networkForces>
+    <gravConstant>-0.2</gravConstant>
+    <minDistance>-1.0</minDistance>
+    <theta>0.01</theta>
+    <drag>0.015000001</drag>
+    <springCoeff>1.0E-5</springCoeff>
+    <defaultLength>148.0</defaultLength>
+  </networkForces>
 </configuration>
-
 
