@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.util.Date;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 /**
@@ -63,6 +64,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonShowStatusBar = new javax.swing.JToggleButton();
         buttonPlayPauseVisualization = new javax.swing.JToggleButton();
         buttonSettings = new javax.swing.JButton();
+        buttonForces = new javax.swing.JButton();
         jSeparator9 = new javax.swing.JToolBar.Separator();
         labelAPILimit = new javax.swing.JLabel();
         jSeparator10 = new javax.swing.JToolBar.Separator();
@@ -72,7 +74,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("DeepTwitter"); // NOI18N
 
-        labelStatusBar.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelStatusBar.setFont(new java.awt.Font("Tahoma", 0, 12));
         labelStatusBar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labelStatusBar.setText(" ");
         labelStatusBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -308,9 +310,17 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonSettings);
+
+        buttonForces.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/F.png"))); // NOI18N
+        buttonForces.setToolTipText("Forças físicas da rede");
+        buttonForces.setActionCommand("buttonForces");
+        buttonForces.setFocusable(false);
+        buttonForces.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonForces.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mainToolBar.add(buttonForces);
         mainToolBar.add(jSeparator9);
 
-        labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelAPILimit.setFont(new java.awt.Font("Tahoma", 0, 12));
         labelAPILimit.setText("API:");
         mainToolBar.add(labelAPILimit);
         mainToolBar.add(jSeparator10);
@@ -361,6 +371,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCenterUser.addActionListener(listener);
         buttonMostActive.addActionListener(listener);
         buttonCategoryEditor.addActionListener(listener);
+        buttonForces.addActionListener(listener);
 	}
 
     public boolean isHighQuality() {
@@ -428,6 +439,10 @@ public class GUIMainWindow extends javax.swing.JFrame {
         labelAPILimit.setToolTipText("Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
     }
 
+    public JToggleButton getButtonCurvedEdges(){
+    	return buttonCurvedEdges;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonAddUser;
     private javax.swing.JButton buttonCategoryEditor;
@@ -435,6 +450,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonClearSelection;
     private javax.swing.JButton buttonCloseUpdates;
     private javax.swing.JToggleButton buttonCurvedEdges;
+    private javax.swing.JButton buttonForces;
     private javax.swing.JButton buttonHelp;
     private javax.swing.JToggleButton buttonHighQuality;
     private javax.swing.JToggleButton buttonInbox;

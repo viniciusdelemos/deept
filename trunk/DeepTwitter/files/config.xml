@@ -4,10 +4,10 @@
     <updates>1</updates>
     <mentions>1</mentions>
     <favorites>1</favorites>
-    <directMessages>1</directMessages>
-    <search>1</search>
+    <directMessages>2</directMessages>
+    <search>7</search>
     <publicTimeline>1</publicTimeline>
-    <mostPopularUsers>60</mostPopularUsers>
+    <mostPopularUsers>7</mostPopularUsers>
   </interval>
   <color>
     <edge>-8355712</edge>
@@ -20,14 +20,14 @@
     <selectedItem>-192</selectedItem>
     <nodeStroke>-16777216</nodeStroke>
   </color>
-  <edgeType>1</edgeType>
+  <edgeType>0</edgeType>
   <networkForces>
-    <gravConstant>-0.2</gravConstant>
+    <gravConstant>-1.0</gravConstant>
     <minDistance>-1.0</minDistance>
-    <theta>0.01</theta>
-    <drag>0.015000001</drag>
-    <springCoeff>1.0E-5</springCoeff>
-    <defaultLength>148.0</defaultLength>
+    <theta>0.9</theta>
+    <drag>0.0070</drag>
+    <springCoeff>9.99E-6</springCoeff>
+    <defaultLength>180.0</defaultLength>
   </networkForces>
 </configuration>
 

@@ -48,27 +48,27 @@ public class GUISettings extends javax.swing.JFrame {
         Color color;
         
         //interval updates
-        interval = controller.getProperty(ConfigurationType.intervalUpdates);
+        interval = controller.getProperty(ConfigurationType.intervalUpdates)/60000;
         updatesjSlider.setValue(interval);
 
         //interval mentions
-        interval = controller.getProperty(ConfigurationType.intervalMentions);
+        interval = controller.getProperty(ConfigurationType.intervalMentions)/60000;
         mentionsjSlider.setValue(interval);
 
         //interval favorites
-        interval = controller.getProperty(ConfigurationType.intervalFavorites);
+        interval = controller.getProperty(ConfigurationType.intervalFavorites)/60000;
         favoritesjSlider.setValue(interval);
 
         //interval direct messages
-        interval = controller.getProperty(ConfigurationType.intervalDirectMessages);
+        interval = controller.getProperty(ConfigurationType.intervalDirectMessages)/60000;
         directMessagesjSlider.setValue(interval);
         
         //interval search
-        interval = controller.getProperty(ConfigurationType.intervalSearch);
+        interval = controller.getProperty(ConfigurationType.intervalSearch)/60000;
         searchjSlider.setValue(interval);
        
         //interval public timeline
-        interval = controller.getProperty(ConfigurationType.intervalPublicTimeline);
+        interval = controller.getProperty(ConfigurationType.intervalPublicTimeline)/60000;
         publicTimelinejSlider.setValue(interval);
         
         //color mainUser
@@ -111,8 +111,8 @@ public class GUISettings extends javax.swing.JFrame {
         interval = controller.getProperty(ConfigurationType.edgeType);
         edgeTypejComboBox.setSelectedIndex(interval);
         
-        //interval most popular users
-        interval = controller.getProperty(ConfigurationType.intervalMostPopularUsers);
+        //interval most popular users        
+        interval = controller.getProperty(ConfigurationType.intervalMostPopularUsers)/1000;
         mostPopularUsersjSlider.setValue(interval);
     }
 

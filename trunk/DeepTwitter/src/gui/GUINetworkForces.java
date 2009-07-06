@@ -66,7 +66,7 @@ public class GUINetworkForces extends javax.swing.JFrame {
         canceljButton = new javax.swing.JButton();
         savejButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("DeepTwitter - Forças da Rede Contatos");
         setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
