@@ -15,7 +15,7 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 import model.Category;
-import model.CategoryWord;
+import model.Tag;
 import model.ChartColor;
 import model.TagParser;
 import model.extensions.StatusesDataTable;
@@ -81,28 +81,28 @@ public class CategoryManager {
 	public Category addCategory(String name, List<String> words) {
 		Category c = addCategory(name);
 		// sobreescreve todas as palavras da categoria
-		c.setWords(words);
+		c.setTags(words);
 		return c;
 	}
 
-	public boolean addWord(String category, String word) {
+	public boolean addWord(String category, String tag) {
 		Category c = categoriesMap.get(category);
 		if (c == null)
 			return false;
-		return c.addWord(word);
+		return c.addTag(tag);
 	}
 
-	public void addWords(String category, List<String> words) {
-		for (String s : words) {
+	public void addWords(String category, List<String> tags) {
+		for (String s : tags) {
 			addWord(category, s);
 		}
 	}
 
-	public boolean removeWord(String category, String word) {
+	public boolean removeWord(String category, String tag) {
 		Category c = categoriesMap.get(category);
 		if (c == null)
 			return false;
-		return c.removeWord(word);
+		return c.removeTag(tag);
 	}
 
 	public Category removeCategory(String name) {
@@ -184,7 +184,7 @@ public class CategoryManager {
 
 			List<String> wordsList = new ArrayList<String>();
 
-			List<Element> words = e.getChildren("Word");
+			List<Element> words = e.getChildren("Tag");
 			for (Element w : words) {
 				wordsList.add(w.getTextTrim());
 			}
@@ -235,17 +235,17 @@ public class CategoryManager {
 			// sb.append(x.getName()+"\n");
 			Element category = new Element("Category");
 			category.setAttribute(new Attribute("name", c.getName()));
-			for (CategoryWord w : c.getWords()) {
-				Element word = new Element("Word");
-				word.setText(w.getName());
-				category.addContent(word);
+			for (Tag w : c.getTags()) {
+				Element tag = new Element("Tag");
+				tag.setText(w.getName());
+				category.addContent(tag);
 			}
 			root.addContent(category);
 		}
 
 		FileWriter f = null;
 		try {
-			f = new FileWriter(new File("config/categories.xml"));
+			f = new FileWriter(new File("files/categories.xml"));
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);
@@ -281,11 +281,11 @@ public class CategoryManager {
 	public void categorize(long responseId, String text, VisualItem item) {
 		text = " " + text + " ";
 		for (Category c : getCategories()) {
-			for (CategoryWord word : c.getWords()) {
-				tagParser = new TagParser(text, word.getName());
-				if (!word.hasRelatedResponse(responseId)) {					
+			for (Tag tag : c.getTags()) {
+				tagParser = new TagParser(text, tag.getName());
+				if (!tag.hasRelatedResponse(responseId)) {					
 					if (tagParser.hasTag()) {
-						word.addRelatedResponse(responseId);
+						tag.addRelatedResponse(responseId);
 						formatItem(item, c);						
 						relatedResponsesCount++;
 					}
@@ -332,15 +332,15 @@ public class CategoryManager {
 
 	public void clearRelatedResponses() {
 		for (Category c : getCategories())
-			for (CategoryWord word : c.getWords())
-				word.clearRelatedResponses();
+			for (Tag tag : c.getTags())
+				tag.clearRelatedResponses();
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (Category x : getCategories()) {
 			sb.append(x.getName() + "\n");
-			for (CategoryWord s : x.getWords()) {
+			for (Tag s : x.getTags()) {
 				sb.append("  " + s.getName() + "\n");
 			}
 		}

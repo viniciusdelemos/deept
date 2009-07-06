@@ -3,12 +3,12 @@ package model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CategoryWord {
+public class Tag {
 	private String myName;
 	private Set<Long> relatedResponses;
 	
-	public CategoryWord(String word) {
-		myName = word;
+	public Tag(String tag) {
+		myName = tag;
 		relatedResponses = new HashSet<Long>();
 	}
 	
