@@ -7,7 +7,7 @@ public enum ConfigurationType {
 	intervalDirectMessages, 
 	intervalSearch, 
 	intervalPublicTimeline, 
-	intervalRateLimitStatus, 
+	intervalMostPopularUsers, 
 	edgeColor, 
 	textColor, 
 	mainUserColor, 
