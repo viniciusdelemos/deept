@@ -30,9 +30,9 @@ public class GUISettings extends javax.swing.JFrame {
     
     public void addMainWindowListener(ActionListener listener){
     	
-    	savejButton.setActionCommand("buttonOKCancelRestoreConfig");
-    	canceljButton.setActionCommand("buttonOKCancelRestoreConfig");
-    	restorejButton.setActionCommand("buttonOKCancelRestoreConfig");
+    	savejButton.setActionCommand("buttonOKCancelConfig");
+    	canceljButton.setActionCommand("buttonOKCancelConfig");
+    	restorejButton.setActionCommand("buttonRestoreConfig"); //TODO restore
 
     	savejButton.addActionListener(listener);
     	canceljButton.addActionListener(listener);
