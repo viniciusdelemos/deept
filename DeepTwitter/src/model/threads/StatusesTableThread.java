@@ -29,6 +29,7 @@ import javax.swing.event.HyperlinkListener;
 import prefuse.data.Node;
 
 import model.ChartColor;
+import model.ConfigurationType;
 import model.MessageType;
 import model.StatusesType;
 import model.URLLinkAction;
@@ -92,7 +93,7 @@ public class StatusesTableThread {
 		this.searchQuery = null;
 		isTwitterUser = controller.isTwitterUser();		
 		rows = 0;
-		interval = 2000;//120000; //2 minutos
+		interval = getUpdateInterval();
 		updatesToGet = 100;
 		senderId = -1;
 		responseId = -1;
@@ -101,6 +102,27 @@ public class StatusesTableThread {
 		isGroup = false;
 		counterLabel = new JLabel();
 		counterLabel.setFont(new Font("Tahoma",1,11));
+	}
+	
+	public long getUpdateInterval() {
+		switch(statusesType) {
+		case UPDATES: 
+			return controller.getProperty(ConfigurationType.intervalUpdates);			
+		case REPLIES:
+			return controller.getProperty(ConfigurationType.intervalMentions);
+		case FAVORITES:
+			return controller.getProperty(ConfigurationType.intervalFavorites);
+		case SEARCH:
+			return controller.getProperty(ConfigurationType.intervalSearch);
+		case PUBLIC_TIMELINE:
+			return controller.getProperty(ConfigurationType.intervalPublicTimeline);
+		case DIRECT_MESSAGES:
+		case DIRECT_MESSAGES_RECEIVED:
+		case DIRECT_MESSAGES_SENT:
+			return controller.getProperty(ConfigurationType.intervalDirectMessages);
+		default:
+			return controller.getProperty(ConfigurationType.intervalUpdates);
+		}		
 	}
 
 	public StatusesType getType() {
@@ -667,6 +689,7 @@ public class StatusesTableThread {
 					if(isGroup)
 						statusesList.clear();
 
+					System.out.println("sleeping for "+interval);
 					Thread.sleep(interval);	
 					System.out.println("running " + statusesType + " para " + controller.getUserName(getUserId()));
 				} catch (TwitterException e) {
@@ -696,7 +719,8 @@ public class StatusesTableThread {
 					System.out.println("INTERRUPTED " + statusesType + " para " + controller.getUserName(getUserId()));
 					break;
 				}
-			}
+				interval = getUpdateInterval();
+			}			
 		}
 	}
 	

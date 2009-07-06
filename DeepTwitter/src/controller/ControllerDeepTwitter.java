@@ -96,7 +96,7 @@ public class ControllerDeepTwitter {
 	private int intervalDirectMessages = 60;
 	private int intervalSearch = 60;
 	private int intervalPublicTimeline = 60;
-	private int intervalMostActiveUsers = 5;
+	private int intervalMostPopularUsers = 7;
 	
 	
 	private ControllerDeepTwitter(){
@@ -424,11 +424,6 @@ public class ControllerDeepTwitter {
 		return mainWindow.getMainToolBar();
 	}
 	
-	public void setRateLimitSleepTime(long time) {
-		intervalRateLimitStatus = (int)time;
-		//TODO trocar para int o recebimento
-	}
-	
 	class MainWindowListener implements ActionListener {		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -574,25 +569,23 @@ public class ControllerDeepTwitter {
 				else{
 					guiSettings.requestFocus();
 					guiSettings.setVisible(true);
+				}				
+			}
+			else if(cmd.equals("buttonForces")) {
+				if(guiNetworkForces == null){
+					guiNetworkForces = new GUINetworkForces();
+					guiNetworkForces.addMainWindowListener(mainWindowListener);
+					guiNetworkForces.addWindowListener(new WindowAdapter(){
+						@Override
+						public void windowClosed(java.awt.event.WindowEvent arg0) {
+							guiNetworkForces = null;
+						}
+					});					
+					guiNetworkForces.setVisible(true);
 				}
-				
-//				if(guiNetworkForces == null){
-//					guiNetworkForces = new GUINetworkForces();
-//					guiNetworkForces.addMainWindowListener(mainWindowListener);
-//					guiNetworkForces.addWindowListener(new WindowAdapter(){
-//						@Override
-//		                public void windowClosed(java.awt.event.WindowEvent arg0) {
-//		                    guiNetworkForces = null;
-//		                }
-//					});
-//					guiNetworkForces.setLocationRelativeTo(null);
-//					guiNetworkForces.setVisible(true);
-//				}
-//				else{
-//					guiNetworkForces.requestFocus();
-//					guiNetworkForces.setVisible(true);
-//				}
-				
+				else
+					guiNetworkForces.requestFocus();
+				guiNetworkForces.setLocationRelativeTo(mainWindow);	
 			}
 			else if(cmd.equals("orderByFriends")) {
 				activeUsersDisplay.setSizeActionDataField(ShowingBy.friendsCount);
@@ -657,6 +650,8 @@ public class ControllerDeepTwitter {
 					guiNetworkForces = null;
 				}
 			}
+			else
+				System.out.println(cmd);
 		}
 	}
 	
@@ -689,19 +684,19 @@ public class ControllerDeepTwitter {
 
 	public int getProperty(ConfigurationType configurationType) {
 		if(configurationType == ConfigurationType.intervalUpdates)
-			return intervalUpdates;
+			return intervalUpdates * 60000;
 		else if(configurationType == ConfigurationType.intervalMentions)
-			return intervalMentions;
+			return intervalMentions * 60000;
 		else if(configurationType == ConfigurationType.intervalFavorites)
-			return intervalFavorites;
+			return intervalFavorites * 60000;
 		else if(configurationType == ConfigurationType.intervalDirectMessages)
-			return intervalDirectMessages;
+			return intervalDirectMessages * 60000;
 		else if(configurationType == ConfigurationType.intervalSearch)
-			return intervalSearch;
+			return intervalSearch * 60000;
 		else if(configurationType == ConfigurationType.intervalPublicTimeline)
-			return intervalPublicTimeline;
+			return intervalPublicTimeline * 60000;
 		else if(configurationType == ConfigurationType.intervalMostPopularUsers)
-			return intervalMostActiveUsers;
+			return intervalMostPopularUsers * 1000;
 		else if(configurationType == ConfigurationType.edgeColor)
 			return networkView.getEdgeColor();
 		else if(configurationType == ConfigurationType.textColor)
@@ -739,7 +734,7 @@ public class ControllerDeepTwitter {
 		else if(configurationType == ConfigurationType.intervalPublicTimeline)
 			intervalPublicTimeline = value;
 		else if(configurationType == ConfigurationType.intervalMostPopularUsers)
-			intervalMostActiveUsers = value;
+			intervalMostPopularUsers = value;
 		else if(configurationType == ConfigurationType.edgeColor)
 			networkView.setEdgeColor(value);
 		else if(configurationType == ConfigurationType.textColor)
@@ -763,8 +758,7 @@ public class ControllerDeepTwitter {
 		}
 	}
 	
-	public void saveSettings(){
-		
+	public void saveSettings(){		
 		SAXBuilder builder = new SAXBuilder(); // Build a document ...
 		Document doc = null; // ... from a file
 		XMLOutputter output = new XMLOutputter(); // And output the document ...
@@ -844,7 +838,7 @@ public class ControllerDeepTwitter {
 		//intervalMostActiveUsers
 		try{
 			elem = interval.getChild("mostPopularUsers");
-			elem.setText(String.valueOf(intervalMostActiveUsers));
+			elem.setText(String.valueOf(intervalMostPopularUsers));
 		}catch(Exception e){
 		}
 		
@@ -927,13 +921,10 @@ public class ControllerDeepTwitter {
     	prefuse.util.force.Force[] forces = networkView.getForceSimulator().getForces();
     	
     	for(int i=0;i<forces.length;i++){
-
-    		if(forces[i] instanceof NBodyForce){
-    			
+    		if(forces[i] instanceof NBodyForce){    			
     			NBodyForce n = (NBodyForce) forces[i];
     			
-    			for(int j=0 ; j<n.getParameterCount(); j++){
-    				
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
     				if(n.getParameterName(j).equals("GravitationalConstant")){
     					try{
     						elem = networkForces.getChild("gravConstant");
@@ -978,10 +969,8 @@ public class ControllerDeepTwitter {
     				}
     			}
     			
-    		}
-    		
-    		else if(forces[i] instanceof DragForce){
-    			
+    		}    		
+    		else if(forces[i] instanceof DragForce){    			
     			DragForce n = (DragForce) forces[i];
     			for(int j=0 ; j<n.getParameterCount(); j++){
     				
@@ -991,14 +980,10 @@ public class ControllerDeepTwitter {
     						elem.setText(String.valueOf(n.getParameter(j)));
     					}catch(Exception e){
     					}
-    				}
-    				
+    				}    				
     			}
     		}
     	}
-    	
-		
-
 		FileWriter f = null;
 		try {
 			f = new FileWriter(new File("files/config.xml"));
@@ -1013,14 +998,10 @@ public class ControllerDeepTwitter {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO colocar frame, ver problemas
 		}
-
-		
 	}
 	
-	public void loadSettings(){
-		
+	public void loadSettings(){		
 		File file = new File("files/config.xml");
-
 		SAXBuilder sb = new SAXBuilder();
 
 		Document d = null;
@@ -1040,7 +1021,6 @@ public class ControllerDeepTwitter {
 		// Root element
 		Element root = d.getRootElement();
 		
-		
 		Element interval = null;
 		Element color = null;
 		Element networkForces = null;
@@ -1058,7 +1038,7 @@ public class ControllerDeepTwitter {
 			elem = interval.getChild("updates");
 			intervalUpdates = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalUpdates = 5;
+			intervalUpdates = 1;
 		}
 		
 		//intervalMentions
@@ -1066,7 +1046,7 @@ public class ControllerDeepTwitter {
 			elem = interval.getChild("mentions");
 			intervalMentions = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalMentions = 5;
+			intervalMentions = 1;
 		}
 		
 		//intervalFavorites
@@ -1074,7 +1054,7 @@ public class ControllerDeepTwitter {
 			elem = interval.getChild("favorites");
 			intervalFavorites = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalFavorites = 5;
+			intervalFavorites = 1;
 		}
 		
 		//intervalDirectMessages
@@ -1082,7 +1062,7 @@ public class ControllerDeepTwitter {
 			elem = interval.getChild("directMessages");
 			intervalDirectMessages = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalDirectMessages = 5;
+			intervalDirectMessages = 1;
 		}
 		
 		//intervalSearch
@@ -1090,7 +1070,7 @@ public class ControllerDeepTwitter {
 			elem = interval.getChild("search");
 			intervalSearch = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalSearch = 5;
+			intervalSearch = 1;
 		}
 		
 		//intervalPublicTimeline
@@ -1098,15 +1078,15 @@ public class ControllerDeepTwitter {
 			elem = interval.getChild("publicTimeline");
 			intervalPublicTimeline = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalPublicTimeline = 5;
+			intervalPublicTimeline = 1;
 		}
 		
 		//intervalMostActiveUsers
 		try{
 			elem = interval.getChild("mostPopularUsers");
-			intervalMostActiveUsers = Integer.parseInt(elem.getTextTrim());
+			intervalMostPopularUsers = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalMostActiveUsers = 5;
+			intervalMostPopularUsers = 7;
 		}
 		
 		//edgeColor
@@ -1197,13 +1177,8 @@ public class ControllerDeepTwitter {
 		}catch(Exception e){
 			networkView.setEdgeType(false);
 		}
-		
-		
-		
+			
 		//networkForces
-		
-		//forceSimulator = new ForceSimulator();
-
     	float gravConstant = -1f;
     	float minDistance = -1f;
     	float theta = 0.9f;
@@ -1211,10 +1186,6 @@ public class ControllerDeepTwitter {
     	float drag = 0.007f;
     	float springCoeff = 9.99E-6f;
     	float defaultLength = 180f;    	
-    	
-//    	forceSimulator.addForce(new NBodyForce(gravConstant, minDistance, theta));
-//    	forceSimulator.addForce(new DragForce(drag));
-//    	forceSimulator.addForce(new SpringForce(springCoeff, defaultLength));
 		
 		try{
 			elem = networkForces.getChild("gravConstant");
@@ -1261,13 +1232,10 @@ public class ControllerDeepTwitter {
     	prefuse.util.force.Force[] forces = networkView.getForceSimulator().getForces();
     	
     	for(int i=0;i<forces.length;i++){
-
-    		if(forces[i] instanceof NBodyForce){
-    			
+    		if(forces[i] instanceof NBodyForce){    			
     			NBodyForce n = (NBodyForce) forces[i];
     			
-    			for(int j=0 ; j<n.getParameterCount(); j++){
-    				
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
     				if(n.getParameterName(j).equals("GravitationalConstant")){
     					try{
     						n.setParameter(j, gravConstant);
@@ -1289,10 +1257,8 @@ public class ControllerDeepTwitter {
     			}
     		}
     		else if(forces[i] instanceof SpringForce){
-
     			SpringForce n = (SpringForce) forces[i];
-    			for(int j=0 ; j<n.getParameterCount(); j++){
-    				
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
     				if(n.getParameterName(j).equals("SpringCoefficient")){
     					try{
     						n.setParameter(j, springCoeff);
@@ -1305,28 +1271,19 @@ public class ControllerDeepTwitter {
     					}catch(Exception e){
     					}
     				}
-    			}
-    			
-    		}
-    		
-    		else if(forces[i] instanceof DragForce){
-    			
+    			}    			
+    		}    		
+    		else if(forces[i] instanceof DragForce){    			
     			DragForce n = (DragForce) forces[i];
-    			for(int j=0 ; j<n.getParameterCount(); j++){
-    				
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
     				if(n.getParameterName(j).equals("DragCoefficient")){
     					try{
     						n.setParameter(j, drag);
     					}catch(Exception e){
     					}
-    				}
-    				
+    				}    				
     			}
     		}
     	}
-
-		
 	}
-	
-	
 }

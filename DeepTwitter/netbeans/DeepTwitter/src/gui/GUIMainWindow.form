@@ -456,6 +456,18 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
         </Component>
+        <Component class="javax.swing.JButton" name="buttonForces">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/gui/F.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="For&#xe7;as f&#xed;sicas da rede"/>
+            <Property name="actionCommand" type="java.lang.String" value="buttonForces"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
         <Component class="javax.swing.JToolBar$Separator" name="jSeparator9">
         </Component>
         <Component class="javax.swing.JLabel" name="labelAPILimit">

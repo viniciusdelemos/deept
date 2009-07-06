@@ -9,7 +9,6 @@ TODO:
 - permitir varias buscas;
 - classe Tweet: fazer imagem do usuario mostrar ele na rede;
 
-- * criar menu configurações e salvar xml;
 - fazer requisicoes com threads para nao trancar visualizacao;
 - fazer algo com trends (#) - aba ou tag cloud;
 - implementar notificação quando novas atualizações/msgs chegarem;
