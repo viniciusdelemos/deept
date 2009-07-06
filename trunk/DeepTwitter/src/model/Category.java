@@ -14,34 +14,34 @@ import javax.xml.ws.Response;
 public class Category {
 
 	private String name;
-	private Map<String,CategoryWord> words;
+	private Map<String,Tag> tagsMap;
 	private Paint color;
 
 	public Category(String name) {
 		this.name = name;
-		this.words = new  HashMap<String,CategoryWord>();
+		this.tagsMap = new  HashMap<String,Tag>();
 	}
 
-	public boolean addWord(String word) {
-		if (words.containsKey(word))
+	public boolean addTag(String tag) {
+		if (tagsMap.containsKey(tag))
 			return false;
 		else {
-			words.put(word,new CategoryWord(word.toLowerCase()));
+			tagsMap.put(tag,new Tag(tag.toLowerCase()));
 			return true;
 		}		
 	}
 	
-	public void addWords(List<String> words) {
+	public void addTags(List<String> words) {
 		for(String s : words) {
-			addWord(s);
+			addTag(s);
 		}
 	}
 	
-	public boolean removeWord(String word) {
-		if (!words.containsKey(word))
+	public boolean removeTag(String word) {
+		if (!tagsMap.containsKey(word))
 			return false;
 		else {
-			words.remove(word);
+			tagsMap.remove(word);
 			return true;
 		}
 	}
@@ -54,14 +54,14 @@ public class Category {
 		name = n;
 	}
 
-	public CategoryWord[] getWords() {
-		return words.values().toArray(new CategoryWord[0]);
+	public Tag[] getTags() {
+		return tagsMap.values().toArray(new Tag[0]);
 	}
 
-	public void setWords(List<String> words) {
-		clearWords();
+	public void setTags(List<String> words) {
+		clearTags();
 		for(String s : words) {
-			addWord(s);
+			addTag(s);
 		}		
 	}
 	
@@ -73,14 +73,14 @@ public class Category {
 		return color;
 	}
 	 
-	public void clearWords() {
-		words.clear();
+	public void clearTags() {
+		tagsMap.clear();
 	}
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(name+" = {");
-		Iterator<String> i = words.keySet().iterator();
+		Iterator<String> i = tagsMap.keySet().iterator();
 		while(i.hasNext()) {
 			sb.append(i.next()+",");
 		}

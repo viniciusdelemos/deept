@@ -16,7 +16,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import model.Category;
-import model.CategoryWord;
+import model.Tag;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -257,7 +257,7 @@ public class CategoryEditorView extends Display {
 
 			t.addChildEdge(t.getRoot(), category);
 
-			for (CategoryWord w : c.getWords()) {
+			for (Tag w : c.getTags()) {
 
 				Node word = t.addChild(category);
 				word.set("label", w.getName());
