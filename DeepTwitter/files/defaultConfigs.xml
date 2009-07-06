@@ -29,5 +29,8 @@
     <springCoeff>9.99E-6</springCoeff>
     <defaultLength>180.0</defaultLength>
   </networkForces>
+  <tweetsToGet>
+	<updates>300</updates>
+  </tweetsToGet>
 </configuration>
 
