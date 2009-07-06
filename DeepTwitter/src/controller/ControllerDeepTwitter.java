@@ -6,6 +6,7 @@ import gui.GUILoginDeepTwitter;
 import gui.GUIMainWindow;
 import gui.GUIMostPopularChoice;
 import gui.GUIMostPopularUsers;
+import gui.GUINetworkForces;
 import gui.GUINewUpdate;
 import gui.GUISettings;
 import gui.visualizations.MostPopularUsersView;
@@ -75,9 +76,11 @@ public class ControllerDeepTwitter {
 	private GUIMostPopularUsers guiMostPopular;
 	private GUIMostPopularChoice choiceFrame;
 	private GUISettings guiSettings;
-	private Twitter twitter;
-	private NetworkView networkView;
 	private MostPopularUsersView activeUsersDisplay;
+	private NetworkView networkView;
+	private GUINetworkForces guiNetworkForces;
+	
+	private Twitter twitter;
 	private boolean isTwitterUser;
 	private String loggedUserId, loggedUsername;
 	private JTabbedPane windowTabs;
@@ -557,7 +560,6 @@ public class ControllerDeepTwitter {
 			}
 			else if(cmd.equals("buttonSettings")) {
 				if(guiSettings == null){
-					System.out.println("é null");
 					guiSettings = new GUISettings(loggedUsername);
 					guiSettings.addMainWindowListener(mainWindowListener);
 					guiSettings.addWindowListener(new WindowAdapter(){
@@ -570,10 +572,26 @@ public class ControllerDeepTwitter {
 					guiSettings.setVisible(true);
 				}
 				else{
-					System.out.println("nao eh null");
 					guiSettings.requestFocus();
 					guiSettings.setVisible(true);
 				}
+				
+//				if(guiNetworkForces == null){
+//					guiNetworkForces = new GUINetworkForces();
+//					guiNetworkForces.addMainWindowListener(mainWindowListener);
+//					guiNetworkForces.addWindowListener(new WindowAdapter(){
+//						@Override
+//		                public void windowClosed(java.awt.event.WindowEvent arg0) {
+//		                    guiNetworkForces = null;
+//		                }
+//					});
+//					guiNetworkForces.setLocationRelativeTo(null);
+//					guiNetworkForces.setVisible(true);
+//				}
+//				else{
+//					guiNetworkForces.requestFocus();
+//					guiNetworkForces.setVisible(true);
+//				}
 				
 			}
 			else if(cmd.equals("orderByFriends")) {
@@ -618,10 +636,25 @@ public class ControllerDeepTwitter {
 			else if(cmd.equals("buttonCategoryEditor")) {
 				GUICategoryEditor.openFrame();
 			}
-			else if(cmd.equals("buttonOKCancelRestoreConfig")){
+			else if(cmd.equals("buttonOKCancelConfig")){
 				if(guiSettings != null){
 					guiSettings.setVisible(false);
 					guiSettings = null;
+				}
+			}
+			else if(cmd.equals("buttonOKNetworkForces")){
+				
+				saveSettings();
+				
+				if(guiNetworkForces != null){
+					guiNetworkForces.setVisible(false);
+					guiNetworkForces = null;
+				}
+			}
+			else if(cmd.equals("buttonCancelNetworkForces")){
+				if(guiNetworkForces != null){
+					guiNetworkForces.setVisible(false);
+					guiNetworkForces = null;
 				}
 			}
 		}
