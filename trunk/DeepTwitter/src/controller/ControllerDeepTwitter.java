@@ -1286,4 +1286,319 @@ public class ControllerDeepTwitter {
     		}
     	}
 	}
+	
+	public void loadDefaultSettingsNetworkForces(){		
+		File file = new File("files/defaultConfigs.xml");
+		SAXBuilder sb = new SAXBuilder();
+
+		Document d = null;
+
+		try {
+			d = sb.build(file);
+		} catch (JDOMException ex) {
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
+			// TODO ver quais excecoes podem ocorrer aki
+		} catch (IOException ex) {
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
+			// TODO se nao tiver pasta, criar a pasta e arquivo, se nao tiver
+			// arquivo, criar apenas ele
+			// System.exit(0);
+		}
+
+		// Root element
+		Element root = d.getRootElement();
+		
+		Element networkForces = null;
+		Element elem;
+		
+		try{
+			networkForces = root.getChild("networkForces");
+		}catch(Exception e){
+		}
+		
+		//networkForces
+    	float gravConstant = -1f;
+    	float minDistance = -1f;
+    	float theta = 0.9f;
+    	
+    	float drag = 0.007f;
+    	float springCoeff = 9.99E-6f;
+    	float defaultLength = 180f;    	
+		
+		try{
+			elem = networkForces.getChild("gravConstant");
+			gravConstant = Float.parseFloat(elem.getText());
+		}catch(Exception e){
+			gravConstant = -1f;
+		}
+		
+		try{
+			elem = networkForces.getChild("minDistance");
+			minDistance = Float.parseFloat(elem.getText());
+		}catch(Exception e){
+			minDistance = -1f;
+		}
+		
+		try{
+			elem = networkForces.getChild("theta");
+			theta = Float.parseFloat(elem.getText());
+		}catch(Exception e){
+			theta = 0.9f;
+		}
+		
+		try{
+			elem = networkForces.getChild("drag");
+			drag = Float.parseFloat(elem.getText());
+		}catch(Exception e){
+			drag = 0.007f;
+		}
+		
+		try{
+			elem = networkForces.getChild("springCoeff");
+			springCoeff = Float.parseFloat(elem.getText());
+		}catch(Exception e){
+			springCoeff = 9.99E-6f;
+		}
+		
+		try{
+			elem = networkForces.getChild("defaultLength");
+			defaultLength = Float.parseFloat(elem.getText());
+		}catch(Exception e){
+			defaultLength = 180f;
+		}
+		
+    	prefuse.util.force.Force[] forces = networkView.getForceSimulator().getForces();
+    	
+    	for(int i=0;i<forces.length;i++){
+    		if(forces[i] instanceof NBodyForce){    			
+    			NBodyForce n = (NBodyForce) forces[i];
+    			
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("GravitationalConstant")){
+    					try{
+    						n.setParameter(j, gravConstant);
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("Distance")){
+    					try{
+    						n.setParameter(j, minDistance);
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("BarnesHutTheta")){
+    					try{
+    						n.setParameter(j, theta);
+    					}catch(Exception e){
+    					}
+    				}
+    			}
+    		}
+    		else if(forces[i] instanceof SpringForce){
+    			SpringForce n = (SpringForce) forces[i];
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("SpringCoefficient")){
+    					try{
+    						n.setParameter(j, springCoeff);
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("DefaultSpringLength")){
+    					try{
+    						n.setParameter(j, defaultLength);
+    					}catch(Exception e){
+    					}
+    				}
+    			}    			
+    		}    		
+    		else if(forces[i] instanceof DragForce){    			
+    			DragForce n = (DragForce) forces[i];
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("DragCoefficient")){
+    					try{
+    						n.setParameter(j, drag);
+    					}catch(Exception e){
+    					}
+    				}    				
+    			}
+    		}
+    	}
+	}
+	
+	public void loadDefaultSettingsOther(){		
+		File file = new File("files/defaultConfigs.xml");
+		SAXBuilder sb = new SAXBuilder();
+
+		Document d = null;
+
+		try {
+			d = sb.build(file);
+		} catch (JDOMException ex) {
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
+			// TODO ver quais excecoes podem ocorrer aki
+		} catch (IOException ex) {
+			showMessageDialog(ex.getMessage(),MessageType.ERROR);
+			// TODO se nao tiver pasta, criar a pasta e arquivo, se nao tiver
+			// arquivo, criar apenas ele
+			// System.exit(0);
+		}
+
+		// Root element
+		Element root = d.getRootElement();
+		
+		Element interval = null;
+		Element color = null;
+		Element elem;
+		
+		try{
+			interval = root.getChild("interval");
+			color = root.getChild("color");
+		}catch(Exception e){
+		}
+		
+		//intervalUpdates
+		try{
+			elem = interval.getChild("updates");
+			intervalUpdates = Integer.parseInt(elem.getTextTrim());
+		}catch(Exception e){
+			intervalUpdates = 1;
+		}
+		
+		//intervalMentions
+		try{
+			elem = interval.getChild("mentions");
+			intervalMentions = Integer.parseInt(elem.getTextTrim());
+		}catch(Exception e){
+			intervalMentions = 1;
+		}
+		
+		//intervalFavorites
+		try{
+			elem = interval.getChild("favorites");
+			intervalFavorites = Integer.parseInt(elem.getTextTrim());
+		}catch(Exception e){
+			intervalFavorites = 1;
+		}
+		
+		//intervalDirectMessages
+		try{
+			elem = interval.getChild("directMessages");
+			intervalDirectMessages = Integer.parseInt(elem.getTextTrim());
+		}catch(Exception e){
+			intervalDirectMessages = 1;
+		}
+		
+		//intervalSearch
+		try{
+			elem = interval.getChild("search");
+			intervalSearch = Integer.parseInt(elem.getTextTrim());
+		}catch(Exception e){
+			intervalSearch = 1;
+		}
+		
+		//intervalPublicTimeline
+		try{
+			elem = interval.getChild("publicTimeline");
+			intervalPublicTimeline = Integer.parseInt(elem.getTextTrim());
+		}catch(Exception e){
+			intervalPublicTimeline = 1;
+		}
+		
+		//intervalMostActiveUsers
+		try{
+			elem = interval.getChild("mostPopularUsers");
+			intervalMostPopularUsers = Integer.parseInt(elem.getTextTrim());
+		}catch(Exception e){
+			intervalMostPopularUsers = 7;
+		}
+		
+		//edgeColor
+		try{
+			elem = color.getChild("edge");
+			networkView.setEdgeColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setEdgeColor(-8355712);
+		}
+		
+		//textColor
+		try{
+			elem = color.getChild("text");
+			networkView.setTextColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setTextColor(-16777216);
+		}
+		
+		//mainUserColor
+		try{
+			elem = color.getChild("mainUser");
+			networkView.setMainUserColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setMainUserColor(-14336);
+		}
+		
+		//searchResultColor
+		try{
+			elem = color.getChild("searchResult");
+			networkView.setSearchResultColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setSearchResultColor(-10789889);
+		}
+		
+		//friendsColor
+		try{
+			elem = color.getChild("friends");
+			networkView.setFriendsColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setFriendsColor(-12517377);
+		}
+		
+		//followersColor
+		try{
+			elem = color.getChild("followers");
+			networkView.setFollowersColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setFollowersColor(-49088);
+		}
+		
+		//friendsAndFollowersColor
+		try{
+			elem = color.getChild("friendsAndFollowers");
+			networkView.setFriendsAndFollowersColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setFriendsAndFollowersColor(-12517568);
+		}
+		
+		//selectedItemColor
+		try{
+			elem = color.getChild("selectedItem");
+			networkView.setSelectedItemColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setSelectedItemColor(-192);
+		}
+		
+		//nodeStrokeColor
+		try{
+			elem = color.getChild("nodeStroke");
+			networkView.setNodeStrokeColor(Integer.parseInt(elem.getTextTrim()));
+		}catch(Exception e){
+			networkView.setNodeStrokeColor(-16777216);
+		}
+		
+		//edgeType
+		try{
+			elem = root.getChild("edgeType");
+			int edgeType = Integer.parseInt(elem.getTextTrim());
+			
+			if(edgeType == 0){
+				networkView.setEdgeType(false);
+				mainWindow.getButtonCurvedEdges().setSelected(false);
+			}
+			else{
+				networkView.setEdgeType(true);
+				mainWindow.getButtonCurvedEdges().setSelected(true);
+			}
+		}catch(Exception e){
+			networkView.setEdgeType(false);
+		}
+	}
 }
