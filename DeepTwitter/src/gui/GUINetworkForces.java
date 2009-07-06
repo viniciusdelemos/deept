@@ -13,6 +13,10 @@ package gui;
 
 import java.awt.event.ActionListener;
 
+import prefuse.util.force.DragForce;
+import prefuse.util.force.NBodyForce;
+import prefuse.util.force.SpringForce;
+
 import controller.ControllerDeepTwitter;
 
 /**
@@ -20,6 +24,17 @@ import controller.ControllerDeepTwitter;
  * @author Vinicius
  */
 public class GUINetworkForces extends javax.swing.JFrame {
+	
+	
+	private float gravConstant = -1f;
+	private float minDistance = -1f;
+	private float theta = 0.9f;
+	
+	private float drag = 0.007f;
+	private float springCoeff = 9.99E-6f;
+	private float defaultLength = 180f;
+	
+	private ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
 
     /** Creates new form GUINetworkForces */
     public GUINetworkForces() {
@@ -29,13 +44,74 @@ public class GUINetworkForces extends javax.swing.JFrame {
         } catch (Exception ex) {
         }
         initComponents();
-        ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
+        init();
+    
+    }
+    
+    private void init(){
+    	
         prefuse.util.ui.JForcePanel fpanel = new prefuse.util.ui.JForcePanel(controller.getNetworkView().getForceSimulator());
         jPanel.add(fpanel);
         
         restorejButton.setEnabled(false);
-
-
+        
+    	prefuse.util.force.Force[] forces = controller.getNetworkView().getForceSimulator().getForces();
+    	
+    	for(int i=0;i<forces.length;i++){
+    		if(forces[i] instanceof NBodyForce){    			
+    			NBodyForce n = (NBodyForce) forces[i];
+    			
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("GravitationalConstant")){
+    					try{
+    						gravConstant = n.getParameter(j);
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("Distance")){
+    					try{
+    						minDistance = n.getParameter(j);
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("BarnesHutTheta")){
+    					try{
+    						theta = n.getParameter(j);
+    					}catch(Exception e){
+    					}
+    				}
+    			}
+    		}
+    		else if(forces[i] instanceof SpringForce){
+    			SpringForce n = (SpringForce) forces[i];
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("SpringCoefficient")){
+    					try{
+    						springCoeff = n.getParameter(j);
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("DefaultSpringLength")){
+    					try{
+    						defaultLength = n.getParameter(j);
+    					}catch(Exception e){
+    					}
+    				}
+    			}    			
+    		}    		
+    		else if(forces[i] instanceof DragForce){    			
+    			DragForce n = (DragForce) forces[i];
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("DragCoefficient")){
+    					try{
+    						drag = n.getParameter(j);
+    					}catch(Exception e){
+    					}
+    				}    				
+    			}
+    		}
+    	}
+    	
     }
 
     public void addMainWindowListener(ActionListener listener){
@@ -143,7 +219,65 @@ public class GUINetworkForces extends javax.swing.JFrame {
     }
 
     private void canceljButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        
+    	prefuse.util.force.Force[] forces = controller.getNetworkView().getForceSimulator().getForces();
+    	
+    	for(int i=0;i<forces.length;i++){
+    		if(forces[i] instanceof NBodyForce){    			
+    			NBodyForce n = (NBodyForce) forces[i];
+    			
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("GravitationalConstant")){
+    					try{
+    						n.setParameter(j, gravConstant);
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("Distance")){
+    					try{
+    						n.setParameter(j, minDistance);
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("BarnesHutTheta")){
+    					try{
+    						n.setParameter(j, theta);
+    					}catch(Exception e){
+    					}
+    				}
+    			}
+    		}
+    		else if(forces[i] instanceof SpringForce){
+    			SpringForce n = (SpringForce) forces[i];
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("SpringCoefficient")){
+    					try{
+    						n.setParameter(j, springCoeff);
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("DefaultSpringLength")){
+    					try{
+    						n.setParameter(j, defaultLength);
+    					}catch(Exception e){
+    					}
+    				}
+    			}    			
+    		}    		
+    		else if(forces[i] instanceof DragForce){    			
+    			DragForce n = (DragForce) forces[i];
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("DragCoefficient")){
+    					try{
+    						n.setParameter(j, drag);
+    					}catch(Exception e){
+    					}
+    				}    				
+    			}
+    		}
+    	}
+
+    	
     }
 
     private void restorejButtonActionPerformed(java.awt.event.ActionEvent evt) {
