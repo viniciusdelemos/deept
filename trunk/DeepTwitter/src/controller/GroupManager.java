@@ -83,41 +83,45 @@ public class GroupManager {
     }
     
     public void removeFromGroup(NodeItem n) {
-    	int groupId = n.getInt("groupId");
-    	if(groupId<0) return;
-    	
-    	AggregateItem ai = (AggregateItem) groupTable.getItem(groupId);
-    	ai.removeItem(n);
-    	n.setInt("groupId", -1);
-    	Iterator<EdgeItem> i = n.edges();
-    	
-    	//TODO: trocar esta gambiarra por algo menos custoso?
-    	boolean aindaTem = true;
-    	while(aindaTem)
-    	while(i.hasNext()) {
-    		try{
-    			EdgeItem edge = i.next();
-    			if(edge.getFloat("weight")==networkView.getWeightValue()) 
-    				edge.setFloat("weight", 0f);
-    			else if(edge.getFloat("weight")==-1.0f) 
-    				networkView.removeEdge((Edge)edge.getSourceTuple());
+    	synchronized(networkView.getVisualization()) {
+    		int groupId = n.getInt("groupId");
+    		if(groupId<0) return;
+
+    		AggregateItem ai = (AggregateItem) groupTable.getItem(groupId);    	
+    		n.setInt("groupId", -1);
+    		Iterator<EdgeItem> i = n.edges();
+
+    		//TODO: trocar esta gambiarra por algo menos custoso?
+    		boolean aindaTem = true;
+    		while(aindaTem)
+    		while(i.hasNext()) {
+    			try{
+    				EdgeItem edge = i.next();
+    				if(edge.getFloat("weight")==networkView.getWeightValue()) 
+    					edge.setFloat("weight", 0f);
+    				else if(edge.getFloat("weight")==-1.0f) 
+    					networkView.removeEdge((Edge)edge.getSourceTuple());
+    			}
+    			catch(IllegalArgumentException e) {
+    				aindaTem = true;
+    				i = n.edges();
+    				e.printStackTrace();
+    			}
+    			aindaTem = false;
     		}
-    		catch(IllegalArgumentException e) {
-    			aindaTem = true;
-    			i = n.edges();
-    			System.out.println("TODO: loop de gambiarra (tentar evitar)");
-    		}
-    		aindaTem = false;
+    		ai.removeItem(n);
     	}
     }
     
     public void removeGroup(AggregateItem ai) {
-    	Iterator<NodeItem> i = ai.items();
-    	while(i.hasNext()) {
-    		NodeItem n = i.next();
-    		removeFromGroup(n);
+    	synchronized(networkView.getVisualization()) {
+    		Iterator<NodeItem> i = ai.items();
+    		while(i.hasNext()) {
+    			NodeItem n = i.next();
+    			removeFromGroup(n);
+    		}
+    		groupTable.removeRow(ai.getInt("id"));    
     	}
-    	groupTable.removeRow(ai.getInt("id"));    
     }
     
     public AggregateTable getGroups() {

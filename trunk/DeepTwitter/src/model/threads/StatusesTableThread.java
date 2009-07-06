@@ -14,7 +14,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -475,23 +478,19 @@ public class StatusesTableThread {
 
 	class KeepTableUpdated extends Thread {		
 		private GridBagConstraints c;
-		//private JPanel empty;
 		private Twitter twitter = controller.getTwitter();
-		private boolean threadSuspended;
-		//private Map<Long,Status> favoritesMap;// = new HashMap<Long,Status>();
-
-		//private List<DirectMessage> directMessagesList; //TROQUEI O TIPO SO PARA TESTAR				
+		private boolean threadSuspended;						
 		private List<TwitterResponse> statusesList, allStatusesList;
 		private List<? extends TwitterResponse> aux;
-
+		private Set<Long> favoritesSet;
 
 		public KeepTableUpdated() {			
 			twitter = controller.getTwitter();
 			c = new GridBagConstraints();
 			threadSuspended = false;
-			//lastResponseId = -1;
 			statusesList = new ArrayList<TwitterResponse>();
 			allStatusesList = new ArrayList<TwitterResponse>();
+			favoritesSet = new HashSet<Long>();
 		}
 
 		public synchronized void pauseThread() {
@@ -550,9 +549,7 @@ public class StatusesTableThread {
 								if(userId==null)
 									aux = twitter.getFriendsTimeline(new Paging().sinceId(lastResponseId[0]));
 								else
-									aux = twitter.getUserTimeline(userId[0], updatesToGet, lastResponseId[0]);
-								//talvez seja melhor fazer userId, new Paging().count(updatesToGet).sinceId(lastStatusId)
-								//testary
+									aux = twitter.getUserTimeline(userId[0], updatesToGet, lastResponseId[0]);								
 							}
 						}
 						else {
@@ -579,20 +576,11 @@ public class StatusesTableThread {
 						System.out.println("GOT UPDATES");
 						break;
 
-					case FAVORITES:
-						//TODO
-						//						if(lastStatusId < 0) {
+					case FAVORITES:						
 						if(userId==null)
 							aux = twitter.getFavorites();
 						else
-							aux = twitter.getFavorites(userId[0]);
-						//						}
-						//						else {System.out.println("user id = "+userId);
-						//							if(userId==null)
-						//								statusesList = (ArrayList<Status>) twitter.favoritesBySinceId(lastStatusId);
-						//							else
-						//								statusesList = (ArrayList<Status>) twitter.favoritesBySinceId(userId, lastStatusId);
-						//						}					
+							aux = twitter.getFavorites(userId[0]);												
 						break;
 
 					case REPLIES:
@@ -644,14 +632,9 @@ public class StatusesTableThread {
 
 					if(statusesType != StatusesType.SEARCH && !isGroup) {
 						statusesList = new ArrayList<TwitterResponse>(aux.size());
-						for(Object x : aux) {
+						for(Object x : aux) {								
 							statusesList.add((TwitterResponse)x);
 						}					
-					}					
-
-					//TODO
-					if(statusesType == StatusesType.FAVORITES) {
-						//adicionar/remover do mapa e do painel!
 					}
 
 					if(!statusesList.isEmpty()) {						
@@ -659,6 +642,13 @@ public class StatusesTableThread {
 							panel.remove(emptyPanel); 							
 						//de trás para frente, para adicionar as mais recentes em cima
 						for(int i=statusesList.size()-1; i>=0; i--) {
+							if(statusesType == StatusesType.FAVORITES) {
+								Status latestFavorite = ((Status)statusesList.get(i));
+								if(favoritesSet.contains(latestFavorite.getId()))
+										continue;
+								else
+									favoritesSet.add(latestFavorite.getId());								
+							}
 							loadData(statusesList.get(i));								
 							c.weightx = 0.5;
 							c.fill = GridBagConstraints.HORIZONTAL;
