@@ -58,9 +58,9 @@ public class AddFriendsThread extends Thread {
 				}
 			}
 			if(!isShowingFriends)
-				controller.setStatusBarMessage("Adicionados "+(friends.size()-notAdded)+" amigos de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
+				controller.setStatusBarMessage("Adicionados "+(friends.size()-notAdded)+" amigos de "+source.getString("name") +" à rede. "+notAdded+" já existentes.",MessageType.INFORMATION);
 			else
-				controller.setStatusBarMessage("Adicionados "+notAdded+" amigos de "+source.getString("name") +" à rede. "+(friends.size()-notAdded)+" já existentes.");
+				controller.setStatusBarMessage("Adicionados "+notAdded+" amigos de "+source.getString("name") +" à rede. "+(friends.size()-notAdded)+" já existentes.",MessageType.INFORMATION);
 			
 			source.setBoolean("isShowingFriends",true);
 			source.setBoolean("isOpen", true);

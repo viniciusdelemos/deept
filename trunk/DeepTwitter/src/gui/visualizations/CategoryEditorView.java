@@ -149,7 +149,7 @@ public class CategoryEditorView extends Display {
 				m_orientation);
 		m_vis.putAction("subLayout", subLayout);
 
-		AutoPanAction autoPan = new AutoPanAction();
+		//AutoPanAction autoPan = new AutoPanAction();
 
 		// create the filtering and layout
 		ActionList filter = new ActionList();
@@ -163,9 +163,9 @@ public class CategoryEditorView extends Display {
 		m_vis.putAction("filter", filter);
 
 		// animated transition
-		ActionList animate = new ActionList(1000);
-		animate.setPacingFunction(new SlowInSlowOutPacer());
-		animate.add(autoPan);
+		ActionList animate = new ActionList(200);
+		//animate.setPacingFunction(new SlowInSlowOutPacer());
+		//animate.add(autoPan);
 		animate.add(new QualityControlAnimator());
 		animate.add(new VisibilityAnimator(tree));
 		animate.add(new LocationAnimator(treeNodes));
@@ -177,7 +177,7 @@ public class CategoryEditorView extends Display {
 		// create animator for orientation changes
 		ActionList orient = new ActionList(2000);
 		orient.setPacingFunction(new SlowInSlowOutPacer());
-		orient.add(autoPan);
+		//orient.add(autoPan);
 		orient.add(new QualityControlAnimator());
 		orient.add(new LocationAnimator(treeNodes));
 		orient.add(new RepaintAction());

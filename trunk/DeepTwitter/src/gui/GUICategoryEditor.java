@@ -25,6 +25,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import controller.CategoryManager;
 
@@ -54,6 +55,12 @@ public class GUICategoryEditor {
 	public static void openFrame() {
 
 		if (frame == null) {
+			try{ 
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
 			Color BACKGROUND = Color.WHITE;
 			Color FOREGROUND = Color.BLACK;
 			categoryEditor = new CategoryEditorView();
@@ -198,13 +205,11 @@ public class GUICategoryEditor {
 			});
 			System.out.println("Instanciou nova tela");
 
-		} else {
-			System.out.println("Não instanciou nova tela");
 		}
 		////categoryEditor.getTreeLayout().setLayoutAnchor(new Point2D.Double(300, 300));
 		// treeLayout.setLayoutAnchor(new Point2D.Double(150, 300));
 		frame.setVisible(true);
-		frame.setLocationRelativeTo(null);
+		//frame.setLocationRelativeTo(null);
 		////categoryEditor.getTreeLayout().setLayoutAnchor(new Point2D.Double(-200, -25));
 		// treeLayout.setLayoutAnchor(new Point2D.Double(-200, -25));
 

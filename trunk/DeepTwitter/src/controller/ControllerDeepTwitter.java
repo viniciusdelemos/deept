@@ -13,6 +13,7 @@ import gui.visualizations.MostPopularUsersView;
 import gui.visualizations.NetworkView;
 import gui.visualizations.MostPopularUsersView.ShowingBy;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +29,7 @@ import java.util.Iterator;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -37,6 +39,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import model.ChartColor;
 import model.ConfigurationType;
 import model.MessageType;
 import model.Settings;
@@ -196,8 +199,16 @@ public class ControllerDeepTwitter {
 		}	
 	}
 	
-	public synchronized void setStatusBarMessage(String message) {
-		mainWindow.setStatusBarMessage(message);
+	public synchronized void setStatusBarMessage(String message, MessageType type) {
+		JLabel statusLabel = mainWindow.getStatusBarLabel();
+		if(type == MessageType.NOTIFICATION)
+			statusLabel.setForeground(ChartColor.DARK_GREEN.darker());
+		else if(type == MessageType.ERROR)
+			statusLabel.setForeground(Color.red);
+		else
+			statusLabel.setForeground(Color.black);
+		
+		statusLabel.setText(message);
 	}
 	
 	public void selectTab(int index) {
@@ -492,7 +503,7 @@ public class ControllerDeepTwitter {
 					twitter.updateStatus(guiNewUpdate.getStatus());
 					guiNewUpdate.dispose();
 					Date now = Calendar.getInstance().getTime();
-					setStatusBarMessage("Update realizado com sucesso em "+now);
+					setStatusBarMessage("Update realizado com sucesso em "+now,MessageType.NOTIFICATION);
 				} catch (TwitterException e1) {
 					showMessageDialog(e1.getMessage(),MessageType.ERROR);						
 				}					

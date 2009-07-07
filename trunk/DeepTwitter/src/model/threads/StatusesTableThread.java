@@ -513,11 +513,12 @@ public class StatusesTableThread {
 		public List<TwitterResponse> getStatusesList() {				
 			return allStatusesList;
 		}
-
+		
+		String notification = null;		
 		public void run()
 		{	
 			System.out.println("STARTING " + statusesType + " para " + controller.getUserName(getUserId()));
-			JPanel emptyPanel = null;
+			JPanel emptyPanel = null;			
 			while(true) {
 				try {					
 					if (threadSuspended) {
@@ -572,7 +573,7 @@ public class StatusesTableThread {
 								statusesList.add((TwitterResponse)group.get(i));
 							}
 						}					
-
+						notification = "tweet";
 						System.out.println("GOT UPDATES");
 						break;
 
@@ -580,7 +581,8 @@ public class StatusesTableThread {
 						if(userId==null)
 							aux = twitter.getFavorites();
 						else
-							aux = twitter.getFavorites(userId[0]);												
+							aux = twitter.getFavorites(userId[0]);		
+						notification = "favorito";
 						break;
 
 					case REPLIES:
@@ -588,13 +590,15 @@ public class StatusesTableThread {
 							aux = twitter.getMentions();
 						else
 							aux = twitter.getMentions(new Paging(lastResponseId[0]));
+						notification = "reply";
 						break;
 
 					case DIRECT_MESSAGES_RECEIVED:
 						if(lastResponseId[0] < 0) 
 							aux = twitter.getDirectMessages();
 						else
-							aux = twitter.getDirectMessages(new Paging(lastResponseId[0]));						
+							aux = twitter.getDirectMessages(new Paging(lastResponseId[0]));	
+						notification = "mensagem";
 						break;
 
 					case DIRECT_MESSAGES_SENT:
@@ -619,14 +623,15 @@ public class StatusesTableThread {
 						for(Tweet t : tweets) {
 							statusesList.add(t);
 						}
-
+						notification = "resultado";
 						break;
 
 					case PUBLIC_TIMELINE:
 						if(lastResponseId[0]<0)							
 							aux = twitter.getPublicTimeline();
 						else
-							aux = twitter.getPublicTimeline(lastResponseId[0]);						
+							aux = twitter.getPublicTimeline(lastResponseId[0]);	
+						notification = "tweet na Public Timeline";
 						break;
 					}
 
@@ -636,19 +641,23 @@ public class StatusesTableThread {
 							statusesList.add((TwitterResponse)x);
 						}					
 					}
-
+					int contNewUpdates = 0;
 					if(!statusesList.isEmpty()) {						
 						if(emptyPanel != null)
 							panel.remove(emptyPanel); 							
 						//de trás para frente, para adicionar as mais recentes em cima
-						for(int i=statusesList.size()-1; i>=0; i--) {
+						for(int i=statusesList.size()-1; i>=0; i--) {							
 							if(statusesType == StatusesType.FAVORITES) {
 								Status latestFavorite = ((Status)statusesList.get(i));
 								if(favoritesSet.contains(latestFavorite.getId()))
 										continue;
-								else
-									favoritesSet.add(latestFavorite.getId());								
+								else {
+									favoritesSet.add(latestFavorite.getId());
+									contNewUpdates++;
+								}
 							}
+							else
+								contNewUpdates++;
 							loadData(statusesList.get(i));								
 							c.weightx = 0.5;
 							c.fill = GridBagConstraints.HORIZONTAL;
@@ -656,7 +665,10 @@ public class StatusesTableThread {
 							panel.add(getStatusesPanel(),c,0);			
 							rows++;
 							allStatusesList.add(0,statusesList.get(i));							
-						}						
+						}
+						if(contNewUpdates>0)
+							setStatusBarMessage(contNewUpdates);
+						notification = null;
 						//counterLabel.setText(String.valueOf(rows) + " "+getType().toString().toLowerCase());						
 						c.weightx = 0.5;
 						c.weighty = 1;
@@ -711,6 +723,22 @@ public class StatusesTableThread {
 				}
 				interval = getUpdateInterval();
 			}			
+		}
+		
+		void setStatusBarMessage(int contNewUpdates) {
+			String novo = " novo ";
+			if(notification != null) {
+				if(contNewUpdates>1) {
+					novo = " novos ";
+					if(notification.equals("mensagem")) { notification = "mensagens"; novo = " novas "; }
+					else if(notification.equals("reply")) notification = "replies";
+					else if(notification.equals("tweet na Public Timeline")) notification = "tweets na Public Timeline"; 
+					else 
+						notification +="s";
+				} 
+				controller.setStatusBarMessage(contNewUpdates + novo + notification + " para " +
+						controller.getUserName(getUserId()), MessageType.NOTIFICATION);
+			}	
 		}
 	}
 	
