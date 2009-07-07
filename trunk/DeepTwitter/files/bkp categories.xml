@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Categories>
+  <Category name="tecnologia">
+    <Tag>notebook</Tag>
+    <Tag>lcd</Tag>
+    <Tag>windows</Tag>
+    <Tag>mac</Tag>
+    <Tag>iphone</Tag>
+    <Tag>linux</Tag>
+    <Tag>blog</Tag>
+  </Category>
+  <Category name="música">
+    <Tag>música</Tag>
+    <Tag>mtv</Tag>
+    <Tag>lady gaga</Tag>
+  </Category>
+  <Category name="ingles">
+    <Tag>love</Tag>
+    <Tag>photos</Tag>
+    <Tag>music</Tag>
+    <Tag>interview</Tag>
+    <Tag>bored</Tag>
+    <Tag>i am</Tag>
+  </Category>
+  <Category name="sentimento">
+    <Tag>love</Tag>
+    <Tag>bom-humor</Tag>
+    <Tag>amo</Tag>
+    <Tag>odeio</Tag>
+  </Category>
+  <Category name="política">
+    <Tag>iran</Tag>
+    <Tag>#iranelection</Tag>
+    <Tag>obama</Tag>
+  </Category>
+  <Category name="eventos">
+    <Tag>workshop</Tag>
+    <Tag>palestra</Tag>
+    <Tag>reunião</Tag>
+  </Category>
+  <Category name="faculdade">
+    <Tag>cnpq</Tag>
+    <Tag>projeto</Tag>
+    <Tag>planejamento</Tag>
+    <Tag>ibm</Tag>
+    <Tag>reunião</Tag>
+  </Category>
+</Categories>
+

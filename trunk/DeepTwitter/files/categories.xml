@@ -1,48 +1,342 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <Categories>
-  <Category name="tecnologia">
-    <Tag>notebook</Tag>
-    <Tag>lcd</Tag>
-    <Tag>windows</Tag>
-    <Tag>mac</Tag>
-    <Tag>iphone</Tag>
-    <Tag>linux</Tag>
-    <Tag>blog</Tag>
+  <Category name="Apple">
+    <Tag>Apple</Tag>
+	<Tag>iPod</Tag>
+	<Tag>iTunes</Tag>
+	<Tag>Mac</Tag>
+	<Tag>MacBook</Tag>
+	<Tag>iPhone</Tag>
   </Category>
-  <Category name="música">
-    <Tag>música</Tag>
-    <Tag>mtv</Tag>
-    <Tag>lady gaga</Tag>
+  <Category name="Brasil">
+    <Tag>brasileiro</Tag>
+	<Tag>brasileiro</Tag>
+	<Tag>carnaval</Tag>
+	<Tag>Brasil</Tag>
+	<Tag>Brazil</Tag>
+	<Tag>Bündchen</Tag>
+	<Tag>copacabana</Tag>
+	<Tag>Rio de Janeiro</Tag>
   </Category>
-  <Category name="ingles">
-    <Tag>love</Tag>
-    <Tag>photos</Tag>
-    <Tag>music</Tag>
-    <Tag>interview</Tag>
-    <Tag>bored</Tag>
-    <Tag>i am</Tag>
+  <Category name="Cinema e TV">
+    <Tag>ator</Tag>
+	<Tag>atriz</Tag>
+	<Tag>artistas</Tag>
+	<Tag>astro</Tag>
+	<Tag>cinema</Tag>
+	<Tag>Cannes</Tag>
+	<Tag>celebridades</Tag>
+	<Tag>filme</Tag>
+	<Tag>movie</Tag>
+	<Tag>HBO</Tag>
+	<Tag>Harry</Tag>
+	<Tag>Transformers</Tag>
+	<Tag>Telecine</Tag>
+	<Tag>Universal</Tag>
   </Category>
-  <Category name="sentimento">
-    <Tag>love</Tag>
-    <Tag>bom-humor</Tag>
-    <Tag>amo</Tag>
-    <Tag>odeio</Tag>
+  <Category name="Comunidades e Blogs">
+    <Tag>Blog</Tag>
+	<Tag>blogueiro</Tag>
+	<Tag>Blogger</Tag>
+	<Tag>blogueira</Tag>
+	<Tag>Fotolog</Tag>
+	<Tag>Wordpress</Tag>
+	<Tag>MySpace</Tag>
+	<Tag>Messenger</Tag>
+	<Tag>MSN</Tag>
+	<Tag>Orkut</Tag>
+	<Tag>Facebook</Tag>
+	<Tag>Twitter</Tag>
+	<Tag>Last.fm</Tag>
+	<Tag>LinkedIn</Tag>
   </Category>
-  <Category name="política">
-    <Tag>iran</Tag>
-    <Tag>#iranelection</Tag>
-    <Tag>obama</Tag>
+  <Category name="Conhecimento">
+    <Tag>cultura</Tag>
+	<Tag>curiosidade</Tag>
+	<Tag>biblioteca</Tag>
+	<Tag>Bienal</Tag>
+	<Tag>aprender</Tag>
+	<Tag>E-book</Tag>
+	<Tag>Darwin</Tag>
+	<Tag>idéias</Tag>
+	<Tag>Wikipedia</Tag>
   </Category>
-  <Category name="eventos">
+  <Category name="Desenvolvimento de Sistemas">
+    <Tag>projeto</Tag>
+	<Tag>programador</Tag>
+	<Tag>Rails</Tag>
+	<Tag>Ruby</Tag>
+	<Tag>Java</Tag>
+	<Tag>C#</Tag>
+	<Tag>Scrum</Tag>
+  </Category>
+  <Category name="Economia">
+    <Tag>finanças</Tag>
+	<Tag>economia</Tag>
+	<Tag>financeiro</Tag>
+	<Tag>negócio</Tag>
+	<Tag>negociações</Tag>
+	<Tag>poupança</Tag>
+	<Tag>Petrobrás</Tag>
+  </Category>
+  <Category name="Estudo">
+    <Tag>diploma</Tag>
+	<Tag>estudante</Tag>
+	<Tag>estudar</Tag>
+	<Tag>ENEM</Tag>
+	<Tag>escola</Tag>
+	<Tag>faculdade</Tag>
+	<Tag>formatura</Tag>
+	<Tag>literatura</Tag>
+	<Tag>livraria</Tag>
+	<Tag>monografia</Tag>
+	<Tag>pesquisa</Tag>
+	<Tag>PUCRS</Tag>
+	<Tag>universidade</Tag>
+  </Category>
+  <Category name="Festa">
+    <Tag>dance</Tag>
+	<Tag>dança</Tag>
+	<Tag>dancing</Tag>
+	<Tag>diversão</Tag>
+	<Tag>balada</Tag>
+	<Tag>beijar</Tag>
+	<Tag>bebidas</Tag>
+	<Tag>babado</Tag>
+	<Tag>bêbado</Tag>
+	<Tag>cantada</Tag>
+	<Tag>cerveja</Tag>
+	<Tag>amigo</Tag>
+	<Tag>amiga</Tag>
+	<Tag>carnaval</Tag>
+  </Category>
+  <Category name="Futebol">
+    <Tag>brasileirão</Tag>
+	<Tag>copa</Tag>
+	<Tag>Corinthians</Tag>
+	<Tag>campeonato</Tag>
+	<Tag>Chelsea</Tag>
+	<Tag>campeões</Tag>
+	<Tag>CBF</Tag>
+	<Tag>futebol</Tag>
+	<Tag>FIFA</Tag>
+	<Tag>Manchester</Tag>
+	<Tag>Milan</Tag>
+	<Tag>libertadores</Tag>
+	<Tag>Kaká</Tag>
+	<Tag>Ronaldo</Tag>
+  </Category>
+  <Category name="Games">
+    <Tag>Nintendo</Tag>
+	<Tag>PS3</Tag>
+	<Tag>Playstation</Tag>
+	<Tag>PSP</Tag>
+	<Tag>Xbox</Tag>
+	<Tag>Wii</Tag>
+	<Tag>Sims</Tag>
+  </Category>
+  <Category name="Marcas">
+    <Tag>Coca-Cola</Tag>
+	<Tag>Coke</Tag>
+	<Tag>Chrysler</Tag>
+	<Tag>Colcci</Tag>
+	<Tag>Chevrolet</Tag>
+	<Tag>Calvin</Tag>
+	<Tag>Gucci</Tag>
+	<Tag>Mercedez-Benz</Tag>
+	<Tag>Nokia</Tag>
+	<Tag>Pepsi</Tag>
+	<Tag>Philips</Tag>
+	<Tag>Volkswagen</Tag>
+  </Category>
+  <Category name="Infantil">
+    <Tag>Foxkids</Tag>
+	<Tag>Cartoon</Tag>
+	<Tag>Nickelodeon</Tag>
+	<Tag>Disney</Tag>
+	<Tag>Garfield</Tag>
+	<Tag>Lego</Tag>
+  </Category>
+  <Category name="Inglês">
+    <Tag>angels</Tag>
+	<Tag>dance</Tag>
+	<Tag>love</Tag>
+	<Tag>like</Tag>
+	<Tag>hate</Tag>
+	<Tag>happy</Tag>
+	<Tag>dance</Tag>
+	<Tag>movie</Tag>
+  </Category>
+  <Category name="Investimento">
+    <Tag>açoes</Tag>
+	<Tag>commodities</Tag>
+	<Tag>money</Tag>
+	<Tag>Bovespa</Tag>
+	<Tag>poupança</Tag>
+	<Tag>PETR4</Tag>
+	<Tag>investir</Tag>
+	<Tag>ibov</Tag>
+	<Tag>Ibovespa</Tag>
+	<Tag>investidor</Tag>
+  </Category>
+  <Category name="Lazer">
+    <Tag>cirque</Tag>
+	<Tag>festa</Tag>
+	<Tag>férias</Tag>
+	<Tag>Gramado</Tag>
+	<Tag>hotel</Tag>
+	<Tag>pizza</Tag>
+	<Tag>parque</Tag>
+	<Tag>viagem</Tag>
+	<Tag>viajar</Tag>
+	<Tag>verão</Tag>
+	<Tag>Redenção</Tag>
+	<Tag>restaurante</Tag>
+  </Category>
+  <Category name="Música">
+    <Tag>Atlântida</Tag>
+	<Tag>Coldplay</Tag>
+	<Tag>Clarkson</Tag>
+	<Tag>discografia</Tag>
+	<Tag>Lady Gaga</Tag>
+	<Tag>MTV</Tag>
+	<Tag>music</Tag>
+	<Tag>música</Tag>
+	<Tag>Grammy</Tag>
+	<Tag>Mallu Magalhães</Tag>
+	<Tag>Pussycat Dolls</Tag>
+	<Tag>Rihanna</Tag>
+	<Tag>reggae</Tag>
+	<Tag>rock</Tag>
+  </Category>
+  <Category name="Namoro">
+    <Tag>saudade</Tag>
+	<Tag>namorada</Tag>
+	<Tag>namordado</Tag>
+	<Tag>namoro</Tag>
+  </Category>
+  <Category name="Notícias">
+    <Tag>CNN</Tag>
+	<Tag>CNBC</Tag>
+	<Tag>jornalista</Tag>
+	<Tag>jornalismo</Tag>
+	<Tag>News</Tag>
+	<Tag>Newsletter</Tag>
+	<Tag>notícias</Tag>
+	<Tag>ZH</Tag>
+  </Category>
+  <Category name="Política">
+    <Tag>CPI</Tag>
+	<Tag>Clinton</Tag>
+	<Tag>democracia</Tag>
+	<Tag>democratic</Tag>
+	<Tag>eleições</Tag>
+	<Tag>Obama</Tag>
+  </Category>
+  <Category name="Religião">
+    <Tag>Bíblia</Tag>
+	<Tag>benção</Tag>
+	<Tag>Bispo</Tag>
+	<Tag>Cristo</Tag>
+	<Tag>cristã</Tag>
+	<Tag>Deus</Tag>
+	<Tag>igreja</Tag>
+	<Tag>Jesus</Tag>
+	<Tag>Senhor</Tag>
+	<Tag>oração</Tag>
+  </Category>
+  <Category name="Sentimentos">
+    <Tag>adoro</Tag>
+	<Tag>amo</Tag>
+	<Tag>alegre</Tag>
+	<Tag>ama</Tag>
+	<Tag>amor</Tag>
+	<Tag>adorei</Tag>
+	<Tag>abraço</Tag>
+	<Tag>apaixonada</Tag>
+	<Tag>apaixonado</Tag>
+	<Tag>alegria</Tag>
+	<Tag>feliz</Tag>
+	<Tag>felicidade</Tag>
+	<Tag>loving</Tag>
+	<Tag>love</Tag>
+	<Tag>like</Tag>
+	<Tag>hate</Tag>
+	<Tag>happy</Tag>
+	<Tag>saudade</Tag>
+	<Tag>sofrer</Tag>
+	<Tag>sentimento</Tag>
+	<Tag>amizade</Tag>
+	<Tag>ódio</Tag>
+	<Tag>odeio</Tag>
+	<Tag>sinto</Tag>
+  </Category>
+  <Category name="Séries de TV">
+    <Tag>House</Tag>
+	<Tag>Heroes</Tag>
+	<Tag>Lost</Tag>
+	<Tag>Smallvile</Tag>
+	<Tag>Gossip Girl</Tag>
+	<Tag>CSI</Tag>
+	<Tag>E.R.</Tag>
+  </Category>
+  <Category name="Tecnologia">
+    <Tag>Bing</Tag>
+	<Tag>Digg</Tag>
+	<Tag>Google</Tag>
+	<Tag>Geek</Tag>
+	<Tag>Gmail</Tag>
+	<Tag>internet</Tag>
+	<Tag>IDGNow</Tag>
+	<Tag>Microsoft</Tag>
+	<Tag>nerd</Tag>
+	<Tag>post</Tag>
+	<Tag>podcast</Tag>
+	<Tag>Pirate Bay</Tag>
+	<Tag>Tecnologia</Tag>
+	<Tag>Youtube</Tag>
+	<Tag>Yahoo</Tag>
+	<Tag>webcast</Tag>
+  </Category>
+  <Category name="Tópicos">
+    <Tag>#afazenda</Tag>
+	<Tag>#followfriday</Tag>
+	<Tag>#poesia</Tag>
+	<Tag>#iranelection</Tag>
+	<Tag>#prontofalei</Tag>
+	<Tag>#VídeoShow</Tag>
+	<Tag>#Fantástico</Tag>
+	<Tag>#money</Tag>
+  </Category>
+  <Category name="Trabalho">
+    <Tag>trabalho</Tag>
+	<Tag>trabalhar</Tag>
+	<Tag>projeto</Tag>
+	<Tag>chefe</Tag>
+	<Tag>trabalhando</Tag>
+	<Tag>agenda</Tag>
+	<Tag>escritório</Tag>
+	<Tag>reunião</Tag>
+	<Tag>intervalo</Tag>
+	<Tag>stress</Tag>
+  </Category>
+  <Category name="Twitter">
+    <Tag>follow</Tag>
+	<Tag>twittadas</Tag>
+	<Tag>twitting</Tag>
+	<Tag>Twitpic</Tag>
+	<Tag>tweeted</Tag>
+	<Tag>TwitterFox</Tag>
+	<Tag>twitteiros</Tag>
+	<Tag>twittando</Tag>
+	<Tag>Twitter</Tag>
+	<Tag>tweet</Tag>
+	<Tag>RT</Tag>
+	<Tag>ReTweet</Tag>
+  </Category>
+  <Category name="Eventos">
     <Tag>workshop</Tag>
     <Tag>palestra</Tag>
-    <Tag>reunião</Tag>
-  </Category>
-  <Category name="faculdade">
-    <Tag>cnpq</Tag>
-    <Tag>projeto</Tag>
-    <Tag>planejamento</Tag>
-    <Tag>ibm</Tag>
     <Tag>reunião</Tag>
   </Category>
 </Categories>
