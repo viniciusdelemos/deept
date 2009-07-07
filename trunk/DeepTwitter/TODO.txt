@@ -16,4 +16,6 @@ TODO:
 
 vis categorias
 - arrumar bug de alterar texto igual ao a um que jah exista
-- tenta fazer poder editar quando der 2 cliques na categoria ou palavra (tem exemplos disto no listener da graphicmanager)
+- tirar classes estaticas
+
+- arrumar nao salvar das forcas 

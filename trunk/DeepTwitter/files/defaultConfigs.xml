@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <configuration>
   <interval>
-    <updates>28</updates>
-    <mentions>60</mentions>
-    <favorites>15</favorites>
-    <directMessages>58</directMessages>
-    <search>11</search>
-    <publicTimeline>53</publicTimeline>
-    <mostPopularUsers>1</mostPopularUsers>
+    <updates>1</updates>
+    <mentions>1</mentions>
+    <favorites>1</favorites>
+    <directMessages>1</directMessages>
+    <search>1</search>
+    <publicTimeline>1</publicTimeline>
+    <mostPopularUsers>7</mostPopularUsers>
   </interval>
   <color>
     <edge>-8355712</edge>
@@ -30,7 +30,7 @@
     <defaultLength>180.0</defaultLength>
   </networkForces>
   <tweetsToGet>
-	<updates>300</updates>
+	<updates>100</updates>
   </tweetsToGet>
 </configuration>
 

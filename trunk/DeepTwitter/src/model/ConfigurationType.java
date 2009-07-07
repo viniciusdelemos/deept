@@ -17,5 +17,6 @@ public enum ConfigurationType {
 	friendsAndFollowersColor, 
 	selectedItemColor, 
 	nodeStrokeColor, 
-	edgeType
+	edgeType,
+	updatesToGet
 }
