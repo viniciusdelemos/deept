@@ -13,6 +13,8 @@ package gui;
 
 import java.awt.event.ActionListener;
 
+import model.Settings;
+
 import prefuse.util.force.DragForce;
 import prefuse.util.force.NBodyForce;
 import prefuse.util.force.SpringForce;
@@ -35,14 +37,16 @@ public class GUINetworkForces extends javax.swing.JFrame {
 	private float defaultLength = 180f;
 	
 	private ControllerDeepTwitter controller = ControllerDeepTwitter.getInstance();
+	
+	private prefuse.util.ui.JForcePanel fpanel;
 
     /** Creates new form GUINetworkForces */
     public GUINetworkForces() {
-        try {
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-            javax.swing.SwingUtilities.updateComponentTreeUI( this );
-        } catch (Exception ex) {
-        }
+//        try {
+//            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+//            javax.swing.SwingUtilities.updateComponentTreeUI( this );
+//        } catch (Exception ex) {
+//        }
         initComponents();
         init();
     
@@ -50,10 +54,8 @@ public class GUINetworkForces extends javax.swing.JFrame {
     
     private void init(){
     	
-        prefuse.util.ui.JForcePanel fpanel = new prefuse.util.ui.JForcePanel(controller.getNetworkView().getForceSimulator());
+        fpanel = new prefuse.util.ui.JForcePanel(controller.getNetworkView().getForceSimulator());
         jPanel.add(fpanel);
-        
-        restorejButton.setEnabled(false);
         
     	prefuse.util.force.Force[] forces = controller.getNetworkView().getForceSimulator().getForces();
     	
@@ -118,11 +120,11 @@ public class GUINetworkForces extends javax.swing.JFrame {
 
         savejButton.setActionCommand("buttonOKNetworkForces");
     	canceljButton.setActionCommand("buttonCancelNetworkForces");
-    	restorejButton.setActionCommand("buttonRestoreNetworkForces"); //TODO restore
+    	//restorejButton.setActionCommand("buttonRestoreNetworkForces"); //TODO restore
 
     	savejButton.addActionListener(listener);
     	canceljButton.addActionListener(listener);
-    	restorejButton.addActionListener(listener);
+    	//restorejButton.addActionListener(listener);
 
 
     }
@@ -281,7 +283,72 @@ public class GUINetworkForces extends javax.swing.JFrame {
     }
 
     private void restorejButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    	
+    	Settings settings = controller.getDefaultSettingsNetworkForces();
+    	
+    	prefuse.util.force.Force[] forces = controller.getNetworkView().getForceSimulator().getForces();
+    	
+    	for(int i=0;i<forces.length;i++){
+    		if(forces[i] instanceof NBodyForce){    			
+    			NBodyForce n = (NBodyForce) forces[i];
+    			
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("GravitationalConstant")){
+    					try{
+    						n.setParameter(j, settings.getGravConstant());
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("Distance")){
+    					try{
+    						n.setParameter(j, settings.getMinDistance());
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("BarnesHutTheta")){
+    					try{
+    						n.setParameter(j, settings.getTheta());
+    					}catch(Exception e){
+    					}
+    				}
+    			}
+    		}
+    		else if(forces[i] instanceof SpringForce){
+    			SpringForce n = (SpringForce) forces[i];
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("SpringCoefficient")){
+    					try{
+    						n.setParameter(j, settings.getSpringCoeff());
+    					}catch(Exception e){
+    					}
+    				}
+    				else if(n.getParameterName(j).equals("DefaultSpringLength")){
+    					try{
+    						n.setParameter(j, settings.getDefaultLength());
+    					}catch(Exception e){
+    					}
+    				}
+    			}    			
+    		}    		
+    		else if(forces[i] instanceof DragForce){    			
+    			DragForce n = (DragForce) forces[i];
+    			for(int j=0 ; j<n.getParameterCount(); j++){    				
+    				if(n.getParameterName(j).equals("DragCoefficient")){
+    					try{
+    						n.setParameter(j, settings.getDrag());
+    					}catch(Exception e){
+    					}
+    				}    				
+    			}
+    		}
+    	}
+    	
+    	jPanel.removeAll();
+    	fpanel = null;
+    	fpanel = new prefuse.util.ui.JForcePanel(controller.getNetworkView().getForceSimulator());
+    	jPanel.add(fpanel);
+    	jPanel.updateUI();
+    	
     }
 
 

@@ -39,6 +39,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import model.ConfigurationType;
 import model.MessageType;
+import model.Settings;
 import model.StatusTab;
 import model.StatusesType;
 import model.threads.StatusesTableThread;
@@ -97,6 +98,8 @@ public class ControllerDeepTwitter {
 	private int intervalSearch = 60;
 	private int intervalPublicTimeline = 60;
 	private int intervalMostPopularUsers = 7;
+	
+	private int updatesToGet = 100;
 	
 	
 	private ControllerDeepTwitter(){
@@ -650,6 +653,9 @@ public class ControllerDeepTwitter {
 					guiNetworkForces = null;
 				}
 			}
+//			else if(cmd.equals("buttonRestoreNetworkForces")){
+//				loadDefaultSettingsNetworkForces();
+//			}
 			else
 				System.out.println(cmd);
 		}
@@ -717,6 +723,8 @@ public class ControllerDeepTwitter {
 			return networkView.getNodeStrokeColor();
 		else if(configurationType == ConfigurationType.edgeType)
 			return networkView.getEdgeType();
+		else if(configurationType == ConfigurationType.updatesToGet)
+			return updatesToGet;
 		else return -1;
 	}
 
@@ -753,9 +761,11 @@ public class ControllerDeepTwitter {
 			networkView.setSelectedItemColor(value);
 		else if(configurationType == ConfigurationType.nodeStrokeColor)
 			networkView.setNodeStrokeColor(value);
-		else if(configurationType == ConfigurationType.edgeType){
+		else if(configurationType == ConfigurationType.edgeType)
 			networkView.setEdgeType(value);
-		}
+		else if(configurationType == ConfigurationType.updatesToGet)
+			updatesToGet = value;
+		
 	}
 	
 	public void saveSettings(){		
@@ -784,12 +794,14 @@ public class ControllerDeepTwitter {
 		Element interval = null;
 		Element color = null;
 		Element networkForces = null;
+		Element tweetsToGet = null;
 		Element elem;
 		
 		try{
 			interval = root.getChild("interval");
 			color = root.getChild("color");
 			networkForces = root.getChild("networkForces");
+			tweetsToGet = root.getChild("tweetsToGet");
 		}catch(Exception e){
 		}
 		
@@ -917,6 +929,13 @@ public class ControllerDeepTwitter {
 		else
 			mainWindow.getButtonCurvedEdges().setSelected(true);
 		
+		//tweets to get
+		try{
+			elem = tweetsToGet.getChild("updates");
+			elem.setText(String.valueOf(updatesToGet));
+		}catch(Exception e){
+		}
+		
 		//forces
     	prefuse.util.force.Force[] forces = networkView.getForceSimulator().getForces();
     	
@@ -984,6 +1003,9 @@ public class ControllerDeepTwitter {
     			}
     		}
     	}
+    	
+    	
+    	
 		FileWriter f = null;
 		try {
 			f = new FileWriter(new File("files/config.xml"));
@@ -1024,12 +1046,14 @@ public class ControllerDeepTwitter {
 		Element interval = null;
 		Element color = null;
 		Element networkForces = null;
+		Element tweetsToGet = null;
 		Element elem;
 		
 		try{
 			interval = root.getChild("interval");
 			color = root.getChild("color");
 			networkForces = root.getChild("networkForces");
+			tweetsToGet = root.getChild("tweetsToGet");
 		}catch(Exception e){
 		}
 		
@@ -1177,6 +1201,14 @@ public class ControllerDeepTwitter {
 		}catch(Exception e){
 			networkView.setEdgeType(false);
 		}
+		
+		//tweets to get
+		try{
+			elem = tweetsToGet.getChild("updates");
+			updatesToGet = Integer.parseInt(elem.getText());
+		}catch(Exception e){
+			updatesToGet = 100;
+		}
 			
 		//networkForces
     	float gravConstant = -1f;
@@ -1287,7 +1319,7 @@ public class ControllerDeepTwitter {
     	}
 	}
 	
-	public void loadDefaultSettingsNetworkForces(){		
+	public Settings getDefaultSettingsNetworkForces(){		
 		File file = new File("files/defaultConfigs.xml");
 		SAXBuilder sb = new SAXBuilder();
 
@@ -1363,69 +1395,18 @@ public class ControllerDeepTwitter {
 		try{
 			elem = networkForces.getChild("defaultLength");
 			defaultLength = Float.parseFloat(elem.getText());
-		}catch(Exception e){
+		} catch (Exception e) {
 			defaultLength = 180f;
 		}
 		
-    	prefuse.util.force.Force[] forces = networkView.getForceSimulator().getForces();
-    	
-    	for(int i=0;i<forces.length;i++){
-    		if(forces[i] instanceof NBodyForce){    			
-    			NBodyForce n = (NBodyForce) forces[i];
-    			
-    			for(int j=0 ; j<n.getParameterCount(); j++){    				
-    				if(n.getParameterName(j).equals("GravitationalConstant")){
-    					try{
-    						n.setParameter(j, gravConstant);
-    					}catch(Exception e){
-    					}
-    				}
-    				else if(n.getParameterName(j).equals("Distance")){
-    					try{
-    						n.setParameter(j, minDistance);
-    					}catch(Exception e){
-    					}
-    				}
-    				else if(n.getParameterName(j).equals("BarnesHutTheta")){
-    					try{
-    						n.setParameter(j, theta);
-    					}catch(Exception e){
-    					}
-    				}
-    			}
-    		}
-    		else if(forces[i] instanceof SpringForce){
-    			SpringForce n = (SpringForce) forces[i];
-    			for(int j=0 ; j<n.getParameterCount(); j++){    				
-    				if(n.getParameterName(j).equals("SpringCoefficient")){
-    					try{
-    						n.setParameter(j, springCoeff);
-    					}catch(Exception e){
-    					}
-    				}
-    				else if(n.getParameterName(j).equals("DefaultSpringLength")){
-    					try{
-    						n.setParameter(j, defaultLength);
-    					}catch(Exception e){
-    					}
-    				}
-    			}    			
-    		}    		
-    		else if(forces[i] instanceof DragForce){    			
-    			DragForce n = (DragForce) forces[i];
-    			for(int j=0 ; j<n.getParameterCount(); j++){    				
-    				if(n.getParameterName(j).equals("DragCoefficient")){
-    					try{
-    						n.setParameter(j, drag);
-    					}catch(Exception e){
-    					}
-    				}    				
-    			}
-    		}
-    	}
+		Settings settings = new Settings(gravConstant, minDistance, theta, 
+				springCoeff, defaultLength, drag);
+		
+		return settings;
+
 	}
-	
-	public void loadDefaultSettingsOther(){		
+
+	public Settings getDefaultSettingsOther() {		
 		File file = new File("files/defaultConfigs.xml");
 		SAXBuilder sb = new SAXBuilder();
 
@@ -1448,157 +1429,180 @@ public class ControllerDeepTwitter {
 		
 		Element interval = null;
 		Element color = null;
+		Element tweetsToGet = null;
 		Element elem;
+		
+		int rIntervalUpdates, rIntervalMentions, rIntervalFavorites,
+		rIntervalDirectMessages, rIntervalSearch, rIntervalPublicTimeline,
+		rIntervalMostPopularUsers, rEdgeColor, rTextColor, rMainUserColor,
+		rSearchResultColor, rFriendsColor, rFollowersColor, rFriendsAndFollowersColor,
+		rSelectedItemColor, rEdgeType, rNodeStrokeColor, rUpdatesToGet;
+		
+		
 		
 		try{
 			interval = root.getChild("interval");
 			color = root.getChild("color");
+			tweetsToGet = root.getChild("tweetsToGet");
 		}catch(Exception e){
 		}
 		
 		//intervalUpdates
 		try{
 			elem = interval.getChild("updates");
-			intervalUpdates = Integer.parseInt(elem.getTextTrim());
+			rIntervalUpdates = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalUpdates = 1;
+			rIntervalUpdates = 1;
 		}
 		
 		//intervalMentions
 		try{
 			elem = interval.getChild("mentions");
-			intervalMentions = Integer.parseInt(elem.getTextTrim());
+			rIntervalMentions = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalMentions = 1;
+			rIntervalMentions = 1;
 		}
 		
 		//intervalFavorites
 		try{
 			elem = interval.getChild("favorites");
-			intervalFavorites = Integer.parseInt(elem.getTextTrim());
+			rIntervalFavorites = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalFavorites = 1;
+			rIntervalFavorites = 1;
 		}
 		
 		//intervalDirectMessages
 		try{
 			elem = interval.getChild("directMessages");
-			intervalDirectMessages = Integer.parseInt(elem.getTextTrim());
+			rIntervalDirectMessages = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalDirectMessages = 1;
+			rIntervalDirectMessages = 1;
 		}
 		
 		//intervalSearch
 		try{
 			elem = interval.getChild("search");
-			intervalSearch = Integer.parseInt(elem.getTextTrim());
+			rIntervalSearch = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalSearch = 1;
+			rIntervalSearch = 1;
 		}
-		
+
 		//intervalPublicTimeline
 		try{
 			elem = interval.getChild("publicTimeline");
-			intervalPublicTimeline = Integer.parseInt(elem.getTextTrim());
+			rIntervalPublicTimeline = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalPublicTimeline = 1;
+			rIntervalPublicTimeline = 1;
 		}
 		
 		//intervalMostActiveUsers
 		try{
 			elem = interval.getChild("mostPopularUsers");
-			intervalMostPopularUsers = Integer.parseInt(elem.getTextTrim());
+			rIntervalMostPopularUsers = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			intervalMostPopularUsers = 7;
+			rIntervalMostPopularUsers = 7;
 		}
 		
 		//edgeColor
 		try{
 			elem = color.getChild("edge");
-			networkView.setEdgeColor(Integer.parseInt(elem.getTextTrim()));
+			rEdgeColor = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			networkView.setEdgeColor(-8355712);
+			rEdgeColor = -8355712;
 		}
 		
 		//textColor
 		try{
 			elem = color.getChild("text");
-			networkView.setTextColor(Integer.parseInt(elem.getTextTrim()));
+			rTextColor = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			networkView.setTextColor(-16777216);
+			rTextColor = -16777216;
 		}
 		
 		//mainUserColor
 		try{
 			elem = color.getChild("mainUser");
-			networkView.setMainUserColor(Integer.parseInt(elem.getTextTrim()));
+			rMainUserColor = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			networkView.setMainUserColor(-14336);
+			rMainUserColor = -14336;
 		}
 		
 		//searchResultColor
 		try{
 			elem = color.getChild("searchResult");
-			networkView.setSearchResultColor(Integer.parseInt(elem.getTextTrim()));
+			rSearchResultColor = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			networkView.setSearchResultColor(-10789889);
+			rSearchResultColor = -10789889;
 		}
 		
 		//friendsColor
 		try{
 			elem = color.getChild("friends");
-			networkView.setFriendsColor(Integer.parseInt(elem.getTextTrim()));
+			rFriendsColor = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			networkView.setFriendsColor(-12517377);
+			rFriendsColor = -12517377;
 		}
 		
 		//followersColor
 		try{
 			elem = color.getChild("followers");
-			networkView.setFollowersColor(Integer.parseInt(elem.getTextTrim()));
+			rFollowersColor = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			networkView.setFollowersColor(-49088);
+			rFollowersColor = -49088;
 		}
 		
 		//friendsAndFollowersColor
 		try{
 			elem = color.getChild("friendsAndFollowers");
-			networkView.setFriendsAndFollowersColor(Integer.parseInt(elem.getTextTrim()));
+			rFriendsAndFollowersColor = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			networkView.setFriendsAndFollowersColor(-12517568);
+			rFriendsAndFollowersColor = -12517568;
 		}
 		
 		//selectedItemColor
 		try{
 			elem = color.getChild("selectedItem");
-			networkView.setSelectedItemColor(Integer.parseInt(elem.getTextTrim()));
+			rSelectedItemColor = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			networkView.setSelectedItemColor(-192);
+			rSelectedItemColor  = -192;
 		}
 		
 		//nodeStrokeColor
 		try{
 			elem = color.getChild("nodeStroke");
-			networkView.setNodeStrokeColor(Integer.parseInt(elem.getTextTrim()));
+			rNodeStrokeColor = Integer.parseInt(elem.getTextTrim());
 		}catch(Exception e){
-			networkView.setNodeStrokeColor(-16777216);
+			rNodeStrokeColor = -16777216;
 		}
 		
 		//edgeType
 		try{
 			elem = root.getChild("edgeType");
-			int edgeType = Integer.parseInt(elem.getTextTrim());
+			rEdgeType = Integer.parseInt(elem.getTextTrim());
 			
-			if(edgeType == 0){
-				networkView.setEdgeType(false);
-				mainWindow.getButtonCurvedEdges().setSelected(false);
-			}
-			else{
-				networkView.setEdgeType(true);
-				mainWindow.getButtonCurvedEdges().setSelected(true);
-			}
 		}catch(Exception e){
-			networkView.setEdgeType(false);
+			rEdgeType = 0;
 		}
+		
+		//tweets to get
+		try{
+			elem = tweetsToGet.getChild("updates");
+			rUpdatesToGet = Integer.parseInt(elem.getTextTrim());
+			
+		}catch(Exception e){
+			rUpdatesToGet = 100;
+		}
+		
+		
+		Settings settings = new Settings(rIntervalUpdates, rIntervalMentions,
+				rIntervalFavorites, rIntervalDirectMessages,
+				rIntervalSearch, rIntervalPublicTimeline,
+				rIntervalMostPopularUsers, rEdgeColor, rTextColor,
+				rMainUserColor, rSearchResultColor, rFriendsColor,
+				rFollowersColor, rFriendsAndFollowersColor,
+				rSelectedItemColor, rNodeStrokeColor, rEdgeType,
+				rUpdatesToGet);
+		
+		return settings;
 	}
 }

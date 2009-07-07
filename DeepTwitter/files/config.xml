@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <configuration>
   <interval>
-    <updates>1</updates>
-    <mentions>1</mentions>
-    <favorites>1</favorites>
-    <directMessages>2</directMessages>
-    <search>7</search>
-    <publicTimeline>1</publicTimeline>
-    <mostPopularUsers>7</mostPopularUsers>
+    <updates>60</updates>
+    <mentions>60</mentions>
+    <favorites>60</favorites>
+    <directMessages>60</directMessages>
+    <search>60</search>
+    <publicTimeline>60</publicTimeline>
+    <mostPopularUsers>60</mostPopularUsers>
   </interval>
   <color>
-    <edge>-8355712</edge>
-    <text>-16777216</text>
-    <mainUser>-14336</mainUser>
-    <searchResult>-10789889</searchResult>
-    <friends>-12517377</friends>
-    <followers>-49088</followers>
-    <friendsAndFollowers>-12517568</friendsAndFollowers>
-    <selectedItem>-192</selectedItem>
-    <nodeStroke>-16777216</nodeStroke>
+    <edge>-1</edge>
+    <text>-1</text>
+    <mainUser>-1</mainUser>
+    <searchResult>-1</searchResult>
+    <friends>-1</friends>
+    <followers>-1</followers>
+    <friendsAndFollowers>-1</friendsAndFollowers>
+    <selectedItem>-1</selectedItem>
+    <nodeStroke>-1</nodeStroke>
   </color>
-  <edgeType>0</edgeType>
+  <edgeType>1</edgeType>
   <networkForces>
     <gravConstant>-1.0</gravConstant>
     <minDistance>-1.0</minDistance>
@@ -29,5 +29,8 @@
     <springCoeff>9.99E-6</springCoeff>
     <defaultLength>180.0</defaultLength>
   </networkForces>
+  <tweetsToGet>
+    <updates>150</updates>
+  </tweetsToGet>
 </configuration>
 
