@@ -2,6 +2,7 @@ package controller;
 
 import gui.visualizations.NetworkView;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import model.MessageType;
@@ -11,6 +12,7 @@ import controller.ControllerDeepTwitter;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 import prefuse.data.tuple.TupleSet;
+import prefuse.data.util.TableIterator;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
 import prefuse.visual.EdgeItem;
@@ -87,40 +89,70 @@ public class GroupManager {
     		int groupId = n.getInt("groupId");
     		if(groupId<0) return;
 
-    		AggregateItem ai = (AggregateItem) groupTable.getItem(groupId);    	
-    		n.setInt("groupId", -1);
-    		Iterator<EdgeItem> i = n.edges();
+    		Iterator<AggregateItem> aggregates = groupTable.getAggregates(n);
+    		while(aggregates.hasNext()) {
+    			AggregateItem ai = aggregates.next();    	
+    			n.setInt("groupId", -1);
+    			Iterator<EdgeItem> i = n.edges();
 
-    		//TODO: trocar esta gambiarra por algo menos custoso?
-    		boolean aindaTem = true;
-    		while(aindaTem)
-    		while(i.hasNext()) {
-    			try{
-    				EdgeItem edge = i.next();
-    				if(edge.getFloat("weight")==networkView.getWeightValue()) 
-    					edge.setFloat("weight", 0f);
-    				else if(edge.getFloat("weight")==-1.0f) 
-    					networkView.removeEdge((Edge)edge.getSourceTuple());
+    			ArrayList<EdgeItem> edgesToRemove = new ArrayList<EdgeItem>();
+
+    			while(i.hasNext()) {
+    				try{
+    					EdgeItem edge = i.next();
+    					if(edge.getFloat("weight")==networkView.getWeightValue()) 
+    						edge.setFloat("weight", 0f);
+    					else if(edge.getFloat("weight")==-1.0f) 
+    						edgesToRemove.add(edge);
+    				}
+    				catch(IllegalArgumentException e) {    				
+    					e.printStackTrace();
+    				}
     			}
-    			catch(IllegalArgumentException e) {
-    				aindaTem = true;
-    				i = n.edges();
-    				e.printStackTrace();
+    			for(EdgeItem e : edgesToRemove) {
+    				try {
+    					networkView.removeEdge((Edge)e.getSourceTuple());
+    				}
+    				catch(Exception e1) {}
     			}
-    			aindaTem = false;
+    			ai.removeItem(n);
     		}
-    		ai.removeItem(n);
     	}
     }
     
     public void removeGroup(AggregateItem ai) {
     	synchronized(networkView.getVisualization()) {
     		Iterator<NodeItem> i = ai.items();
+    		ArrayList<NodeItem> nodesToRemove = new ArrayList<NodeItem>();
     		while(i.hasNext()) {
     			NodeItem n = i.next();
-    			removeFromGroup(n);
+    			n.setInt("groupId", -1);
+    			nodesToRemove.add(n);
+    			Iterator<EdgeItem> i2 = n.edges();
+    			ArrayList<EdgeItem> edgesToRemove = new ArrayList<EdgeItem>();
+    			while(i2.hasNext()) {
+    				try{
+    					EdgeItem edge = i2.next();
+    					if(edge.getFloat("weight")==networkView.getWeightValue()) 
+    						edge.setFloat("weight", 0f);
+    					else if(edge.getFloat("weight")==-1.0f) 
+    						edgesToRemove.add(edge);
+    				}
+    				catch(IllegalArgumentException e) {    				
+    					e.printStackTrace();
+    				}
+    			}
+    			for(EdgeItem e : edgesToRemove) {
+    				try {
+    					networkView.removeEdge((Edge)e.getSourceTuple());
+    				}
+    				catch(Exception e1) {}
+    			}			
+    		}    
+    		for(NodeItem n : nodesToRemove) {
+    			ai.removeItem(n);
     		}
-    		groupTable.removeRow(ai.getInt("id"));    
+    		groupTable.removeTuple(ai);//ai.getInt("id"));    
     	}
     }
     

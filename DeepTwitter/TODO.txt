@@ -2,7 +2,6 @@ TODO:
 
 - * utilizar s.getUser().getUtcOffset() para poder exibir as atualizacoes na hora local da pessoa
 - * grupos: ao adicionar membro ao grupo, adicionar atualizacoes dele ao panel
-- * consertar remocao de grupos;
 - inserir no painel de atualizacoes a data e o link para ver na web;
 - possibilitar definir o inReplyTo nos statuses;
 - permitir varias buscas;
@@ -14,8 +13,3 @@ TODO:
 - * mostrar mensagens de erro e notificações na toolbar principal;
 - escolher forças de atração/repulsão melhores;
 
-vis categorias
-- arrumar bug de alterar texto igual ao a um que jah exista
-- tirar classes estaticas
-
-- arrumar nao salvar das forcas 

@@ -55,9 +55,9 @@ public class AddFollowersThread extends Thread {
 				}
 			}
 			if(!isShowingFollowers)
-				controller.setStatusBarMessage("Adicionados "+(followers.size()-notAdded)+" seguidores de "+source.getString("name") +" à rede. "+notAdded+" já existentes.");
+				controller.setStatusBarMessage("Adicionados "+(followers.size()-notAdded)+" seguidores de "+source.getString("name") +" à rede. "+notAdded+" já existentes.",MessageType.INFORMATION);
 			else
-				controller.setStatusBarMessage("Adicionados "+notAdded+" seguidores de "+source.getString("name") +" à rede. "+(followers.size()-notAdded)+" já existentes.");
+				controller.setStatusBarMessage("Adicionados "+notAdded+" seguidores de "+source.getString("name") +" à rede. "+(followers.size()-notAdded)+" já existentes.",MessageType.INFORMATION);
 			
 			source.setBoolean("isShowingFollowers",true);
 			//node count: botar no log

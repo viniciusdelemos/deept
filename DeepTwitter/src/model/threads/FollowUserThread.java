@@ -39,14 +39,14 @@ public class FollowUserThread extends Thread {
 				controller.getTwitter().createFriendship(targetNode.getString("idTwitter"));
 				//controller.getTwitter().follow(userId);						
 				networkView.addEdge(mainUserNode, targetNode);
-				controller.setStatusBarMessage("Agora seguindo "+targetNode.getString("name"));
+				controller.setStatusBarMessage("Agora seguindo "+targetNode.getString("name"),MessageType.INFORMATION);
 			}
 			else { //leave
 				if(!existsFriendship) return;
 				controller.getTwitter().destroyFriendship(targetNode.getString("idTwitter"));
 				//controller.getTwitter().leave(userId);				
 				networkView.removeEdge(mainUserNode, targetNode);
-				controller.setStatusBarMessage("Deixando de seguir "+targetNode.getString("name"));
+				controller.setStatusBarMessage("Deixando de seguir "+targetNode.getString("name"),MessageType.INFORMATION);
 			}
 
 		} catch (TwitterException e) {	

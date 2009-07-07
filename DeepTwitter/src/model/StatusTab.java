@@ -59,7 +59,7 @@ public class StatusTab {
 		this.type = type;
 		idArray = new ArrayList<String>();			
 		currentTable = 0;
-		if(type == StatusesType.UPDATES || type == StatusesType.FAVORITES) 		
+		if(type == StatusesType.UPDATES || type == StatusesType.FAVORITES || type == StatusesType.SEARCH) 		
 			hasMultiplePanels = true;		
 		tablesMap = new HashMap<String,StatusesTableThread>();		
 	}
@@ -86,7 +86,7 @@ public class StatusTab {
 				userId = "sent";
 			else if(isGroup)
 				setCurrentUserName(userId);
-			else 
+			else if(type!=StatusesType.SEARCH)
 				setCurrentUserName(controller.getUserName(userId));
 			tablesMap.put(userId,newTable);
 			idArray.add(userId);
@@ -168,7 +168,7 @@ public class StatusTab {
         jToolBar1.add(buttonPreviousUser);
 
         if(type == StatusesType.SEARCH) {
-        	txtCurrentUser.setBackground(new java.awt.Color(240, 240, 240));
+        	//txtCurrentUser.setBackground(new java.awt.Color(240, 240, 240));
         	txtCurrentUser.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
             txtCurrentUser.setHorizontalAlignment(javax.swing.JTextField.LEFT);
             txtCurrentUser.setText("busca");
@@ -304,7 +304,7 @@ public class StatusTab {
 			buttonNewDirectMessage.setVisible(false);	
 			buttonPreviousUser.setVisible(false);
 			buttonNextUser.setVisible(false);
-			buttonCloseUpdates.setVisible(false);		
+			//buttonCloseUpdates.setVisible(false);		
 			break;
 		}
 	}
@@ -355,7 +355,8 @@ public class StatusTab {
 			buttonPreviousUser.setEnabled(true);
 			buttonNextUser.setEnabled(true);
 		}
-		if(idArray.get(currentTable).equals(controller.getLoggedUserId()))
+		if(idArray.get(currentTable).equals(controller.getLoggedUserId())
+				&& type!=StatusesType.SEARCH)
 			buttonCloseUpdates.setEnabled(false);
 		else
 			buttonCloseUpdates.setEnabled(true);
@@ -412,8 +413,7 @@ public class StatusTab {
 			else if(cmd.equals("buttonCloseUpdates")) {
 				String id = idArray.get(currentTable);
 				tablesMap.get(id).interruptThread();
-				tablesMap.remove(id);				
-				
+				tablesMap.remove(id);			
 				if(currentTable==idArray.size()-1) {
 					idArray.remove(currentTable);
 					currentTable--;
@@ -428,8 +428,10 @@ public class StatusTab {
 				}
 				else {
 					jScrollPane6.setViewportView(new JPanel());
-					buttonTurnOnOff.setEnabled(false);
-					buttonCloseUpdates.setEnabled(false);
+					if(type!=StatusesType.SEARCH) {
+						buttonTurnOnOff.setEnabled(false);
+						buttonCloseUpdates.setEnabled(false);
+					}
 					setCurrentUserName("");
 				}								
 			}
