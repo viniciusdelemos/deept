@@ -4,16 +4,20 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
@@ -136,19 +140,14 @@ public class NetworkView extends Display {
     	g.addColumn("idTwitter",int.class);
     	g.addColumn("screenName", String.class);
     	g.addColumn("name", String.class);
-    	g.addColumn("image", String.class);
-    	
+    	g.addColumn("image", String.class);    	
     	g.addColumn("location", String.class);
     	g.addColumn("description", String.class);
     	g.addColumn("protected", boolean.class);
     	g.addColumn("friendsCount", int.class);
     	g.addColumn("followersCount", int.class);
     	g.addColumn("statusesCount", int.class);
-    	g.addColumn("favoritesCount", int.class);
-//    	getProfileBackgroundImageUrl()
-//    	getProfileBackgroundColor()
-//    	getProfileTextColor()
-    	
+    	g.addColumn("favoritesCount", int.class);    	
     	g.addColumn("latestStatus", String.class);
     	g.addColumn("isOpen", boolean.class); 
     	g.addColumn("isShowingFriends", boolean.class);
@@ -345,7 +344,28 @@ public class NetworkView extends Display {
     	
     	//executar ações associadas ao layout    	
     	m_vis.run("layout");    
-    }        
+    }
+    
+    class TestLoadUserImage extends Thread {
+		private User u;
+		private Node newNode;
+		
+		public TestLoadUserImage(User u, Node newNode) {
+			this.u = u;
+			this.newNode = newNode;
+			start();
+		}
+		
+		public void run() {			
+			if(controller.getUserImageMap().containsKey(u.getId())) 
+				newNode.set("image",(ImageIcon)controller.getUserImageMap().get(u.getId()));				
+			else {			
+				ImageIcon userPicture = new ImageIcon(u.getProfileImageURL());											
+				newNode.set("image",userPicture);				
+				controller.getUserImageMap().put(u.getId(), userPicture);
+			}			
+		}
+	}
 	
     public Node addNode(User u) {    	  	
     	synchronized (m_vis) {
@@ -355,6 +375,8 @@ public class NetworkView extends Display {
 			newNode.set("idTwitter", u.getId());
 			newNode.set("screenName", u.getScreenName());
 			newNode.set("name", u.getName());
+			
+			//new TestLoadUserImage(u,newNode);
 			newNode.set("image", u.getProfileImageURL().toString());
 			newNode.set("latestStatus",u.getStatusText());
 			

@@ -174,7 +174,7 @@ public class StatusesTableThread {
 		});
 		updatePanel.add(interactiveImage,gbc);
 		
-		new LoadUserImage(profileImageURL,interactiveImage);
+		new LoadUserImage(senderId,profileImageURL,interactiveImage);
 
 		gbc.weightx = 1;
 		gbc.gridx = 1;
@@ -744,23 +744,29 @@ public class StatusesTableThread {
 	
 	class LoadUserImage extends Thread {
 		private URL url;
+		private long senderId;
 		private JLabel interactiveImage;
 		
-		public LoadUserImage(URL url, JLabel interactiveImage) {
+		public LoadUserImage(long senderId, URL url, JLabel interactiveImage) {
+			this.senderId = senderId;
 			this.url = url;
 			this.interactiveImage = interactiveImage;
 			start();
 		}
 		
-		public void run() {
-			ImageIcon userPicture = new ImageIcon(url);
-			
-			if(userPicture.getIconHeight()>48 || userPicture.getIconWidth()>48) {
-				Image image = userPicture.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);
-				interactiveImage.setIcon(new ImageIcon(image));
-			}
-			else			
+		public void run() {			
+			if(controller.getUserImageMap().containsKey(senderId)) 
+				interactiveImage.setIcon((ImageIcon)controller.getUserImageMap().get(senderId));				
+			else {			
+				ImageIcon userPicture = new ImageIcon(url);
+				if(userPicture.getIconHeight()>48 || userPicture.getIconWidth()>48) {
+					Image image = userPicture.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT);					
+					userPicture.setImage(image);						
+				}							
 				interactiveImage.setIcon(userPicture);
+				if(statusesType != StatusesType.PUBLIC_TIMELINE && statusesType != StatusesType.SEARCH)
+					controller.getUserImageMap().put(senderId, userPicture);
+			}			
 		}
 	}
 }

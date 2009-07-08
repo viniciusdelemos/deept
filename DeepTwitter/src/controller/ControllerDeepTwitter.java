@@ -15,6 +15,7 @@ import gui.visualizations.MostPopularUsersView.ShowingBy;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -25,8 +26,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -100,9 +104,10 @@ public class ControllerDeepTwitter {
 	private int intervalDirectMessages = 60;
 	private int intervalSearch = 60;
 	private int intervalPublicTimeline = 60;
-	private int intervalMostPopularUsers = 7;
-	
+	private int intervalMostPopularUsers = 7;	
 	private int updatesToGet = 100;
+	
+	private Map userImageMap;
 	
 	
 	private ControllerDeepTwitter(){
@@ -281,6 +286,8 @@ public class ControllerDeepTwitter {
 						tabManager.setEnabledAt(3, false); //mensagens
 					}
 					
+					userImageMap = new HashMap<Long, ImageIcon>();
+					
 					windowTabs.addChangeListener(new ChangeListener(){
 						@Override
 						public void stateChanged(ChangeEvent e) {
@@ -371,6 +378,10 @@ public class ControllerDeepTwitter {
 				e2.printStackTrace();
 			}			
 		}
+	}
+	
+	public Map getUserImageMap() {
+		return userImageMap;
 	}
 	
 	public void openGUINewUpdateWindow() {
