@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/prefuse"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/twitter4j"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/profusians"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/profusians"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

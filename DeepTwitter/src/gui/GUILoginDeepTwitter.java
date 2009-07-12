@@ -51,11 +51,9 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
 
         labelPassword.setFont(new java.awt.Font("Tahoma", 0, 14));
         labelPassword.setText("Senha:");
-
-        txtUser.setText("guilhermerotta");
+        
         txtUser.setNextFocusableComponent(txtPassword);
 
-        txtPassword.setText("g260405r");
         txtPassword.setNextFocusableComponent(OkButton);
 
         OkButton.setText("OK");
