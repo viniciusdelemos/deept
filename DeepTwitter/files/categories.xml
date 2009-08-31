@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <Categories>
+  <Category name="trends">
+    <Tag>#knewshewasagroupie</Tag>
+  </Category>
   <Category name="Notícias">
     <Tag>jornalista</Tag>
     <Tag>zh</Tag>
@@ -98,6 +101,7 @@
     <Tag>coldplay</Tag>
     <Tag>discografia</Tag>
     <Tag>grammy</Tag>
+    <Tag>oasis</Tag>
     <Tag>mallu magalhães</Tag>
   </Category>
   <Category name="Cinema e TV">
