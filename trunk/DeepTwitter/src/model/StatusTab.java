@@ -1,5 +1,6 @@
 package model;
 
+import gui.GUITagCloud;
 import gui.GUITimeline;
 
 import java.awt.Component;
@@ -44,6 +45,7 @@ public class StatusTab {
     private javax.swing.JButton buttonPreviousUser;
     private javax.swing.JButton buttonCloseUpdates;
     private javax.swing.JButton buttonTimeline;
+    private javax.swing.JButton buttonTagCloud;
     private javax.swing.JTextField txtCurrentUser;
 	private Map<String,StatusesTableThread> tablesMap;
 	private StatusesType type;
@@ -270,6 +272,17 @@ public class StatusTab {
         jToolBar1.add(buttonTimeline);
         buttonTimeline.getAccessibleContext().setAccessibleDescription("Visualização do Timeline de Atualizações");
         
+        buttonTagCloud.setBackground(new java.awt.Color(240, 240, 240));
+        buttonTagCloud.setIcon(new javax.swing.ImageIcon(getClass().getResource("../tagcloud.png"))); // NOI18N
+        buttonTagCloud.setToolTipText("Visualização da Tag Cloud");
+        buttonTagCloud.setActionCommand("buttonTagCloud");
+        buttonTagCloud.setFocusable(false);
+        buttonTagCloud.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonTagCloud.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(buttonTagCloud);
+        buttonTagCloud.getAccessibleContext().setAccessibleDescription("Visualização da Tag Cloud");
+
+        
         reconfigToolBarBasedOnTabType();
         jToolBar1.add(Box.createHorizontalStrut(80));
 		panel.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
@@ -317,6 +330,7 @@ public class StatusTab {
 		jSeparator5 = new Separator();
 		buttonTurnOnOff = new JToggleButton();
 		buttonTimeline = new JButton();
+		buttonTagCloud = new JButton();
 	    buttonNextUser = new JButton();
 	    buttonPreviousUser = new JButton();
 	    buttonCloseUpdates = new JButton();
@@ -332,6 +346,7 @@ public class StatusTab {
         buttonNextUser.addActionListener(tabListener);
         buttonTurnOnOff.addActionListener(tabListener);
         buttonTimeline.addActionListener(tabListener);
+        buttonTagCloud.addActionListener(tabListener);
         buttonSearchUpdates.addActionListener(tabListener);
         buttonInbox.addActionListener(tabListener);
         buttonOutbox.addActionListener(tabListener);
@@ -452,6 +467,11 @@ public class StatusTab {
 			}
 			else if(cmd.equals("buttonNewDirectMessage")) {
 				controller.openGUINewUpdateWindow("",StatusesType.DIRECT_MESSAGES);
+			}
+			else if(cmd.equals("buttonTagCloud")){
+				String userId = idArray.get(currentTable);
+				StatusesTableThread table = tablesMap.get(userId);
+				new GUITagCloud(table.getStatusesList(),table.isGroup(),txtCurrentUser.getText());
 			}
 			else
 				System.out.println(cmd);
