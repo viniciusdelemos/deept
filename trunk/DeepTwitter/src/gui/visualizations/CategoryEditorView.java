@@ -96,7 +96,7 @@ public class CategoryEditorView extends Display {
 		// 0 Category, 1 Categories, 2 Words of category
 
 		Node root = t.addRoot();
-		root.set(c_label, "Categorias");
+		root.set(c_label, "Categories");
 		root.set(c_type, t_Categories);
 
 		// abre categorias do CategoryManager
@@ -415,8 +415,8 @@ public class CategoryEditorView extends Display {
 		private JMenuItem addCategory;
 		private JMenuItem addWord;
 
-		private String defaultTextNewCategory = "Nova Categoria";
-		private String defaultTextNewWord = "Nova Palavra";
+		private String defaultTextNewCategory = "New Category";
+		private String defaultTextNewWord = "New Tag";
 
 		public PopupMenuController(Visualization vis) {
 			this.d = vis.getDisplay(0);
@@ -424,10 +424,10 @@ public class CategoryEditorView extends Display {
 
 			nodePopupMenu = new JPopupMenu();
 
-			delete = new JMenuItem("Excluir");
-			edit = new JMenuItem("Editar nome");
-			addCategory = new JMenuItem("Adicionar categoria");
-			addWord = new JMenuItem("Adicionar palavra");
+			delete = new JMenuItem("Delete");
+			edit = new JMenuItem("Edit");
+			addCategory = new JMenuItem("Add category");
+			addWord = new JMenuItem("Add tag");
 
 			delete.setActionCommand(l_delete);
 			edit.setActionCommand(l_editLabel);

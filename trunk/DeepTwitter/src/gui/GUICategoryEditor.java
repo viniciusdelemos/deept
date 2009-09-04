@@ -105,8 +105,8 @@ public class GUICategoryEditor {
 			box.add(Box.createHorizontalStrut(3));
 			box.setBackground(BACKGROUND);
 
-			JButton save = new JButton("Salvar");
-			JButton exit = new JButton("Sair");
+			JButton save = new JButton("Save");
+			JButton exit = new JButton("Exit");
 			save.setBackground(BACKGROUND);
 			save.setForeground(FOREGROUND);
 			exit.setBackground(BACKGROUND);
@@ -154,7 +154,7 @@ public class GUICategoryEditor {
 			
 			
 
-			frame = new JFrame("DeepTwitter - Gerenciador de Categorias");
+			frame = new JFrame("DeepTwitter - Categories Management");
 			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			frame.setContentPane(panel);
 			frame.pack();
@@ -209,7 +209,7 @@ public class GUICategoryEditor {
 		////categoryEditor.getTreeLayout().setLayoutAnchor(new Point2D.Double(300, 300));
 		// treeLayout.setLayoutAnchor(new Point2D.Double(150, 300));
 		frame.setVisible(true);
-		//frame.setLocationRelativeTo(null);
+		frame.setLocationRelativeTo(null);
 		////categoryEditor.getTreeLayout().setLayoutAnchor(new Point2D.Double(-200, -25));
 		// treeLayout.setLayoutAnchor(new Point2D.Double(-200, -25));
 

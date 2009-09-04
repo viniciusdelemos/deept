@@ -40,6 +40,61 @@ public class TagCloudView extends JPanel implements MouseListener{
         
         init();
     }
+    
+    private void add(String name, int type, double normScore){
+    	
+    	JLabelTag jlabel1 = new JLabelTag(name);
+    	jlabel1.setType(type);
+    	jlabel1.setNormScore(normScore);
+    	jlabel1.setScore(9);
+    	tags.put(jlabel1.getName(), jlabel1);
+    	
+    }
+    
+    private void mountTags(){
+    	
+    	tags = new Hashtable<String, JLabelTag>();
+    	
+    	add("Apple", JLabelTag.typeBoth, 0.88);
+    	
+    	add("Twitter", JLabelTag.typeCategories, 0.7);
+    	
+    	add("Sushi", JLabelTag.typeCategories, 0.1);
+    	
+    	add("#musicmonday", JLabelTag.typeTrends, 0.4);
+    	
+    	add("facebook", JLabelTag.typeCategories, 0.0);
+    	
+    	add("Marvel", JLabelTag.typeBoth, 0.8);
+    	
+    	
+    	
+    	add("Obama", JLabelTag.typeCategories, 0.6);
+    	
+    	add("friends", JLabelTag.typeCategories, 0.9);
+    	
+    	add("Travel", JLabelTag.typeCategories, 0.1);
+    	
+    	add("Disney", JLabelTag.typeCategories, 0.4);
+    	
+    	add("#rememberwhen", JLabelTag.typeTrends, 0.5);
+    	
+    	add("photos", JLabelTag.typeCategories, 0.2);
+    	
+    	add("geek", JLabelTag.typeCategories, 0.3);
+    	
+    	add("PS3", JLabelTag.typeTrends, 0.6);
+    	
+    	add("feeling", JLabelTag.typeCategories, 0.4);
+    	
+    	add("Movie", JLabelTag.typeBoth, 0.8);
+    	
+    	add("Opera", JLabelTag.typeCategories, 0.1);
+    	
+    	add("iPhone", JLabelTag.typeBoth, 1);
+    	
+
+    }
 
     private void init(){
 
@@ -56,6 +111,8 @@ public class TagCloudView extends JPanel implements MouseListener{
 //
 //        }
     	
+    	
+    	
     	new MakeCloud().start();
     	
     	while(finished == false){
@@ -65,6 +122,10 @@ public class TagCloudView extends JPanel implements MouseListener{
 				// TODO: handle exception
 			}
     	}
+
+    	
+    	
+    	//mountTags();
     	
     	Collection<JLabelTag> jlabelTags = tags.values();
     	
