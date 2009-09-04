@@ -45,21 +45,21 @@ public class GUITagCloud extends JFrame {
 
 		JPanel panelCategories = new JPanel();
 		panelCategories.setBackground(new Color(TagCloudView.colorCategories));
-		JLabel labelCategories = new JLabel("from Categories");
+		JLabel labelCategories = new JLabel("Categories");
 		labelCategories.setForeground(Color.WHITE);
 		labelCategories.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panelCategories.add(labelCategories);
 		
 		JPanel panelTrends = new JPanel();
 		panelTrends.setBackground(new Color(TagCloudView.colorTrends));
-		JLabel labelTrends = new JLabel("from Trends");
+		JLabel labelTrends = new JLabel("Popular Topics");
 		labelTrends.setForeground(Color.WHITE);
 		labelTrends.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panelTrends.add(labelTrends);
 		
 		JPanel panelCategoriesTrends = new JPanel();
 		panelCategoriesTrends.setBackground(new Color(TagCloudView.colorBoth));
-		JLabel labelCategoriesTrends = new JLabel("from Categories and Trends");
+		JLabel labelCategoriesTrends = new JLabel("Categories and Popular Topics");
 		labelCategoriesTrends.setForeground(Color.WHITE);
 		labelCategoriesTrends.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panelCategoriesTrends.add(labelCategoriesTrends);

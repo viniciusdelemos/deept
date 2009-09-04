@@ -55,21 +55,48 @@ public class TagCloudManager {
 			}
 		}
 		
-		//Put current trends in hashmap
-		Trends trends = null;
-		try{
-			trends = controller.getTwitter().getCurrentTrends();
-		}catch(TwitterException e){
+		/** Agora pegando weekly trends*/
+		
+		List<Trends> trends = null;
+		
+		try {
+			trends = controller.getTwitter().getWeeklyTrends();
+		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
 		
-		Trend[] trend = trends.getTrends();
 		
-		for(Trend t : trend){
-			if(tagsTrends.containsKey(t.getName()) == false){
-				tagsTrends.put(t.getName().toLowerCase().trim(), 0);
+		for(Trends tr : trends){
+			
+			Trend[] trend = tr.getTrends();
+			
+			for(Trend t : trend){
+				if(tagsTrends.containsKey(t.getName().toLowerCase().trim()) == false){
+					tagsTrends.put(t.getName().toLowerCase().trim(), 0);
+				}
 			}
+			
+			
 		}
+		
+		/** Não pega mais current trends*/
+		///////////
+		
+//		//Put current trends in hashmap
+//		Trends trends = null;
+//		try{
+//			trends = controller.getTwitter().getCurrentTrends();
+//		}catch(TwitterException e){
+//			e.printStackTrace();
+//		}
+//		
+//		Trend[] trend = trends.getTrends();
+//		
+//		for(Trend t : trend){
+//			if(tagsTrends.containsKey(t.getName()) == false){
+//				tagsTrends.put(t.getName().toLowerCase().trim(), 0);
+//			}
+//		}
 		
 		//Percorrendo todas atualizacoes procurando por alguma tag...
 		for(TwitterResponse tr : statusList){
@@ -80,16 +107,16 @@ public class TagCloudManager {
 				String[] text = status.getText().split(" ");
 				
 				for(String word : text){
-					if(tagsCategories.containsKey(word.toLowerCase())){
+					if(tagsCategories.containsKey(word.toLowerCase().trim())){
 						int score = tagsCategories.get(word.toLowerCase().trim());
 						score++;
-						tagsCategories.put(word, score);
+						tagsCategories.put(word.toLowerCase().trim(), score);
 					}
 					
-					if(tagsTrends.containsKey(word.toLowerCase())){
+					if(tagsTrends.containsKey(word.toLowerCase().trim())){
 						int score = tagsTrends.get(word.toLowerCase().trim());
 						score++;
-						tagsTrends.put(word, score);
+						tagsTrends.put(word.toLowerCase().trim(), score);
 					}
 				}
 			}
@@ -103,16 +130,22 @@ public class TagCloudManager {
 		
 		
 		//Remove tags com zero ocorrencias
+		System.out.println("\nTags Categories");
 		List<Map.Entry> listCategoriesAux = new ArrayList<Map.Entry>(tagsCategories.entrySet());
 		for(Map.Entry<String, Integer> ls : listCategoriesAux){
-			if(ls.getValue() > 0)
+			if(ls.getValue() > 0){
 				listCategories.add(ls);
+				System.out.println("\t"+ls.getKey()+ "\t" + ls.getValue());
+			}
 		}
 		
+		System.out.println("\nTags Trends");
 		List<Map.Entry> listTrendsAux = new ArrayList<Map.Entry>(tagsTrends.entrySet());
 		for(Map.Entry<String, Integer> ls : listTrendsAux){
-			if(ls.getValue() > 0)
+			if(ls.getValue() > 0){
 				listTrends.add(ls);
+				System.out.println("\t"+ls.getKey()+ "\t" + ls.getValue());
+			}
 		}
 				
 		
