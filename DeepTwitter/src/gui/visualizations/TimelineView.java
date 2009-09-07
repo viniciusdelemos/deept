@@ -86,10 +86,10 @@ import controller.CategoryManager;
 
 public class TimelineView extends JPanel {
 
-	private String panelTitle = "Atualizações de ";
+	private String panelTitle = "Tweets from ";
 	private String statusesCountText;
 	private int visibleStatuses;
-	private JFastLabel labelTotalStatuses = new JFastLabel("Exibindo "+visibleStatuses+" tweets");
+	private JFastLabel labelTotalStatuses = new JFastLabel("Showing "+visibleStatuses+" tweets");
 	private JFastLabel labelDetails;
 	private boolean categoriesOn, isStatusOrTweet;
 	private AndPredicate statusesFilter;
@@ -217,7 +217,7 @@ public class TimelineView extends JPanel {
 		labelTotalStatuses.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelTotalStatuses.setVerticalAlignment(SwingConstants.BOTTOM);
 
-		String descriptions[] = { "Usuário:", "Tweet:", "Categorias:","Data:" };
+		String descriptions[] = { "User:", "Tweet:", "Categories:","Date:" };
 		String data[] = { StatusesDataTable.ColNames.SCREEN_NAME.toString(), StatusesDataTable.ColNames.TWEET.toString(),
 				StatusesDataTable.ColNames.CATEGORIES.toString(),
 				StatusesDataTable.ColNames.FULL_DATE.toString()};
@@ -265,16 +265,16 @@ public class TimelineView extends JPanel {
 		infoBox.add(Box.createHorizontalStrut(5));
 
 		JSearchPanel screenNameSearcher = screenNameSearchQuery.createSearchPanel();
-		screenNameSearcher.setLabelText("Usuário: ");
+		screenNameSearcher.setLabelText("User: ");
 		screenNameSearcher.setBorder(BorderFactory.createEmptyBorder(5,5,5,0));
 		screenNameSearcher.setPreferredSize(new Dimension(150,30));
 		JSearchPanel textSearcher = textSearchQuery.createSearchPanel();
-		textSearcher.setLabelText("Texto: ");
+		textSearcher.setLabelText("Tweet: ");
 		textSearcher.setBorder(BorderFactory.createEmptyBorder(5,5,5,0));
 		textSearcher.setPreferredSize(new Dimension(170,30));
 
-		final JRadioButton buttonShapes = new JRadioButton("Formas");        
-		final JRadioButton buttonPhotos = new JRadioButton("Fotos");
+		final JRadioButton buttonShapes = new JRadioButton("Forms");        
+		final JRadioButton buttonPhotos = new JRadioButton("Photos");
 
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(buttonShapes);
@@ -302,7 +302,7 @@ public class TimelineView extends JPanel {
 			}}); 
 
 		JButton buttonCategoryManager = new JButton();
-		buttonCategoryManager.setToolTipText("Gerenciador de Categorias");
+		buttonCategoryManager.setToolTipText("Management Categories");
 		buttonCategoryManager.setIcon(new ImageIcon(getClass().getResource("../../archive.png")));        
 		buttonCategoryManager.addActionListener(new ActionListener(){
 			@Override
@@ -313,7 +313,7 @@ public class TimelineView extends JPanel {
 		final CategoryManager cManager = CategoryManager.getInstance();
 		final JComboBox categoriesComboBox = new JComboBox();
 		categoriesComboBox.setMaximumRowCount(4);
-		categoriesComboBox.addItem("Mostrar Todas");
+		categoriesComboBox.addItem("Show All");
 		categoriesComboBox.setVisible(false);
 		categoriesComboBox.setRenderer(new ColorCellRenderer());
 		categoriesComboBox.addActionListener(new ActionListener() {
@@ -337,7 +337,7 @@ public class TimelineView extends JPanel {
 			}});
 
 		final JButton buttonCategorize = new JButton();
-		buttonCategorize.setToolTipText("Categorizar tweets");
+		buttonCategorize.setToolTipText("Categorize tweets");
 		buttonCategorize.setIcon(new ImageIcon(getClass().getResource("../../tag.png")));
 		buttonCategorize.addActionListener(new ActionListener(){
 			@Override
@@ -348,7 +348,7 @@ public class TimelineView extends JPanel {
 				class RunButtonCategorize extends Thread{
 					public void run(){
 						buttonCategorize.setEnabled(false);
-						buttonCategorize.setText("Categorizando...");
+						buttonCategorize.setText("Categorizing...");
 
 						categoriesOn = true;                    		
 						TwitterResponse tr;
@@ -372,7 +372,7 @@ public class TimelineView extends JPanel {
 						}
 
 						categoriesComboBox.removeAllItems();
-						categoriesComboBox.addItem("Mostrar Todas");
+						categoriesComboBox.addItem("Show All");
 
 						for(Category c : cManager.getUsedCategories()) {
 							categoriesComboBox.addItem(c);
@@ -563,9 +563,9 @@ public class TimelineView extends JPanel {
 			}
 			visibleStatuses = cont;
 			if(visibleStatuses == 1)
-				statusesCountText = "Exibindo " + visibleStatuses + " tweet";
+				statusesCountText = "Showing " + visibleStatuses + " tweet";
 			else
-				statusesCountText = "Exibindo " + visibleStatuses + " tweets";
+				statusesCountText = "Showing " + visibleStatuses + " tweets";
 			labelTotalStatuses.setText(statusesCountText);
 		}
 	}
