@@ -154,7 +154,7 @@ public class GUICategoryEditor {
 			
 			
 
-			frame = new JFrame("DeepTwitter - Categories Management");
+			frame = new JFrame("DeepTwitter - Management Categories");
 			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			frame.setContentPane(panel);
 			frame.pack();
