@@ -273,11 +273,11 @@ public class ControllerDeepTwitter {
 					
 					tabManager = new StatusTabManager();
 					tabManager.setTabbedPane(windowTabs);
-					tabManager.addTab(StatusesType.UPDATES,"Atualizações"); //0
+					tabManager.addTab(StatusesType.UPDATES,"Home"); //0
 					tabManager.addTab(StatusesType.REPLIES,"@"+user.getScreenName()); //1
-					tabManager.addTab(StatusesType.FAVORITES,"Favoritos"); //2
-					tabManager.addTab(StatusesType.DIRECT_MESSAGES,"Mensagens"); //3
-					tabManager.addTab(StatusesType.SEARCH, "Busca"); //4
+					tabManager.addTab(StatusesType.FAVORITES,"Favorites"); //2
+					tabManager.addTab(StatusesType.DIRECT_MESSAGES,"Direct Messages"); //3
+					tabManager.addTab(StatusesType.SEARCH, "Search"); //4
 					tabManager.addTab(StatusesType.PUBLIC_TIMELINE, "Public Timeline"); //5		
 					
 					if(!isTwitterUser) {

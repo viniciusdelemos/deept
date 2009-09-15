@@ -302,7 +302,7 @@ public class NetworkView extends Display {
     	addControlListener(new ListenerAdapter(this));
     	addControlListener(centerUserControl);
     	
-    	String descriptions[] = { "Username:", "Último Tweet: ", "Descrição:", "Localidade:", "Amigos:", "Seguidores:", "Tweets:" };
+    	String descriptions[] = { "Username:", "Last Tweet: ", "Description:", "Location:", "Friends:", "Followers:", "Tweets:" };
     	String data[] = { "screenName", "latestStatus", "description", "location", "friendsCount", "followersCount", "statusesCount" };
 
     	toolTipControl = new GenericToolTipControl(descriptions,data,200);    	
@@ -336,7 +336,7 @@ public class NetworkView extends Display {
     	//searchPanel.setShowResultCount(true);
     	searchPanel.setMaximumSize(new Dimension(200, 20));
     	searchPanel.setFont(FontLib.getFont("Tahoma", Font.BOLD, 12));
-    	searchPanel.setLabelText("Buscar por:");
+    	searchPanel.setLabelText("Search by:");
     	searchPanel.setShowBorder(false);
     	searchPanel.setBackground(mainToolBar.getBackground());
     	mainToolBar.add(searchPanel,mainToolBar.getComponentCount()-4);
@@ -686,18 +686,18 @@ public class NetworkView extends Display {
 			final String clickedUserName = getUser(item.getInt("idTwitter")).getScreenName();
 			popupMenu = new JPopupMenu();
 			
-			JMenuItem friends = new JMenuItem("Ver Amigos");
-			JMenuItem updates = new JMenuItem("Ver Tweets");
+			JMenuItem friends = new JMenuItem("View Friends");
+			JMenuItem updates = new JMenuItem("View Tweets");
 			//JMenuItem timeline = new JMenuItem("Ver Timeline");
-			JMenuItem favorites = new JMenuItem("Ver Favoritos");			
-    		JMenuItem follow = new JMenuItem("Seguir");//("Follow",'f') para adicionar atalho
-    		JMenuItem leave = new JMenuItem("Deixar");
+			JMenuItem favorites = new JMenuItem("View Favorites");			
+    		JMenuItem follow = new JMenuItem("Follow");//("Follow",'f') para adicionar atalho
+    		JMenuItem leave = new JMenuItem("Unfollow");
     		JMenuItem sendReply = new JMenuItem("@"+clickedUserName);
-    		JMenuItem sendMessage = new JMenuItem("Enviar mensagem");
-    		JMenuItem openURL = new JMenuItem("Abrir URL");
+    		JMenuItem sendMessage = new JMenuItem("Send Direct Message");
+    		JMenuItem openURL = new JMenuItem("Open URL");
     		JMenuItem blockUnblock = new JMenuItem(); 
-    		JMenuItem followers = new JMenuItem("Ver Seguidores");
-    		JMenuItem removeFromGroup = new JMenuItem("Remover do Grupo");
+    		JMenuItem followers = new JMenuItem("View Followes");
+    		JMenuItem removeFromGroup = new JMenuItem("Remove of Group");
     		 
     		Integer loggedUserId = Integer.parseInt(controller.getLoggedUserId());
     		Node mainUserNode = getNodeByTwitterId(loggedUserId);
@@ -723,9 +723,9 @@ public class NetworkView extends Display {
     			//edge = g.getEdge(clickedNode.getInt("id"),mainUserNode.getInt("id"), );
     			
     			if(!socialNetwork.isUserBlocked(clickedItem.getInt("idTwitter")))
-    				blockUnblock.setText("Bloquear");
+    				blockUnblock.setText("Block");
     			else
-    				blockUnblock.setText("Desbloquer");
+    				blockUnblock.setText("Unblock");
     				
     			popupMenu.add(blockUnblock);    			
     		}
@@ -826,10 +826,10 @@ public class NetworkView extends Display {
 		
 		public void createGroupMenu(final AggregateItem item) {
 			popupMenu = new JPopupMenu();
-			JMenuItem updates = new JMenuItem("Ver Tweets");
+			JMenuItem updates = new JMenuItem("View Tweets");
 			//JMenuItem timeline = new JMenuItem("Ver Timeline");
-			JMenuItem removeGroup = new JMenuItem("Deletar Grupo");
-			JMenuItem mostPopularUsers = new JMenuItem("Usuários Mais Populares");
+			JMenuItem removeGroup = new JMenuItem("Remove Group");
+			JMenuItem mostPopularUsers = new JMenuItem("Most Popular Users");
 			
 			popupMenu.add(updates);
 			//popupMenu.add(timeline);
