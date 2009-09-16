@@ -146,7 +146,7 @@ public class StatusTab {
         jScrollPane6.setBackground(new java.awt.Color(240, 240, 240));
         
         buttonNewDirectMessage.setBackground(new java.awt.Color(240, 240, 240));
-        buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_add.png"))); // NOI18N
+        buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(("img/mail_add.png"))); // NOI18N
         buttonNewDirectMessage.setToolTipText("Nova mensagem direta");
         buttonNewDirectMessage.setActionCommand("buttonNewDirectMessage");
         buttonNewDirectMessage.setFocusable(false);
@@ -157,7 +157,7 @@ public class StatusTab {
         	jToolBar1.add(jSeparator2);
                 
         buttonPreviousUser.setBackground(new java.awt.Color(240, 240, 240));
-        buttonPreviousUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../backward.png"))); // NOI18N
+        buttonPreviousUser.setIcon(new javax.swing.ImageIcon(("img/backward.png"))); // NOI18N
         buttonPreviousUser.setToolTipText("Usuário anterior");
         buttonPreviousUser.setActionCommand("buttonPreviousUser");
         buttonPreviousUser.setEnabled(false);
@@ -203,7 +203,7 @@ public class StatusTab {
         jToolBar1.add(txtCurrentUser);
         
         buttonNextUser.setBackground(new java.awt.Color(240, 240, 240));
-        buttonNextUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("../forward.png"))); // NOI18N
+        buttonNextUser.setIcon(new javax.swing.ImageIcon(("img/forward.png"))); // NOI18N
         buttonNextUser.setToolTipText("Próximo usuário");
         buttonNextUser.setActionCommand("buttonNextUser");
         buttonNextUser.setEnabled(false);
@@ -213,7 +213,7 @@ public class StatusTab {
         jToolBar1.add(buttonNextUser);
 
         buttonSearchUpdates.setBackground(new java.awt.Color(240, 240, 240));
-        buttonSearchUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../search.png"))); // NOI18N
+        buttonSearchUpdates.setIcon(new javax.swing.ImageIcon(("img/search.png"))); // NOI18N
         buttonSearchUpdates.setToolTipText("Buscar");
         buttonSearchUpdates.setActionCommand("buttonSearchUpdates");
         buttonSearchUpdates.setFocusable(false);
@@ -222,7 +222,7 @@ public class StatusTab {
         jToolBar1.add(buttonSearchUpdates);
 
         buttonInbox.setBackground(new java.awt.Color(240, 240, 240));
-        buttonInbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_inbox.png"))); // NOI18N
+        buttonInbox.setIcon(new javax.swing.ImageIcon(("img/mail_inbox.png"))); // NOI18N
         buttonInbox.setSelected(true);
         buttonInbox.setToolTipText("Caixa de Entrada");
         buttonInbox.setActionCommand("buttonInbox");
@@ -232,7 +232,7 @@ public class StatusTab {
         jToolBar1.add(buttonInbox);
 
         buttonOutbox.setBackground(new java.awt.Color(240, 240, 240));
-        buttonOutbox.setIcon(new javax.swing.ImageIcon(getClass().getResource("../mail_outbox.png"))); // NOI18N
+        buttonOutbox.setIcon(new javax.swing.ImageIcon(("img/mail_outbox.png"))); // NOI18N
         buttonOutbox.setToolTipText("Caixa de Saída");
         buttonOutbox.setActionCommand("buttonOutbox");
         buttonOutbox.setFocusable(false);
@@ -242,7 +242,7 @@ public class StatusTab {
         jToolBar1.add(jSeparator4);
 
         buttonCloseUpdates.setBackground(new java.awt.Color(240, 240, 240));
-        buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(getClass().getResource("../remove.png"))); // NOI18N
+        buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(("img/remove.png"))); // NOI18N
         buttonCloseUpdates.setToolTipText("Fechar este usuário");
         buttonCloseUpdates.setActionCommand("buttonCloseUpdates");
         buttonCloseUpdates.setFocusable(false);
@@ -251,19 +251,19 @@ public class StatusTab {
         jToolBar1.add(buttonCloseUpdates);
 
         buttonTurnOnOff.setBackground(new java.awt.Color(240, 240, 240));
-        buttonTurnOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_on.png"))); // NOI18N
+        buttonTurnOnOff.setIcon(new javax.swing.ImageIcon(("img/turn_on.png"))); // NOI18N
         buttonTurnOnOff.setSelected(true);
         buttonTurnOnOff.setToolTipText("Ligar/desligar atualizar automaticamente");
         buttonTurnOnOff.setActionCommand("buttonTurnOnOff");
         buttonTurnOnOff.setFocusable(false);
         buttonTurnOnOff.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonTurnOnOff.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("../turn_off.png"))); // NOI18N
+        buttonTurnOnOff.setSelectedIcon(new javax.swing.ImageIcon(("img/turn_off.png"))); // NOI18N
         buttonTurnOnOff.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonTurnOnOff);
         jToolBar1.add(jSeparator5);
 
         buttonTimeline.setBackground(new java.awt.Color(240, 240, 240));
-        buttonTimeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("../eye.png"))); // NOI18N
+        buttonTimeline.setIcon(new javax.swing.ImageIcon(("img/eye.png"))); // NOI18N
         buttonTimeline.setToolTipText("Visualização do timeline de atualizações");
         buttonTimeline.setActionCommand("buttonTimeline");
         buttonTimeline.setFocusable(false);
@@ -273,7 +273,7 @@ public class StatusTab {
         buttonTimeline.getAccessibleContext().setAccessibleDescription("Visualização do Timeline de Atualizações");
         
         buttonTagCloud.setBackground(new java.awt.Color(240, 240, 240));
-        buttonTagCloud.setIcon(new javax.swing.ImageIcon(getClass().getResource("../tagcloud.png"))); // NOI18N
+        buttonTagCloud.setIcon(new javax.swing.ImageIcon(("img/tagcloud.png"))); // NOI18N
         buttonTagCloud.setToolTipText("Visualização da Tag Cloud");
         buttonTagCloud.setActionCommand("buttonTagCloud");
         buttonTagCloud.setFocusable(false);

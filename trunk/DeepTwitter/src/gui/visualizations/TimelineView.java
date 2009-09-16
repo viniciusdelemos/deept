@@ -303,7 +303,7 @@ public class TimelineView extends JPanel {
 
 		JButton buttonCategoryManager = new JButton();
 		buttonCategoryManager.setToolTipText("Management Categories");
-		buttonCategoryManager.setIcon(new ImageIcon(getClass().getResource("../../archive.png")));        
+		buttonCategoryManager.setIcon(new ImageIcon("img/archive.png"));        
 		buttonCategoryManager.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -338,7 +338,7 @@ public class TimelineView extends JPanel {
 
 		final JButton buttonCategorize = new JButton();
 		buttonCategorize.setToolTipText("Categorize tweets");
-		buttonCategorize.setIcon(new ImageIcon(getClass().getResource("../../tag.png")));
+		buttonCategorize.setIcon(new ImageIcon("img/tag.png"));
 		buttonCategorize.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
