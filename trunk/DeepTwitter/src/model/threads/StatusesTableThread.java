@@ -693,6 +693,7 @@ public class StatusesTableThread {
 
 					System.out.println("sleeping for "+interval);
 					Thread.sleep(interval);	
+					controller.liberaMemoria();
 					System.out.println("running " + statusesType + " para " + controller.getUserName(getUserId()));
 				} catch (TwitterException e) {
 					System.out.println("Status code: "+e.getStatusCode());
