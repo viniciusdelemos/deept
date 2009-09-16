@@ -434,10 +434,43 @@ public class GUIMainWindow extends javax.swing.JFrame {
     public void setCloseUserEnabled(boolean b) {
         buttonCloseUpdates.setEnabled(b);
     }
+    
+    class vetor{
+    	
+    	int[] v;
+    	public vetor(){
+    		v = new int[100];
+    		for(int i=0;i<100;i++)
+    			v[i]=10;
+    		
+    	}
+    }
+    
+    private long execucao = 0;
 
     public void setRateLimitStatus(int left, int total, Date resetDate) {
         labelAPILimit.setText("API: "+left+"/"+total);
         labelAPILimit.setToolTipText("Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
+        
+        System.out.println("**************************");
+        System.out.println((execucao++));
+        System.out.println("Free: " +Runtime.getRuntime().freeMemory() 
+        		+ "\tMax: " + Runtime.getRuntime().maxMemory() 
+        		+ "\tTotal:" +Runtime.getRuntime().totalMemory());
+        
+//        System.gc(); System.gc(); System.gc(); System.gc();
+//        System.gc(); System.gc(); System.gc(); System.gc();
+//        System.gc(); System.gc(); System.gc(); System.gc();
+//        System.gc(); System.gc(); System.gc(); System.gc();
+        
+        //new vetor(); 
+        
+        System.out.println("Free: " +Runtime.getRuntime().freeMemory() 
+        		+ "\tMax: " + Runtime.getRuntime().maxMemory() 
+        		+ "\tTotal:" +Runtime.getRuntime().totalMemory());
+        System.out.println("**************************");
+        		
+        
     }
 
     public JToggleButton getButtonCurvedEdges(){
