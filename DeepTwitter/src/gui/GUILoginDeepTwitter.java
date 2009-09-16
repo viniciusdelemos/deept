@@ -44,7 +44,7 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
         setName("LoginDeepTwitter"); // NOI18N
         setResizable(false);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("../logo.jpg"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon("img/logo.jpg")); // NOI18N
 
         labelUser.setFont(new java.awt.Font("Tahoma", 0, 14));
         labelUser.setText("Usuário:");
@@ -53,8 +53,12 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
         labelPassword.setText("Senha:");
         
         txtUser.setNextFocusableComponent(txtPassword);
+        
+        txtUser.setText("");
 
         txtPassword.setNextFocusableComponent(OkButton);
+        
+        txtPassword.setText("");
 
         OkButton.setText("OK");
 
