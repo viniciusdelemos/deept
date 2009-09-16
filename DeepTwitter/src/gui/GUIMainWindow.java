@@ -2,11 +2,14 @@ package gui;
 
 import java.awt.event.ActionListener;
 import java.util.Date;
+
 import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+
+import controller.ControllerDeepTwitter;
 
 /**
  *
@@ -452,25 +455,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         labelAPILimit.setText("API: "+left+"/"+total);
         labelAPILimit.setToolTipText("Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
         
-        System.out.println("**************************");
-        System.out.println((execucao++));
-        System.out.println("Free: " +Runtime.getRuntime().freeMemory() 
-        		+ "\tMax: " + Runtime.getRuntime().maxMemory() 
-        		+ "\tTotal:" +Runtime.getRuntime().totalMemory());
-        
-//        System.gc(); System.gc(); System.gc(); System.gc();
-//        System.gc(); System.gc(); System.gc(); System.gc();
-//        System.gc(); System.gc(); System.gc(); System.gc();
-//        System.gc(); System.gc(); System.gc(); System.gc();
-        
-        //new vetor(); 
-        
-        System.out.println("Free: " +Runtime.getRuntime().freeMemory() 
-        		+ "\tMax: " + Runtime.getRuntime().maxMemory() 
-        		+ "\tTotal:" +Runtime.getRuntime().totalMemory());
-        System.out.println("**************************");
-        		
-        
+        ControllerDeepTwitter.liberaMemoria();        
     }
 
     public JToggleButton getButtonCurvedEdges(){
