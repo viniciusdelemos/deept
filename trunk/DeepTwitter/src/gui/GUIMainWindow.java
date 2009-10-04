@@ -438,19 +438,6 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCloseUpdates.setEnabled(b);
     }
     
-    class vetor{
-    	
-    	int[] v;
-    	public vetor(){
-    		v = new int[100];
-    		for(int i=0;i<100;i++)
-    			v[i]=10;
-    		
-    	}
-    }
-    
-    private long execucao = 0;
-
     public void setRateLimitStatus(int left, int total, Date resetDate) {
         labelAPILimit.setText("API: "+left+"/"+total);
         labelAPILimit.setToolTipText("Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
