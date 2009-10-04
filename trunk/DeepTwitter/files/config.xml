@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <configuration>
   <interval>
-    <updates>1</updates>
-    <mentions>1</mentions>
-    <favorites>1</favorites>
-    <directMessages>1</directMessages>
-    <search>1</search>
-    <publicTimeline>1</publicTimeline>
+    <updates>5</updates>
+    <mentions>60</mentions>
+    <favorites>60</favorites>
+    <directMessages>60</directMessages>
+    <search>60</search>
+    <publicTimeline>60</publicTimeline>
     <mostPopularUsers>7</mostPopularUsers>
   </interval>
   <color>
