@@ -188,7 +188,7 @@ public class TwitterSupport implements java.io.Serializable {
      * System property -Dtwitter4j.source overrides this attribute.
      *
      * @param source the new source
-     * @see <a href='http://apiwiki.twitter.com/FAQ#HowdoIget“fromMyApp”appendedtoupdatessentfrommyAPIapplication'>How do I get "from [MyApp]" appended to updates sent from my API application?</a>
+     * @see <a href='http://apiwiki.twitter.com/FAQ#HowdoIget"fromMyApp"appendedtoupdatessentfrommyAPIapplication'>How do I get "from [MyApp]" appended to updates sent from my API application?</a>
      * @see <a href="http://twitter.com/help/request_source">Twitter - Request a link to your application</a>
      */
     public void setSource(String source) {
