@@ -153,7 +153,7 @@ public class CategoryManager {
 		Document d = null;
 
 		try {
-			d = sb.build(getClass().getResourceAsStream("categories.xml"));
+			d = sb.build(getClass().getResourceAsStream("/categories.xml"));
 		} catch (JDOMException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);
@@ -207,7 +207,7 @@ public class CategoryManager {
 		output.setFormat(format);
 
 		try {
-			doc = builder.build(getClass().getResourceAsStream("categories.xml"));
+			doc = builder.build(getClass().getResourceAsStream("/categories.xml"));
 		} catch (JDOMException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);

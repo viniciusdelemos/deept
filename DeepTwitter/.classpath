@@ -7,6 +7,6 @@
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="E:/Documents/DeepTwitter/libs/prefuse-beta-20071021/prefuse-beta/build/prefuse.jar"/>
 	<classpathentry kind="lib" path="E:/Documents/DeepTwitter/libs/profusians-beta-20080629/profusians-beta-20080629/profusians-20080629/build/profusians.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/twitter4j"/>
+	<classpathentry kind="lib" path="E:/Documents/DeepTwitter/libs/twitter4j-2.0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

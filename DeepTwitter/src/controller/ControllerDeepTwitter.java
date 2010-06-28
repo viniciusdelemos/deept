@@ -22,6 +22,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -501,8 +503,10 @@ public class ControllerDeepTwitter {
 			}
 			else if(cmd.equals("buttonHelp")) {
 				try {
-					File manual = new File(getClass().getResource("/config.xml").toURI());	
-					Runtime.getRuntime().exec("cmd.exe /c \"" +manual.getAbsolutePath() +"\"");
+					File manual = new File(getClass().getResource("/Manual.pdf").toURI().getPath());	
+					//FileInputStream fis = (FileInputStream)getClass().getResourceAsStream("/Manual.pdf");
+					
+					Runtime.getRuntime().exec("cmd.exe /c \"" +manual.getPath() +"\"");
 				} catch (Exception e1) {
 					showMessageDialog(e1.getMessage(), MessageType.ERROR);
 				}				
@@ -1437,7 +1441,7 @@ public class ControllerDeepTwitter {
 		Document d = null;
 
 		try {
-			d = sb.build(getClass().getResourceAsStream("defaultConfigs.xml"));
+			d = sb.build(getClass().getResourceAsStream("/defaultConfigs.xml"));
 		} catch (JDOMException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO ver quais excecoes podem ocorrer aki
