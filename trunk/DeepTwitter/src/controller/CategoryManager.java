@@ -5,6 +5,7 @@ import java.awt.Paint;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,6 +30,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import prefuse.visual.VisualItem;
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.TwitterResponse;
@@ -147,15 +149,11 @@ public class CategoryManager {
 	 * ele antes de chamar este método
 	 */
 	private void loadCategories() {
-
-		File file = new File("files/categories.xml");
-
 		SAXBuilder sb = new SAXBuilder();
-
 		Document d = null;
 
 		try {
-			d = sb.build(file);
+			d = sb.build(getClass().getResourceAsStream("categories.xml"));
 		} catch (JDOMException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);
@@ -209,7 +207,7 @@ public class CategoryManager {
 		output.setFormat(format);
 
 		try {
-			doc = builder.build("files/categories.xml");
+			doc = builder.build(getClass().getResourceAsStream("categories.xml"));
 		} catch (JDOMException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);
@@ -245,11 +243,14 @@ public class CategoryManager {
 
 		FileWriter f = null;
 		try {
-			f = new FileWriter(new File("files/categories.xml"));
+			f = new FileWriter(new File(getClass().getResource("/categories.xml").toURI()));
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);
 			// TODO colocar frame, ver problemas
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		try {
 			output.output(doc, f);

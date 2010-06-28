@@ -103,13 +103,13 @@ public class GUIMostPopularUsers extends javax.swing.JFrame {
         jLabel1.setText("Classificar por número de");
 
         buttonPlayPauseTweetView.setBackground(new java.awt.Color(102, 204, 255));
-        buttonPlayPauseTweetView.setIcon(new javax.swing.ImageIcon(("img/play.png"))); // NOI18N
+        buttonPlayPauseTweetView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/play.png"))); // NOI18N
         buttonPlayPauseTweetView.setSelected(true);
         buttonPlayPauseTweetView.setToolTipText("Executar/Parar exibição de tweets");
         buttonPlayPauseTweetView.setActionCommand("buttonPlayPauseTweetView");
         buttonPlayPauseTweetView.setFocusable(false);
         buttonPlayPauseTweetView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonPlayPauseTweetView.setSelectedIcon(new javax.swing.ImageIcon(("img/pause.png"))); // NOI18N
+        buttonPlayPauseTweetView.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/pause.png"))); // NOI18N
         buttonPlayPauseTweetView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N

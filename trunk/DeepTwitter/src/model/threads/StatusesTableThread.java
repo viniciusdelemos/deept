@@ -224,7 +224,7 @@ public class StatusesTableThread {
 		gbc.anchor = GridBagConstraints.NORTH;
 
 		final JLabel replyButton = new JLabel();	
-		ImageIcon replyIcon = new ImageIcon(("img/reply.png"));	
+		ImageIcon replyIcon = new ImageIcon(getClass().getResource("/reply.png"));	
 		replyButton.setIcon(replyIcon);		
 		replyButton.setToolTipText("Reply");
 		final String screenNameAux = screenName;
@@ -255,9 +255,9 @@ public class StatusesTableThread {
 			ImageIcon starIcon;
 
 			if(((Status)currentResponse).isFavorited())
-				starIcon = new ImageIcon(("img/star_on.png"));		
+				starIcon = new ImageIcon((getClass().getResource("/star_on.png")));		
 			else 
-				starIcon = new ImageIcon(("img/star_off.png"));		
+				starIcon = new ImageIcon((getClass().getResource("/star_off.png")));		
 			favoriteButton.setIcon(starIcon);	
 			favoriteButton.setToolTipText("Favorite");			
 			favoriteButton.addMouseListener(new MouseAdapter(){
@@ -269,11 +269,11 @@ public class StatusesTableThread {
 						int isOff = favoriteButton.getIcon().toString().indexOf("star_off");
 						if(isOff>0) {
 							controller.getTwitter().createFavorite(responseIdAux);
-							favoriteButton.setIcon(new ImageIcon(("img/star_on.png")));
+							favoriteButton.setIcon(new ImageIcon((getClass().getResource("/star_on.png"))));
 						}
 						else {
 							controller.getTwitter().destroyFavorite(responseIdAux);
-							favoriteButton.setIcon(new ImageIcon(("img/star_off.png")));
+							favoriteButton.setIcon(new ImageIcon((getClass().getResource("/star_off.png"))));
 							if(statusesType == StatusesType.FAVORITES) {
 								panel.remove(updatePanel);
 								rows--;
@@ -302,7 +302,7 @@ public class StatusesTableThread {
 			gbc.insets = new Insets(0,0,4,0);
 
 			final JLabel deleteButton = new JLabel();
-			ImageIcon deleteIcon = new ImageIcon(("img/trash.png"));	
+			ImageIcon deleteIcon = new ImageIcon((getClass().getResource("/trash.png")));	
 			deleteButton.setIcon(deleteIcon);	
 			deleteButton.setToolTipText("Delete");
 			deleteButton.addMouseListener(new MouseAdapter(){
