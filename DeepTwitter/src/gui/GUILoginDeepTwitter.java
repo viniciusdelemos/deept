@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  *
@@ -44,7 +45,7 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
         setName("LoginDeepTwitter"); // NOI18N
         setResizable(false);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon("img/logo.jpg")); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.jpg"))); // NOI18N
 
         labelUser.setFont(new java.awt.Font("Tahoma", 0, 14));
         labelUser.setText("Usuário:");

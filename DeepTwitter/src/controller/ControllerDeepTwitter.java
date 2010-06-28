@@ -24,6 +24,7 @@ import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -500,7 +501,7 @@ public class ControllerDeepTwitter {
 			}
 			else if(cmd.equals("buttonHelp")) {
 				try {
-					File manual = new File("files/Manual.pdf");
+					File manual = new File(getClass().getResource("/config.xml").toURI());	
 					Runtime.getRuntime().exec("cmd.exe /c \"" +manual.getAbsolutePath() +"\"");
 				} catch (Exception e1) {
 					showMessageDialog(e1.getMessage(), MessageType.ERROR);
@@ -799,7 +800,7 @@ public class ControllerDeepTwitter {
 		output.setFormat(format);
 
 		try {
-			doc = builder.build("files/config.xml");
+			doc = builder.build(getClass().getResourceAsStream("/config.xml"));
 		} catch (JDOMException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO adicionar modal sobre a tela
@@ -1024,17 +1025,23 @@ public class ControllerDeepTwitter {
     				}    				
     			}
     		}
-    	}
-    	
-    	
+    	}   	
     	
 		FileWriter f = null;
-		try {
-			f = new FileWriter(new File("files/config.xml"));
+		try {			
+			try {
+				f = new FileWriter(new File(getClass().getResource("/config.xml").toURI()));
+
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		} catch (IOException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO colocar frame, ver problemas
-		}
+		} 
+		
 		try {
 			output.output(doc, f);
 			f.close();
@@ -1045,13 +1052,12 @@ public class ControllerDeepTwitter {
 	}
 	
 	public void loadSettings(){		
-		File file = new File("files/config.xml");
 		SAXBuilder sb = new SAXBuilder();
 
 		Document d = null;
 
-		try {
-			d = sb.build(file);
+		try {			
+			d = sb.build(getClass().getResourceAsStream("/config.xml"));
 		} catch (JDOMException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO ver quais excecoes podem ocorrer aki
@@ -1341,14 +1347,12 @@ public class ControllerDeepTwitter {
     	}
 	}
 	
-	public Settings getDefaultSettingsNetworkForces(){		
-		File file = new File("files/defaultConfigs.xml");
+	public Settings getDefaultSettingsNetworkForces(){				
 		SAXBuilder sb = new SAXBuilder();
-
 		Document d = null;
 
 		try {
-			d = sb.build(file);
+			d = sb.build(getClass().getResourceAsStream("/defaultConfigs.xml"));
 		} catch (JDOMException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO ver quais excecoes podem ocorrer aki
@@ -1429,13 +1433,11 @@ public class ControllerDeepTwitter {
 	}
 
 	public Settings getDefaultSettingsOther() {		
-		File file = new File("files/defaultConfigs.xml");
 		SAXBuilder sb = new SAXBuilder();
-
 		Document d = null;
 
 		try {
-			d = sb.build(file);
+			d = sb.build(getClass().getResourceAsStream("defaultConfigs.xml"));
 		} catch (JDOMException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO ver quais excecoes podem ocorrer aki

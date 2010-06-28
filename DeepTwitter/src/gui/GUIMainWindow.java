@@ -96,7 +96,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
-        buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(("img/mail_add.png"))); // NOI18N
+        buttonNewDirectMessage.setIcon(new javax.swing.ImageIcon(("/mail_add.png"))); // NOI18N
         buttonNewDirectMessage.setToolTipText("Nova mensagem direta");
         buttonNewDirectMessage.setActionCommand("buttonNewDirectMessage");
         buttonNewDirectMessage.setFocusable(false);
@@ -105,7 +105,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jToolBar1.add(buttonNewDirectMessage);
         jToolBar1.add(jSeparator2);
 
-        buttonPreviousUser.setIcon(new javax.swing.ImageIcon(("img/backward.png"))); // NOI18N
+        buttonPreviousUser.setIcon(new javax.swing.ImageIcon((getClass().getResource("/backward.png")))); // NOI18N
         buttonPreviousUser.setToolTipText("Usuário anterior");
         buttonPreviousUser.setActionCommand("buttonPreviousUser");
         buttonPreviousUser.setEnabled(false);
@@ -130,7 +130,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         txtCurrentUser.setPreferredSize(new java.awt.Dimension(60, 14));
         jToolBar1.add(txtCurrentUser);
 
-        buttonNextUser.setIcon(new javax.swing.ImageIcon(("img/forward.png"))); // NOI18N
+        buttonNextUser.setIcon(new javax.swing.ImageIcon((getClass().getResource("/forward.png")))); // NOI18N
         buttonNextUser.setToolTipText("Próximo usuário");
         buttonNextUser.setActionCommand("buttonNextUser");
         buttonNextUser.setEnabled(false);
@@ -139,7 +139,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonNextUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonNextUser);
 
-        buttonSearchUpdates.setIcon(new javax.swing.ImageIcon(("img/search.png"))); // NOI18N
+        buttonSearchUpdates.setIcon(new javax.swing.ImageIcon((getClass().getResource("/search.png")))); // NOI18N
         buttonSearchUpdates.setToolTipText("Buscar");
         buttonSearchUpdates.setActionCommand("buttonSearchUpdates");
         buttonSearchUpdates.setFocusable(false);
@@ -147,7 +147,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonSearchUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonSearchUpdates);
 
-        buttonInbox.setIcon(new javax.swing.ImageIcon(("img/mail_inbox.png"))); // NOI18N
+        buttonInbox.setIcon(new javax.swing.ImageIcon((getClass().getResource("/mail_inbox.png")))); // NOI18N
         buttonInbox.setSelected(true);
         buttonInbox.setToolTipText("Caixa de Entrada");
         buttonInbox.setActionCommand("buttonInbox");
@@ -156,7 +156,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonInbox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonInbox);
 
-        buttonOutbox.setIcon(new javax.swing.ImageIcon(("img/mail_outbox.png"))); // NOI18N
+        buttonOutbox.setIcon(new javax.swing.ImageIcon((getClass().getResource("/mail_outbox.png")))); // NOI18N
         buttonOutbox.setToolTipText("Caixa de Saída");
         buttonOutbox.setActionCommand("buttonOutbox");
         buttonOutbox.setFocusable(false);
@@ -165,7 +165,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         jToolBar1.add(buttonOutbox);
         jToolBar1.add(jSeparator4);
 
-        buttonCloseUpdates.setIcon(new javax.swing.ImageIcon(("img/remove.png"))); // NOI18N
+        buttonCloseUpdates.setIcon(new javax.swing.ImageIcon((getClass().getResource("/remove.png")))); // NOI18N
         buttonCloseUpdates.setToolTipText("Fechar este usuário");
         buttonCloseUpdates.setActionCommand("buttonCloseUpdates");
         buttonCloseUpdates.setFocusable(false);
@@ -173,18 +173,18 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCloseUpdates.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonCloseUpdates);
 
-        buttonTurnOnOff.setIcon(new javax.swing.ImageIcon(("img/turn_on.png"))); // NOI18N
+        buttonTurnOnOff.setIcon(new javax.swing.ImageIcon((getClass().getResource("/turn_on.png")))); // NOI18N
         buttonTurnOnOff.setSelected(true);
         buttonTurnOnOff.setToolTipText("Ligar/desligar atualizar automaticamente");
         buttonTurnOnOff.setActionCommand("buttonTurnOnOff");
         buttonTurnOnOff.setFocusable(false);
         buttonTurnOnOff.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonTurnOnOff.setSelectedIcon(new javax.swing.ImageIcon(("img/turn_off.png"))); // NOI18N
+        buttonTurnOnOff.setSelectedIcon(new javax.swing.ImageIcon((getClass().getResource("/turn_off.png")))); // NOI18N
         buttonTurnOnOff.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(buttonTurnOnOff);
         jToolBar1.add(jSeparator5);
 
-        buttonTimeline.setIcon(new javax.swing.ImageIcon(("img/eye.png"))); // NOI18N
+        buttonTimeline.setIcon(new javax.swing.ImageIcon((getClass().getResource("/eye.png")))); // NOI18N
         buttonTimeline.setToolTipText("Visualização do timeline de atualizações");
         buttonTimeline.setActionCommand("buttonTimeline");
         buttonTimeline.setFocusable(false);
@@ -205,26 +205,26 @@ public class GUIMainWindow extends javax.swing.JFrame {
         mainToolBar.setFloatable(false);
         mainToolBar.setRollover(true);
 
-        buttonUpdate.setIcon(new javax.swing.ImageIcon(("img/comment_add.png"))); // NOI18N
+        buttonUpdate.setIcon(new javax.swing.ImageIcon((getClass().getResource("/comment_add.png")))); // NOI18N
         buttonUpdate.setToolTipText("Novo tweet");
         buttonUpdate.setActionCommand("buttonNewUpdate");
         buttonUpdate.setName("buttonNewUpdate"); // NOI18N
         mainToolBar.add(buttonUpdate);
         mainToolBar.add(jSeparator3);
 
-        buttonAddUser.setIcon(new javax.swing.ImageIcon(("img/user_search.png"))); // NOI18N
+        buttonAddUser.setIcon(new javax.swing.ImageIcon((getClass().getResource("/user_search.png")))); // NOI18N
         buttonAddUser.setToolTipText("Procurar por usuário do Twitter");
         buttonAddUser.setActionCommand("buttonAddUser");
         buttonAddUser.setName("buttonAddUser"); // NOI18N
         mainToolBar.add(buttonAddUser);
 
-        buttonNewGroup.setIcon(new javax.swing.ImageIcon(("img/users_add.png"))); // NOI18N
+        buttonNewGroup.setIcon(new javax.swing.ImageIcon((getClass().getResource("/users_add.png")))); // NOI18N
         buttonNewGroup.setToolTipText("Novo grupo");
         buttonNewGroup.setActionCommand("buttonNewGroup");
         buttonNewGroup.setName("buttonNewGroup"); // NOI18N
         mainToolBar.add(buttonNewGroup);
 
-        buttonClearSelection.setIcon(new javax.swing.ImageIcon(("img/eraser.png"))); // NOI18N
+        buttonClearSelection.setIcon(new javax.swing.ImageIcon((getClass().getResource("/eraser.png")))); // NOI18N
         buttonClearSelection.setToolTipText("Limpar seleção");
         buttonClearSelection.setActionCommand("buttonClearSelection");
         buttonClearSelection.setFocusable(false);
@@ -234,7 +234,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         mainToolBar.add(buttonClearSelection);
         mainToolBar.add(jSeparator6);
 
-        buttonCategoryEditor.setIcon(new javax.swing.ImageIcon(("img/archive.png"))); // NOI18N
+        buttonCategoryEditor.setIcon(new javax.swing.ImageIcon((getClass().getResource("/archive.png")))); // NOI18N
         buttonCategoryEditor.setToolTipText("Gerenciador de Categorias");
         buttonCategoryEditor.setActionCommand("buttonCategoryEditor");
         buttonCategoryEditor.setFocusable(false);
@@ -243,7 +243,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCategoryEditor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonCategoryEditor);
 
-        buttonMostActive.setIcon(new javax.swing.ImageIcon(("img/popularuser.png"))); // NOI18N
+        buttonMostActive.setIcon(new javax.swing.ImageIcon((getClass().getResource("/popularuser.png")))); // NOI18N
         buttonMostActive.setToolTipText("Visualização dos usuários mais populares");
         buttonMostActive.setActionCommand("buttonMostActive");
         buttonMostActive.setFocusable(false);
@@ -253,7 +253,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         mainToolBar.add(buttonMostActive);
         mainToolBar.add(jSeparator7);
 
-        buttonToolTipControl.setIcon(new javax.swing.ImageIcon(("img/user_info.png"))); // NOI18N
+        buttonToolTipControl.setIcon(new javax.swing.ImageIcon((getClass().getResource("/user_info.png")))); // NOI18N
         buttonToolTipControl.setSelected(true);
         buttonToolTipControl.setToolTipText("Exibir tooltip com informações do usuário");
         buttonToolTipControl.setActionCommand("buttonToolTipControl");
@@ -262,7 +262,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonToolTipControl.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonToolTipControl);
 
-        buttonCenterUser.setIcon(new javax.swing.ImageIcon(("img/target.png"))); // NOI18N
+        buttonCenterUser.setIcon(new javax.swing.ImageIcon((getClass().getResource("/target.png")))); // NOI18N
         buttonCenterUser.setToolTipText("Centralizar usuário ao clicar");
         buttonCenterUser.setActionCommand("buttonCenterUser");
         buttonCenterUser.setFocusable(false);
@@ -270,7 +270,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCenterUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonCenterUser);
 
-        buttonHighQuality.setIcon(new javax.swing.ImageIcon(("img/Q.png"))); // NOI18N
+        buttonHighQuality.setIcon(new javax.swing.ImageIcon((getClass().getResource("/Q.png")))); // NOI18N
         buttonHighQuality.setSelected(true);
         buttonHighQuality.setToolTipText("Exibir gráficos com alta qualidade");
         buttonHighQuality.setActionCommand("buttonHighQuality");
@@ -279,7 +279,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonHighQuality.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonHighQuality);
 
-        buttonCurvedEdges.setIcon(new javax.swing.ImageIcon(("img/arrow.png"))); // NOI18N
+        buttonCurvedEdges.setIcon(new javax.swing.ImageIcon((getClass().getResource("/arrow.png")))); // NOI18N
         buttonCurvedEdges.setToolTipText("Arestas curvas");
         buttonCurvedEdges.setActionCommand("buttonCurvedEdges");
         buttonCurvedEdges.setFocusable(false);
@@ -288,7 +288,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         mainToolBar.add(buttonCurvedEdges);
         mainToolBar.add(jSeparator8);
 
-        buttonShowStatusBar.setIcon(new javax.swing.ImageIcon(("img/S.png"))); // NOI18N
+        buttonShowStatusBar.setIcon(new javax.swing.ImageIcon((getClass().getResource("/S.png")))); // NOI18N
         buttonShowStatusBar.setSelected(true);
         buttonShowStatusBar.setToolTipText("Exibir barra de status");
         buttonShowStatusBar.setActionCommand("buttonShowStatusBar");
@@ -297,17 +297,17 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonShowStatusBar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonShowStatusBar);
 
-        buttonPlayPauseVisualization.setIcon(new javax.swing.ImageIcon(("img/play.png"))); // NOI18N
+        buttonPlayPauseVisualization.setIcon(new javax.swing.ImageIcon((getClass().getResource("/play.png")))); // NOI18N
         buttonPlayPauseVisualization.setSelected(true);
         buttonPlayPauseVisualization.setToolTipText("Play/Pause animar rede");
         buttonPlayPauseVisualization.setActionCommand("buttonPlayPauseVisualization");
         buttonPlayPauseVisualization.setFocusable(false);
         buttonPlayPauseVisualization.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonPlayPauseVisualization.setSelectedIcon(new javax.swing.ImageIcon(("img/pause.png"))); // NOI18N
+        buttonPlayPauseVisualization.setSelectedIcon(new javax.swing.ImageIcon((getClass().getResource("/pause.png")))); // NOI18N
         buttonPlayPauseVisualization.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonPlayPauseVisualization);
 
-        buttonSettings.setIcon(new javax.swing.ImageIcon(("img/config.png"))); // NOI18N
+        buttonSettings.setIcon(new javax.swing.ImageIcon((getClass().getResource("/config.png")))); // NOI18N
         buttonSettings.setToolTipText("Configurações");
         buttonSettings.setActionCommand("buttonSettings");
         buttonSettings.setFocusable(false);
@@ -315,7 +315,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonSettings);
 
-        buttonForces.setIcon(new javax.swing.ImageIcon(("img/F.png"))); // NOI18N
+        buttonForces.setIcon(new javax.swing.ImageIcon((getClass().getResource("/F.png")))); // NOI18N
         buttonForces.setToolTipText("Forças físicas da rede");
         buttonForces.setActionCommand("buttonForces");
         buttonForces.setFocusable(false);
@@ -329,7 +329,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         mainToolBar.add(labelAPILimit);
         mainToolBar.add(jSeparator10);
 
-        buttonHelp.setIcon(new javax.swing.ImageIcon(("img/help.png"))); // NOI18N
+        buttonHelp.setIcon(new javax.swing.ImageIcon((getClass().getResource("/help.png")))); // NOI18N
         buttonHelp.setToolTipText("Manual do usuário");
         buttonHelp.setActionCommand("buttonHelp");
         buttonHelp.setFocusable(false);
@@ -338,7 +338,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonHelp.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(buttonHelp);
 
-        buttonLogout.setIcon(new javax.swing.ImageIcon(("img/logout.png"))); // NOI18N
+        buttonLogout.setIcon(new javax.swing.ImageIcon((getClass().getResource("/logout.png")))); // NOI18N
         buttonLogout.setToolTipText("Logout");
         buttonLogout.setActionCommand("buttonLogout");
         buttonLogout.setFocusable(false);
