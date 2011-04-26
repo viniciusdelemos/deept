@@ -21,12 +21,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +58,7 @@ import model.MessageType;
 import model.Settings;
 import model.StatusTab;
 import model.StatusesType;
+import model.URLLinkAction;
 import model.threads.StatusesTableThread;
 
 import org.jdom.Document;
@@ -77,7 +84,10 @@ import prefuse.visual.VisualItem;
 import twitter4j.RateLimitStatus;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.User;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
 
 public class ControllerDeepTwitter {
 	private GUILoginDeepTwitter loginWindow;
@@ -97,6 +107,7 @@ public class ControllerDeepTwitter {
 	private JTabbedPane windowTabs;
 	private StatusTabManager tabManager;
 	private MainWindowListener mainWindowListener;
+	private RequestToken requestToken;
 	private UpdateRateLimitThread updateRateLimit;
 	
 	//intervals
@@ -144,14 +155,18 @@ public class ControllerDeepTwitter {
 	
 	public String getUserName(String id) {
 		try{
-			return networkView.getUserName(Integer.parseInt(id));
+			//(ATUALIZAÇÃO)
+			//mudança de int para long
+			return networkView.getUserName(Long.parseLong(id));
 		}
 		catch(NumberFormatException e) {
 			return id;
 		}
 	}
 	
-	public Node getNode(int id) {
+	//(ATUALIZAÇÃO)
+	//mudança de int para long
+	public Node getNode(long id) {
 		return networkView.getNodeByTwitterId(id);
 	}
 	
@@ -163,11 +178,15 @@ public class ControllerDeepTwitter {
 		networkView.searchAndAddUserToNetwork(u);
 	}
 	
-	public void searchAndAddUserToNetwork(int id) {
+	//(ATUALIZAÇÃO)
+	//mudança de int para long
+	public void searchAndAddUserToNetwork(long id) {
 		try {
 			User u = networkView.getUser(id);
 			if(u == null) 
-				searchAndAddUserToNetwork(getTwitter().getUserDetail(String.valueOf(id)));			
+				//(ATUALIZAÇÃO)
+				//mudança de getUserDetail() para showUser()
+				searchAndAddUserToNetwork(getTwitter().showUser(String.valueOf(id)));			
 			else
 				searchAndAddUserToNetwork(u);	
 			
@@ -223,34 +242,94 @@ public class ControllerDeepTwitter {
 		mainWindow.getTabs().setSelectedIndex(index);
 	}
 	
-	class LoginListener implements ActionListener {	
+	class LoginListener implements ActionListener 
+	{	
 		
-		@Override
 		public void actionPerformed(ActionEvent e) {
 			boolean logInOK = false;
 			isTwitterUser = loginWindow.isTwitterUser();
 			
 			User user = null;
 			
-			try{
+			try{			
 				if(isTwitterUser)
-				{				
-					if(loginWindow.getUser().compareTo("")>0 && loginWindow.getPassword().compareTo("")>0)
+				{
+					//se usuário tenta logar com seu próprio twitter
+					if(loginWindow.getSelecao().equals("Logar") && loginWindow.getUser().compareTo("")>0)
 					{
-						twitter = new Twitter(loginWindow.getUser(),loginWindow.getPassword());						
-						user = twitter.verifyCredentials(); //Se usuario ou senha invalido,
+						//Autenticação OAuth
+						twitter = new TwitterFactory().getInstance();
+						twitter.setOAuthConsumer("EQwcBmFc4rQtejrQZGfwzA", "tEezbK6EFtzopAnte88gd3pPfC3r9hW9T0hXfJmxk3k");
+						
+						AccessToken accessToken = null;
+						AccessToken accessTokenUser = getAccessToken(loginWindow.getUser());
+						
+						if(accessTokenUser != null)
+						{
+							try
+							{
+								//Procura se o usuário já é autenticado
+								twitter.setOAuthAccessToken(accessTokenUser);
+								
+								user = twitter.verifyCredentials(); //Se usuario ou senha invalido,
+								logInOK = true;
+							}
+							catch(Exception e1){}
+						}
+						else
+						{		
+							//Se usuário colocou PIN
+							if(loginWindow.getPassword().compareTo("")>0)
+							{
+								accessToken = twitter.getOAuthAccessToken(requestToken, loginWindow.getPassword());
+								
+								//Armazenamento dos AccessTokens de cada usuário
+								ControllerDeepTwitter.storeAccessToken(loginWindow.getUser(), accessToken);
+								
+								user = twitter.verifyCredentials(); //Se usuario ou senha invalido
+								logInOK = true;
+							}
+							else
+							{
+								//Se usuário não tem AccessToken salva,
+								//abre o browser para permitir ao programa acesso a conta
+								if(requestToken == null)
+								{
+									requestToken = twitter.getOAuthRequestToken();
+								}
+								
+								new URLLinkAction(requestToken.getAuthorizationURL());
+								loginWindow.setPin();
+							}
+						}
+						
+					    //user = twitter.verifyCredentials(); //Se usuario ou senha invalido,
 						//gerado excecao com statusCode = 401						
-						logInOK = true;
-						//	else showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);
+						//logInOK = true;
 					}
-					else showMessageDialog("Por favor, preencha os campos de nome de usuário e senha!",MessageType.WARNING);					
+					else showMessageDialog("Por favor, preencha o campos de nome de usuário!",MessageType.WARNING);					
 				}
 				else 
 				{
-					if(loginWindow.getUser().compareTo("")>0)
+					//caso apenas se queira explorar outro usuário sem logar
+					if(loginWindow.getSelecao().equals("Explorar"))
 					{
-						twitter = new Twitter(loginWindow.getUser(),"");
-						user = twitter.getUserDetail(twitter.getUserId());
+						twitter = new TwitterFactory().getInstance();
+						twitter.setOAuthConsumer("EQwcBmFc4rQtejrQZGfwzA", "tEezbK6EFtzopAnte88gd3pPfC3r9hW9T0hXfJmxk3k");
+						System.out.println(twitter.getRateLimitStatus());
+						
+						//AccessToken accessToken = twitter.getOAuthAccessToken();
+						//(ATUALIZAÇÃO)
+						//mudança getUserId() para getId();
+						try
+						{
+							user = twitter.showUser(loginWindow.getUser());
+							//twitter.getId());
+						}
+						catch(Exception e123)
+						{
+							System.out.println(e123.getMessage());
+						}
 						logInOK = true;
 					}
 					else showMessageDialog("Por favor, preencha o campo de nome de usuário!",MessageType.WARNING);					
@@ -362,7 +441,7 @@ public class ControllerDeepTwitter {
 				}	
 			} catch (TwitterException ex) {
 				if(ex.getStatusCode()==400)
-					showMessageDialog("Você excedeu o número máximo de 100 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
+					showMessageDialog("Você excedeu o número máximo de 350 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
 				else if(ex.getStatusCode()==401)
 					showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);				
 				else if(ex.getStatusCode()==404)
@@ -380,6 +459,36 @@ public class ControllerDeepTwitter {
 				showMessageDialog(e2.getMessage(), MessageType.ERROR);
 				e2.printStackTrace();
 			}			
+		}
+		
+		private AccessToken getAccessToken(String screenName)
+		{		
+			AccessToken accessToken = null;
+			FileInputStream fileIn = null;
+	        ObjectInputStream objectIn = null;
+
+	        try 
+	        {
+	        	File arquivo = new File("accesstokens" + screenName);
+	        	
+	        	fileIn = new FileInputStream(arquivo);
+	        	objectIn = new ObjectInputStream(fileIn);
+	        	accessToken = (AccessToken)objectIn.readObject();
+	        }
+	        catch(Exception e){}
+
+	        finally
+	        {
+	           try
+	           {
+	               if(objectIn != null)
+	               {
+	                   objectIn.close();
+	               }   
+	           }
+	           catch(Exception e){}
+	        }
+	        return accessToken;
 		}
 	}
 	
@@ -548,7 +657,10 @@ public class ControllerDeepTwitter {
 					String id = guiAddUser.getUser();
 					if(!id.equals("")) {
 						System.out.println("=> Requesting user to Twitter");
-						User u = twitter.getUserDetail(id);
+						
+						//(ATUALIZAÇÃO)
+						//mudança de getUserDetail() para showUser()
+						User u = twitter.showUser(id);
 						System.out.println("=> Got user");
 						networkView.searchAndAddUserToNetwork(u);								
 						guiAddUser.dispose();
@@ -700,9 +812,15 @@ public class ControllerDeepTwitter {
 		public void run() {
 			while(true) {
 				try {
-					//System.out.println("UPDATING RATE LIMIT");					
-					rlt = twitter.rateLimitStatus();
-					mainWindow.setRateLimitStatus(rlt.getRemainingHits(),rlt.getHourlyLimit(),rlt.getDateTime());
+					//System.out.println("UPDATING RATE LIMIT");	
+					
+					//(ATUALIZAÇÃO)
+					//mudança de rateLimitStatus() para getRateLimitStatus();
+					rlt = twitter.getRateLimitStatus();
+					
+					//(ATUALIZAÇÃO)
+					//mudança de getDateTime() para getResetTime();
+					mainWindow.setRateLimitStatus(rlt.getRemainingHits(),rlt.getHourlyLimit(),rlt.getResetTime());
 					Thread.sleep(sleepTime);
 				} catch (Exception e) {					
 					break;
@@ -1064,7 +1182,7 @@ public class ControllerDeepTwitter {
 			d = sb.build(getClass().getResourceAsStream("/config.xml"));
 		} catch (JDOMException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
-			// TODO ver quais excecoes podem ocorrer aki
+			// TODO ver quais excecoes podem ocorrer aqui
 		} catch (IOException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO se nao tiver pasta, criar a pasta e arquivo, se nao tiver
@@ -1359,7 +1477,7 @@ public class ControllerDeepTwitter {
 			d = sb.build(getClass().getResourceAsStream("/defaultConfigs.xml"));
 		} catch (JDOMException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
-			// TODO ver quais excecoes podem ocorrer aki
+			// TODO ver quais excecoes podem ocorrer aqui
 		} catch (IOException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO se nao tiver pasta, criar a pasta e arquivo, se nao tiver
@@ -1444,7 +1562,7 @@ public class ControllerDeepTwitter {
 			d = sb.build(getClass().getResourceAsStream("/defaultConfigs.xml"));
 		} catch (JDOMException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
-			// TODO ver quais excecoes podem ocorrer aki
+			// TODO ver quais excecoes podem ocorrer aqui
 		} catch (IOException ex) {
 			showMessageDialog(ex.getMessage(),MessageType.ERROR);
 			// TODO se nao tiver pasta, criar a pasta e arquivo, se nao tiver
@@ -1656,7 +1774,39 @@ static long execucao = 0;
         		+ "\tMax: " + Runtime.getRuntime().maxMemory() 
         		+ "\tTotal:" +Runtime.getRuntime().totalMemory());
         //System.out.println("**************************");
-		
 	}
-
+	
+	//Feito em 12/04/2011
+	//TODO Armazenar accesstoken dos usuários em arquivo binário
+	public static void storeAccessToken(String screenName, AccessToken accessToken)
+	{
+		File arquivo = new File("accesstokens" + accessToken.getScreenName());
+		
+		FileOutputStream fileOut = null;
+		ObjectOutputStream objectOut = null;
+		
+		try
+		{
+			fileOut = new FileOutputStream(arquivo);
+			objectOut = new ObjectOutputStream(fileOut);
+			
+			objectOut.writeObject(accessToken);
+			
+			//store accessToken.getToken()
+		    //store accessToken.getTokenSecret()
+		}
+		catch(Exception e){}
+		
+		finally
+        {
+            try
+            {
+                if(objectOut != null)
+                {
+                    objectOut.close();
+                }
+            }
+            catch(Exception e){}
+        }
+	}
 }

@@ -8,6 +8,7 @@ import model.MessageType;
 import prefuse.data.Node;
 import prefuse.util.PrefuseLib;
 import prefuse.visual.VisualItem;
+import twitter4j.PagableResponseList;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import controller.ControllerDeepTwitter;
@@ -27,7 +28,24 @@ public class AddFriendsThread extends Thread {
 	{
 		try {
 			System.out.println("GETTING FRIENDS FOR "+source.get("name"));
-			List<User> friends = controller.getTwitter().getFriends(source.get("idTwitter").toString());
+			
+			//(ATUALIZAÇÃO)
+			//mudança de getFriends() para getFriendsStatuses()
+			
+			//lista que muda dependendo do 'cursor' definido
+			//retorna no máximo 100 amigos
+			//PagableResponseList<User> friendsWithPaging = controller.getTwitter().getFriendsStatuses(Long.parseLong(source.get("idTwitter").toString()), -1);
+			
+			//lista onde são armazenados todos os amigos
+			//List<User> friends = friendsWithPaging;
+			List<User> friends =  controller.getTwitter().getFriendsStatuses(Long.parseLong(source.get("idTwitter").toString()), -1);
+			
+			//while(friendsWithPaging.getNextCursor() != 0)
+			//{
+				//friendsWithPaging = controller.getTwitter().getFriendsStatuses(Long.parseLong(source.get("idTwitter").toString()), friendsWithPaging.getNextCursor());
+				//friends.addAll(friendsWithPaging);
+			//}
+			
 			System.out.println("GOT FRIENDS FOR "+source.get("name"));
 
 			int notAdded = 0;
@@ -68,8 +86,18 @@ public class AddFriendsThread extends Thread {
 			System.out.println("Node Count: "+networkView.getGraph().getNodeCount());
 			
 		} catch (TwitterException e) {
-			controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
-			e.printStackTrace();
+			
+			//Não é possível ver os amigos pois o usuário tem os tweets protegidos
+			if(e.getExceptionCode().equals("85f8b96c-247d6c8e"))
+			{
+				controller.showMessageDialog("Este usuário tem seu perfil protegido.",MessageType.ERROR);
+			}
+			else
+			{
+				controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
+				System.out.println("%%%%TWITTER EXCEPTION%%%%\n");
+				e.printStackTrace();
+			}
 		} catch(Exception ex) {
 			System.out.println("%%%%EXCEPTION%%%%\n");
 			ex.printStackTrace();

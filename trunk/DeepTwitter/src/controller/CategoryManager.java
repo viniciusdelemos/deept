@@ -157,7 +157,7 @@ public class CategoryManager {
 		} catch (JDOMException ex) {
 			JOptionPane.showMessageDialog(null, ex, "Problemas",
 					JOptionPane.ERROR_MESSAGE);
-			// TODO ver quais excecoes podem ocorrer aki
+			// TODO ver quais excecoes podem ocorrer aqui
 		} catch (IOException ex) {
 			JOptionPane
 					.showMessageDialog(

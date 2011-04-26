@@ -4,20 +4,17 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
@@ -101,7 +98,10 @@ public class NetworkView extends Display {
     private Graph g;
     private int numUsers, groupId;
     private ForceSimulator forceSimulator;
-    private Map<Integer, Node> nodesMap;    
+    
+    //(ATUALIZAÇÃO)
+    //de Integer para Long
+    private Map<Long, Node> nodesMap;    
     private boolean isHighQuality, isTwitterUser;
     private SocialNetwork socialNetwork; 
     private VisualItem selectionBox;	
@@ -123,7 +123,7 @@ public class NetworkView extends Display {
     	controller = ControllerDeepTwitter.getInstance();
     	isTwitterUser = controller.isTwitterUser();    	
     	
-    	nodesMap = new HashMap<Integer, Node>();
+    	nodesMap = new HashMap<Long, Node>();
     	
     	socialNetwork = new SocialNetwork();
     	try {
@@ -136,6 +136,7 @@ public class NetworkView extends Display {
     	weight_value = 370f;
     	
     	g = new Graph(true);
+    	
     	g.addColumn("id", int.class);
     	g.addColumn("idTwitter",int.class);
     	g.addColumn("screenName", String.class);
@@ -378,7 +379,13 @@ public class NetworkView extends Display {
 			
 			//new TestLoadUserImage(u,newNode);
 			newNode.set("image", u.getProfileImageURL().toString());
-			newNode.set("latestStatus",u.getStatusText());
+			
+			//(ATUALIZAÇÃO)
+			//de u.getStatusText() para u.getStatus().getText()
+			try{
+				newNode.set("latestStatus",u.getStatus().getText());
+			}
+			catch(Exception e){}
 			
 			newNode.set("location", u.getLocation());
 			newNode.set("description", u.getDescription());
@@ -412,7 +419,9 @@ public class NetworkView extends Display {
     
     public void removeNode(VisualItem item) {
     	synchronized(m_vis) {
-    		socialNetwork.removeUser(item.getInt("idTwitter"));
+    		//(ATUALIZAÇÃO)
+    		//mudança de item.getInt para item.getLong
+    		socialNetwork.removeUser(item.getLong("idTwitter"));
     		g.removeNode((Node)item.getSourceTuple());
     	}
     }
@@ -505,7 +514,9 @@ public class NetworkView extends Display {
 		return g.getNode(id);
 	}
 	
-	public Node getNodeByTwitterId(int id) {
+	//(ATUALIZAÇÃO)
+	//mudança de int para long
+	public Node getNodeByTwitterId(long id) {
 		return nodesMap.get(id);			
 	}
 	
@@ -520,12 +531,16 @@ public class NetworkView extends Display {
 		return m_vis.getVisualItem(NODES, node);
 	}
 	
-	public String getUserName(int id) {
+	//(ATUALIZAÇÃO)
+	//mudança de int para long
+	public String getUserName(long id) {
 		Node n = nodesMap.get(id);
 		return n.getString("name");
 	}
-			
-	public User getUser(int idTwitter) {
+	
+	//(ATUALIZAÇÃO)
+	//mudança de int para long
+	public User getUser(long idTwitter) {
 		return socialNetwork.getUser(idTwitter);
 	}
 	
@@ -683,7 +698,9 @@ public class NetworkView extends Display {
 				return;
 			}
 			
-			final String clickedUserName = getUser(item.getInt("idTwitter")).getScreenName();
+			//(ATUALIZAÇÃO)
+			//mudança de item.getInt para item.getLong
+			final String clickedUserName = getUser(item.getLong("idTwitter")).getScreenName();
 			popupMenu = new JPopupMenu();
 			
 			JMenuItem friends = new JMenuItem("View Friends");
@@ -722,7 +739,9 @@ public class NetworkView extends Display {
     			//verifica se estou sendo seguido
     			//edge = g.getEdge(clickedNode.getInt("id"),mainUserNode.getInt("id"), );
     			
-    			if(!socialNetwork.isUserBlocked(clickedItem.getInt("idTwitter")))
+    			//(ATUALIZAÇÃO)
+    			//mudanã de clickedItem.getInt para .getLong
+    			if(!socialNetwork.isUserBlocked(clickedItem.getLong("idTwitter")))
     				blockUnblock.setText("Block");
     			else
     				blockUnblock.setText("Unblock");
@@ -840,14 +859,15 @@ public class NetworkView extends Display {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					controller.selectTab(0);
-					String groupName = "Grupo "+(item.getInt("id")+1);
+					String groupName = "Grupo "+(item.getLong("id")+1);
 					int aggSize = item.getAggregateSize();
 					String[] ids = new String[aggSize];
 					Iterator<NodeItem> nodes = item.items();
 					int cont = 0;
 					while(nodes.hasNext()) {
 						NodeItem next = nodes.next();
-						ids[cont] = String.valueOf(next.getInt("idTwitter"));
+						
+						ids[cont] = String.valueOf(next.getLong("idTwitter"));
 						cont++;
 					}					
 					StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);					

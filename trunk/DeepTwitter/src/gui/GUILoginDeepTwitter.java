@@ -12,6 +12,9 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
     /** Creates new form GUILoginDeepTwitter */
     public GUILoginDeepTwitter() {
         initComponents();
+        
+        txtPassword.setVisible(false);
+        labelPassword.setVisible(false);
         isTwitterUser = true;
     }
 
@@ -51,7 +54,7 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
         labelUser.setText("Usuário:");
 
         labelPassword.setFont(new java.awt.Font("Tahoma", 0, 14));
-        labelPassword.setText("Senha:");
+        labelPassword.setText("PIN:");
         
         txtUser.setNextFocusableComponent(txtPassword);
         
@@ -86,7 +89,7 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
         panelTip.setBorder(null);
         panelTip.setEditable(false);
         panelTip.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        panelTip.setText("Informe seu nome de usuário e senha do Twitter.");
+        panelTip.setText("Informe seu nome de usuário do Twitter.");
         panelTip.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jScrollPane1.setViewportView(panelTip);
 
@@ -153,9 +156,9 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
     }                                             
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        panelTip.setText("Informe seu nome de usuário e senha do Twitter.");
-        labelPassword.setVisible(true);
-        txtPassword.setVisible(true);
+        panelTip.setText("Informe seu nome de usuário do Twitter.");
+        labelPassword.setVisible(false);
+        txtPassword.setVisible(false);
         isTwitterUser = true;
     }                                             
 
@@ -177,7 +180,26 @@ public class GUILoginDeepTwitter extends javax.swing.JFrame {
     {
     	return isTwitterUser;
     }
-      
+    
+    //se o usuário que logar ou explorar alguém no twitter
+    public String getSelecao()
+    {
+    	if(jRadioButton1.isSelected())
+    	{
+    		return "Logar";
+    	}
+    	else
+    		return "Explorar";
+    }
+    
+    public void setPin()
+    {
+    	txtPassword.setVisible(true);
+    	labelPassword.setVisible(true);
+    	panelTip.setText("Informe seu PIN para efetuar o login no Twitter.");
+    	
+    	this.validate();
+    }
 
     // Variables declaration - do not modify
     private javax.swing.JButton OkButton;
