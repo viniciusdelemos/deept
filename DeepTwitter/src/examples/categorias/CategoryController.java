@@ -261,7 +261,7 @@ public class CategoryController {
 				wg = hasWordsGroup(categoriesGroup, listCategoryStatus);
 			} catch(DeepTwitterException e){
 				System.out.println("PROBLEMAOOOOOOOOOOOO");
-				//TODO tratar isto aki
+				//TODO tratar isto aqui
 				e.printStackTrace();
 			}
 			

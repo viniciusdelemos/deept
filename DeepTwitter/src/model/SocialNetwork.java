@@ -12,32 +12,46 @@ import controller.GroupManager;
 import twitter4j.User;
 
 public class SocialNetwork {   
-    private Map<Integer,User> usersMap;
-    private Set<Integer> blocksSet; 
+	
+	//(ATUALIZA플O)
+	//usersMap de Integer para Long	
+    private Map<Long,User> usersMap;
+    
+    //(ATUALIZA플O)
+    //blocksSet para long
+    private Set<Long> blocksSet; 
+    
     private List<GroupManager> listUsersGroup;
     private int groupId;
     
     public SocialNetwork() {        
-        usersMap = new HashMap<Integer, User>();     
+        usersMap = new HashMap<Long, User>();     
         listUsersGroup = new ArrayList<GroupManager>();
-        blocksSet = new HashSet<Integer>();
+        blocksSet = new HashSet<Long>();
         groupId = 0;
     }
     
-	public User getUser(int twitterId) {
+	public User getUser(long twitterId) {
 		return usersMap.get(twitterId);
 	}
 	
-	public void addBlockedUsers(int[] ids) {
-		for(int i : ids)
+	//(ATUALIZA플O)
+	//de int[] para long[]
+	public void addBlockedUsers(long[] ids)
+	{
+		for(long i : ids)
 			blocksSet.add(i);
 	}
 	
-	public void removeBlockedUser(int id) {
+	//(ATUALIZA플O)
+	//de int para long
+	public void removeBlockedUser(long id) {
 		blocksSet.remove(id);
 	}
 	
-	public boolean isUserBlocked(int id) {
+	//(ATUALIZA플O)
+	//de int para long
+	public boolean isUserBlocked(long id) {
 		return blocksSet.contains(id);
 	}
 			
@@ -45,7 +59,9 @@ public class SocialNetwork {
 		usersMap.put(u.getId(), u);
 	}
 	
-	public void removeUser(int id) {
+	//(ATUALIZA플O)
+	//de int para long
+	public void removeUser(long id) {
 		usersMap.remove(id);
 	}
 	

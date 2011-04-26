@@ -9,18 +9,15 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -29,19 +26,17 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import prefuse.data.Node;
-
 import model.ChartColor;
 import model.ConfigurationType;
 import model.MessageType;
 import model.StatusesType;
 import model.URLLinkAction;
+import prefuse.data.Node;
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
-import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterResponse;
@@ -64,7 +59,10 @@ public class StatusesTableThread {
 	private String text, screenName, groupName;
 	private String[] userId;
 	private URL profileImageURL;
-	private int senderId;
+	
+	//(ATUALIZAÇÃO)
+	//mudança de int para long
+	private long senderId;
 	private long responseId;
 	private long[] lastResponseId;
 	private Date date;
@@ -158,7 +156,9 @@ public class StatusesTableThread {
 		gbc.gridx = 0;
 		gbc.insets = new Insets(0,3,0,1);
 		
-		final int senderIdAux = senderId;
+		//(ATUALIZAÇÃO)
+		//mudança de int para long
+		final long senderIdAux = senderId;
 		
 		final JLabel interactiveImage = new JLabel();
 		interactiveImage.setBorder(BorderFactory.createLineBorder(Color.black, 1));
@@ -289,7 +289,10 @@ public class StatusesTableThread {
 			updatePanel.add(favoriteButton,gbc);
 		}
 
-		int loggedUserId = Integer.parseInt(controller.getLoggedUserId());
+		//(ATUALIZAÇÃO)
+		//mudança de int para long
+		//mudança de Integer.parseInt para Long.parseLong
+		long loggedUserId = Long.parseLong(controller.getLoggedUserId());
 
 		if(loggedUserId == senderId || currentResponse instanceof DirectMessage) {
 			gbc.weightx = 0;
@@ -367,6 +370,7 @@ public class StatusesTableThread {
 			senderId = u.getId();
 			date = dm.getCreatedAt();
 		}
+		/**
 		else if (response instanceof Tweet) {
 			Tweet t = (Tweet) response;
 			responseId = t.getId();
@@ -380,6 +384,7 @@ public class StatusesTableThread {
 			}
 			date = t.getCreatedAt();
 		}
+		*/
 		else
 			throw new IllegalArgumentException("Objeto inválido dentro da lista");
 		
@@ -479,7 +484,7 @@ public class StatusesTableThread {
 	class KeepTableUpdated extends Thread {		
 		private GridBagConstraints c;
 		private Twitter twitter = controller.getTwitter();
-		private boolean threadSuspended;						
+		private boolean threadSuspended;		
 		private List<TwitterResponse> statusesList, allStatusesList;
 		private List<? extends TwitterResponse> aux;
 		private Set<Long> favoritesSet;
@@ -488,6 +493,7 @@ public class StatusesTableThread {
 			twitter = controller.getTwitter();
 			c = new GridBagConstraints();
 			threadSuspended = false;
+			//here
 			statusesList = new ArrayList<TwitterResponse>();
 			allStatusesList = new ArrayList<TwitterResponse>();
 			favoritesSet = new HashSet<Long>();
@@ -544,13 +550,19 @@ public class StatusesTableThread {
 								if(userId==null)
 									aux = twitter.getFriendsTimeline(new Paging().count(updatesToGet));
 								else
-									aux = twitter.getUserTimeline(userId[0], new Paging().count(updatesToGet));
+									aux = twitter.getUserTimeline(Long.parseLong(userId[0]), new Paging().count(updatesToGet));
 							}
 							else {
 								if(userId==null)
 									aux = twitter.getFriendsTimeline(new Paging().sinceId(lastResponseId[0]));
 								else
-									aux = twitter.getUserTimeline(userId[0], updatesToGet, lastResponseId[0]);								
+									
+									//(ATUALIZAÇÃO)
+									//aux = twitter.getUserTimeline(userId[0], updatesToGet, lastResponseId[0]);
+									//criação de uma instância Paging com count = updateToGet
+									//e sinceId = lastRespondeId[0]
+									aux = twitter.getUserTimeline();
+									aux = twitter.getUserTimeline(Long.parseLong(userId[0]), new Paging().count(updatesToGet).sinceId(lastResponseId[0]));								
 							}
 						}
 						else {
@@ -558,9 +570,13 @@ public class StatusesTableThread {
 							List<Status> l;
 							for(int i=0; i<userId.length; i++) {
 								if(lastResponseId[i] < 0) 
-									l = twitter.getUserTimeline(userId[i], new Paging().count(updatesToGet));									
+									l = twitter.getUserTimeline(Long.parseLong(userId[i]), new Paging().count(updatesToGet));									
 								else
-									l = twitter.getUserTimeline(userId[i], updatesToGet, lastResponseId[i]);									
+									//(ATUALIZAÇÃO)
+									//seguindo a sugestão, código antigo comentado
+									
+									l = twitter.getUserTimeline(Long.parseLong(userId[i]), new Paging().count(updatesToGet).sinceId(lastResponseId[i]));
+								//l = twitter.getUserTimeline(userId[i], updatesToGet, lastResponseId[i]);									
 								//talvez seja melhor fazer userId, new Paging().count(updatesToGet).sinceId(lastStatusId)
 								//testar
 								if(l.size()>0)
@@ -618,19 +634,26 @@ public class StatusesTableThread {
 
 						QueryResult results = twitter.search(query);
 
+						//TODO arrumar esse erro maldito
+						/**
 						List<Tweet> tweets = results.getTweets();
 						statusesList = new ArrayList<TwitterResponse>(tweets.size());
 						for(Tweet t : tweets) {
 							statusesList.add(t);
 						}
+						
 						notification = "resultado";
 						break;
+						*/
 
 					case PUBLIC_TIMELINE:
 						if(lastResponseId[0]<0)							
 							aux = twitter.getPublicTimeline();
 						else
-							aux = twitter.getPublicTimeline(lastResponseId[0]);	
+							//(ATUALIZAÇÃO)
+							//removido o argumento lastResponseId[0], pois não
+							//há mais o método getPublicTimeline(int sinceId)
+							aux = twitter.getPublicTimeline();	
 						notification = "tweet na Public Timeline";
 						break;
 					}
