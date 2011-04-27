@@ -155,6 +155,10 @@ public class NetworkView extends Display {
     	g.addColumn("isShowingFollowers", boolean.class);
     	g.addColumn("groupId", int.class);
     	g.addColumn("weight", float.class);
+    	g.addColumn("friendsNextCursor", long.class);
+    	g.addColumn("followersNextCursor", long.class);
+    	g.addColumn("addedFriends", int.class);
+    	g.addColumn("addedFollowers", int.class);
     	   	
     	// add visual data groups
     	VisualGraph vg = m_vis.addGraph(GRAPH, g);
@@ -399,6 +403,11 @@ public class NetworkView extends Display {
 			newNode.set("isShowingFriends", false);
 			newNode.set("isShowingFollowers", false);
 			newNode.set("groupId", -1);
+			
+			newNode.set("friendsNextCursor", -1);
+			newNode.set("followersNextCursor", -1);
+			newNode.set("addedFriends", 0);
+			newNode.set("addedFollowers", 0);
 			
 			nodesMap.put(u.getId(), newNode);			
 			if (numUsers == 0) {

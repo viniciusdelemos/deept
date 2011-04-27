@@ -32,19 +32,12 @@ public class AddFriendsThread extends Thread {
 			//(ATUALIZAÇÃO)
 			//mudança de getFriends() para getFriendsStatuses()
 			
-			//lista que muda dependendo do 'cursor' definido
-			//retorna no máximo 100 amigos
-			//PagableResponseList<User> friendsWithPaging = controller.getTwitter().getFriendsStatuses(Long.parseLong(source.get("idTwitter").toString()), -1);
+			PagableResponseList<User> friends =  controller.getTwitter().getFriendsStatuses(Long.parseLong(source.get("idTwitter").toString()), Long.parseLong(source.get("friendsNextCursor").toString()));
 			
-			//lista onde são armazenados todos os amigos
-			//List<User> friends = friendsWithPaging;
-			List<User> friends =  controller.getTwitter().getFriendsStatuses(Long.parseLong(source.get("idTwitter").toString()), -1);
-			
-			//while(friendsWithPaging.getNextCursor() != 0)
-			//{
-				//friendsWithPaging = controller.getTwitter().getFriendsStatuses(Long.parseLong(source.get("idTwitter").toString()), friendsWithPaging.getNextCursor());
-				//friends.addAll(friendsWithPaging);
-			//}
+			if(friends.getNextCursor() != 0)
+			{
+				source.set("friendsNextCursor", friends.getNextCursor());
+			}
 			
 			System.out.println("GOT FRIENDS FOR "+source.get("name"));
 
@@ -75,10 +68,27 @@ public class AddFriendsThread extends Thread {
 					notAdded++;
 				}
 			}
+			
+			int addedFriends = Integer.parseInt(source.get("addedFriends").toString());
+			
 			if(!isShowingFriends)
+			{
 				controller.setStatusBarMessage("Adicionados "+(friends.size()-notAdded)+" amigos de "+source.getString("name") +" à rede. "+notAdded+" já existentes.",MessageType.INFORMATION);
+				source.set("addedFriends", addedFriends + friends.size());
+			}
 			else
-				controller.setStatusBarMessage("Adicionados "+notAdded+" amigos de "+source.getString("name") +" à rede. "+(friends.size()-notAdded)+" já existentes.",MessageType.INFORMATION);
+			{	
+				//se adicionou todos os amigos
+				if(addedFriends == Integer.parseInt(source.get("friendsCount").toString()))
+				{
+					controller.setStatusBarMessage("Todos amigos de " + source.getString("name") + " já foram adicionados à rede.", MessageType.INFORMATION);
+				}
+				else
+				{	
+					controller.setStatusBarMessage("Adicionados mais "+(friends.size()-notAdded)+" amigos de "+source.getString("name") +" à rede. " + addedFriends + " já existentes.",MessageType.INFORMATION);
+					source.set("addedFriends", addedFriends + (friends.size()-notAdded));
+				}
+			}
 			
 			source.setBoolean("isShowingFriends",true);
 			source.setBoolean("isOpen", true);

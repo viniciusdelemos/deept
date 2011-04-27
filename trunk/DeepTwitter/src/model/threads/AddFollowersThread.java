@@ -31,21 +31,11 @@ public class AddFollowersThread extends Thread {
 			//(ATUALIZAÇÃO)
 			//mundança de getFollowers() para getFollowersStatuses(string, long cursor);
 			
-			//lista que muda dependendo do 'cursor' definido
-			//retorna no máximo 100 followers
-			//PagableResponseList<User> followersWithPaging = controller.getTwitter().getFollowersStatuses(Long.parseLong(source.get("idTwitter").toString()), -1);
-			
-			//lista onde são armazenados todos os followers
-			List<User> followers = controller.getTwitter().getFollowersStatuses(Long.parseLong(source.get("idTwitter").toString()), -1);
-			
-			//while(followersWithPaging.getNextCursor() != 0)
-			//{
-				//retorna mais 100 followers
-				//followersWithPaging = controller.getTwitter().getFollowersStatuses(Long.parseLong(source.get("idTwitter").toString()), followersWithPaging.getNextCursor());
-				
-				//adiciona esses novos followers a lista com todos os followers
-				//followers.addAll(followersWithPaging);
-			//}
+			PagableResponseList<User> followers = controller.getTwitter().getFollowersStatuses(Long.parseLong(source.get("idTwitter").toString()), Long.parseLong(source.get("followersNextCursor").toString()));
+			if(followers.getNextCursor() != 0)
+			{
+				source.set("followersNextCursor", followers.getNextCursor());
+			}
 			
 			System.out.println("GOT FOLLOWERS FOR "+source.get("name"));
 			
@@ -78,10 +68,25 @@ public class AddFollowersThread extends Thread {
 					notAdded++;
 				}
 			}
+			int addedFollowers = Integer.parseInt(source.get("addedFollowers").toString());
 			if(!isShowingFollowers)
+			{
 				controller.setStatusBarMessage("Adicionados "+(followers.size()-notAdded)+" seguidores de "+source.getString("name") +" à rede. "+notAdded+" já existentes.",MessageType.INFORMATION);
+				source.set("addedFollowers", addedFollowers + followers.size());
+			}
 			else
-				controller.setStatusBarMessage("Adicionados "+notAdded+" seguidores de "+source.getString("name") +" à rede. "+(followers.size()-notAdded)+" já existentes.",MessageType.INFORMATION);
+			{
+				//se adicionou todos os followers
+				if(addedFollowers == Integer.parseInt(source.get("followersCount").toString()))
+				{
+					controller.setStatusBarMessage("Todos seguidores de " + source.getString("name") + " já foram adicionados à rede.", MessageType.INFORMATION);
+				}
+				else
+				{	
+					controller.setStatusBarMessage("Adicionados mais "+(followers.size()-notAdded)+" seguidores de "+source.getString("name") +" à rede. " + addedFollowers + " já existentes.",MessageType.INFORMATION);
+					source.set("addedFollowers", addedFollowers + (followers.size()-notAdded));
+				}
+			}
 			
 			source.setBoolean("isShowingFollowers",true);
 			//node count: botar no log
