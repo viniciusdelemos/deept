@@ -559,10 +559,10 @@ public class StatusesTableThread {
 									
 									//(ATUALIZAÇÃO)
 									//aux = twitter.getUserTimeline(userId[0], updatesToGet, lastResponseId[0]);
-									//criação de uma instância Paging com count = updateToGet
-									//e sinceId = lastRespondeId[0]
-									aux = twitter.getUserTimeline();
-									aux = twitter.getUserTimeline(Long.parseLong(userId[0]), new Paging().count(updatesToGet).sinceId(lastResponseId[0]));								
+									//aux = twitter.getUserTimeline(Long.parseLong(userId[0]), new Paging().count(updatesToGet).sinceId(lastResponseId[0]));
+									
+									//Aparentemente, assim não ocorrer NullPointerExceptions como ocorria com o último comentário acima
+									aux = twitter.getUserTimeline(Long.parseLong(userId[0]), new Paging(1, updatesToGet, lastResponseId[0]));
 							}
 						}
 						else {
@@ -597,6 +597,7 @@ public class StatusesTableThread {
 						if(userId==null)
 							aux = twitter.getFavorites();
 						else
+							//TODO erro aqui quando está explorando usuário sem fazer login
 							aux = twitter.getFavorites(userId[0]);		
 						notification = "favorito";
 						break;
