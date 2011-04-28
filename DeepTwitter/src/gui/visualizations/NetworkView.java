@@ -128,7 +128,8 @@ public class NetworkView extends Display {
     	socialNetwork = new SocialNetwork();
     	try {
 			socialNetwork.addBlockedUsers(controller.getTwitter().getBlockingUsersIDs().getIDs());
-		} catch (TwitterException e) {}
+		} catch (Exception e) {}
+		//mudei de TwitterException para Exception pq nesse local ocorriam erros na opção "Encontrar outro usuário"
     	
 		isHighQuality = true;
     	numUsers = 0;
