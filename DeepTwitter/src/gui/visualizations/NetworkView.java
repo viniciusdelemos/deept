@@ -764,7 +764,9 @@ public class NetworkView extends Display {
     		popupMenu.add(openURL);
 			
     		if(!controller.isTwitterUser()) {
-				followers.setEnabled(false);
+    			//(ATUALIZAÇÃO)
+    			//deixei comentado
+				//followers.setEnabled(false);
 				follow.setEnabled(false);
 				leave.setEnabled(false);
 				blockUnblock.setEnabled(false);
