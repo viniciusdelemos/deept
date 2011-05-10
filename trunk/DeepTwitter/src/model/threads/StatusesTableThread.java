@@ -561,7 +561,8 @@ public class StatusesTableThread {
 									//aux = twitter.getUserTimeline(userId[0], updatesToGet, lastResponseId[0]);
 									//aux = twitter.getUserTimeline(Long.parseLong(userId[0]), new Paging().count(updatesToGet).sinceId(lastResponseId[0]));
 									
-									//Aparentemente, assim não ocorrer NullPointerExceptions como ocorria com o último comentário acima
+									//Aparentemente, assim não ocorrem mais NullPointerExceptions como ocorriam	 algumas vezes
+									//quando aux era igual ao último comentário acima
 									aux = twitter.getUserTimeline(Long.parseLong(userId[0]), new Paging(1, updatesToGet, lastResponseId[0]));
 							}
 						}
