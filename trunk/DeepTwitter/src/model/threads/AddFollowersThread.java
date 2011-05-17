@@ -95,12 +95,13 @@ public class AddFollowersThread extends Thread {
 		} catch (TwitterException e) {
 			
 			//Não é possível ver os followers pois o usuário tem os tweets protegidos
-			if(e.getExceptionCode().equals("d5cc896c-26006263"))
+			if(e.getExceptionCode().equals("d5cc896c-2604055b"))
 			{				
 				controller.showMessageDialog("Este usuário tem seu perfil protegido.",MessageType.ERROR);
 			}
 			else
 			{
+				System.out.println(e.getExceptionCode());
 				controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
 				System.out.println("%%%%TWITTER EXCEPTION%%%%\n");
 				e.printStackTrace();
