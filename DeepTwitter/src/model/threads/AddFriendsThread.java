@@ -98,7 +98,7 @@ public class AddFriendsThread extends Thread {
 		} catch (TwitterException e) {
 			
 			//Não é possível ver os amigos pois o usuário tem os tweets protegidos
-			if(e.getExceptionCode().equals("85f8b96c-247d6c8e"))
+			if(e.getExceptionCode().equals("85f8b96c-24810f86"))
 			{
 				controller.showMessageDialog("Este usuário tem seu perfil protegido.",MessageType.ERROR);
 			}
