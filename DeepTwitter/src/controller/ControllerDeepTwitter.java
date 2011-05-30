@@ -273,18 +273,9 @@ public class ControllerDeepTwitter {
 						}
 						else
 						{		
-							//Se usuário colocou PIN
-							if(loginWindow.getPassword().compareTo("")>0)
-							{
-								accessToken = twitter.getOAuthAccessToken(requestToken, loginWindow.getPassword());
-								
-								//Armazenamento dos AccessTokens de cada usuário
-								ControllerDeepTwitter.storeAccessToken(loginWindow.getUser(), accessToken);
-								
-								user = twitter.verifyCredentials(); //Se usuario ou senha invalido
-								logInOK = true;
-							}
-							else
+							
+							//Se usuário não colocou PIN
+							if(!(loginWindow.getPassword().compareTo("")>0))
 							{
 								//Se usuário não tem AccessToken salva,
 								//abre o browser para permitir ao programa acesso a conta
@@ -295,6 +286,17 @@ public class ControllerDeepTwitter {
 								
 								new URLLinkAction(requestToken.getAuthorizationURL());
 								loginWindow.setPin();
+							}
+							//Se usuário colocou PIN
+							if(loginWindow.getPassword().compareTo("")>0)
+							{
+								accessToken = twitter.getOAuthAccessToken(requestToken, loginWindow.getPassword().trim());
+								
+								//Armazenamento dos AccessTokens de cada usuário
+								ControllerDeepTwitter.storeAccessToken(loginWindow.getUser(), accessToken);
+								
+								user = twitter.verifyCredentials(); //Se usuario ou senha invalido
+								logInOK = true;
 							}
 						}
 						
@@ -438,7 +440,10 @@ public class ControllerDeepTwitter {
 				if(ex.getStatusCode()==400)
 					showMessageDialog("Você excedeu o número máximo de 350 requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
 				else if(ex.getStatusCode()==401)
-					showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);				
+				{
+					System.out.println(loginWindow.getPassword());
+					showMessageDialog("Nome de usuário ou senha inválidos!",MessageType.ERROR);
+				}
 				else if(ex.getStatusCode()==404)
 					showMessageDialog("Usuário não encontrado!",MessageType.ERROR);
 				else if(ex.getStatusCode()==406)

@@ -724,7 +724,7 @@ public class StatusesTableThread {
 					System.out.println("Status code: "+e.getStatusCode());
 					e.printStackTrace();
 					if(e.getStatusCode()==400) {
-						controller.showMessageDialog("Você excedeu o limite de requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);
+						controller.showMessageDialog("Você excedeu o limite de requisições por hora permitido pelo Twitter. Aguarde e tente novamente.",MessageType.ERROR);						
 						break;
 					}
 					else if(e.getStatusCode()==401) {
@@ -737,8 +737,8 @@ public class StatusesTableThread {
 						panel.revalidate();
 						break;
 					}
-					else if(e.getStatusCode()==-1) {
-						//controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
+					else if(e.getStatusCode()==502) {
+						controller.showMessageDialog("Twitter is down or being upgraded.",MessageType.ERROR);						
 					}
 					else
 						controller.showMessageDialog(e.getMessage(),MessageType.ERROR);
