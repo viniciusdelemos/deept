@@ -750,7 +750,7 @@ public class NetworkView extends Display {
     			//edge = g.getEdge(clickedNode.getInt("id"),mainUserNode.getInt("id"), );
     			
     			//(ATUALIZAÇÃO)
-    			//mudanã de clickedItem.getInt para .getLong
+    			//mudança de clickedItem.getInt para .getLong
     			if(!socialNetwork.isUserBlocked(clickedItem.getLong("idTwitter")))
     				blockUnblock.setText("Block");
     			else
@@ -778,7 +778,7 @@ public class NetworkView extends Display {
     		friends.addActionListener(new ActionListener() {				
     			@Override
 				public void actionPerformed(ActionEvent e) {    				
-					new AddFriendsThread(networkView, (NodeItem)clickedItem);					
+					new AddFriendsThread(networkView, (NodeItem)clickedItem);
 				}});
     		updates.addActionListener(new ActionListener() {
 				@Override
@@ -937,8 +937,20 @@ public class NetworkView extends Display {
 				}
 				if(item.getBoolean("isOpen") == false)
 				{										
-					if(item.getBoolean("isShowingFriends") == false) 
+					if(item.getBoolean("isShowingFriends") == false)
+					{
+						//adiciona amigos do usuario clicado
 						new AddFriendsThread(networkView, (NodeItem)item);
+						//adiciona followers do usuario clicado
+						new AddFollowersThread(networkView, (NodeItem)item);
+						//mostra tweets do usuario clicado
+						StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);
+						if(isTwitterUser && clickedItem.getString("idTwitter").equals(controller.getLoggedUserId()))
+							tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES));
+						else
+							tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES,clickedItem.getString("idTwitter")));
+						controller.selectTab(0);
+					}
 					else {
 						setChildrenVisible((NodeItem)item, true);
 						item.setBoolean("isOpen", true);
