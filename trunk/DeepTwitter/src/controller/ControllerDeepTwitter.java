@@ -150,7 +150,7 @@ public class ControllerDeepTwitter {
 	
 	public String getUserName(String id) {
 		try{
-			//(ATUALIZAÇÃO)
+			//(ATUALIZACAO)
 			//mudança de int para long
 			return networkView.getUserName(Long.parseLong(id));
 		}
@@ -159,7 +159,7 @@ public class ControllerDeepTwitter {
 		}
 	}
 	
-	//(ATUALIZAÇÃO)
+	//(ATUALIZACAO)
 	//mudança de int para long
 	public Node getNode(long id) {
 		return networkView.getNodeByTwitterId(id);
@@ -173,13 +173,13 @@ public class ControllerDeepTwitter {
 		networkView.searchAndAddUserToNetwork(u);
 	}
 	
-	//(ATUALIZAÇÃO)
+	//(ATUALIZACAO)
 	//mudança de int para long
 	public void searchAndAddUserToNetwork(long id) {
 		try {
 			User u = networkView.getUser(id);
 			if(u == null) 
-				//(ATUALIZAÇÃO)
+				//(ATUALIZACAO)
 				//mudança de getUserDetail() para showUser()
 				searchAndAddUserToNetwork(getTwitter().showUser(String.valueOf(id)));			
 			else
@@ -249,10 +249,10 @@ public class ControllerDeepTwitter {
 			try{			
 				if(isTwitterUser)
 				{
-					//se usuário tenta logar com seu próprio twitter
+					//se usuario tenta logar com seu proprio twitter
 					if(loginWindow.getSelecao().equals("Logar") && loginWindow.getUser().compareTo("")>0)
 					{
-						//Autenticação OAuth
+						//Autenticacao OAuth
 						twitter = new TwitterFactory().getInstance();
 						twitter.setOAuthConsumer("EQwcBmFc4rQtejrQZGfwzA", "tEezbK6EFtzopAnte88gd3pPfC3r9hW9T0hXfJmxk3k");
 						
@@ -263,7 +263,7 @@ public class ControllerDeepTwitter {
 						{
 							try
 							{
-								//Procura se o usuário já é autenticado
+								//Procura se o usuario ja eh autenticado
 								twitter.setOAuthAccessToken(accessTokenUser);
 								
 								user = twitter.verifyCredentials(); //Se usuario ou senha invalido,
@@ -274,10 +274,10 @@ public class ControllerDeepTwitter {
 						else
 						{		
 							
-							//Se usuário não colocou PIN
+							//Se usuario nao colocou PIN
 							if(!(loginWindow.getPassword().compareTo("")>0))
 							{
-								//Se usuário não tem AccessToken salva,
+								//Se usuario nao tem AccessToken salva,
 								//abre o browser para permitir ao programa acesso a conta
 								if(requestToken == null)
 								{
@@ -287,12 +287,12 @@ public class ControllerDeepTwitter {
 								new URLLinkAction(requestToken.getAuthorizationURL());
 								loginWindow.setPin();
 							}
-							//Se usuário colocou PIN
+							//Se usuario colocou PIN
 							if(loginWindow.getPassword().compareTo("")>0)
 							{
 								accessToken = twitter.getOAuthAccessToken(requestToken, loginWindow.getPassword().trim());
 								
-								//Armazenamento dos AccessTokens de cada usuário
+								//Armazenamento dos AccessTokens de cada usuario
 								ControllerDeepTwitter.storeAccessToken(loginWindow.getUser(), accessToken);
 								
 								user = twitter.verifyCredentials(); //Se usuario ou senha invalido
@@ -308,7 +308,7 @@ public class ControllerDeepTwitter {
 				}
 				else 
 				{
-					//caso apenas se queira explorar outro usuário sem logar
+					//caso apenas se queira explorar outro usuario sem logar
 					if(loginWindow.getSelecao().equals("Explorar"))
 					{
 						twitter = new TwitterFactory().getInstance();
@@ -316,7 +316,7 @@ public class ControllerDeepTwitter {
 						System.out.println(twitter.getRateLimitStatus());
 						
 						//AccessToken accessToken = twitter.getOAuthAccessToken();
-						//(ATUALIZAÇÃO)
+						//(ATUALIZACAO)
 						//mudança getUserId() para getId();
 						try
 						{
@@ -405,7 +405,7 @@ public class ControllerDeepTwitter {
 						}						
 					});
 					
-					//adicionar tab de forças?
+					//adicionar tab de forcas?
 					
 					mainWindow.addWindowListener(new WindowAdapter() {
 						@Override

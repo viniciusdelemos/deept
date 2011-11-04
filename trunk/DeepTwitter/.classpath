@@ -5,9 +5,9 @@
 	<classpathentry kind="src" path="files"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
-	<classpathentry kind="lib" path="H:/homewin/workspace/profusians/lib/prefuse.jar"/>
+	<classpathentry kind="lib" path="/Users/analuizacunha/Documents/workspace/profusians/lib/prefuse.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/prefuse"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/profusians"/>
-	<classpathentry kind="lib" path="H:/homewin/workspace/twitter4j-2.2.2/lib/twitter4j-core-2.2.2.jar"/>
+	<classpathentry kind="lib" path="/Users/analuizacunha/Documents/workspace/twitter4j-2.2.5/lib/twitter4j-core-2.2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
