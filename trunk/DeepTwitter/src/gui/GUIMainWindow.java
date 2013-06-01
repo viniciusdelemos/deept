@@ -439,6 +439,7 @@ public class GUIMainWindow extends javax.swing.JFrame {
     }
     
     public void setRateLimitStatus(int left, int total, Date resetDate) {
+    	
         labelAPILimit.setText("API: "+left+"/"+total);
         labelAPILimit.setToolTipText("Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
         
