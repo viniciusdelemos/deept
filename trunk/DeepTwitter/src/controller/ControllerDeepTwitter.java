@@ -1759,21 +1759,13 @@ static long execucao = 0;
 		if(execucao>=9223372036854775807L)
 			execucao = 0;
 		
-		//System.out.println("**************************");
         System.out.println((execucao++) + "\t\t" +new Date().toGMTString());
-//        System.out.println("Free: " +Runtime.getRuntime().freeMemory() 
-//        		+ "\tMax: " + Runtime.getRuntime().maxMemory() 
-//        		+ "\tTotal:" +Runtime.getRuntime().totalMemory());
+
+        System.gc(); System.gc();
         
-//        System.gc(); System.gc(); System.gc(); System.gc();
-//        System.gc(); System.gc(); System.gc(); System.gc();
-//        System.gc(); System.gc(); System.gc(); System.gc();
-        System.gc(); System.gc(); //System.gc(); System.gc();
-        
-        System.out.println("Free: " +Runtime.getRuntime().freeMemory() 
-        		+ "\tMax: " + Runtime.getRuntime().maxMemory() 
-        		+ "\tTotal:" +Runtime.getRuntime().totalMemory());
-        //System.out.println("**************************");
+        System.out.println("Mémoria Free: " +Runtime.getRuntime().freeMemory() 
+        		+ "\t Mémoria Max: " + Runtime.getRuntime().maxMemory() 
+        		+ "\tMémoria Total:" +Runtime.getRuntime().totalMemory());
 	}
 	
 	//Feito em 12/04/2011
