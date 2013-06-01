@@ -810,8 +810,11 @@ public class ControllerDeepTwitter {
 		}
 		
 		public void run() {
+			
 			while(true) {
+				
 				try {
+					
 					//System.out.println("UPDATING RATE LIMIT");	
 					
 					//(ATUALIZAÇÃO)
@@ -821,8 +824,11 @@ public class ControllerDeepTwitter {
 					//(ATUALIZAÇÃO)
 					//mudança de getDateTime() para getResetTime();
 					mainWindow.setRateLimitStatus(rlt.getRemainingHits(),rlt.getHourlyLimit(),rlt.getResetTime());
+					
 					Thread.sleep(sleepTime);
-				} catch (Exception e) {					
+					
+				} catch (Exception e) {
+					
 					break;
 				} 
 			}
@@ -1752,20 +1758,31 @@ public class ControllerDeepTwitter {
 		return settings;
 	}
 	
-static long execucao = 0;
+	
+	static long execucao = 0;
+	
+	static boolean printExecucao = false; 
 	
 	public static void liberaMemoria(){
+		
+		
 
 		if(execucao>=9223372036854775807L)
 			execucao = 0;
 		
-        System.out.println((execucao++) + "\t\t" +new Date().toGMTString());
+		if (printExecucao)
+		{
+			System.out.println((execucao++) + "\t\t" +new Date().toGMTString());
+		}
 
         System.gc(); System.gc();
         
-        System.out.println("Mémoria Free: " +Runtime.getRuntime().freeMemory() 
-        		+ "\t Mémoria Max: " + Runtime.getRuntime().maxMemory() 
-        		+ "\tMémoria Total:" +Runtime.getRuntime().totalMemory());
+        if(printExecucao)
+        {
+	        System.out.println("Mémoria Free: " +Runtime.getRuntime().freeMemory() 
+	        		+ "\t Mémoria Max: " + Runtime.getRuntime().maxMemory() 
+	        		+ "\tMémoria Total:" +Runtime.getRuntime().totalMemory());
+        }
 	}
 	
 	//Feito em 12/04/2011
