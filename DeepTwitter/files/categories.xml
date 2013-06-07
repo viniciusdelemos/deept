@@ -29,6 +29,16 @@
     <Tag>Bündchen</Tag>
     <Tag>Copacabana</Tag>
   </Category>
-  
+  <Category name="Sports">
+  	<Tag>Heat</Tag>
+  	<Tag>French</Tag>
+  	<Tag>Sharapova</Tag>
+  </Category>
+  <Category name="Tech">
+  	<Tag>Microsoft</Tag>
+  	<Tag>Windows</Tag>
+  	<Tag>Apple</Tag>
+  	<Tag>iPhone</Tag>
+  </Category>
 </Categories>
 
