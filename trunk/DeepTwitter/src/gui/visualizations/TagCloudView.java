@@ -93,7 +93,6 @@ public class TagCloudView extends JPanel implements MouseListener{
     	
     	add("iPhone", JLabelTag.typeBoth, 1);
     	
-
     }
 
     private void init(){
@@ -112,11 +111,12 @@ public class TagCloudView extends JPanel implements MouseListener{
 //        }
     	
     	
-    	
     	new MakeCloud().start();
     	
     	while(finished == false){
+    		
     		try{
+    			
     			Thread.sleep(500);
     		}catch (Exception e) {
 				// TODO: handle exception
@@ -130,7 +130,9 @@ public class TagCloudView extends JPanel implements MouseListener{
     	Collection<JLabelTag> jlabelTags = tags.values();
     	
     	int cont = 0;
+    	
     	for(JLabelTag j : jlabelTags){
+    		
     		cont++;
     		
     		j.setFont(new Font("Tahoma", 0 , (int)(interpolacaoLinear(0, 1, minSize, maxSize, j.getNormScore()))));
@@ -144,6 +146,7 @@ public class TagCloudView extends JPanel implements MouseListener{
     		else j.setForeground(new Color(colorBoth));
     		
     		j.setToolTipText((int)j.getScore() + " ocurrence(s)");
+
     		//j.addMouseListener(l)
     		
     		add(j);
@@ -167,6 +170,7 @@ public class TagCloudView extends JPanel implements MouseListener{
     	public void run(){
     		
     		tags = tagCloudManager.makeTagCloud();
+    		
     		finished = true;
     		
     	}
@@ -186,11 +190,14 @@ public class TagCloudView extends JPanel implements MouseListener{
     }// </editor-fold>
 
     public void mouseClicked(MouseEvent e) {
-        System.out.println("Foi");
+        
+    	System.out.println("Mouse Clicado em TagCloud");
         
         if (e.getComponent() instanceof JLabel){
+        	
             JLabel label = (JLabel)e.getComponent();
             System.out.print("  " + label.getText());
+            
         }
 
 

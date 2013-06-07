@@ -49,8 +49,11 @@ public class TagCloudManager {
 			Tag[] tags = c.getTags();
 			
 			for(Tag t : tags){
+				
 				if(tagsCategories.containsKey(t.getName()) == false){
+					
 					tagsCategories.put(t.getName().toLowerCase().trim(), 0);
+					
 				}
 			}
 		}
@@ -121,6 +124,7 @@ public class TagCloudManager {
 				}
 			}
 			else{
+				
 				System.out.println("VERRRRRRRRRRRRRRRR ISTTTOOOOOOOOOOOOOOOOOOOOO");
 			}
 		}
@@ -238,6 +242,7 @@ public class TagCloudManager {
         		tags.put(ls.getKey(), jLabelTag);
         	}
         	else{
+        		
         		JLabelTag jlLabelTag = tags.get(ls.getKey().toLowerCase().trim());
         		
         		jlLabelTag.setType(JLabelTag.typeBoth);
