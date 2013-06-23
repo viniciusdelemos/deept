@@ -832,9 +832,9 @@ public class ControllerDeepTwitter {
 					//mudança de getDateTime() para getResetTime();
 					//mainWindow.setRateLimitStatus(rlt.getRemainingHits(),rlt.getHourlyLimit(),rlt.getResetTime());
 					
-					//TODO talvez "/statuses/show/:id" não seja a melhor solucao
-					mainWindow.setRateLimitStatus(rltMap.get("/statuses/show/:id").getRemaining()
-							,rltMap.get("/statuses/show/:id").getLimit(),rltMap.get("/statuses/show/:id").getSecondsUntilReset());
+					//TODO talvez "/statuses/home_timeline" não seja a melhor solucao
+					mainWindow.setRateLimitStatus(rltMap.get("/statuses/home_timeline").getRemaining()
+							,rltMap.get("/statuses/home_timeline").getLimit(),rltMap.get("/statuses/home_timeline").getSecondsUntilReset());
 					
 					
 					Thread.sleep(sleepTime);
