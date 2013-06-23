@@ -60,27 +60,57 @@ public class TagCloudManager {
 		
 		/** Agora pegando weekly trends*/
 		
-		List<Trends> trends = null;
+		//List<Trends> trends = null;
+		Trends trendsBRA = null;
+		Trends trendsUSA = null;
 		
 		try {
-			trends = controller.getTwitter().getWeeklyTrends();
+			
+			//trends = controller.getTwitter().getWeeklyTrends();
+
+			// TODO Melhorar, pegando trends somente do Brazil e USA
+			trendsBRA = controller.getTwitter().getPlaceTrends(23424768); //BRA
+			trendsUSA = controller.getTwitter().getPlaceTrends(23424977); //USA
+			
 		} catch (TwitterException e) {
+			
 			e.printStackTrace();
+			
 		}
 		
 		
-		for(Trends tr : trends){
-			
-			Trend[] trend = tr.getTrends();
+			System.out.println("Trends BRASIL:");
+		
+		//for(Trend tr : trends){
+		//	
+			Trend[] trend = trendsBRA.getTrends();
 			
 			for(Trend t : trend){
+				
 				if(tagsTrends.containsKey(t.getName().toLowerCase().trim()) == false){
+					
 					tagsTrends.put(t.getName().toLowerCase().trim(), 0);
+					System.out.println(t.getName());
+					
 				}
+				
 			}
 			
+			System.out.println("Trends USA:");
 			
-		}
+			trend = trendsUSA.getTrends();
+			
+			for(Trend t : trend){
+				
+				if(tagsTrends.containsKey(t.getName().toLowerCase().trim()) == false){
+					
+					tagsTrends.put(t.getName().toLowerCase().trim(), 0);
+					System.out.println(t.getName());
+					
+				}
+				
+			}
+		//}
 		
 		/** Não pega mais current trends*/
 		///////////

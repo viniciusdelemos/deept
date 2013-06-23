@@ -80,7 +80,7 @@ import prefuse.visual.sort.ItemSorter;
 import profusians.controls.GenericToolTipControl;
 import twitter4j.DirectMessage;
 import twitter4j.Status;
-import twitter4j.Tweet;
+import twitter4j.Status;
 import twitter4j.TwitterResponse;
 import controller.CategoryManager;
 
@@ -357,7 +357,7 @@ public class TimelineView extends JPanel {
 							tr = statusesList.get(i);
 							//substituir estes ifs com instance of atraves da classe ResponseDeepT :)
 							if(tr instanceof Status) responseId = ((Status)tr).getId();
-							else if(tr instanceof Tweet) responseId = ((Tweet)tr).getId();
+							else if(tr instanceof Status) responseId = ((Status)tr).getId();
 
 							String expr = "ID='"+responseId+"'";
 							Iterator<VisualItem> it = m_vis.items(Group.TWEETS.toString(),expr);
@@ -481,12 +481,17 @@ public class TimelineView extends JPanel {
 					date = s.getCreatedAt();
 					isStatusOrTweet = false;
 				}
-				else if (response instanceof Tweet) {					
-					Tweet s = (Tweet) response;
+				else if (response instanceof Status) {					
+					Status s = (Status) response;
 					id = s.getId();
 					text = s.getText();
-					screenName = s.getFromUser();
-					profileImageURL = s.getProfileImageUrl().toString();
+					
+					//screenName = s.getFromUser();
+					screenName = s.getUser().getScreenName();
+					
+					//profileImageURL = s.getProfileImageUrl().toString();
+					profileImageURL = s.getUser().getProfileImageURL();
+					
 					date = s.getCreatedAt();
 					isStatusOrTweet = true;
 				}

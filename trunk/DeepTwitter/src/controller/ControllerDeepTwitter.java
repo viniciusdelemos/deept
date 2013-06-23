@@ -801,7 +801,9 @@ public class ControllerDeepTwitter {
 	}
 	
 	private class UpdateRateLimitThread extends Thread {
+		
 		long sleepTime;
+		
 		RateLimitStatus rlt;
 		
 		public UpdateRateLimitThread(long sleepTime) {
@@ -819,11 +821,21 @@ public class ControllerDeepTwitter {
 					
 					//(ATUALIZAÇÃO)
 					//mudança de rateLimitStatus() para getRateLimitStatus();
-					rlt = twitter.getRateLimitStatus();
+					
+					//rlt = twitter.getRateLimitStatus();
+					
+					//TODO melhorar, pois agora tem ratelimitstatus para cada operação no twitter
+					//https://dev.twitter.com/docs/api/1.1/get/application/rate_limit_status
+					Map<String, RateLimitStatus> rltMap = twitter.getRateLimitStatus("statuses");
 					
 					//(ATUALIZAÇÃO)
 					//mudança de getDateTime() para getResetTime();
-					mainWindow.setRateLimitStatus(rlt.getRemainingHits(),rlt.getHourlyLimit(),rlt.getResetTime());
+					//mainWindow.setRateLimitStatus(rlt.getRemainingHits(),rlt.getHourlyLimit(),rlt.getResetTime());
+					
+					//TODO talvez "/statuses/show/:id" não seja a melhor solucao
+					mainWindow.setRateLimitStatus(rltMap.get("/statuses/show/:id").getRemaining()
+							,rltMap.get("/statuses/show/:id").getLimit(),rltMap.get("/statuses/show/:id").getSecondsUntilReset());
+					
 					
 					Thread.sleep(sleepTime);
 					

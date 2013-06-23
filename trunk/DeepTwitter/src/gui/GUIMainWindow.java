@@ -438,10 +438,11 @@ public class GUIMainWindow extends javax.swing.JFrame {
         buttonCloseUpdates.setEnabled(b);
     }
     
-    public void setRateLimitStatus(int left, int total, Date resetDate) {
+    public void setRateLimitStatus(int left, int total, int seconds) {
     	
-        labelAPILimit.setText("API: "+left+"/"+total);
-        labelAPILimit.setToolTipText("Reset às "+resetDate.getHours()+":"+resetDate.getMinutes());
+        labelAPILimit.setText("API: " + left + "/" + total);
+        
+        labelAPILimit.setToolTipText("Reset em "+ seconds + " segundos");
         
         ControllerDeepTwitter.liberaMemoria();        
     }

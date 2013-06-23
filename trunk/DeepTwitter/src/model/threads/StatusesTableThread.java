@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -345,7 +346,17 @@ public class StatusesTableThread {
 			//para poder exibir links
 			//TODO s.setText(text);
 			screenName = s.getUser().getScreenName();
-			profileImageURL = s.getUser().getProfileImageURL();
+			
+			
+			try {
+				//profileImageURL = s.getUser().getProfileImageURL();
+				profileImageURL = new URL(s.getUser().getProfileImageURL());
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+
+			
 			senderId = s.getUser().getId();
 			date = s.getCreatedAt();			
 			
@@ -366,7 +377,18 @@ public class StatusesTableThread {
 			else
 				u = dm.getSender();
 			screenName = u.getScreenName();
-			profileImageURL = u.getProfileImageURL();
+			
+			
+
+			try {
+				//profileImageURL = u.getProfileImageURL();
+				profileImageURL = new URL(u.getProfileImageURL());
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+			
+
 			senderId = u.getId();
 			date = dm.getCreatedAt();
 		}
@@ -523,13 +545,20 @@ public class StatusesTableThread {
 		String notification = null;		
 		public void run()
 		{	
-			System.out.println("STARTING " + statusesType + " para " + controller.getUserName(getUserId()));
-			JPanel emptyPanel = null;			
+			System.out.println("\nSTARTING " + statusesType + " para Usuário: " + controller.getUserName(getUserId()));
+			
+			JPanel emptyPanel = null;
+			
 			while(true) {
-				try {					
+				
+				try {
+					
 					if (threadSuspended) {
+						
 						System.out.println("PAUSING " + statusesType + " para " + controller.getUserName(getUserId()));
+						
 						synchronized(this) {
+						
 							while (threadSuspended) {
 								try {
 									wait();
@@ -545,16 +574,28 @@ public class StatusesTableThread {
 					switch(statusesType)
 					{
 					case UPDATES:	
+						
 						if(!isGroup) {
+							
 							if(lastResponseId[0] < 0) {
+							
 								if(userId==null)
-									aux = twitter.getFriendsTimeline(new Paging().count(updatesToGet));
+								{
+									//aux = twitter.getFriendsTimeline(new Paging().count(updatesToGet));
+									aux = twitter.getHomeTimeline(new Paging().count(updatesToGet));
+								}
 								else
+								{
 									aux = twitter.getUserTimeline(Long.parseLong(userId[0]), new Paging().count(updatesToGet));
+								}
 							}
 							else {
+								
 								if(userId==null)
-									aux = twitter.getFriendsTimeline(new Paging().sinceId(lastResponseId[0]));
+								{
+									//aux = twitter.getFriendsTimeline(new Paging().sinceId(lastResponseId[0]));
+									aux = twitter.getHomeTimeline(new Paging().sinceId(lastResponseId[0]));
+								}
 								else
 									
 									//(ATUALIZAÇÃO)
@@ -567,8 +608,10 @@ public class StatusesTableThread {
 							}
 						}
 						else {
+							
 							List<Status> group = new ArrayList<Status>();
 							List<Status> l;
+							
 							for(int i=0; i<userId.length; i++) {
 								if(lastResponseId[i] < 0) 
 									l = twitter.getUserTimeline(Long.parseLong(userId[i]), new Paging().count(updatesToGet));									
@@ -595,15 +638,18 @@ public class StatusesTableThread {
 						break;
 
 					case FAVORITES:						
+						
 						if(userId==null)
 							aux = twitter.getFavorites();
 						else
 							//TODO erro aqui quando está explorando usuário sem fazer login
-							aux = twitter.getFavorites(userId[0]);		
+							aux = twitter.getFavorites(userId[0]);
+						
 						notification = "favorito";
 						break;
 
 					case REPLIES:
+						
 						if(lastResponseId[0] < 0) 
 							aux = twitter.getMentions();
 						else
@@ -612,6 +658,7 @@ public class StatusesTableThread {
 						break;
 
 					case DIRECT_MESSAGES_RECEIVED:
+						
 						if(lastResponseId[0] < 0) 
 							aux = twitter.getDirectMessages();
 						else
@@ -620,6 +667,7 @@ public class StatusesTableThread {
 						break;
 
 					case DIRECT_MESSAGES_SENT:
+						
 						if(lastResponseId[0] < 0) 
 							aux = twitter.getSentDirectMessages();
 						else
@@ -627,46 +675,63 @@ public class StatusesTableThread {
 						break;
 
 					case SEARCH:
+						
 						//TODO: POSSIBILITAR MULTIPLAS PESQUISAS
 						//SALVAR PESQUISAS/UPDATES NO COMPUTADOR PARA CARREGAR MAIS RAPIDO DEPOIS?
+						
+						System.out.println("Pesquisa por: " + searchQuery);
+						
 						Query query = new Query(searchQuery);
+						
 						if(lastResponseId[0] >= 0) 
 							query.setSinceId(lastResponseId[0]);
-						query.setRpp(updatesToGet);
+						
+						//query.setRpp(updatesToGet);
+						query.setCount(updatesToGet);
 
 						QueryResult results = twitter.search(query);
 
 						//TODO arrumar esse erro maldito
-						/**
-						List<Tweet> tweets = results.getTweets();
+						List<Status> tweets = results.getTweets();
 						statusesList = new ArrayList<TwitterResponse>(tweets.size());
-						for(Tweet t : tweets) {
+						
+						for(Status t : tweets) {
 							statusesList.add(t);
 						}
 						
+						
 						notification = "resultado";
 						break;
-						*/
 
 					case PUBLIC_TIMELINE:
+						
 						if(lastResponseId[0]<0)							
-							aux = twitter.getPublicTimeline();
+						{
+							//aux = twitter.getPublicTimeline();
+						}
 						else
+						{
 							//(ATUALIZAÇÃO)
 							//removido o argumento lastResponseId[0], pois não
 							//há mais o método getPublicTimeline(int sinceId)
-							aux = twitter.getPublicTimeline();	
+							//aux = twitter.getPublicTimeline();
+						}
+						
 						notification = "tweet na Public Timeline";
 						break;
 					}
 
 					if(statusesType != StatusesType.SEARCH && !isGroup) {
+						
 						statusesList = new ArrayList<TwitterResponse>(aux.size());
 						for(Object x : aux) {								
 							statusesList.add((TwitterResponse)x);
-						}					
+						}
+						
 					}
+					
 					int contNewUpdates = 0;
+					
 					if(!statusesList.isEmpty()) {						
 						if(emptyPanel != null)
 							panel.remove(emptyPanel); 							

@@ -32,7 +32,7 @@ import org.jdom.output.XMLOutputter;
 import prefuse.visual.VisualItem;
 import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 import twitter4j.Status;
-import twitter4j.Tweet;
+import twitter4j.Status;
 import twitter4j.TwitterResponse;
 
 public class CategoryManager {
@@ -269,8 +269,8 @@ public class CategoryManager {
 			String text = status.getText();
 			long responseId = status.getId();
 			categorize(responseId, text, item);
-		} else if (response instanceof Tweet) {
-			Tweet t = (Tweet) response;
+		} else if (response instanceof Status) {
+			Status t = (Status) response;
 			String text = t.getText();
 			long responseId = Long.parseLong(String.valueOf(t.getId()));			
 			categorize(responseId, text, item);
