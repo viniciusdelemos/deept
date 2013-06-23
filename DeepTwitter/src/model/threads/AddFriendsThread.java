@@ -32,7 +32,8 @@ public class AddFriendsThread extends Thread {
 			//(ATUALIZAÇÃO)
 			//mudança de getFriends() para getFriendsStatuses()
 			
-			PagableResponseList<User> friends =  controller.getTwitter().getFriendsStatuses(Long.parseLong(source.get("idTwitter").toString()), Long.parseLong(source.get("friendsNextCursor").toString()));
+			//PagableResponseList<User> friends =  controller.getTwitter().getFriendsStatuses(Long.parseLong(source.get("idTwitter").toString()), Long.parseLong(source.get("friendsNextCursor").toString()));
+			PagableResponseList<User> friends =  controller.getTwitter().getFriendsList(Long.parseLong(source.get("idTwitter").toString()), Long.parseLong(source.get("friendsNextCursor").toString()));
 			
 			if(friends.getNextCursor() != 0)
 			{

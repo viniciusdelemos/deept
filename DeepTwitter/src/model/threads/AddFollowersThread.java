@@ -31,7 +31,9 @@ public class AddFollowersThread extends Thread {
 			//(ATUALIZAÇÃO)
 			//mundança de getFollowers() para getFollowersStatuses(string, long cursor);
 			
-			PagableResponseList<User> followers = controller.getTwitter().getFollowersStatuses(Long.parseLong(source.get("idTwitter").toString()), Long.parseLong(source.get("followersNextCursor").toString()));
+			//PagableResponseList<User> followers = controller.getTwitter().getfo getFollowersStatuses(Long.parseLong(source.get("idTwitter").toString()), Long.parseLong(source.get("followersNextCursor").toString()));
+			PagableResponseList<User> followers = controller.getTwitter().getFollowersList(Long.parseLong(source.get("idTwitter").toString()), Long.parseLong(source.get("followersNextCursor").toString()));
+			
 			if(followers.getNextCursor() != 0)
 			{
 				source.set("followersNextCursor", followers.getNextCursor());

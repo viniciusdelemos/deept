@@ -8,6 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/prefuse"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/profusians"/>
 	<classpathentry kind="lib" path="lib/prefuse.jar"/>
-	<classpathentry kind="lib" path="lib/twitter4j-core-2.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/twitter4j-core-3.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

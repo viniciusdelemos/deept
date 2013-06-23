@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import twitter4j.Tweet;
+import twitter4j.Status;;
 
 public class CategoriesGroup {
 	
 	private List<CategoryVinicius> listCategory;
 	private int color;
 	
-	private List<Tweet> tweets;
+	private List<Status> tweets;
 	
 		
 	public CategoriesGroup(int color, List<CategoryVinicius> listCategory){
 		this.listCategory = listCategory;
 		this.color = color;
-		this.tweets = new ArrayList<Tweet>();
+		this.tweets = new ArrayList<Status>();
 	}
 
 
@@ -30,11 +30,11 @@ public class CategoriesGroup {
 		return color;
 	}
 	
-	public void addTweet(Tweet t){
+	public void addTweet(Status t){
 		this.tweets.add(t);
 	}
 	
-	public List<Tweet> getTweets(){
+	public List<Status> getTweets(){
 		return tweets;
 	}
 	

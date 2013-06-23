@@ -52,7 +52,7 @@ import prefuse.util.ui.JForcePanel;
 import prefuse.util.ui.JValueSlider;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
-import twitter4j.Tweet;
+import twitter4j.Status;
 
 public class CategoryView extends Display {
 
@@ -273,7 +273,7 @@ public class CategoryView extends Display {
 
 	}
 	
-	public void addNode(int color, Tweet tweet, String userName){
+	public void addNode(int color, Status tweet, String userName){
 		
 //		g.addColumn(VisualItem.LABEL, VisualItem.LABEL.getClass());
 //		g.addColumn("color", int.class);
@@ -285,9 +285,15 @@ public class CategoryView extends Display {
 			Node node = g.addNode();
 			node.set(VisualItem.LABEL, "   ");
 			node.set("status", tweet.getText());
-			node.set("screenNameUser", tweet.getFromUser());
+			
+			//node.set("screenNameUser", tweet.getFromUser());
+			node.set("screenNameUser", tweet.getUser().getScreenName());
+			
 			node.set("userName", userName);
-			node.set("imageUrl", tweet.getProfileImageUrl());
+			
+			//node.set("imageUrl", tweet.getProfileImageUrl());
+			node.set("imageUrl", tweet.getUser().getProfileImageURL());
+			
 		}
 		else{
 
@@ -295,9 +301,14 @@ public class CategoryView extends Display {
 			node.set(VisualItem.LABEL, "   ");
 			node.set("color", color);
 			node.set("status", tweet.getText());
-			node.set("screenNameUser", tweet.getFromUser());
+			
+			//node.set("screenNameUser", tweet.getFromUser());
+			node.set("screenNameUser", tweet.getUser().getScreenName());
+			
 			node.set("userName", userName);
-			node.set("imageUrl", tweet.getProfileImageUrl());
+			
+			//node.set("imageUrl", tweet.getProfileImageUrl());
+			node.set("imageUrl", tweet.getUser().getProfileImageURL());
 		}
 		
 	}

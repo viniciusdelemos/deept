@@ -126,8 +126,10 @@ public class NetworkView extends Display {
     	nodesMap = new HashMap<Long, Node>();
     	
     	socialNetwork = new SocialNetwork();
+    	
     	try {
-			socialNetwork.addBlockedUsers(controller.getTwitter().getBlockingUsersIDs().getIDs());
+			//socialNetwork.addBlockedUsers(controller.getTwitter().getBlockingUsersIDs().getIDs());
+    		socialNetwork.addBlockedUsers(controller.getTwitter().getBlocksIDs().getIDs());
 		} catch (Exception e) {}
 		//mudei de TwitterException para Exception pq nesse local ocorriam erros na opção "Encontrar outro usuário"
     	
@@ -736,6 +738,7 @@ public class NetworkView extends Display {
     		popupMenu.add(favorites);
     		   		
     		if(!item.get("idTwitter").equals(loggedUserId)) { 
+    			
     			popupMenu.addSeparator();
     			popupMenu.add(sendReply);
     			popupMenu.add(sendMessage);
@@ -783,7 +786,9 @@ public class NetworkView extends Display {
     		updates.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
+					
 					StatusTab tab = controller.getStatusTabManager().getTab(StatusesType.UPDATES);
+					
 					if(isTwitterUser && clickedItem.getString("idTwitter").equals(controller.getLoggedUserId()))
 						tab.setPanelContent(new StatusesTableThread(StatusesType.UPDATES));
 					else

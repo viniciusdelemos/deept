@@ -10,7 +10,7 @@ import prefuse.visual.AggregateItem;
 import prefuse.visual.NodeItem;
 import twitter4j.Query;
 import twitter4j.QueryResult;
-import twitter4j.Tweet;
+import twitter4j.Status;
 import twitter4j.TwitterException;
 import controller.ControllerDeepTwitter;
 
@@ -47,7 +47,7 @@ public class CategoryController {
 	
 	class Make extends Thread {
 		
-		Map<Long, Tweet> tweets = new HashMap<Long, Tweet>();
+		Map<Long, Status> tweets = new HashMap<Long, Status>();
 
 		//List<Tweet> tweets = new ArrayList<Tweet>();
 
@@ -100,12 +100,12 @@ public class CategoryController {
 
 			List<CategoriesGroup> categoriesGroupGlobal = null;
 			
-			List<Tweet> listTweets = new ArrayList<Tweet>();
+			List<Status> listTweets = new ArrayList<Status>();
 			
-			Iterator<Tweet> iterator = tweets.values().iterator();
+			Iterator<Status> iterator = tweets.values().iterator();
 			
 			while(iterator.hasNext()){
-				Tweet t = iterator.next();
+				Status t = iterator.next();
 				listTweets.add(t);
 			}
 
@@ -113,7 +113,7 @@ public class CategoryController {
 
 			for (CategoriesGroup wg : categoriesGroupGlobal) {
 
-				for (Tweet t : wg.getTweets()) {
+				for (Status t : wg.getTweets()) {
 
 //					categoryView.addNode(wg.getColor(), t, controller
 //							.getUserNameByScreenName(t.getFromUser()));
@@ -125,9 +125,9 @@ public class CategoryController {
 
 		}
 		
-		public synchronized void addTweets(List<Tweet> tw){
+		public synchronized void addTweets(List<Status> tw){
 			
-			for(Tweet t : tw)
+			for(Status t : tw)
 				tweets.put(t.getId(), t);
 		
 		}
@@ -238,7 +238,7 @@ public class CategoryController {
 	}
 	
 	//esse eh o cara
-	private List<CategoriesGroup> analizeSearchWithGroups(List<Tweet> tweets){
+	private List<CategoriesGroup> analizeSearchWithGroups(List<Status> tweets){
 		
 		//Lista de categoria e palavra de todas categorias definidas pelo usuario
 		//List<CategoryWord> listCategoriesWordGlobal = listCategoryWord(); 
@@ -248,7 +248,7 @@ public class CategoryController {
 		//Inicializa color dos grupos de wordsGroup
 		int color = 1;
 		
-		for(Tweet t : tweets){
+		for(Status t : tweets){
 			
 			List<CategoryVinicius> listCategoryStatus = null;
 			
@@ -321,7 +321,7 @@ public class CategoryController {
 	 * 
 	 * @throws TwitterException
 	 */
-	private List<Tweet> search(String query) throws TwitterException{
+	private List<Status> search(String query) throws TwitterException{
 		
 		QueryResult queryResult = null;
 		
@@ -450,9 +450,10 @@ public class CategoryController {
 				
 			}
 			
-			for(Tweet t : wg.getTweets()){
+			for(Status t : wg.getTweets()){
 				
-				print += "\n\t Tweet: " + t.getText() + " User:" +t.getFromUser();
+				//print += "\n\t Tweet: " + t.getText() + " User:" + t.getFromUser();
+				print += "\n\t Tweet: " + t.getText() + " User:" + t.getUser().getScreenName();
 				
 			}
 			
