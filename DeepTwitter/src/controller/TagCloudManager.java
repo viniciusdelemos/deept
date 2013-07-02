@@ -114,6 +114,21 @@ public class TagCloudManager {
 		
 		/** Não pega mais current trends*/
 		///////////
+			
+		System.out.println("Trends Adicionados Manualmente:");
+		
+		String[] trendString = { "business", "How", "students"}; 
+		
+		for(String t : trendString){
+			
+			if(tagsTrends.containsKey(t.toLowerCase().trim()) == false){
+				
+				tagsTrends.put(t.toLowerCase().trim(), 0);
+				System.out.println(t);
+				
+			}
+			
+		}
 		
 //		//Put current trends in hashmap
 //		Trends trends = null;
@@ -286,10 +301,7 @@ public class TagCloudManager {
 
 	}
 	
-	private void menos3tags(){
-		
-	}
-	
+
 	private double interpolacaoLinear(double a, double b, double fa, double fb, double x){
 	
 		return ((b-x)*fa/(b-a)) + ((x-a)*fb/(b-a)); 
